@@ -1,0 +1,28 @@
+.dragdrop-container { 
+    float: left;
+    min-height: 18em;
+    min-width: 18em;
+    padding: 1%;
+}
+.dragdrop-container h4 {
+}
+.dragdrop-container li {
+    float: left;
+    width: 96px;
+    padding: 0.4em;
+    margin: 0 0.4em 0.4em 0;
+    text-align: center;
+    list-style-type: none;
+}
+.dragdrop-container li h5 {
+    margin: 0 0 0.4em; cursor: move;
+    word-wrap: break-word;
+    font-size: small;
+}
+.dragdrop-container li a {
+    float: right;
+}
+.dragdrop-container li img {
+    width: 100%;
+    cursor: move;
+}

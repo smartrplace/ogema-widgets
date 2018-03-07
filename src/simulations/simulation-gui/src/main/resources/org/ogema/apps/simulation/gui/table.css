@@ -1,0 +1,6 @@
+#plotsModal .modal-dialog { width: 80%; height: 100%; }
+#plotsModal .modal-content {height: 100%; }
+#plotsModal .modal-body {height: 85%; max-height: 85%; }
+#plotsModal .modal-footer {max-height: 3%; }
+#plotsModal .modal-header {max-height: 12%; }
+	

@@ -1,0 +1,110 @@
+.headerMenu { 
+	width: 100%;	
+}
+
+/*
+*  was height:50px
+*/
+.navbar-brand-ogema {
+	float:left;
+	height:75px; 
+	padding:15px 15px;
+	font-size:18px;
+	line-height:20px
+}
+
+.linkElement {
+	cursor:pointer;
+}
+
+.linkElement:hover {
+	background:grey;
+}
+
+.menuItem {
+	padding:30px 15px 0 15px;
+}
+
+.messageIcon{
+	position:absolute;
+	top: 50%;
+	left: 20px;
+	transform: translateX(-50%) translateY(-20%);
+}
+
+.messageText{
+	padding:5px 0px 0px 35px;
+	background-color: #fbfbfb;
+}
+
+textarea.messageText{
+	resize:none;
+}
+
+textarea.messageText.active{
+	border: 3px solid #AACCFF;	
+	cursor:pointer;
+}
+
+textarea.messageText.inactive{
+	border: 2px solid #DDDDDD;
+}
+
+.messageBox {
+	padding:3px 15px 0px 0px;
+}
+
+.active{
+	color:#3366AA;
+	font-weight:bold;
+}
+
+.inactive{
+	color:#999999;
+}
+
+.fadeInBox{
+	position:absolute; 
+	display:block; 
+	z-index:5;
+	background-color:#3366AA;
+	font-weight:bold;
+	border: 5px solid #88CCFF;
+	padding: 5px;
+}
+
+.fadeInBox > a{
+	color:#dddddd;
+	text-decoration:none;
+}
+
+#msgNrBox{
+	position:absolute;
+	top: 8px;
+	transform: translateX(-3px);
+	z-index:5;
+	background-color:#88CCFF;
+	color:#ffffff;
+	font-weight: bold;
+	border: 3px solid #3366AA;
+	border-radius:5px;
+	padding:3px;
+	opacity:0.8;
+}
+
+
+.linkBox{
+	position:absolute;
+	height:95%;
+	width:40px;
+	cursor:pointer;
+}
+
+.messageText:hover{
+	background-clip:content-box;
+	background-color:#DDEEFF;
+}
+
+.linkBox:hover{
+	background-color:#B0DDEE;
+}

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<groups xmlns="http://www.isdc.ro/wro">
+  <group name='widgets-base'>
+  	<!-- no processor added in wro.properties yet -->
+<!-- <css>/widgets.css</css> -->
+    <js>/GenericWidget.js</js>
+    <js>/WidgetGroups.js</js>
+    <js>/widgetLoader.js</js>
+  </group>
+  <group name='menu'>
+  	<js>/jquery/jquery.ddslick.min.js</js>
+    <js>/menuInitializer.js</js>
+  </group>
+</groups>

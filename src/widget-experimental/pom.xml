@@ -1,0 +1,94 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>de.iwes.widgets</groupId>
+        <artifactId>ogema-widgets</artifactId>
+        <version>2.1.3</version>
+    </parent>
+
+    <artifactId>widget-experimental</artifactId>
+
+    <packaging>bundle</packaging>
+    <name>OGEMA Tools :: Experimental Widgets</name>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-scr-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Import-Package>
+                            com.google.common.cache;version="[${guava.version.min},${guava.version.max})",
+                            org.apache.commons.lang3;version="[${lang3.version.min},${lang3.version.max})",
+                            org.json;version="[${org.json.version.min},${org.json.version.max})",
+                             org.ogema.webadmin;resolution:=optional,
+                        *</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.scr.annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.core</groupId>
+            <artifactId>api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.core</groupId>
+            <artifactId>models</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.ref-impl</groupId>
+            <artifactId>ogema-exam-base</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.tools</groupId>
+            <artifactId>resource-utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.iwes.widgets</groupId>
+            <artifactId>ogema-js-bundle</artifactId>
+        </dependency>
+        <!-- 
+        <dependency>
+            <groupId>de.iwes.widgets</groupId>
+            <artifactId>util-extended</artifactId>
+        </dependency>
+        -->
+          <dependency>
+            <groupId>de.iwes.widgets</groupId>
+            <artifactId>widget-collection</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.iwes.widgets</groupId>
+            <artifactId>widget-extended</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

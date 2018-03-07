@@ -1,0 +1,32 @@
+.dd-container-style-A { 
+	background-color: MintCream;
+    border-radius: 8px;
+    border-width: 3px;
+    border-color: royalblue;
+    border-style: solid;
+}
+.dd-container-style-A>.ui-widget-header {
+	line-height:25px; margin: 0 0 0.4em;
+    border-color: green;
+    border-radius: 10px;
+    border-width: 3px;
+    border-style: groove;
+    color: midnightblue;
+}
+.dd-container-style-A li {
+    border-radius: 8px;
+}
+.dd-container-style-A li h5 {
+    border-radius: 5px;
+}
+.dd-container-style-A li a {
+
+}
+.dd-container-style-A li img {
+}
+
+.image-centered-bottom {
+	background-repeat: no-repeat; 
+	background-position: center bottom; 
+	background-size: contain;
+}

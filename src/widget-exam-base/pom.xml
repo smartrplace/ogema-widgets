@@ -1,0 +1,82 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>de.iwes.widgets</groupId>
+        <artifactId>ogema-widgets</artifactId>
+        <version>2.1.3</version>
+    </parent>
+
+    <artifactId>widget-exam-base</artifactId>
+
+    <packaging>bundle</packaging>
+    <name>Test base for the widgets framework</name>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-scr-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Export-Package>
+							org.ogema.tools.widgets.test.base,
+							org.ogema.tools.widgets.test.base.util,
+							org.ogema.tools.widgets.test.base.widgets
+						</Export-Package>
+						<Import-Package>
+							org.json;version="[${org.json.version.min},${org.json.version.max})",
+							*;resolution:=optional
+						</Import-Package>
+					</instructions>
+				</configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.scr.annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.ref-impl</groupId>
+            <artifactId>ogema-exam-base</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.iwes.widgets</groupId>
+            <artifactId>widget-experimental</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient-osgi</artifactId>
+            <version>4.5.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore-osgi</artifactId>
+            <version>4.4.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpasyncclient-osgi</artifactId>
+            <version>4.1.2</version>
+        </dependency>
+    </dependencies>
+
+</project>

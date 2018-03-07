@@ -1,0 +1,7 @@
+.boldHeader>tbody>tr:first-child {
+    font-weight: bold;
+}
+
+.redBkHeader>tbody>tr:first-child {
+	background-color: #f00;
+}

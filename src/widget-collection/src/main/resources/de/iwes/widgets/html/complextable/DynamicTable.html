@@ -1,0 +1,57 @@
+<!--
+
+    This file is part of the OGEMA widgets framework.
+
+    OGEMA is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License version 3
+    as published by the Free Software Foundation.
+
+    OGEMA is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
+
+    Copyright 2014 - 2018
+
+    Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
+
+    Fraunhofer IWES/Fraunhofer IEE
+
+-->
+<!--
+
+    Copyright 2009 - 2016
+
+    Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
+
+    Fraunhofer IWES
+
+    All Rights reserved
+
+-->
+<html>
+<head>
+<script src="/ogema/jslib/angular/angular-1.6.4.min.js"></script>
+
+<link href="/ogema/widget/complextable/DynamicTable.css" rel="stylesheet" type="text/css"/>
+<script src="/ogema/widget/complextable/DynamicTable.js"></script>
+</head>
+<body>
+<div class="angularDiv" id="ComplexTableWidgetBody">
+	<div ng-controller="ComplexTableCtrl">		
+		<table id="table" class="table" ng-class="options.tableClasses"> 
+			<!-- <tr ng-repeat="row in entriesSet.getRows()" ng-class ="options.rowClass[row]"> -->
+			<tr ng-repeat="row in entriesSet.getRows()">
+				<td class="col" ng-repeat='col in entriesSet.getCols()' ng-class="options.colClass[col]">
+					<div ng-bind-html="entriesSet.getHtml()[row][col]" ng-attr-id="{{row + '__' + col}}" class="complex-table-cell">
+					</div>
+				</td>
+			</tr>	
+		</table>	
+	</div>
+</div>
+</body>
+</html>

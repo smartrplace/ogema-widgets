@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<groups xmlns="http://www.isdc.ro/wro">
+  <group name='widget-collection'>
+  	<!-- include only commonly used and not overly large js files;
+  		 e.g., do not include datepicker with it's huge dependencies -->
+  	<js>/accordion/Accordion.js</js>
+    <js>/alert/Alert.js</js>
+    <!-- uses angular -->
+<!-- <js>/complextable/DynamicTable.js</js> -->
+    <js>/emptywidget/EmptyWidget.js</js>
+    <js>/form/button/Button.js</js>
+    <js>/form/checkbox/Checkbox.js</js> 
+    <js>/form/dropdown/Dropdown.js</js>
+   <js>/form/label/Label.js</js>
+   <js>/form/textfield/TextField.js</js>
+    <js>/html5/Flexbox.js</js>
+    <js>/icon/Icon.js</js>
+    <js>/multiselect/Multiselect.js</js>
+    <js>/popup/Popup.js</js>
+
+  </group>
+</groups>

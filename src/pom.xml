@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Parent-POM: OGEMA Apps master pom with project-wide settings -->
+    <parent>
+        <groupId>org.ogema.tools</groupId>
+        <artifactId>ogema-tools</artifactId>
+        <version>2.1.3</version>
+    </parent>
+
+    <groupId>de.iwes.widgets</groupId>
+    <artifactId>ogema-widgets</artifactId>
+    <version>2.1.3</version>
+
+    <packaging>pom</packaging>
+    <name>OGEMA Tools :: Widgets</name>
+
+    <scm>
+		<connection>scm:git:ssh://ogema-source.net:fhg-alliance-internal</connection>
+		<developerConnection>scm:git:ssh://git@ogema-source.net:fhg-alliance-internal</developerConnection>
+		<url>scm:git:ssh://ogema-source.net:fhg-alliance-internal</url>
+		<tag>ogema-widgets-2.1.3</tag>
+	</scm>
+
+	    <!-- Sub-projects: OGEMA Applications (in alphabetical order) -->
+    <modules>
+    	<module>icon-service-impl</module>
+		<module>messaging</module>
+		<module>name-service-impl</module>
+		<module>ogema-gui-api</module>
+		<module>ogema-js-bundle</module>
+	    <module>simulations</module>
+		<!--<module>templates</module>-->
+	 	<module>widget-apps</module>
+		<module>widget-collection</module>
+		<module>widget-exam-base</module>
+		<module>widget-experimental</module>
+		<module>widget-extended</module>
+	    <module>widget-tools</module>
+  </modules>
+
+    <profiles>
+    		<!--
+				Use the following command to create javadoc for the API bundles only. Note the dot at the end for the current project.
+				Unfortunately, the bundles to be inclduded cannot easily be specified at pom level:
+
+				 mvn -DskipTests -Pgenerate-javadoc -Dadditionalparam=-Xdoclint:none -Dauthor=false install -pl ogema-gui-api,ogema-js-bundle,widget-collection,widget-extended,util-extended,widget-experimental,simulations/simulation-service,simulations/roomsimulation-service,.
+			 -->
+    		<profile>
+			<id>generate-javadoc</id>
+			<build>
+				<plugins>
+					<!-- Javadoc Plugin -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<configuration>
+							<!-- does not allow for linebreaks, neither to put the configuration in the affected submodules... -->
+						  <excludePackageNames>
+		          			de.iwes.widgets.api.extended.impl:de.iwes.widgets.api.extended.xxx:de.iwes.widgets.messaging.impl:de.iwes.widgets.messaging.model:de.iwes.widgets.start:de.iwes.widgets.html.start:de.iwes.widgets.pattern.page.impl:de.iwes.widgets.experimental.general:org.ogema.tools.simulation.service.impl:org.ogema.tools.simulation.service.apiplusv1:de.iwes.sim.roomsimservice:de.iwes.sim.roomsimservice.logic:de.iwes.sim.roomsimservice.device:org.ogema.apps.roomsim.service.api.impl
+		          		  </excludePackageNames>
+				          <links>
+				            <link>https://www.ogema-source.net/apidocs/</link>
+				          </links>
+				          <detectLinks>true</detectLinks>
+				        </configuration>
+				        <executions>
+				          <execution>
+				            <id>aggregate</id>
+				            <goals>
+				              <goal>aggregate</goal>
+				            </goals>
+				             <phase>install</phase>
+				          </execution>
+				        </executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+ <!-- disable doclint (strict Javadoc checks); alternatively, use command line argument -Dadditionalparam=-Xdoclint:none -->
+ <!--
+ 	    <profile>
+	        <id>disable-java8-doclint</id>
+	        <activation>
+	            <jdk>[1.8,)</jdk>
+	        </activation>
+	        <properties>
+	            <additionalparam>-Xdoclint:none</additionalparam>
+	        </properties>
+	    </profile>
+-->
+	</profiles>
+	<build>
+        <plugins>
+       		<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+					<showDeprecation>true</showDeprecation>
+					<showWarnings>true</showWarnings>
+					<compilerArgs>
+						<arg>-Xlint</arg>
+					</compilerArgs>
+				</configuration>
+			</plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+	            <groupId>de.iwes.widgets</groupId>
+	            <artifactId>ogema-gui-api</artifactId>
+	            <version>2.1.3</version>
+        	</dependency>
+        	<dependency>
+	            <groupId>de.iwes.widgets</groupId>
+	            <artifactId>ogema-js-bundle</artifactId>
+	            <version>2.1.3</version>
+        	</dependency>
+        	<dependency>
+	            <groupId>de.iwes.widgets</groupId>
+	            <artifactId>widget-collection</artifactId>
+	            <version>2.1.3</version>
+        	</dependency>
+        	<dependency>
+	            <groupId>de.iwes.widgets</groupId>
+	            <artifactId>widget-extended</artifactId>
+	            <version>2.1.3</version>
+        	</dependency>
+        	<dependency>
+	            <groupId>de.iwes.widgets</groupId>
+	            <artifactId>widget-experimental</artifactId>
+	            <version>2.1.3</version>
+        	</dependency>
+        	<dependency>
+	            <groupId>de.iwes.tools</groupId>
+	            <artifactId>standard-patterns</artifactId>
+	            <version>2.1.3</version>
+        	</dependency>
+        	<dependency>
+	            <groupId>de.iwes.widgets</groupId>
+	            <artifactId>widget-exam-base</artifactId>
+	            <version>2.1.3</version>
+        	</dependency>
+			<dependency>
+				<groupId>org.json</groupId>
+				<artifactId>json</artifactId>
+				<version>20170516</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+</project>

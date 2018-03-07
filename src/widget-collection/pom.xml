@@ -1,0 +1,130 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>de.iwes.widgets</groupId>
+        <artifactId>ogema-widgets</artifactId>
+        <version>2.1.3</version>
+    </parent>
+
+    <artifactId>widget-collection</artifactId>
+
+    <packaging>bundle</packaging>
+    <name>OGEMA Tools :: Widget collection</name>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-scr-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Import-Package>
+                        	com.google.common.io;version="[${guava.version.min},${guava.version.max})",
+                            org.apache.commons.lang3;version="[${lang3.version.min},${lang3.version.max})",
+                            org.json;version="[${org.json.version.min},${org.json.version.max})",
+                            org.ogema.webadmin;resolution:=optional,
+                            *</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>ro.isdc.wro4j</groupId>
+                <artifactId>wro4j-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+				    <groupId>ro.isdc.wro4j</groupId>
+				    <artifactId>wro4j-maven-plugin</artifactId>
+				    <version>1.8.0</version>
+				    <executions>
+				        <execution>
+				        	<phase>compile</phase>
+				            <goals>
+			              		<goal>run</goal>
+			            	</goals>
+				            <configuration>
+	      						<minimize>true</minimize>
+				                <ignoreMissingResources>false</ignoreMissingResources>
+				                <contextFolder>${basedir}/src/main/resources/de/iwes/widgets/html/</contextFolder>
+				                <extraConfigFile>${basedir}/src/main/resources/WEB-INF/wro.properties</extraConfigFile>
+				                <wroFile>${basedir}/src/main/resources/WEB-INF/wro.xml</wroFile>
+				                <destinationFolder>${basedir}/src/main/resources/de/iwes/widgets/html/minified/</destinationFolder>
+				            </configuration>
+				        </execution>
+				    </executions>
+				     <dependencies>
+						<dependency>
+				     		<groupId>org.mockito</groupId>
+				     		<artifactId>mockito-core</artifactId>
+				     		<scope>compile</scope>
+				     		<version>2.12.0</version>
+				       	</dependency>
+				    </dependencies>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.scr.annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.core</groupId>
+            <artifactId>api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.core</groupId>
+            <artifactId>models</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.iwes.widgets</groupId>
+            <artifactId>ogema-js-bundle</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.7.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.5</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.9.9</version>
+        </dependency>
+        <dependency>
+        	<groupId>com.google.guava</groupId>
+        	<artifactId>guava</artifactId>
+        </dependency>
+        <!-- for fileupload widget -->
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.3.1</version>
+            <type>jar</type>
+        </dependency>
+    </dependencies>
+
+</project>

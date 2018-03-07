@@ -1,0 +1,84 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>de.iwes.widgets</groupId>
+		<artifactId>widget-tools</artifactId>
+        <version>2.1.3</version>
+    </parent>
+
+	<groupId>de.iwes.tools</groupId>
+    <artifactId>schedule-viewer-basic</artifactId>
+    <name>Schedule viewer basic</name>
+	<description>Displays available schedules, and allows to edit them</description>
+    <packaging>bundle</packaging>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-scr-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Import-Package>
+                            com.google.common.cache;version="[${guava.version.min},${guava.version.max})",
+                            *</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.scr.annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.core</groupId>
+            <artifactId>api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.core</groupId>
+            <artifactId>models</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.ref-impl</groupId>
+            <artifactId>internal-api</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+		<dependency>
+            <groupId>de.iwes.widgets</groupId>
+            <artifactId>widget-extended</artifactId>
+        </dependency>
+		<dependency>
+            <groupId>de.iwes.widgets</groupId>
+            <artifactId>widget-experimental</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.iwes.tools</groupId>
+            <artifactId>standard-patterns</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.ref-impl</groupId>
+            <artifactId>ogema-exam-base</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+
+</project>

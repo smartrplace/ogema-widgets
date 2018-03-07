@@ -1,0 +1,11 @@
+(org.osgi.framework.ServicePermission "org.ogema.core.application.Application" "register")
+(org.osgi.framework.ServicePermission "de.iwes.widgets.api.OgemaGuiService" "get")
+(org.osgi.framework.ServicePermission "org.ogema.tools.messaging.MessagingService" "get")
+
+(org.osgi.framework.PackagePermission "org.ogema.core.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.widgets.*" "import")
+(org.osgi.framework.PackagePermission "org.apache.felix.scr.annotation"  "import")
+
+# not read or write
+#(org.ogema.accesscontrol.ResourcePermission "path=*" "create,read,activity,delete,addsub") 
+(org.ogema.accesscontrol.WebAccessPermission "name=de.iwes.widgets.ogema-js-bundle")

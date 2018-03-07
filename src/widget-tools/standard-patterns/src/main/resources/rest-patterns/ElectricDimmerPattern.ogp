@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<og:pattern xmlns:og="http://www.ogema-source.net/REST" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelClass>org.ogema.model.devices.buildingtechnology.ElectricDimmer</modelClass>
+    <fields>
+        <field>
+            <name>stateControl</name>
+            <relativePath>setting/stateControl</relativePath>
+            <type>org.ogema.core.model.simple.FloatResource</type>
+            <optional>false</optional>
+            <accessMode>SHARED</accessMode>
+        </field>
+        <field>
+            <name>stateFeedback</name>
+            <relativePath>setting/stateFeedback</relativePath>
+            <type>org.ogema.core.model.simple.FloatResource</type>
+            <optional>true</optional>
+            <accessMode>READ_ONLY</accessMode>
+        </field>
+    </fields>
+</og:pattern>

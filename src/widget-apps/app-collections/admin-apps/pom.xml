@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+
+    <artifactId>app-collections</artifactId>
+    <groupId>de.iwes.widgets</groupId>
+    <version>2.1.3</version>
+  </parent>
+    
+    <artifactId>admin-apps</artifactId>
+    <groupId>de.iwes.apps</groupId>
+    <packaging>bundle</packaging>
+    <name>Admin apps overview</name>
+    <description>Provides links to generic framework administration apps</description>
+    
+    <repositories>
+    	<repository>
+		    <id>ogema-release</id>
+		    <name>ogema-release</name>
+		    <url>https://www.ogema-source.net/artifactory/libs-release</url>
+   		</repository>
+    </repositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-scr-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Export-Package>
+                        </Export-Package>
+                        <Private-Package>
+                        	de.iwes.apps.collection.pages,
+                        	de.iwes.apps.collection
+                        </Private-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.scr.annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.core</groupId>
+            <artifactId>api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.iwes.tools</groupId>
+            <artifactId>app-collections-api</artifactId>
+        </dependency> 
+    </dependencies>
+
+</project>

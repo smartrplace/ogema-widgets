@@ -1,0 +1,21 @@
+# OGEMA standard permissions
+(org.osgi.framework.ServicePermission "org.ogema.core.application.Application" "register")
+(org.osgi.framework.PackagePermission "org.ogema.core.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.model.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.tools.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.util.*" "import")
+(org.osgi.framework.PackagePermission "org.joda.time" "import")
+(org.osgi.framework.PackagePermission "org.json" "import")
+(org.osgi.framework.PackagePermission "org.slf4j" "import")
+
+# export custom resource types
+(org.osgi.framework.PackagePermission "com.example.driver.template.drivermodel" "exportonly")
+
+# Resource permissions
+# all resource permissions for custom types
+(org.ogema.accesscontrol.ResourcePermission "type=com.example.driver.template.drivermodel.TemplateConfig" "read,write,addsub,create,activity,delete")
+(org.ogema.accesscontrol.ResourcePermission "type=com.example.driver.template.drivermodel.TemplateProgramConfig" "read,write,addsub,create,activity,delete")
+# Read/write permissions for all resources 
+(org.ogema.accesscontrol.ResourcePermission "*" "read,write")
+
+# TODO if the driver requires access to an external library, it will need additional permissions

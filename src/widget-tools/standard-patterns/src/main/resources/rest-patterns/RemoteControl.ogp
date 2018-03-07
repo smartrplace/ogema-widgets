@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<og:pattern xmlns:og="http://www.ogema-source.net/REST" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelClass>org.ogema.model.actors.RemoteControl</modelClass>
+    <fields>
+        <field>
+            <name>longPress</name>
+            <relativePath>longPress</relativePath>
+            <type>org.ogema.core.model.ResourceList</type>
+            <optional>false</optional>
+            <accessMode>SHARED</accessMode>
+        </field>
+        <field>
+            <name>shortPress</name>
+            <relativePath>shortPress</relativePath>
+            <type>org.ogema.core.model.ResourceList</type>
+            <optional>false</optional>
+            <accessMode>SHARED</accessMode>
+        </field>
+        <field>
+            <name>reading</name>
+            <relativePath>battery/chargeSensor/reading</relativePath>
+            <type>org.ogema.core.model.simple.FloatResource</type>
+            <optional>true</optional>
+            <accessMode>SHARED</accessMode>
+        </field>
+    </fields>
+</og:pattern>

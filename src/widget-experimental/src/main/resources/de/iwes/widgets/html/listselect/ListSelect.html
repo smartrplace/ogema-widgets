@@ -1,0 +1,70 @@
+<!--
+
+    This file is part of the OGEMA widgets framework.
+
+    OGEMA is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License version 3
+    as published by the Free Software Foundation.
+
+    OGEMA is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
+
+    Copyright 2014 - 2018
+
+    Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
+
+    Fraunhofer IWES/Fraunhofer IEE
+
+-->
+<!--
+
+    Copyright 2009 - 2016
+
+    Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
+
+    Fraunhofer IWES
+
+    All Rights reserved
+
+-->
+<html>
+<head>
+<!-- <script src="/ogema/jslib/jquery/jquery-1.11.1.min.js"></script> -->
+<!--<script src="/ogema/jslib/jquery/flot-0.8.3/jquery.flot.min.js"></script>
+<script src="/ogema/jslib/jquery/flot-0.8.3/jquery.flot.selection.min.js"></script>
+<script src="/ogema/jslib/jquery/flot-0.8.3/jquery.flot.time.min.js"></script>
+<script src ="/ogema/jslib/jquery/ui-1.12.1/jquery-ui.min.js"></script>
+-->
+<script src="/ogema/jslib/angular/angular-1.6.4.min.js"></script>
+ 
+<link href="/ogema/widget/listselect/ListSelect.css" rel="stylesheet" type="text/css"/>
+<script src="/ogema/widget/listselect/ListSelect.js"></script>
+</head>
+<body>
+<div class="angularDiv" id="listWidgetBody">
+<div ng-controller="ListSelectCtrl">
+	<!-- <p>Temperature: {{temp}}</p>
+	<button ng-Click="getTestResource()">GET</button> 
+	<button ng-Click="getList(false)">GET</button>-->
+	
+	<div class="demo-container" style="height:auto;">
+ 	<table class="table table-striped">
+      	<tr>
+      	  <th ng-repeat="title in rowsSet.getHeaders() | orderBy: headerPosition " class="listWidgetHeaderClass">{{title.headerItem}}</p></th> 
+      	</tr>
+      	<tr ng-repeat="row in rowsSet.getRows()" ng-click="rowSelected(row)" ng-class="{'checkedList': selected[row.lWidgetId], 'uncheckedList': !selected[row.lWidgetId]}">
+      	  <td ng-repeat="col in rowsSet.getHeaders() | orderBy: headerPosition">{{row[col.headerItem]}}</td>
+      	</tr>
+     </table></div>
+</div>
+<script>// note: inline javascript not loaded for widgets
+  console.log("Running included script of ListSelectWidget");	
+</script>
+</div>
+</body>
+</html>

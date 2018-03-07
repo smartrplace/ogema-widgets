@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Parent-POM: OGEMA master pom with project-wide settings -->
+    <parent>
+        <groupId>de.iwes.widgets</groupId>
+        <artifactId>ogema-widgets</artifactId>
+        <version>2.1.3</version>
+    </parent>
+
+ 	<groupId>org.ogema.apps</groupId>
+    <artifactId>ogema-simulations</artifactId>
+    <packaging>pom</packaging>
+    <name>OGEMA Tools :: Simulations</name>
+    <version>2.1.3</version>
+	
+    <!-- Sub-projects: OGEMA Applications (in alphabetical order) -->
+    <modules>
+		<module>simulation-gui</module>  
+		<module>simulation-service</module> 
+  </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+    	<dependencyManagement>
+		<dependencies>
+		<!-- Simulations -->
+			<dependency>
+	            <groupId>org.ogema.apps</groupId>
+	            <artifactId>simulation-service</artifactId>
+	            <version>2.1.3</version>
+        	</dependency>
+        	<dependency>
+	            <groupId>org.ogema.apps</groupId>
+	            <artifactId>simulation-gui</artifactId>
+	            <version>2.1.3</version>
+        	</dependency>
+		</dependencies>
+	</dependencyManagement>
+</project>

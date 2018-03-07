@@ -1,0 +1,35 @@
+(org.osgi.framework.ServicePermission "org.ogema.core.application.Application" "register")
+
+(org.osgi.framework.PackagePermission "org.ogema.core.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.model.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.tools.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.util.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.pattern.management.backup" "import")
+(org.osgi.framework.PackagePermission "de.iwes.widgets.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.tools.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.util.*" "import")
+
+
+#(org.osgi.framework.PackagePermission "org.osgi.service.http" "import")
+#(org.osgi.framework.PackagePermission "org.osgi.service.http.*" "import")
+(org.osgi.framework.PackagePermission "javax.servlet" "import")
+(org.osgi.framework.PackagePermission "javax.servlet.*" "import")
+(org.osgi.framework.PackagePermission "javax.xml.bind" "import")
+(org.osgi.framework.PackagePermission "org.json" "import")
+(org.osgi.framework.PackagePermission "org.apache.commons.fileupload" "import")
+(org.osgi.framework.PackagePermission "org.apache.commons.fileupload.*" "import")
+
+(org.osgi.framework.PackagePermission "de.iwes.widgets.api.extended.*" "exportonly")
+(org.osgi.framework.PackagePermission "de.iwes.widgets.object.widget.*" "exportonly")
+(org.osgi.framework.PackagePermission "de.iwes.widgets.pattern.widget.*" "exportonly")
+(org.osgi.framework.PackagePermission "de.iwes.widgets.resource.widget.*" "exportonly")
+(org.osgi.framework.PackagePermission "de.iwes.util.*" "exportonly")
+
+(org.osgi.framework.PackagePermission "com.fasterxml.jackson.*" "import")
+(org.osgi.framework.PackagePermission "org.slf4j" "import")
+(org.osgi.framework.PackagePermission "org.slf4j.*" "import")
+# required for PatternPageUtil
+(java.lang.RuntimePermission "accessDeclaredMembers")
+(java.lang.reflect.ReflectPermission "suppressAccessChecks")
+(java.io.FilePermission "<<ALL FILES>>" "read,write")
+

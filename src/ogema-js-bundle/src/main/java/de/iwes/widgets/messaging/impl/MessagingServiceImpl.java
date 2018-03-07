@@ -1,0 +1,326 @@
+/**
+ * This file is part of the OGEMA widgets framework.
+ *
+ * OGEMA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3
+ * as published by the Free Software Foundation.
+ *
+ * OGEMA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright 2014 - 2018
+ *
+ * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
+ *
+ * Fraunhofer IWES/Fraunhofer IEE
+ */
+
+package de.iwes.widgets.messaging.impl;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.NavigableSet;
+import java.util.Objects;
+import java.util.TreeSet;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
+
+import org.apache.felix.scr.annotations.Activate;
+import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Deactivate;
+import org.apache.felix.scr.annotations.Service;
+import org.ogema.core.application.AppID;
+import org.ogema.core.application.Application;
+import org.ogema.core.application.ApplicationManager;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.iwes.widgets.api.messaging.Message;
+import de.iwes.widgets.api.messaging.listener.MessageListener;
+import de.iwes.widgets.api.services.MessagingService;
+import de.iwes.widgets.messaging.MessageReader;
+import de.iwes.widgets.messaging.model.MessagingApp;
+import de.iwes.widgets.messaging.model.UserConfig;
+
+@Service(Application.class) // MessagingService registered in start method
+@Component
+public class MessagingServiceImpl implements MessagingService, Application {
+	
+	private final static int MAX_SIZE_UNREAD = 10000;
+	private final static int MAX_SIZE_READ = 5000;
+	private final static int MAX_SIZE_DELETED = 1000;
+	private final ExecutorService exec = Executors.newCachedThreadPool();
+	private final ConcurrentMap<AppID,NavigableSet<Long>> lastMessages = new ConcurrentHashMap<AppID, NavigableSet<Long>>();
+	private final static Logger logger = LoggerFactory.getLogger(MessagingService.class);
+	// note: this path is shared between select-connector and messaging service, do not change
+	private final static String ALL_APPS_PATH = "messagingApps/" + getValidVariableName(de.iwes.widgets.messaging.MessagingApp.ALL_APPS_IDENTIFIER);
+	private volatile BundleContext ctx;
+	private volatile ServiceRegistration<MessagingService> serviceReg;
+	private volatile ServiceRegistration<MessageReader> readerReg;
+	private volatile ApplicationManager appMan;
+	private MessageReaderImpl reader;
+	private final MessageLists messages = new MessageLists();
+	
+	@Activate
+	protected void activate(BundleContext ctx) {
+		this.ctx = ctx;
+	}
+	
+	@Override
+	public void start(ApplicationManager appManager) {
+		this.appMan = appManager;
+		this.serviceReg = ctx.registerService(MessagingService.class, this, null);
+		this.reader = new MessageReaderImpl(ctx, appManager, messages);
+		this.readerReg = ctx.registerService(MessageReader.class, reader, null);
+	}
+	
+	@Override
+	public void stop(AppStopReason reason) {
+		this.appMan = null;
+		removeService();
+	}
+	
+	@Deactivate
+	protected void deactivate() {
+		removeService();
+		lastMessages.clear();
+		messages.clear();
+		this.ctx = null;
+	}
+	
+	private void removeService() {
+		final ServiceRegistration<MessagingService> sreg = this.serviceReg;
+		final ServiceRegistration<MessageReader> rreg = this.readerReg;
+		final MessageReaderImpl reader = this.reader;
+		this.serviceReg = null;
+		this.readerReg = null;
+		this.reader = null;
+		if (reader == null && sreg == null &&  rreg == null)
+			return;
+		// blocks sometimes if executed in the deactivate thread... unclear why
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				if (reader != null) {
+					try {
+						reader.close();
+					} catch (Exception ignore) {}
+				}
+				if (rreg != null) {
+					try {
+						rreg.unregister();
+					} catch (Exception ignore) {}
+				}
+				if (sreg != null) {
+					try {
+						sreg.unregister();
+					} catch (Exception ignore) {}
+				}
+			}
+		}, "messaging-service-shutdown").start();
+	}
+	
+	@Override
+	public void sendMessage(ApplicationManager am, Message message)	throws RejectedExecutionException, IllegalStateException {
+		sendMessage(Objects.requireNonNull(am).getAppID(), message);
+	}
+	
+	@Override
+	public void sendMessage(final AppID appId, final Message message) throws RejectedExecutionException, IllegalStateException {
+		Objects.requireNonNull(appId);
+		Objects.requireNonNull(message);
+//		Bundle bundle =  am.getAdministrationManager().getContextBundle(MessagingServiceImpl.class);
+//		String appName;
+//		try {
+//			appName = bundle.getHeaders().get("Bundle-Name");
+//		} catch (Exception e) {
+//			appName = appId.getIDString();
+//		}
+//		String senderId = messages.registeredMessageSenders.get(appId);
+		
+		de.iwes.widgets.messaging.MessagingApp ma = messages.registeredMessageSenders.get(appId);
+		if (ma == null) {
+			throw new IllegalStateException("App has not been registered to send messages");
+		}
+		String senderId = ma.getMessagingId();
+		if (messages.unreadMessages.size() > MAX_SIZE_UNREAD)
+			throw new RejectedExecutionException("Too many unread messages.");
+		if (messages.deletedMessages.size() > MAX_SIZE_DELETED) {  // "garbage collector"; 
+			clean(messages.deletedMessages,MAX_SIZE_DELETED);
+		}
+		if (messages.readMessages.size() > MAX_SIZE_READ) {  // "garbage collector"; 
+			clean(messages.readMessages,MAX_SIZE_READ);
+		}
+		long tm = appMan.getFrameworkTime();
+		lastMessages.putIfAbsent(appId, new TreeSet<Long>());
+		NavigableSet<Long> lastM = lastMessages.get(appId);
+		// ensure the app is not sending too many messages
+		synchronized(lastM) {
+			if (lastM.ceiling(tm - 20*1000) == null) {  // no other messages in the last 20s -> fine
+				lastM.clear();
+			}
+			else if (lastM.tailSet(tm - 30*1000).size() > 10 || lastM.tailSet(tm - 5*60*1000).size() > 25) {  // too many messages!
+				logger.info("Too many messages from app {}", appId.getIDString());
+				throw new RejectedExecutionException("Too many messages from this application. AppID: " + appId);
+			}
+			lastM.add(tm);
+		}
+		String appName = ma.getMessagingId();
+		ReceivedMessageImpl msg = new ReceivedMessageImpl(message, tm, appId, appName);
+		messages.unreadMessages.put(tm, msg);
+		// listener callbacks
+		
+		MessagingApp allApps = null;
+		try {
+			allApps = appMan.getResourceAccess().getResource(ALL_APPS_PATH);
+			if (allApps != null && !allApps.isActive())
+				allApps = null;
+		} catch (Exception e) {}
+
+		
+		List<MessagingApp> apps = appMan.getResourceAccess().getResources(MessagingApp.class); 
+		//
+		MessagingApp sendingApp = null;
+		for(MessagingApp app : apps) {
+			if(app.appId().getValue().equals(senderId)) {
+				sendingApp = app;
+				break;
+			}
+		}
+		// resource must be created by external component (e.g. message-forwarding)
+		if (sendingApp == null) {
+			logger.info("No forwarding configuration for app {}",senderId);
+			return;
+		}
+		if (sendingApp.active().isActive() && !sendingApp.active().getValue()) {
+			logger.info("Message received from deactivated messaging app {}", senderId);
+			return;
+		}
+		forwardMessage(msg, sendingApp, allApps);
+		
+		// remove listeners that caused an exception (e.g. because app has been stopped in the meantime)
+//		Iterator<String> failedIt = failedListeners.iterator();
+//		while (failedIt.hasNext()) {
+//			String appIdLoc = failedIt.next();
+//			messages.listeners.remove(appIdLoc);
+//		}
+		logger.info("New message registered from app {}; nr of messages: {}" , appId.getIDString(), messages.unreadMessages.size());
+	}
+	
+	private void forwardMessage(ReceivedMessageImpl msg, MessagingApp app, MessagingApp allAppsConfig) {
+		
+		List<de.iwes.widgets.messaging.model.MessagingService> services = app.services().getAllElements();
+		MessageListener listener;
+		for(de.iwes.widgets.messaging.model.MessagingService service : services) {
+			List<UserConfig> users = service.users().getAllElements();
+			List<String> userNames = new ArrayList<String>();
+			listener = messages.listeners.get(service.serviceId().getValue());
+			if (listener == null) {
+				logger.warn("Listener " + service.serviceId().getValue() + " not found.");
+				continue;
+			}
+			for(UserConfig uc : users) {
+				if (logger.isTraceEnabled()) {
+					logger.trace("Checking forwarding configuration for " + service.serviceId().getValue() + " : Message Priority " + msg.getOriginalMessage().priority().getPriority() + ", " + 
+							uc.userName().getValue() + ", priority " + uc.priority().getValue());
+				}
+				if(msg.getOriginalMessage().priority().getPriority() >= uc.priority().getValue()) {
+//					System.out.println(uc.userName().getValue() + " added to recipients");
+					userNames.add(uc.userName().getValue());
+				}
+			}
+			if (userNames.isEmpty())
+				continue;
+			logger.debug("Submitting message forwarding task for app {}, users {}", service.serviceId().getValue(), users);
+			exec.submit(new MessageThread(msg, userNames, listener));
+		}
+		if (allAppsConfig == null)
+			return;
+		forwardMessage(msg, allAppsConfig, null); // TODO exclude those service/user combinations which already have received the message
+	}
+	
+	private static class MessageThread implements Callable<Void> {
+		
+		private final ReceivedMessageImpl msg;
+		private final List<String> userNames;
+		private final MessageListener listener;
+		
+		public MessageThread(ReceivedMessageImpl msg, List<String> userNames, MessageListener listener) {
+			this.msg = msg;
+			this.userNames = userNames;
+			this.listener = listener;
+		}
+		
+		@Override
+		public Void call() throws Exception {
+			listener.newMessageAvailable(msg,userNames);
+			return null;
+		}
+		
+	}
+	
+	private static void clean(Map<Long,ReceivedMessageImpl> map, int maxSize) {  // while this implementation is simple and fast, it deletes up to half of the messages marked as 'deleted'
+		Iterator<Entry<Long, ReceivedMessageImpl>> it  = map.entrySet().iterator();
+		int counter =0;
+		try {
+			while(it.hasNext() && counter++ < maxSize/2) {
+				it.next();
+				it.remove();
+			}
+		} catch (UnsupportedOperationException e) {
+			return;
+		}
+	}
+
+	@Override
+	public void registerMessagingApp(AppID appId, String humanReadableId) throws IllegalArgumentException {
+		Objects.requireNonNull(appId);
+		Objects.requireNonNull(humanReadableId);
+		if (humanReadableId.trim().length() < 5)
+			throw new IllegalArgumentException("App id too short: " + humanReadableId + ": Need at least five characters.");
+		if (getValidVariableName(humanReadableId).equals(getValidVariableName(de.iwes.widgets.messaging.MessagingApp.ALL_APPS_IDENTIFIER)))
+			throw new IllegalArgumentException("App id " + humanReadableId + " not admissible");
+		// FIXME we should rather check for identity at the level of valid ids
+		if (messages.registeredMessageSenders.containsKey(appId))
+			throw new IllegalArgumentException("App with appId " + appId.getIDString() + " already registered");
+		MessagingAppImpl mai = new MessagingAppImpl(appId, humanReadableId);
+		messages.registeredMessageSenders.put(appId,mai);
+	}
+
+	@Override
+	public void unregisterMessagingApp(AppID appId) {
+		Objects.requireNonNull(appId);
+		messages.registeredMessageSenders.remove(appId);
+	}
+	
+	private static String getValidVariableName(String variableName) {
+		if (variableName == null || variableName.isEmpty()) 
+			return variableName; 
+		char[] str = variableName.toCharArray();
+		for (int i =0;i<str.length;i++) { 
+			if (!Character.isJavaIdentifierPart(str[i]))
+				str[i] = '_';
+		}
+		String out = new String(str);
+		if (!Character.isJavaIdentifierStart(str[0]))
+			out = "_" + out;
+		return out;
+	}
+
+
+}

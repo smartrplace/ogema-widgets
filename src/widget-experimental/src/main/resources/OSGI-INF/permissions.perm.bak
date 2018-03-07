@@ -1,0 +1,44 @@
+(org.osgi.framework.ServicePermission "org.ogema.core.application.Application" "register")
+(org.osgi.framework.ServicePermission "de.iwes.widgets.resource.timeseries.OnlineTimeSeriesCache" "register")
+(org.osgi.framework.ServicePermission "org.ogema.core.administration.FrameworkClock" "get")
+
+(org.osgi.framework.PackagePermission "org.ogema.core.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.model.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.tools.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.util.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.pattern.management.backup" "import")
+(org.osgi.framework.PackagePermission "de.iwes.widgets.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.tools.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.util.*" "import")
+(org.osgi.framework.PackagePermission "org.joda.time" "import")
+(org.osgi.framework.PackagePermission "org.joda.time.*" "import")
+
+(org.osgi.framework.PackagePermission "org.osgi.framework" "import")
+#(org.osgi.framework.PackagePermission "org.osgi.service.http" "import")
+#(org.osgi.framework.PackagePermission "org.osgi.service.http.*" "import")
+(org.osgi.framework.PackagePermission "javax.servlet" "import")
+(org.osgi.framework.PackagePermission "javax.servlet.*" "import")
+(org.osgi.framework.PackagePermission "org.json" "import")
+(org.osgi.framework.PackagePermission "org.apache.commons.fileupload" "import")
+(org.osgi.framework.PackagePermission "org.apache.commons.fileupload.*" "import")
+(org.osgi.framework.PackagePermission "org.apache.commons.lang3" "import")
+(org.osgi.framework.PackagePermission "com.google.common.cache" "import")
+(org.osgi.framework.PackagePermission "org.apache.commons.io" "import")
+(org.osgi.framework.PackagePermission "com.fasterxml.jackson.*" "import")
+(org.osgi.framework.PackagePermission "org.slf4j" "import")
+(org.osgi.framework.PackagePermission "org.slf4j.*" "import")
+(org.osgi.framework.PackagePermission "org.apache.felix.scr.annotations" "import")
+(org.osgi.framework.PackagePermission "com.google.common.annotations" "import")
+(org.osgi.framework.PackagePermission "java.io.FilePermission" "import")
+
+# required for registering widget templates
+(org.osgi.framework.PackagePermission "org.ogema.webadmin" "import")
+(org.osgi.framework.PackagePermission "de.iwes.widgets.*" "exportonly")
+
+(java.io.FilePermission "<<ALL FILES>>" "read,write,delete")
+(java.lang.RuntimePermission "getClassLoader")
+# for app box
+(org.osgi.framework.AdminPermission "*" "metadata")
+(org.ogema.accesscontrol.ResourcePermission "type=*" "read,write,addsub,create,activity,delete")
+
+#Automated Generation Below:
