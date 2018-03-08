@@ -2,6 +2,36 @@
 
 The OGEMA widgets framework provides a small web framework for building [OGEMA](https://github.com/ogema/ogema) user pages. 
 
+## Getting started
+
+Follow the steps below to run OGEMA with the widgets framework.
+Prerequisite: Java 8
+
+1) Download the [demokit](https://ogema-source.net/demokit_widgets.zip)
+2) Go to the demokit rundirectory and execute the start.sh (for bash compatible shells) script or the start.cmd (Windows shell)
+3) Open the site https://localhost:8443/ogema/index.html in your Browser and accept the warning about the untrusted certificate
+4) Login with default credentials master/master
+
+## Developing apps
+
+Documentation: [https://ogema-source.net/apidocsextended/](https://ogema-source.net/apidocsextended/)
+Tutorials and resources about OGEMA are available on the OGEMA Wiki and the community Wiki
+* [https://ogema-source.net/wiki](https://ogema-source.net/wiki)
+* [https://community.ogema-source.net](https://community.ogema-source.net)
+
+For widget-specific information see [https://community.ogema-source.net/xwiki/bin/view/Main/The%20OGEMA%20Widgets%20framework/](https://community.ogema-source.net/xwiki/bin/view/Main/The%20OGEMA%20Widgets%20framework/)
+
+## Examples
+
+Example apps can be found in the subfolder src/widget-apps and in the [tutorial repository](https://github.com/ogema/tutorial).
+
+## Build yourself
+
+Prerequisite: Maven 3
+
+Go to the src folder and execute `mvn clean install -DskipTests`
+
+## Components
 ### API
 * ogema-gui-api
 ### Implementation
