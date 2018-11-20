@@ -1,3 +1,18 @@
+/**
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.iwes.timeseries.eval.viewer.gui;
 
 import java.time.temporal.ChronoUnit;
@@ -12,9 +27,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.ogema.core.application.ApplicationManager;
+import org.ogema.core.model.Resource;
 import org.ogema.core.model.schedule.Schedule;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.FloatResource;
@@ -44,17 +58,20 @@ import de.iwes.widgets.api.widgets.OgemaWidget;
 import de.iwes.widgets.api.widgets.WidgetPage;
 import de.iwes.widgets.api.widgets.dynamics.TriggeredAction;
 import de.iwes.widgets.api.widgets.dynamics.TriggeringAction;
-import de.iwes.widgets.api.widgets.html.StaticTable;
 import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
+import de.iwes.widgets.html.accordion.Accordion;
+import de.iwes.widgets.html.accordion.AccordionData;
 import de.iwes.widgets.html.emptywidget.EmptyWidget;
 import de.iwes.widgets.html.form.button.Button;
-import de.iwes.widgets.html.form.checkbox.SimpleCheckbox;
+import de.iwes.widgets.html.form.checkbox.Checkbox2;
+import de.iwes.widgets.html.form.checkbox.DefaultCheckboxEntry;
 import de.iwes.widgets.html.form.dropdown.TemplateDropdown;
 import de.iwes.widgets.html.form.label.Header;
 import de.iwes.widgets.html.form.label.Label;
 import de.iwes.widgets.html.form.textfield.ValueInputField;
 import de.iwes.widgets.html.html5.Flexbox;
+import de.iwes.widgets.html.html5.SimpleGrid;
 import de.iwes.widgets.html.html5.flexbox.AlignItems;
 import de.iwes.widgets.html.html5.flexbox.JustifyContent;
 import de.iwes.widgets.html.multiselect.TemplateMultiselect;
@@ -65,12 +82,15 @@ import de.iwes.widgets.html.selectiontree.SelectionItem;
 import de.iwes.widgets.html.selectiontree.TerminalOption;
 import de.iwes.widgets.resource.timeseries.OnlineTimeSeries;
 import de.iwes.widgets.reswidget.schedulecsvdownload.ScheduleCsvDownload;
-import de.iwes.widgets.reswidget.scheduleplot.flot.SchedulePlotFlot;
+import de.iwes.widgets.reswidget.scheduleplot.api.TimeSeriesPlot;
+import de.iwes.widgets.reswidget.scheduleplot.container.PlotTypeSelector;
+import de.iwes.widgets.reswidget.scheduleplot.container.SchedulePlotWidgetSelector;
+import de.iwes.widgets.reswidget.scheduleplot.container.TimeSeriesPlotGeneric;
 import de.iwes.widgets.reswidget.scheduleviewer.DefaultSchedulePresentationData;
 import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
 import de.iwes.widgets.template.DisplayTemplate;
 
-// TODO 
+// TODO
 // - fix interval checkbox
 // - downsampling to standard interval, such 1h, 1d, 1w
 // - config popup: partial transparency for plot; colors?
@@ -85,16 +105,16 @@ public class ScheduleViewerPage {
 	private final LabelledItemSelectorSingle<DataProvider<?>> dataProviderSelector;
 //	private final LabelledItemSelectorSingle<ProfileCategory> profileCategorySelector;
 	private final LabelledItemSelectorMulti<ProfileCategory> profileCategorySelector;
-	private final TemplateMultiselect<Profile> profilesSelector; 
+	private final TemplateMultiselect<Profile> profilesSelector;
 	private final DataTree dataTree;
 	private final ViewerDatepicker startTimePicker;
 	private final ViewerDatepicker endTimePicker;
 	private final Label sizeLabel;
 	private final ValueInputField<Integer> heightField;
+	private final SchedulePlotWidgetSelector plotLibSelector;
 	private final TemplateDropdown<PlotType> lineTypeSelector;
-	private final EmptyWidget clientSideConfigSetter;
 	private final EmptyWidget clientSideHeightSetter;
-	private final SimpleCheckbox aggregationCheckbox;
+	private final Checkbox2 aggregationCheckbox;
 	private final TemplateDropdown<LinkingOption> aggregationLevel;
 	private final ConfigPopupProfile profileConfig;
 	private final ConfigPopupTimeseries timeSeriesConfig;
@@ -102,27 +122,27 @@ public class ScheduleViewerPage {
 	private final Button timeSeriesConfigTrigger;
 	private final Button configClearBtn;
 	private final Button apply;
-	private final SchedulePlotFlot schedulePlot;
+	private final TimeSeriesPlot<?, ?, ?> schedulePlot;
 	private final Header downloadHeader;
 	private final ScheduleCsvDownload<ReadOnlyTimeSeries> csvDownload;
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public ScheduleViewerPage(
-			final WidgetPage<?> page, 
-			final LabelledItemProvider<DataProvider<?>> dataProviders, 
+			final WidgetPage<?> page,
+			final LabelledItemProvider<DataProvider<?>> dataProviders,
 			final LabelledItemProvider<ProfileCategory> profileProviders,
 			final ApplicationManager am) {
 		this.page = page;
 		this.header = new Header(page, "header", true);
 		header.setDefaultText("Schedule viewer");
-		header.addDefaultStyle(WidgetData.TEXT_ALIGNMENT_CENTERED);
+//		header.addDefaultStyle(WidgetData.TEXT_ALIGNMENT_CENTERED);
 		header.setDefaultColor("blue");
 		dataProviderSelector = new LabelledItemSelectorSingle<DataProvider<?>>(page, "dataProviderSelector", dataProviders);
 		profileCategorySelector = new LabelledItemSelectorMulti<>(page, "profileCategorySelector", profileProviders);
 		profilesSelector = new TemplateMultiselect<Profile>(page, "profilesSelector") {
 
 			private static final long serialVersionUID = 1L;
-			
+
 			@Override
 			public void onGET(OgemaHttpRequest req) {
 				final List<ProfileCategory> category = (List) profileCategorySelector.getSelectedItems(req);
@@ -143,7 +163,7 @@ public class ScheduleViewerPage {
 				if (lastTerminal != null)
 					profilesSelector.triggerAction(lastTerminal, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST, req);
 			}
-			
+
 		};
 		profilesSelector.setTemplate((DisplayTemplate) LabelledItemUtils.LABELLED_ITEM_TEMPLATE);
 		dataTree = new DataTree(page, "dataTree", dataProviderSelector) {
@@ -154,14 +174,14 @@ public class ScheduleViewerPage {
 			protected void onTerminalFieldGetComplete(OgemaHttpRequest req) {
 				setSchedulesByProfiles(req);
 			}
-			
+
 		};
-		startTimePicker =  new ViewerDatepicker(page, "startTimePicker", true, dataTree);
-		endTimePicker = new ViewerDatepicker(page, "endTimePicker", false, dataTree);
+		startTimePicker =  new ViewerDatepicker(page, "startTimePicker", true, dataTree, this);
+		endTimePicker = new ViewerDatepicker(page, "endTimePicker", false, dataTree, this);
 		sizeLabel = new Label(page, "sizeLabel") {
 
 			private static final long serialVersionUID = 1L;
-			
+
 			@Override
 			public void onGET(OgemaHttpRequest req) {
 				final long start = startTimePicker.getDateLong(req);
@@ -176,54 +196,17 @@ public class ScheduleViewerPage {
 					sz += ts.size(start, end);
 				setText(String.valueOf(sz), req);
 			}
-			
+
 		};
-		
+
 		heightField = new ValueInputField<>(page, "heightField", Integer.class);
 		heightField.setDefaultNumericalValue(500);
 		heightField.setDefaultLowerBound(0);
-		lineTypeSelector = new TemplateDropdown<PlotType>(page, "lineTypeSelector");
-		lineTypeSelector.setDefaultAddEmptyOption(true, "Automatic");
-		lineTypeSelector.setDefaultItems(Arrays.asList(
-				PlotType.LINE,
-				PlotType.STEPS,
-				PlotType.LINE_WITH_POINTS,
-				PlotType.POINTS,
-				PlotType.BAR
-		));
-		lineTypeSelector.setTemplate(new DisplayTemplate<PlotType>() {
-
-			@Override
-			public String getId(PlotType object) {
-				return object.getId();
-			}
-
-			@Override
-			public String getLabel(PlotType object, OgemaLocale locale) {
-				return object.toString();
-			}
-		});
-		// FIXME can probably replace this widget by the line type field onGET (even better: individual trigger button)
-		clientSideConfigSetter = new EmptyWidget(page,"clientSideConfigSetter") {
-
-			private static final long serialVersionUID = 1L;
-			
-			@Override
-			public void onGET(OgemaHttpRequest req) {
-				final PlotType type = lineTypeSelector.getSelectedItem(req);
-				// TODO implement this client side in the plot flot
-				if (type != null)
-					triggerAction(schedulePlot, TriggeringAction.GET_REQUEST, Plot2DOptions.adaptPlotType(type), req);
-				else 
-					removeTriggerAction(schedulePlot, TriggeringAction.GET_REQUEST, Plot2DOptions.adaptPlotType(PlotType.LINE), req);
-			}
-			
-		};
 		// FIXME can probably replace this widget by the height fiel onGET
 		clientSideHeightSetter = new EmptyWidget(page,"clientSideHeightSetter") {
 
 			private static final long serialVersionUID = 1L;
-			
+
 			@Override
 			public void onGET(OgemaHttpRequest req) {
 				final Integer height = heightField.getNumericalValue(req);
@@ -233,19 +216,27 @@ public class ScheduleViewerPage {
 				}
 				triggerAction(schedulePlot, TriggeringAction.GET_REQUEST, Plot2DOptions.adaptHeight(height), req);
 			}
-			
+
 		};
-		
-		aggregationCheckbox = new SimpleCheckbox(page, "aggregationCheckbox", "");
-		aggregationCheckbox.setDefaultValue(false);
-		
+
+		this.aggregationCheckbox = new Checkbox2(page, "aggregationCheckbox");
+		aggregationCheckbox.setDefaultCheckboxList(Arrays.asList(
+				new DefaultCheckboxEntry("fixTime", "Fix interval on schedule switch", false),
+				new DefaultCheckboxEntry("aggregate", "Aggregate time series", false)
+		));
+
+
+//		aggregationCheckbox = new SimpleCheckbox(page, "aggregationCheckbox", "");
+//		aggregationCheckbox.setDefaultValue(false);
+
 		aggregationLevel = new TemplateDropdown<LinkingOption>(page, "aggregationLevel") {
 
 			private static final long serialVersionUID = 1L;
-			
+
 			@Override
 			public void onGET(OgemaHttpRequest req) {
-				if (!aggregationCheckbox.getValue(req)) {
+
+				if (!aggregateTimeSeries(req)) {
 					update(Collections.<LinkingOption> emptyList(), req);
 					disable(req);
 					return;
@@ -263,7 +254,7 @@ public class ScheduleViewerPage {
 				}
 				update(admissibleOptions, req);
 			}
-			
+
 		};
 		aggregationLevel.setDefaultAddEmptyOption(true, "Aggregate by profile");
 		aggregationLevel.setTemplate(new DisplayTemplate<LinkingOption>() {
@@ -278,17 +269,18 @@ public class ScheduleViewerPage {
 				return object.label(locale);
 			}
 		});
-		
+
 		apply = new Button(page, "apply", "Apply");
-		schedulePlot = new SchedulePlotFlot(page, "schedulePlot", false) {
+		schedulePlot = new TimeSeriesPlotGeneric(page, "schedulePlot") {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void onGET(OgemaHttpRequest req) {
+				 setPlotWidget(plotLibSelector.getSelectedItem(req), req);
 				 final List<ReadOnlyTimeSeries> schedules = dataTree.getSelectedSchedules(req);
 				 final Map<String, SchedulePresentationData> scheduleData = new LinkedHashMap<>();
-				 final boolean aggregate = aggregationCheckbox.getValue(req);
+				 final boolean aggregate = aggregateTimeSeries(req);
 				 final List<Profile> profiles = profilesSelector.getSelectedItems(req);
 				 if (!aggregate || profiles.isEmpty()) {
 					 for (ReadOnlyTimeSeries ts : schedules) {
@@ -468,11 +460,14 @@ public class ScheduleViewerPage {
 				 getConfiguration(req).setYUnit(unit);
 				 setPollingInterval(online ? 5000 : -1, req);
 			}
-			
+
 		};
 		// what about mobile devices?
 		schedulePlot.setDefaultHeight("500px");
-		
+
+		plotLibSelector = new SchedulePlotWidgetSelector(page, "plotLibSelector");
+		lineTypeSelector = new PlotTypeSelector(page, "lineTypeSelector", schedulePlot);
+
 		profileConfig = new ConfigPopupProfile(page, "profileConfig", profilesSelector, schedulePlot);
 		timeSeriesConfig = new ConfigPopupTimeseries(page, "timeSeriesConfig", dataTree, schedulePlot);
 		profileConfigTrigger = new Button(page, "profileConfigTrigger", "Configure profiles");
@@ -480,15 +475,15 @@ public class ScheduleViewerPage {
 		configClearBtn = new Button(page, "configClearBtn", "Clear all configurations") {
 
 			private static final long serialVersionUID = 1L;
-			
+
 			@Override
 			public void onPOSTComplete(String data, OgemaHttpRequest req) {
 				profileConfig.clear(req);
 				timeSeriesConfig.clear(req);
 			}
-			
+
 		};
-		
+
 		downloadHeader = new Header(page, "downloadHeader");
 		downloadHeader.setDefaultHeaderType(3);
 		downloadHeader.setDefaultText("Download CSV data");
@@ -497,49 +492,58 @@ public class ScheduleViewerPage {
 		csvDownload = new ScheduleCsvDownload<ReadOnlyTimeSeries>(page, "csvDownload", am.getWebAccessManager()) {
 
 			private static final long serialVersionUID = 1L;
-			
+
 			@Override
 			public void onGET(OgemaHttpRequest req) {
 				this.setSchedules((Collection) schedulePlot.getScheduleData(req).getSchedules().values(), req);
 			}
-			
+
 		};
-		
+
 		buildPage();
 		setDependencies();
 	}
-	
+
+	@SuppressWarnings("deprecation")
 	private final void buildPage() {
 		page.append(header).linebreak();
-		int row = 0;
-		final StaticTable table = new StaticTable(4, 2, new int[]{3,3})
-				.setContent(row, 0, "Select data source").setContent(row++, 1, dataProviderSelector)
-				.setContent(row, 0, "Select profile category").setContent(row++, 1, profileCategorySelector)
-				.setContent(row, 0, "Select profile").setContent(row++, 1, profilesSelector);
-		page.append(table).linebreak().append(dataTree);
-		
+		final SimpleGrid settings0 = new SimpleGrid(page, "settingsGrid0", true)
+				.addItem("Select data source", false, null).addItem(dataProviderSelector, false, null)
+				.addItem("Select profile category", true, null).addItem(profileCategorySelector, false, null)
+				.addItem("Select profile", true, null).addItem(profilesSelector, false, null);
+		settings0.setAppendFillColumn(true, null);
+		page.append(settings0).linebreak().append(dataTree).linebreak();
+
+
 		final Flexbox configFlex = new Flexbox(page, "configFlex", true);
 		configFlex.setDefaultJustifyContent(JustifyContent.SPACE_BETWEEN);
 		configFlex.setDefaultAlignItems(AlignItems.CENTER);
 		configFlex.addItem(profileConfigTrigger, null).addItem(timeSeriesConfigTrigger, null).addItem(configClearBtn, null);
-		
-		row = 0;
-		final StaticTable table2 = new StaticTable(9, 2, new int[]{3,3})
-				.setContent(row, 0, "Start time").setContent(row++, 1, startTimePicker)
-				.setContent(row, 0, "End time").setContent(row++, 1, endTimePicker)
-				.setContent(row, 0, "Size").setContent(row++, 1, sizeLabel)
-				.setContent(row, 0, "Plot height in px").setContent(row++, 1, heightField)
-				.setContent(row, 0, "Line type").setContent(row++, 1, lineTypeSelector)
-				.setContent(row, 0, "Aggregate time series").setContent(row++, 1, aggregationCheckbox)
-				.setContent(row, 0, "Select aggregation level").setContent(row++, 1, aggregationLevel)
-				.setContent(row, 0, "Display settings").setContent(row++, 1, configFlex)
-				.setContent(row++, 1, apply);
-		page.append(table2).linebreak().append(schedulePlot).linebreak().append(downloadHeader).linebreak().append(csvDownload)
+
+		final SimpleGrid settings1 = new SimpleGrid(page, "settingsGrid1", true)
+				.addItem("Start time", false, null).addItem(startTimePicker, false, null)
+				.addItem("End time", true, null).addItem(endTimePicker, false, null)
+				.addItem("Size", true, null).addItem(sizeLabel, false, null)
+				.addItem("Plot height in px", true, null).addItem(heightField, false, null)
+				.addItem("Select plot library", true, null).addItem(plotLibSelector, false, null)
+				.addItem("Line type", true, null).addItem(lineTypeSelector, false, null)
+				.addItem("Options", true, null).addItem(aggregationCheckbox, false, null)
+				.addItem("Select aggregation level", true, null).addItem(aggregationLevel, false, null)
+				.addItem("Display settings", true, null).addItem(configFlex, false, null);
+		settings1.setAppendFillColumn(true, null);
+
+		final Accordion settingsAcc = new Accordion(page, "settingsAccordion", true);
+		settingsAcc.addDefaultStyle(AccordionData.BOOTSTRAP_BLUE);
+		settingsAcc.addItem("Settings", settings1, null);
+
+		page.append(settingsAcc).append(apply);
+
+		page.linebreak().append(schedulePlot).linebreak().append(downloadHeader).linebreak().append(csvDownload)
 			.linebreak().append(profileConfig).linebreak().append(timeSeriesConfig).linebreak()
-			.append(clientSideConfigSetter).append(clientSideHeightSetter);
-		
+			.append(clientSideHeightSetter);
+
 	}
-	
+
 	private final void setDependencies() {
 		dataProviderSelector.triggerAction(dataTree, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		dataProviderSelector.triggerAction(profilesSelector, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST, 1);
@@ -560,8 +564,10 @@ public class ScheduleViewerPage {
 		timeSeriesConfig.trigger(timeSeriesConfigTrigger);
 
 		schedulePlot.triggerAction(csvDownload, TriggeringAction.GET_REQUEST, TriggeredAction.GET_REQUEST);
-		lineTypeSelector.triggerAction(clientSideConfigSetter, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+//		lineTypeSelector.triggerAction(clientSideConfigSetter, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		heightField.triggerAction(clientSideHeightSetter, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+
+		plotLibSelector.triggerAction(schedulePlot, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 	}
 
 	private final void setSchedulesByProfiles(final OgemaHttpRequest req) {
@@ -572,7 +578,16 @@ public class ScheduleViewerPage {
 		final List<ReadOnlyTimeSeries> selected = filterSchedulesByProfiles(profiles, allSchedules);
 		dataTree.selectSchedules(selected, req);
 	}
-	
+
+	final boolean fixInterval(final OgemaHttpRequest req) {
+		return aggregationCheckbox.isChecked("fixTime", req);
+	}
+
+	private final boolean aggregateTimeSeries(final OgemaHttpRequest req) {
+		return aggregationCheckbox.isChecked("aggregate", req);
+	}
+
+
 	private static String getUnit(Collection<SchedulePresentationData> schedules) {
 		Class<?> type = null;
 		for (SchedulePresentationData spd : schedules) {
@@ -610,7 +625,7 @@ public class ScheduleViewerPage {
 		// TODO further; TODO more generic approach
 		return null;
 	}
-	
+
 	/**
 	 * We assume here that the schedule has been checked for Float type already
 	 * @param spd
@@ -627,7 +642,7 @@ public class ScheduleViewerPage {
 			return EnergyResource.class;
 		return FloatResource.class;
 	}
-	
+
 	private static List<ReadOnlyTimeSeries> filterSchedulesByProfiles(final List<Profile> selectedProfiles, final List<ReadOnlyTimeSeries> allSchedules) {
 		if (selectedProfiles.isEmpty())
 			return Collections.emptyList();
@@ -642,8 +657,8 @@ public class ScheduleViewerPage {
 		}
 		return selected;
 	}
-	
-	
+
+
 	private static String getSchedulePath(final ReadOnlyTimeSeries ts) {
 		if (ts instanceof Schedule)
 			return ((Schedule) ts).getPath();
@@ -653,7 +668,7 @@ public class ScheduleViewerPage {
 			return ((SchedulePresentationData) ts).getLabel(OgemaLocale.ENGLISH);
 		return "Unknown timeseries";
 	}
-	
+
 	private static Profile getApplicableProfile(final ReadOnlyTimeSeries ts, List<Profile> profiles) {
 		Profile p = null;
 		for (Profile profile : profiles) {
@@ -664,11 +679,11 @@ public class ScheduleViewerPage {
 		}
 		return p;
 	}
-	
+
 	private static SchedulePresentationData getSchedulePresentationData(final ReadOnlyTimeSeries ts, List<Profile> profiles) {
 		return getSchedulePresentationData(ts, getApplicableProfile(ts, profiles));
 	}
-	
+
 	private static SchedulePresentationData getSchedulePresentationData(final ReadOnlyTimeSeries ts, Profile profile) {
 		InterpolationMode explicitMode = profile != null ? profile.defaultInterpolationMode() : null;
 		if (explicitMode == null)
@@ -683,25 +698,27 @@ public class ScheduleViewerPage {
 		}
 		if (ts instanceof OnlineTimeSeries) {
 			final SingleValueResource res = ((OnlineTimeSeries) ts).getResource();
-			return new PresentationDataImpl(ts, res.getResourceType(), "Online " + ((OnlineTimeSeries) ts).getResource().getPath(), 
+			return new PresentationDataImpl(ts, res.getResourceType(), "Online " + ((OnlineTimeSeries) ts).getResource().getPath(),
 						res instanceof BooleanResource ? InterpolationMode.STEPS : InterpolationMode.LINEAR, profile);
 		}
 		if (ts instanceof SchedulePresentationData)
 			return (SchedulePresentationData) ts;
-		return new DefaultSchedulePresentationData(ts, Float.class, "Unknown timeseries", explicitMode);
+		else {
+			return new DefaultSchedulePresentationData(ts, Float.class, ts.toString(), explicitMode);
+		}
 	}
-	
+
 	private static SchedulePresentationData resample(final SchedulePresentationData input, final long duration, final TemporalUnit unit) {
 		final ReadOnlyTimeSeries resampled = StandardIntervalTimeseriesBuilder.newBuilder(input)
 				.setInterval(duration, unit)
 				.build();
-		final String label = input.getLabel(OgemaLocale.ENGLISH) + "_" + duration + getUnit(unit); 
+		final String label = input.getLabel(OgemaLocale.ENGLISH) + "_" + duration + getUnit(unit);
 		if (input instanceof PresentationDataImpl)
 			return new PresentationDataImpl(resampled, input.getScheduleType(), label, input.getInterpolationMode(), ((PresentationDataImpl) input).getProfile());
 		else
 			return new DefaultSchedulePresentationData(resampled, input.getScheduleType(), label, input.getInterpolationMode());
 	}
-	
+
 	private static final String getUnit(final TemporalUnit unit) {
 		if (unit == ChronoUnit.DAYS)
 			return "d";
@@ -717,5 +734,21 @@ public class ScheduleViewerPage {
 			return "a";
 		return unit.toString();
 	}
-	
+
+	private List<ReadOnlyTimeSeries> getSelectedSchedules(OgemaHttpRequest req) {
+		@SuppressWarnings("unchecked")
+		final TemplateMultiselect<SelectionItem> selector = (TemplateMultiselect<SelectionItem>) dataTree.getTerminalSelectWidget(req);
+		if (selector == null)
+			return Collections.emptyList();
+		@SuppressWarnings("unchecked")
+		final TerminalOption<ReadOnlyTimeSeries> terminalOpt = (TerminalOption<ReadOnlyTimeSeries>) dataTree.getTerminalOption(req);
+		if (terminalOpt == null)
+			return Collections.emptyList();
+		final List<ReadOnlyTimeSeries> list = new ArrayList<>();
+		for (SelectionItem item : selector.getSelectedItems(req)) {
+			list.add(terminalOpt.getElement(item));
+		}
+		return list;
+	}
+
 }

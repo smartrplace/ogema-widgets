@@ -202,27 +202,18 @@ ogema.widgetLoader.createWidgets = function(widgetScripts) {
 //			continue;
 //		}
 		var widgetHtmlElement;
-		var elements = $("#" + widgetID);
+		var elements = $("#" + widgetID + ".ogema-widget");
 		var size = elements.length;
 		if (size === 0) {
 			ogema.widgetLoader.backupScripts.push(widgetScripts[i]);
 			continue;
 		}
-		else if (size === 1) {
-			widgetHtmlElement = elements.get(0);
-		}
 		else {
-			// there is more than one matching element; try to restrict further by specifying also the class 'ogema-widget'
-			var elements2 = $("#" + widgetID + ".ogema-widget");
-			var size2 = elements2.length;
-			if (size2 !== 1)
+			widgetHtmlElement = elements.get(0);
+			if (size > 1) {
 				console.warn("Widget ID " + widgetID + " is not unique on this page. This may lead to unexpected behaviour.");
-			if (size2 > 0)
-				widgetHtmlElement = elements2.get(0);
-			else
-				widgetHtmlElement = elements.get(0);
+			}
 		}
-
 		widgetHtmlElement.style.visibility = "hidden";
         widgetHtmlElement.innerHTML = ogema.widgetLoader.htmlObj[type];
         try { // Browser support: http://caniuse.com/#search=classlist

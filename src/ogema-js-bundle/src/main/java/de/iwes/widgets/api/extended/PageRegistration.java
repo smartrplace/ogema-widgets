@@ -1,31 +1,23 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.api.extended;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -41,17 +33,16 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ogema.core.model.simple.IntegerResource;
+import org.ogema.accesscontrol.AccessManager;
 import org.slf4j.LoggerFactory;
 
-import de.iwes.widgets.api.extended.impl.AccessCounterAdvanced;
 import de.iwes.widgets.api.extended.impl.Session;
 import de.iwes.widgets.api.extended.impl.SessionManagement;
 import de.iwes.widgets.api.extended.xxx.ConfiguredWidget;
@@ -64,7 +55,8 @@ import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
  * Stores references to page-global widgets, whereas all session-specific widgets are only referenced
  * in the respective Session object.
  */
-public class PageRegistration extends HttpServlet {
+// FIXME move to implementation package?
+public class PageRegistration extends PageRegistrationI {
 
 	private static final long serialVersionUID = 1L;
 //	ConcurrentSkipListMap<K, V>
@@ -75,9 +67,6 @@ public class PageRegistration extends HttpServlet {
 	// only contains globally existing widgets, not session widgets; FIXME why isn't this a map? Makes iteration slow!
 	volatile List<ConfiguredWidget<?>> pageWidgets = null; // will be replaced with a CopyOnWriteArrayList, once the page is initialized
 	private List<ConfiguredWidget<?>> initialWidgets = new ArrayList<>(); // will be set to null once the page is initialized
-	private volatile AtomicInteger accessCountVolatile = new AtomicInteger(0);
-	private volatile IntegerResource accessCountPersistent = null;
-	private final Set<AccessCounterAdvanced> parameterAccessCounters = new HashSet<>();
 	// Map<widgetId, WidgetSessionData>
 
 	
@@ -86,9 +75,7 @@ public class PageRegistration extends HttpServlet {
 	
 	// Map<groupdId, group>
 	private final Map<String,WidgetGroupDerived> groups = new ConcurrentHashMap<>();
-	private final WidgetPage<?> page;
-	// XXX public
-	public final SessionManagement sessionManagement;
+
 //	private final boolean pageSpecificId;
 	
 	/**
@@ -97,9 +84,8 @@ public class PageRegistration extends HttpServlet {
 	 * @param sm
 	 */
 	// FIXME make constructor private and instantiate via reflections?
-	public PageRegistration(WidgetPage<?> page, SessionManagement sm) {
-		this.page = page;
-		this.sessionManagement = sm;
+	public PageRegistration(WidgetPage<?> page, SessionManagement sm, AccessManager acessManager) {
+		super(sm, acessManager, (WidgetPageBase<?>) page);
 //		this.pageSpecificId = pageSpecificId;
 	}
 	
@@ -350,11 +336,7 @@ public class PageRegistration extends HttpServlet {
 	}
 	
 	private static Map<String, ConfiguredWidget<?>> getMap(List<ConfiguredWidget<?>> widgets) {
-		Map<String, ConfiguredWidget<?>> map = new HashMap<>();
-		for (ConfiguredWidget<?> cw: widgets) {
-			map.put(cw.widget.getId(), cw);
-		}
-		return map;
+		return widgets.stream().collect(Collectors.toMap(cw -> cw.widget.getId(), Function.identity()));
 	}
 	
 	public void updateOrder(ConfiguredWidget<?> widget) {
@@ -423,10 +405,6 @@ public class PageRegistration extends HttpServlet {
 		initialWidgets = null;
 	}
 	
-	public String getServletBase() {
-		return ((WidgetPageBase<?>) page).getServletBase();
-	}
-	
 	@Override
 	protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
 		handleRequest(req, resp, true);
@@ -460,10 +438,12 @@ public class PageRegistration extends HttpServlet {
 				resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				return;
 			}
+			final String user = accessManager.getCurrentUser(); // never null
 			Callable<Void> callable = new Callable<Void>() {
 
 				@Override
 				public Void call() throws Exception {
+					accessManager.setCurrentUser(user);
 					if (isGet)
 						widgetImpl.doGet(req, resp);
 					else
@@ -506,41 +486,7 @@ public class PageRegistration extends HttpServlet {
 		return page;
 	}
 	
-	public void setPersistentAccessCount(final IntegerResource r) {
-		if (r != null && r.exists()) {
-			this.accessCountPersistent = r;
-			this.accessCountVolatile = null;
-		}
-	}
-	
-	public void setPersistentAccessCountForParameters(WidgetPage<?> page, IntegerResource counter, Map<String,String[]> parameters) {
-		parameterAccessCounters.add(new AccessCounterAdvanced(page, parameters, counter));
-	}
-	
-	public final void increaseAccessCount(Map<String,String[]> parameters) {
-		final IntegerResource r = accessCountPersistent;
-		if (r != null && r.exists()) {
-			r.getAndAdd(1);
-		} else {
-			final AtomicInteger ai = accessCountVolatile;
-			if (ai != null) {
-				ai.incrementAndGet();
-			}
-		}
-		for (AccessCounterAdvanced counter : parameterAccessCounters) {
-			counter.touched(parameters);
-		}
-	}
-	
-	public int getAccessCount() {
-		final IntegerResource r = accessCountPersistent;
-		if (r != null && r.exists()) 
-			return r.getValue();
-		final AtomicInteger ai = accessCountVolatile;
-		if (ai != null)
-			return ai.get();
-		return 0;
-	}
+
 	
 //	public final boolean usePageSpecificId() {
 //		return pageSpecificId;

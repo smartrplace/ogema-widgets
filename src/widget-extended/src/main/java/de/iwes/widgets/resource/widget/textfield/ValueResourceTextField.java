@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.resource.widget.textfield;
 
 import java.util.Locale;
@@ -49,7 +42,7 @@ import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
 public class ValueResourceTextField<V extends SingleValueResource> extends ResourceTextField<V> {
 
 	private static final long serialVersionUID = 1L;
-	private int nrDecimals = 2;
+	private volatile int nrDecimals = 2;
 
 	public ValueResourceTextField(WidgetPage<?> page, String id) {
 		this(page, id, null);
@@ -77,9 +70,14 @@ public class ValueResourceTextField<V extends SingleValueResource> extends Resou
 	
 	@Override
 	protected String format(V resource, Locale locale) {
-		String output;
-		if (resource instanceof FloatResource)
-			output = ValueResourceUtils.getValue((FloatResource) resource, nrDecimals); // default; override in derived class, if necessary // FIXME or use parameter?
+		final String output;
+		if (resource instanceof FloatResource) {
+			final int nrDecimals = this.nrDecimals;
+			if (nrDecimals < 0)
+				output = String.format(Locale.ENGLISH, "%f", ((FloatResource) resource).getValue());
+			else
+				output = ValueResourceUtils.getValue((FloatResource) resource, nrDecimals); // default; override in derived class, if necessary // FIXME or use parameter?
+		}
 		else
 			output = ValueResourceUtils.getValue(resource);
 		return output;
@@ -90,22 +88,24 @@ public class ValueResourceTextField<V extends SingleValueResource> extends Resou
 			value = value.replaceAll("[^\\d.,-]", "");
 		}
 		// may throw different kinds of exceptions
+		boolean exists = resource.exists();
+		if(!exists) resource.create();
 		if (resource instanceof TemperatureResource)  {
 			((TemperatureResource) resource).setValue(Float.parseFloat(value) + 273.15F);
 		}
 		else
-			ValueResourceUtils.setValue(resource, value);		
+			ValueResourceUtils.setValue(resource, value);
+		if(!exists) resource.activate(false);
 	}
 	
 	/**
-	 * Relevant for FloatResources
+	 * Relevant for FloatResources. 
 	 * @param nr
+	 * 		a negative value to show all digits, or a non-negative value to specify the
+	 * 		number of digits to be shown.
 	 */
 	public void setNrDecimals(int nr) {
-		if (nr < 0)
-			nrDecimals = 0;
-		else
-			nrDecimals = nr;
+		this.nrDecimals = nr;
 	}
 	
 }

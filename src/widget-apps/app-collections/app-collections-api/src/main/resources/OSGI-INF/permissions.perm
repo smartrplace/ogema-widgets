@@ -5,3 +5,4 @@
 (org.osgi.framework.PackagePermission "org.slf4j" "import")
 (org.osgi.framework.PackagePermission "de.iwes.tools.apps.collections.api" "exportonly")
 (org.osgi.framework.PackagePermission "de.iwes.tools.apps.collections.base" "exportonly")
+(org.ogema.accesscontrol.AdminPermission "*" "app")

@@ -1,11 +1,3 @@
-(org.osgi.framework.ServicePermission "org.ogema.core.application.Application" "register")
-(org.osgi.framework.ServicePermission "de.iwes.timeseries.eval.api.DataProvider" "register")
-(org.osgi.framework.ServicePermission "de.iwes.timeseries.eval.api.EvaluationProvider" "register")
-(org.osgi.framework.ServicePermission "de.iwes.timeseries.eval.api.EvaluationManager" "register")
-(org.osgi.framework.ServicePermission "org.ogema.core.administration.FrameworkClock" "get")
-(org.osgi.framework.ServicePermission "de.iwes.widgets.resource.timeseries.OnlineTimeSeriesCache" "get")
-(org.osgi.framework.ServicePermission "de.iwes.widgets.api.services.NameService" "get")
-
 (org.osgi.framework.PackagePermission "org.ogema.core.*" "import")
 (org.osgi.framework.PackagePermission "org.ogema.model.*" "import")
 (org.osgi.framework.PackagePermission "org.ogema.pattern.*" "import")
@@ -16,37 +8,24 @@
 
 (org.osgi.framework.PackagePermission "com.fasterxml.jackson.*" "import")
 
-(org.osgi.framework.PackagePermission "javax.servlet" "import")
-(org.osgi.framework.PackagePermission "javax.servlet.*" "import")
-(org.osgi.framework.PackagePermission "org.apache.felix.scr.annotations" "import")
-
 (org.osgi.framework.PackagePermission "de.iwes.timeseries.eval.api"  "exportonly")
 (org.osgi.framework.PackagePermission "de.iwes.timeseries.eval.api.configuration"  "exportonly")
 (org.osgi.framework.PackagePermission "de.iwes.timeseries.eval.base.provider"  "exportonly")
 (org.osgi.framework.PackagePermission "de.iwes.timeseries.eval.base.provider.gap"  "exportonly")
 (org.osgi.framework.PackagePermission "de.iwes.timeseries.eval.base.provider.utils"  "exportonly")
+(org.osgi.framework.PackagePermission "org.ogema.generictype"  "exportonly")
+(org.osgi.framework.PackagePermission "org.ogema.generictype.*"  "exportonly")
+
+#Property permissions
+("java.util.PropertyPermission" "org.ogema.recordeddata.slotsdb.use252F" "read")
+
+# registered programmatically, hence it must be specified explicitly
+(org.osgi.framework.ServicePermission "de.iwes.timeseries.eval.api.DataProvider" "register")
+# Let bnd generate service and capability permissions
+${permissions;services;capabilities}
+
 
 # export/custom type permissions
 
 # resource permissions # for data provider
 (org.ogema.accesscontrol.ResourcePermission "type=*" "read")
-
-#Automated Generation Below:
-# import permissions
-(org.osgi.framework.PackagePermission "org.apache.felix.scr.annotations" "import")
-(org.osgi.framework.PackagePermission "com.fasterxml.jackson.databind.annotation" "import")
-(org.osgi.framework.PackagePermission "org.apache.felix.scr.annotations" "import")
-(org.osgi.framework.PackagePermission "org.apache.felix.scr.annotations" "import")
-(org.osgi.framework.PackagePermission "org.apache.felix.scr.annotations" "import")
-(org.osgi.framework.PackagePermission "org.apache.felix.scr.annotations" "import")
-(org.osgi.framework.PackagePermission "org.osgi.framework" "import")
-(org.osgi.framework.PackagePermission "org.apache.felix.scr.annotations" "import")
-(org.osgi.framework.PackagePermission "org.osgi.framework" "import")
-(org.osgi.framework.PackagePermission "org.osgi.framework" "import")
-(org.osgi.framework.PackagePermission "org.slf4j" "import")
-(org.osgi.framework.PackagePermission "org.apache.felix.scr.annotations" "import")
-(org.osgi.framework.PackagePermission "org.apache.felix.scr.annotations" "import")
-
-# export/custom type permissions
-
-# resource permissions

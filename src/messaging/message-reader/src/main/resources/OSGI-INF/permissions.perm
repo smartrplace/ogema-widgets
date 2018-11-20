@@ -11,6 +11,6 @@
 (org.osgi.framework.PackagePermission "org.slf4j" "import")
 (org.osgi.framework.PackagePermission "org.apache.felix.scr.annotations" "import")
 
-(org.ogema.accesscontrol.WebAccessPermission "name=de.iwes.widgets.ogema-js-bundle")
+(org.ogema.accesscontrol.WebAccessPermission "name=org.ogema.widgets.ogema-js-bundle")
 
 #(org.ogema.accesscontrol.ResourcePermission "path=*" "create,read,activity,delete,addsub") 

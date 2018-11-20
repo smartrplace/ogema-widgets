@@ -1,3 +1,18 @@
+/**
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.iwes.timeseries.eval.base.provider.test;
 
 import java.util.ArrayList;
@@ -11,7 +26,6 @@ import java.util.concurrent.TimeoutException;
 import javax.inject.Inject;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.ogema.core.channelmanager.measurements.FloatValue;
 import org.ogema.core.channelmanager.measurements.Quality;
@@ -21,6 +35,8 @@ import org.ogema.core.timeseries.InterpolationMode;
 import org.ogema.tools.timeseries.api.FloatTimeSeries;
 import org.ogema.tools.timeseries.implementations.FloatTreeTimeSeries;
 import org.ogema.tools.widgets.test.base.WidgetsTestBase;
+import org.ops4j.pax.exam.CoreOptions;
+import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerClass;
 
@@ -46,7 +62,13 @@ import de.iwes.widgets.resource.timeseries.OnlineTimeSeriesCache;
 
 @ExamReactorStrategy(PerClass.class)
 public class BaseProviderTest extends WidgetsTestBase {
-
+	
+	// FIXME why is this required, constructor call super(true) should do as well
+	@Override
+	public Option widgets() {
+		return CoreOptions.composite(super.widgets(),
+				CoreOptions.mavenBundle("org.ogema.eval", "timeseries-eval-base", widgetsVersion));
+	}
 	@Inject
 	private OnlineTimeSeriesCache timeSeriesCache;
 

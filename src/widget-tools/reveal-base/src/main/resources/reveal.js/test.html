@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>OGEMA 2.0 - Open source energy management</title>
+
+		<meta name="description" content="A Java/OSGi based energy management software framework">
+		<meta name="author" content="Fraunhofer">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<!--<link rel="stylesheet" href="lib/css/zenburn.css">-->
+		<link rel="stylesheet" href="lib/css/hybrid.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>OGEMA</h1>
+					<h3>Open Source Energy Management</h3>
+					<img src="../img/title_0.jpg"/>
+					<p>
+						<small>Created by <a href="https://www.fraunhofer.de">Fraunhofer</a></small>
+					</p>
+				</section>
+				<section>
+					<h3>Interfaces</h3>
+					<img src="../img/interfaces_0.png"/>
+				</section>
+				<section>
+					<h3>Software stack</h3>
+					<p>All required components are included, no separate database or web server required. Runs everywhere.</p>
+					<img src="../img/stack_0.png"/>
+				</section>
+				<section>
+					<h3>OGEMA architecture</h3>
+					<p>Functionality is encapsulated in apps, which are not part of the core framework. 
+						Similarly, hardware connectivity is provided by individual drivers.</p>
+					<img src="../img/architecture_0.png" style="max-height:60vh"/>
+				</section>
+				<section>
+					<h3>Modularity</h3>
+					<ul>
+					   <li>Applications work on Resources and do not know about driver details
+					   <li>Add or remove apps and drivers at runtime
+					   <li>Role model: operating systems
+					</ul>				    
+					<img src="../img/linux.png" style="max-height:40vh"/>
+				</section>
+				<section>
+					<h3>Data model</h3>
+				    <p>Devices and data points are represented as typed nodes of the <i>Resource graph</i>.</p>
+					<img src="../img/resourceTree_0.png" style="max-height:50vh"/>
+				</section>
+				<section>
+					<h3>Persistence</h3>
+				    <p>OGEMA persistence is based on a flash-friendly in-memory database.</p>
+					<img src="../img/tango_save.svg" style="height:20vh;"/>
+				</section>
+				<section>
+					<h3>Driver support</h3>
+					<p>Hardware drivers available in the open source release:</p>
+					<ul style="text-align:left;">
+					   <li>Homematic
+					   <li>KNX via LAN
+					   <li>Modbus TCP and RTU
+					   <li>ZigBee
+					   <li>ZWave
+					 </ul>	 
+				</section>
+				<section>
+					<h3>Semantics made easy</h3>
+					<p>Find all devices of a certain type using the Java or REST API.</p>
+					<small><pre><code class="java" data-trim contenteditable>
+@Override
+public void start(final ApplicationManager appManager) {
+    double averageTemperature = appManager.getResourceAccess().getResources(TemperatureSensor.class).stream()
+        .filter(sensor -> sensor.reading().isActive())
+        .mapToDouble(sensor -> sensor.reading().getValue())
+        .average().orElse(Double.NaN);
+    System.out.println("The average temperature is " + averageTemperature);
+}
+				</code></pre></small>
+				</section>
+				<section>
+					<h3>User interfaces</h3>
+				    <p>Build interactive web sites in Java using the OGEMA widgets framework for rapid prototyping...</p>
+					<small class="fragment current-visible"><pre><code class="java" data-trim contenteditable>
+public class SamplePage implements LazyWidgetPage {
+
+    @Override
+    public void init(final ApplicationManager appMan, final WidgetPage&lt;?&gt; page) {
+        final Header header =  new Header(page, "header", "A widgets sample page");
+        header.setDefaultColor("blue");
+        final Label label = new Label(page, "nrSensor") {
+
+            @Override
+            public void onGET(OgemaHttpRequest req) {
+                final int nrSensors = appMan.getResourceAccess().getResources(TemperatureSensor.class).size();
+                setText("There are " + nrSensors + " temperature sensors in the system.", req);
+            }
+	
+        };
+        page.append(header).linebreak()
+            .append(label);
+    }
+}
+					</code></pre></small>
+					<img src="../img/widgets_sample.png" style="max-height:50vh;" class="fragment"/>
+				</section>
+				<!--<section>
+					<h3>User interfaces</h3>
+				    <p>Build interactive web sites in Java using the OGEMA widgets framework for rapid prototyping...</p>
+					<img src="../img/widgets_sample.png" style="height:30vh;"/>
+				</section>-->
+				<section>
+					<h3>User interfaces</h3>
+				    <p>...or create a full-blown HTML/Javascript website that communicates with OGEMA via its REST interface or a custom Java servlet.</p>
+					<img src="../img/sema_0.png" style="max-height:50vh"/>
+				</section>
+				<section>
+				    <div><!--test-->
+					<h3>Security & data privacy</h3>
+					<ul>
+					  <li>Fine-grained permission control for both apps and users... leveraging Java and OSGi security
+					  <li>Apps must request permissions for all resources they want to access
+					  <li>Local data storage by default means full user control over their data
+					</ul>
+					</div>
+				</section>
+				<section>
+					<h3>Simulations</h3>
+					<ul>
+					   <li>Test applications on simulated setups
+					   <li>Select predefined simulation device types or add your own
+					</ul>				    
+					<img src="../img/simulations_0.png" style="max-height:50vh"/>
+				</section>
+				<section>
+					<h3>Resources</h3>
+					<small>
+					<ul>
+					   <li>Demokit: <a href="https://ogema-source.net/demokit_widgets.zip">https://ogema-source.net/demokit_widgets.zip</a>
+					   <li>Wiki: <a href="https://ogema-source.net/wiki">https://ogema-source.net/wiki</a>
+					   <li>Source Code: <a href="https://github.com/ogema/ogema">https://github.com/ogema/ogema</a>
+					   <li>Known issues: <a href="https://github.com/ogema/ogema/issues">https://github.com/ogema/ogema/issues</a>
+					   <li>Software Development Kit (SDK), experimental: <a href="https://community.ogema-source.net">https://community.ogema-source.net</a>
+					</ul>
+					</small>
+				</section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/search/search.js', async: true },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+		</script>
+		<!--required to hide fragments again after they appeared once... somewhat hacky -->
+		<style> 
+		.fragment.current-visible.visible:not(.current-fragment) {
+			display: none;
+			height:0px;
+			line-height: 0px;
+			font-size: 0px;
+		}
+		</style>
+
+	</body>
+</html>

@@ -1,3 +1,18 @@
+/**
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.iwes.timeseries.eval.impl;
 
 import java.time.temporal.ChronoUnit;
@@ -7,11 +22,9 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Property;
-import org.apache.felix.scr.annotations.Service;
 import org.ogema.tools.timeseries.iterator.api.MultiTimeSeriesIterator;
 import org.osgi.framework.Constants;
+import org.osgi.service.component.annotations.Component;
 
 import de.iwes.timeseries.eval.api.EvaluationInput;
 import de.iwes.timeseries.eval.api.EvaluationInstance;
@@ -28,15 +41,22 @@ import de.iwes.timeseries.eval.base.provider.utils.EvaluationUtils;
 /**
  * Uses old school blocking iterators for online evaluation
  */
-@Service(EvaluationManager.class)
-@Component
-@Property(name=Constants.SERVICE_RANKING,value=""+Integer.MIN_VALUE)
+@Component(
+	service=EvaluationManager.class,
+	property=Constants.SERVICE_RANKING + ":Integer=" +Integer.MIN_VALUE
+)
 public class EvaluationManagerImplDeprecated implements EvaluationManager {
 	
 	@Override
 	public EvaluationInstance newEvaluation(EvaluationProvider provider, List<EvaluationInput> input,
 			List<ResultType> requestedResults, Collection<ConfigurationInstance> configurations) {
-		final EvaluationInstance instance = provider.newEvaluation(input, requestedResults, configurations);
+		return newEvaluation(null, provider, input, requestedResults, configurations);
+	}
+	
+	@Override
+	public EvaluationInstance newEvaluation(String id, EvaluationProvider provider, List<EvaluationInput> input,
+			List<ResultType> requestedResults, Collection<ConfigurationInstance> configurations) {
+		final EvaluationInstance instance = provider.newEvaluation(id, input, requestedResults, configurations);
 		Long timestep = null;
 		if (configurations != null) {
 			timestep = configurations.stream()

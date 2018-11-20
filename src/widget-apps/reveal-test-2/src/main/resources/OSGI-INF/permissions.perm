@@ -1,0 +1,19 @@
+(org.osgi.framework.ServicePermission "org.ogema.core.application.Application" "register,get")
+(org.osgi.framework.ServicePermission "de.iwes.widgets.api.widgets.LazyWidgetPage" "register,get")
+
+(org.osgi.framework.PackagePermission "org.ogema.core.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.model.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.tools.*" "import")
+
+(org.osgi.framework.PackagePermission "de.iwes.widgets.*" "import")
+(org.osgi.framework.PackagePermission "org.osgi.framework" "import")
+(org.osgi.framework.PackagePermission "org.osgi.service.component" "import")
+
+(org.ogema.accesscontrol.WebAccessPermission "name=org.ogema.widgets.ogema-js-bundle")
+(org.ogema.accesscontrol.AdminPermission "*" "app")
+(org.osgi.framework.AdminPermission "*" "metadata")
+
+(org.ogema.accesscontrol.ResourcePermission "type=org.ogema.model.actors.OnOffSwitch" "read,write")
+(org.ogema.accesscontrol.ResourcePermission "type=*" "read")
+
+(org.osgi.framework.CapabilityPermission "osgi.extender" "require")

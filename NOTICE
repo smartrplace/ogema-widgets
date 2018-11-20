@@ -180,3 +180,6 @@ This product includes code-prettify developed by
 Copyright 2011 Mike Samuel et al, mikesamuel@gmail.com
 Licensed under the Apache License 2.0
 
+This product uses 
+Byte Buddy, Copyright (c) Rafael Winterhalter (2014 - 2018)
+Licensed under the Apache License 2.0.

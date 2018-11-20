@@ -1,23 +1,17 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package de.iwes.widgets.api.widgets;
 
@@ -98,6 +92,7 @@ public interface OgemaWidget {
      * @param req
 	 * 		identifies the user session and contains all request information
      */
+    @Deprecated
     void updateDependentWidgets(OgemaHttpRequest req);
 
     
@@ -138,7 +133,7 @@ public interface OgemaWidget {
 
     /**
      * Set the polling interval for a specific session.
-     * @param pollingInterval; in ms; if <=0, then no polling
+     * @param pollingInterval; in ms; if &lt;=0, then no polling
      */
     void setPollingInterval(long pollingInterval, OgemaHttpRequest req);
     
@@ -152,7 +147,6 @@ public interface OgemaWidget {
      * Set whether the widget shall send its value to the server on every update through the user. 
      * Think of a text field: the server can be updated either every time a user enters a new word,
      * or server-side updates could be triggered only when the user clicks a "Save"-button (a Form-like concept). 
-     * @return 
      * 	
      */
 	void setDefaultSendValueOnChange(boolean defaultSendValueOnChange);
@@ -196,7 +190,7 @@ public interface OgemaWidget {
     void addStyle(WidgetStyle<?> style, OgemaHttpRequest req);
 
     /**
-     * Like {@see OgemaWidgetI#addStyle(WidgetStyle, OgemaHttpRequest), except that 
+     * Like {@link OgemaWidget#addStyle(WidgetStyle, OgemaHttpRequest)}, except that 
      * any previous style definitions are removed.
      * @param style
      * @param req
@@ -252,6 +246,13 @@ public interface OgemaWidget {
 	 * 		An HTML width identifier, such as "20%", or "60px";
 	 */
 	void setDefaultMaxWidth(String width);
+	
+	/**
+	 * Set the default min-width. 
+	 * @param width
+	 * 		An HTML width identifier, such as "20%", or "60px";
+	 */
+	void setDefaultMinWidth(String width);
     
 	/**
 	 * @see #setDefaultWidth(String)
@@ -268,6 +269,14 @@ public interface OgemaWidget {
 	 * @param req
 	 */
 	void setMaxWidth(String width, OgemaHttpRequest req);
+
+	/**
+	 * @see #setDefaultWidth(String)
+	 * session-specific version
+	 * @param width
+	 * @param req
+	 */
+	void setMinWidth(String width, OgemaHttpRequest req);
 
 	
 	/**
@@ -294,7 +303,7 @@ public interface OgemaWidget {
     Map<String, Map<String, String>> getCssMap(OgemaHttpRequest req);
 
     /**
-     * @see #addCssItem(String, Map)
+     * @see #addCssItem(String, Map, OgemaHttpRequest)
      * Here, outer keys of the nested map are selectors (e.g. CSS classnames), inner map keys
      * are CSS-properties
      * @param css
@@ -337,14 +346,14 @@ public interface OgemaWidget {
     void addCssItem(String selector, Map<String, String> value, OgemaHttpRequest req);
     
     /**
-     * @see #addCssItem(String, Map)
+     * @see #addCssItem(String, Map, OgemaHttpRequest)
      * @param selector
      * @param req
      */
     void removeCSSItems(String selector, OgemaHttpRequest req);
 
     /**
-     * @see #addCssItem(String, Map)
+     * @see #addCssItem(String, Map, OgemaHttpRequest)
      * @param selector
      * @param property
      * @param req
@@ -448,9 +457,9 @@ public interface OgemaWidget {
 
     /**
      * Trigger an action of another widget. Typically, both the triggering and triggered actions are Http requests, either GET or POST.
-     * Other types are possible, though, for instance {@see TriggeredAction#HIDE_WIDGET}, which hides the widget in the client browser.<br>
+     * Other types are possible, though, for instance {@link TriggeredAction#HIDE_WIDGET}, which hides the widget in the client browser.<br>
      * Note that the target widget must exist globally, not just in one session. For the latter case, use 
-     * {@link #triggerAction(String, TriggeringAction, TriggeredAction, OgemaHttpRequest)}.
+     * {@link #triggerAction(OgemaWidget, TriggeringAction, TriggeredAction, OgemaHttpRequest)}.
      * @param target
      * @param triggeringAction
      * @param triggeredAction
@@ -577,7 +586,6 @@ public interface OgemaWidget {
      * Disable any dynamic functionality of the widget. The effect of this method differs between widgets.
      * @see #enable(OgemaHttpRequest)
      * @param req
-     * @return
      */
     void disable(OgemaHttpRequest req);
 
@@ -634,7 +642,6 @@ public interface OgemaWidget {
      *
      * @param other
      * 		the dependent widget
-     * @return
      * @deprecated use {@link #triggerOnPOST(OgemaWidget)} instead
      */
     @Deprecated
@@ -647,7 +654,6 @@ public interface OgemaWidget {
      *
      * @param other
      * 		the dependent widget
-     * @return
      */
     void triggerOnPOST(OgemaWidget other);
     

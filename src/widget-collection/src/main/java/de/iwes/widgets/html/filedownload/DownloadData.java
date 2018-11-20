@@ -1,23 +1,17 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package de.iwes.widgets.html.filedownload;
 
@@ -25,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.math.BigInteger;
@@ -83,19 +78,19 @@ public class DownloadData extends WidgetData {
 	}
 	
 	protected void setSource(final File file, boolean reusable, final String contentType) {
-		setSource(Files.asByteSource(file), null, reusable, contentType);
+		setSource(Files.asByteSource(file), null, null, reusable, contentType);
 	}
 	
 	protected void setSource(final InputStream stream, final String contentType) {
-		setSource(new StreamSource(stream), null, false, contentType);
+		setSource(new StreamSource(stream), null, null, false, contentType);
 	}
 	
 	protected void setSource(final URL url, final boolean reusable, final String contentType) {
-		setSource(Resources.asByteSource(url), null, reusable, contentType);
+		setSource(Resources.asByteSource(url), null, null, reusable, contentType);
 	}
 	
 	protected void setSource(final byte[] bytes, final boolean reusable, final String contentType) {
-		setSource(ByteSource.wrap(bytes), null, reusable, contentType);
+		setSource(ByteSource.wrap(bytes), null, null, reusable, contentType);
 	}
 	
 	protected void setSource(final Reader reader, final String contentType) throws IOException {
@@ -104,14 +99,19 @@ public class DownloadData extends WidgetData {
 		setSource(new ByteArrayInputStream(CharStreams.toString(reader).getBytes(StandardCharsets.UTF_8)), contentType);
 	}
 	
-	protected void setSource(final Consumer<Writer> writerConsumer, final boolean reusable, final String contentType) {
-		setSource(null, writerConsumer, reusable, contentType);
+	protected void setStringSource(final Consumer<Writer> writerConsumer, final boolean reusable, final String contentType) {
+		setSource(null, writerConsumer, null, reusable, contentType);
 	}
 	
-	protected synchronized void setSource(final ByteSource source, final Consumer<Writer> consumer, final boolean reusable, final String contentType) {
-		if ((source == null && consumer == null) || this.servlet != null)
+	protected void setSource(final Consumer<OutputStream> streamConsumer, final boolean reusable, final String contentType) {
+		setSource(null, null, streamConsumer, reusable, contentType);
+	}
+	
+	protected synchronized void setSource(final ByteSource source, final Consumer<Writer> consumer, final Consumer<OutputStream> outputConsumer,
+			final boolean reusable, final String contentType) {
+		if ((source == null && consumer == null && outputConsumer == null) || this.servlet != null)
 			finalize(); // unregister existing servlet if it is still registered
-		if (source == null && consumer == null) {
+		if (source == null && consumer == null && outputConsumer == null) {
 			this.servlet = null;
 			this.webPath = null;
 			this.url = null;
@@ -133,8 +133,9 @@ public class DownloadData extends WidgetData {
 			if (!reusable)
 				listeners.add(ownListener);
 		}
-		this.servlet = source != null ? new DownloadServlet(source, reusable, contentType, appMan, listeners)
-				: new DownloadServlet(consumer, reusable, contentType, appMan, listeners);
+		this.servlet = source != null ? new DownloadServlet(source, reusable, contentType, appMan, listeners) :
+				consumer != null ? new DownloadServlet(consumer, reusable, contentType, appMan, listeners) :
+					new DownloadServlet(outputConsumer, reusable, contentType, appMan, listeners, true);
 		this.url = appMan.getWebAccessManager().registerWebResourcePath(webPath, servlet);
 		if (customFilename != null)
 			url += "/" + customFilename;

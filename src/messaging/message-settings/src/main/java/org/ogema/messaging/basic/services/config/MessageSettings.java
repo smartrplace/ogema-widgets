@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.ogema.messaging.basic.services.config;
 
 import org.apache.felix.scr.annotations.Component;
@@ -43,7 +36,6 @@ import de.iwes.widgets.api.widgets.WidgetPage;
 import de.iwes.widgets.api.widgets.navigation.MenuConfiguration;
 import de.iwes.widgets.api.widgets.navigation.NavigationMenu;
 
-
 @Component(specVersion = "1.2")
 @Service(Application.class)
 public class MessageSettings implements Application {
@@ -53,43 +45,43 @@ public class MessageSettings implements Application {
 	private ResourceAccess resAcc;
 	private SenderPageBuilder senderPageBuilder;
 	private ReceiverPageBuilder receiverPageBuilder;
-	
+
 	@Reference
 	private OgemaGuiService guiService;
-	
+
 	@Override
 	public void start(ApplicationManager appManager) {
 		this.resAcc = appManager.getResourceAccess();
 		this.logger = appManager.getLogger();
-        logger.debug("{} started", getClass().getName());
-        
+		logger.debug("{} started", getClass().getName());
+
 		wApp = guiService.createWidgetApp("/de/iwes/ogema/apps/messageSettings", appManager);
 		WidgetPage<MessageSettingsDictionary> senderPage = wApp.createWidgetPage("sender.html");
 		senderPage.registerLocalisation(MessageSettingsDictionary_de.class).registerLocalisation(MessageSettingsDictionary_en.class);
 		senderPageBuilder = new SenderPageBuilder(senderPage, appManager);
-		
+
 		WidgetPage<MessageSettingsDictionary> receiverPage = wApp.createStartPage();
 		receiverPage.registerLocalisation(MessageSettingsDictionary_de.class).registerLocalisation(MessageSettingsDictionary_en.class);
 		receiverPageBuilder = new ReceiverPageBuilder(receiverPage, appManager);
-		
+
 		resAcc.addResourceDemand(EmailConfiguration.class, senderPageBuilder.getEmailListener());
 		resAcc.addResourceDemand(SmsConfiguration.class, senderPageBuilder.getSmsListener());
 		resAcc.addResourceDemand(XmppConfiguration.class, senderPageBuilder.getXmppListener());
 		resAcc.addResourceDemand(ReceiverConfiguration.class, receiverPageBuilder);
-		
+
 		NavigationMenu nm = new NavigationMenu(" Select page");
 		nm.addEntry("Edit senders", senderPage);
 		nm.addEntry("Edit receivers", receiverPage);
-		
+
 		MenuConfiguration mc = receiverPage.getMenuConfiguration();
 		mc.setCustomNavigation(nm);
 		mc = senderPage.getMenuConfiguration();
 		mc.setCustomNavigation(nm);
 	}
-	
+
 	@Override
 	public void stop(AppStopReason reason) {
-		if (wApp != null){
+		if (wApp != null) {
 			wApp.close();
 		}
 		if (resAcc != null && senderPageBuilder != null) {
@@ -106,5 +98,5 @@ public class MessageSettings implements Application {
 		receiverPageBuilder = null;
 		senderPageBuilder = null;
 	}
-	
+
 }

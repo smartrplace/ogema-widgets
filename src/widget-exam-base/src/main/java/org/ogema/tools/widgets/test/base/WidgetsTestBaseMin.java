@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.ogema.tools.widgets.test.base;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.inject.Inject;
 
 import org.junit.Before;
-import org.ogema.exam.OsgiAppTestBase;
+import org.ogema.exam.latest.LatestVersionsTestBase;
 import org.ogema.tools.widgets.test.base.widgets.TestButton;
 import org.ogema.tools.widgets.test.base.widgets.TestDropdown;
 import org.ogema.tools.widgets.test.base.widgets.TestLabel;
@@ -48,9 +41,13 @@ import de.iwes.widgets.html.form.dropdown.Dropdown;
 import de.iwes.widgets.html.form.label.Label;
 import de.iwes.widgets.html.form.textfield.TextField;
 
-public abstract class WidgetsTestBaseMin extends OsgiAppTestBase {
+public abstract class WidgetsTestBaseMin extends LatestVersionsTestBase {
 
-	public final String widgetsVersion = MavenUtils.asInProject().getVersion("de.iwes.widgets", "ogema-js-bundle");
+	/**
+	 * Use {@link #getWidgetsVersion()} instead.
+	 */
+	@Deprecated
+	public final String widgetsVersion = MavenUtils.asInProject().getVersion("org.ogema.widgets", "ogema-js-bundle");
 	@Inject
 	protected OgemaGuiService guiService;
 	@Inject
@@ -64,37 +61,42 @@ public abstract class WidgetsTestBaseMin extends OsgiAppTestBase {
 	public WidgetsTestBaseMin() {
 		this(true);
 	}
+	
+	protected String getWidgetsVersion() {
+		return MavenUtils.asInProject().getVersion("org.ogema.widgets", "ogema-js-bundle");
+	}
 
 	@Override
 	public Option[] frameworkBundles() {
 		Option[] opt = super.frameworkBundles();
-		Option[] options = new Option[opt.length + 3];
+		Option[] options = new Option[opt.length + 1];
 		for (int i =0;i<opt.length;i++) {
 			options[i] = opt[i];
 		}
 		options[opt.length] = widgets();
-		options[opt.length+1] = webConsoleOption();
-		options[opt.length+2] = felixGogoShellOption();
+//		options[opt.length+1] = webConsoleOption();
+//		options[opt.length+1] = felixGogoShellOption();
 		return options;
 	}
 
 	// TODO options for name and icon service, and messaging
 	public Option widgets() {
-		return CoreOptions.composite(CoreOptions.mavenBundle("de.iwes.widgets", "ogema-gui-api", widgetsVersion),
-									 CoreOptions.mavenBundle("de.iwes.widgets", "ogema-js-bundle", widgetsVersion),
-									 CoreOptions.mavenBundle("de.iwes.widgets", "widget-collection", widgetsVersion),
+		final String widgetsVersion = getWidgetsVersion();
+		return CoreOptions.composite(CoreOptions.mavenBundle("org.ogema.widgets", "ogema-gui-api", widgetsVersion),
+									 CoreOptions.mavenBundle("org.ogema.widgets", "ogema-js-bundle", widgetsVersion),
+									 CoreOptions.mavenBundle("org.ogema.widgets", "widget-collection", widgetsVersion),
 									 CoreOptions.mavenBundle("org.ogema.tools", "resource-manipulators", ogemaVersion), // dependency of util-extended
-									 CoreOptions.mavenBundle("de.iwes.widgets", "widget-extended", widgetsVersion),
-									 CoreOptions.mavenBundle("de.iwes.widgets", "widget-experimental", widgetsVersion),
-									 CoreOptions.mavenBundle("de.iwes.widgets", "widget-exam-base", widgetsVersion),
+									 CoreOptions.mavenBundle("org.ogema.widgets", "widget-extended", widgetsVersion),
+									 CoreOptions.mavenBundle("org.ogema.widgets", "widget-experimental", widgetsVersion),
+									 CoreOptions.mavenBundle("org.ogema.widgets", "widget-exam-base", widgetsVersion),
 //									 CoreOptions.mavenBundle().groupId("org.apache.httpcomponents").artifactId("httpcore-osgi").versionAsInProject(), // fails
 //									 CoreOptions.mavenBundle().groupId("org.apache.httpcomponents").artifactId("httpclient-osgi").versionAsInProject(),
 //									 CoreOptions.mavenBundle().groupId("org.apache.httpcomponents").artifactId("httpasyncclient-osgi").versionAsInProject(),
-									 CoreOptions.mavenBundle().groupId("org.apache.commons").artifactId("commons-lang3").version("3.5"),
 									 CoreOptions.mavenBundle().groupId("org.apache.httpcomponents").artifactId("httpcore-osgi").version("4.4.5"),
 									 CoreOptions.mavenBundle().groupId("org.apache.httpcomponents").artifactId("httpclient-osgi").version("4.5.2"),
 									 CoreOptions.mavenBundle().groupId("org.apache.httpcomponents").artifactId("httpasyncclient-osgi").version("4.1.2"),
 									 CoreOptions.mavenBundle("commons-logging", "commons-logging", "1.1.3"), // needed by apache components
+									 CoreOptions.mavenBundle("commons-fileupload", "commons-fileupload", "1.3.3"), // needed by apache components
 									 CoreOptions.mavenBundle("joda-time", "joda-time", "2.9.3"));
 	}
 

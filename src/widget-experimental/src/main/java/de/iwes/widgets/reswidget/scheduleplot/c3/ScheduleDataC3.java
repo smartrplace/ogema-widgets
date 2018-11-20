@@ -1,28 +1,21 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.reswidget.scheduleplot.c3;
 
-import java.util.List;
+import java.util.Iterator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,28 +31,29 @@ import de.iwes.widgets.reswidget.scheduleplot.api.ScheduleData;
 public class ScheduleDataC3 extends ScheduleData<C3DataSet> {
 
 	@Override
-	protected C3DataSet getData(String id,ReadOnlyTimeSeries schedule, long startTime, long endTime, int maxNrPoints, 
+	protected C3DataSet getData(String id,ReadOnlyTimeSeries schedule, long startTime, long endTime, int maxNrPoints,
 			float scale, float offset, long downsamplingIntv) {
-		JSONArray[] array = getJSONData(id, schedule, startTime, endTime, maxNrPoints, scale, offset);	
+		JSONArray[] array = getJSONData(id, schedule, startTime, endTime, maxNrPoints, scale, offset);
 		C3DataSet c3data = new C3DataSet(array[0], array[1]);
 		return c3data;
 	}
-	
+
 	@Override
 	protected C3DataSet getData(String id, ReadOnlyTimeSeries schedule, long startTime, long endTime, int maxNrPoints,
 			float scale, float offset, float ymin, float ymax, long downsamplingIntv) throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("Value filters not implemented yet");
 	}
 
-	private static JSONArray[] getJSONData(String id, ReadOnlyTimeSeries schedule, long startTime, long endTime, int maxNrPoints, float scale, float offset) { // TODO implement reduction to maxNrPoints; preferably in ScheduleData, 
+	private static JSONArray[] getJSONData(String id, ReadOnlyTimeSeries schedule, long startTime, long endTime, int maxNrPoints, float scale, float offset) { // TODO implement reduction to maxNrPoints; preferably in ScheduleData,
 																						// so other implementations can use it as well
 		JSONArray array_x = new JSONArray();
 		JSONArray array_y = new JSONArray();
 		array_x.put(id.substring(0, id.length()-2) + "_t");
 		array_y.put(id);
-		List<SampledValue> vals = schedule.getValues(startTime, endTime);
-		for (SampledValue sv: vals) {
-			if (sv.getQuality()== Quality.BAD) 
+		final Iterator<SampledValue> vals = schedule.iterator(startTime, endTime);
+		while (vals.hasNext()) {
+			final SampledValue sv = vals.next();
+			if (sv.getQuality()== Quality.BAD)
 				continue;
 			long t = sv.getTimestamp();
 			Value container = sv.getValue();
@@ -73,7 +67,7 @@ public class ScheduleDataC3 extends ScheduleData<C3DataSet> {
 			}
 		}
 		return new JSONArray[]{array_x,array_y};
-		
+
 	}
 
 }

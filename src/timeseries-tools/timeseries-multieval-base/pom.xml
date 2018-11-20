@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
     <artifactId>timeseries-tools</artifactId>
-    <groupId>de.iwes.tools</groupId>
-    <version>2.1.3</version>
+    <groupId>org.ogema.eval</groupId>
+    <version>2.2.0</version>
   </parent>
     
     <artifactId>timeseries-multieval-base</artifactId>
@@ -48,19 +48,19 @@
             <artifactId>models</artifactId>
         </dependency>
         <dependency>
-            <groupId>de.iwes.widgets</groupId>
+            <groupId>org.ogema.widgets</groupId>
             <artifactId>ogema-js-bundle</artifactId>
         </dependency>
         <dependency>
-            <groupId>de.iwes.widgets</groupId>
+            <groupId>org.ogema.widgets</groupId>
             <artifactId>widget-collection</artifactId>
         </dependency>  
         <dependency>
-            <groupId>de.iwes.widgets</groupId>
+            <groupId>org.ogema.widgets</groupId>
             <artifactId>widget-experimental</artifactId>
         </dependency>  
         <dependency>
-            <groupId>de.iwes.tools</groupId>
+            <groupId>org.ogema.eval</groupId>
             <artifactId>timeseries-eval-base</artifactId>
         </dependency>  
         <dependency>
@@ -69,7 +69,7 @@
         </dependency>  
         <!-- Test dependencies -->
         <dependency>
-            <groupId>de.iwes.widgets</groupId>
+            <groupId>org.ogema.widgets</groupId>
             <artifactId>widget-exam-base</artifactId>
             <scope>test</scope>
         </dependency>

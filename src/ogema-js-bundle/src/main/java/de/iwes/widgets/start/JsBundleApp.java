@@ -1,27 +1,22 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-
 package de.iwes.widgets.start;
+
+import java.util.concurrent.ForkJoinPool;
 
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -70,11 +65,12 @@ public class JsBundleApp implements Application {
     	this.wam = am.getWebAccessManager();
         wam.registerWebResource("/ogema/jslib", "/org/ogema/tools");
         wam.registerWebResource("/ogema/widget/bricks", "/org/ogema/widget/html/bricks");
+        wam.registerWebResource("/ogema/widget/fragment", "/org/ogema/widget/html/fragment");
         wam.registerWebResource("/ogema/widget/images", "/org/ogema/img");
         wam.registerWebResource("/org/ogema/localisation/service", "/org/ogema/localisation/service");
         wam.registerWebResource("/ogema/widget/apps", new AppsServlet(am, permMan));
         wam.registerStartUrl(null);
-        widgetService = new OgemaOsgiWidgetServiceImpl();
+        widgetService = new OgemaOsgiWidgetServiceImpl(permMan.getAccessManager());
         wam.registerWebResource("/ogema/widget/servlet" , widgetService);
         this.sreg = ctx.registerService(WidgetAdminService.class, widgetService, null);
     }
@@ -89,22 +85,18 @@ public class JsBundleApp implements Application {
     	this.sreg = null;
     	if (sreg != null) {
     		// unregister in stop call may block
-    		new Thread(new Runnable() {
-				
-				@Override
-				public void run() {
-					try {
-		    			sreg.unregister();
-		    		} catch (Exception ignore) {}
-				}
-			}).start();
+    		ForkJoinPool.commonPool().submit(() -> {
+    			try {
+	    			sreg.unregister();
+	    		} catch (Exception ignore) {}
+    		});
     	}
     	if (widgetService != null) {
 	    	try {
 		    	widgetService.deactivate();
 	    	} catch (Exception e) {
 	    		if (am != null)
-	    			am.getLogger().error("Could not shut down session management");
+	    			am.getLogger().error("Could not shut down session management: ",e);
 	    	}
     	}
     	am = null;
@@ -112,9 +104,10 @@ public class JsBundleApp implements Application {
 	    	wam.unregisterWebResource("/ogema/widget/servlet");
 	    	wam.unregisterWebResource("/ogema/jslib");
 	    	wam.unregisterWebResource("/ogema/widget/bricks");
+	    	wam.unregisterWebResource("/ogema/widget/fragment");
 	    	wam.unregisterWebResource("/ogema/widget/images");
 	    	wam.unregisterWebResource("/org/ogema/localisation/service");
-	    	wam.unregisterWebResourcePath("/ogema/widget/apps");
+	    	wam.unregisterWebResource("/ogema/widget/apps");
     	}
     }
     

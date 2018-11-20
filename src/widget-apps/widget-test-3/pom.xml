@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
     <artifactId>widget-apps</artifactId>
-    <groupId>de.iwes.widgets</groupId>
-    <version>2.1.3</version>
+    <groupId>org.ogema.widgets</groupId>
+    <version>2.2.0</version>
   </parent>
     
     <artifactId>widget-test-3</artifactId>
@@ -51,15 +51,15 @@
             <artifactId>models</artifactId>
         </dependency>
         <dependency>
-            <groupId>de.iwes.widgets</groupId>
+            <groupId>org.ogema.widgets</groupId>
             <artifactId>ogema-js-bundle</artifactId>
         </dependency>
         <dependency>
-            <groupId>de.iwes.widgets</groupId>
+            <groupId>org.ogema.widgets</groupId>
             <artifactId>widget-collection</artifactId>
         </dependency> 
         <dependency>
-            <groupId>de.iwes.widgets</groupId>
+            <groupId>org.ogema.widgets</groupId>
             <artifactId>widget-experimental</artifactId>
         </dependency>  
     </dependencies>

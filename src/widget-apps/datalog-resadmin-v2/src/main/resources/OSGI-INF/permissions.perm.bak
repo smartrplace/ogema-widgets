@@ -1,0 +1,51 @@
+(org.osgi.framework.ServicePermission "org.ogema.core.application.Application" "register")
+(org.osgi.framework.ServicePermission "org.smartrplace.internal.resadmin.ShellCommands" "register")
+(org.osgi.framework.ServicePermission "de.iwes.widgets.api.OgemaGuiService" "get")
+(org.osgi.framework.PackagePermission "org.ogema.core.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.model.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.pattern.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.tools.*" "import")
+(org.osgi.framework.PackagePermission "org.osgi.framework" "import")
+(org.osgi.framework.PackagePermission "org.osgi.util.tracker" "import")
+(org.osgi.framework.PackagePermission "org.apache.felix.service.command" "import")
+(org.osgi.framework.PackagePermission "org.slf4j" "import")
+
+# Widgets
+(org.osgi.framework.PackagePermission "de.iwes.widgets.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.tools.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.util.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.util.action" "import")
+
+(org.osgi.framework.PackagePermission "javax.servlet.http" "import")
+(org.osgi.framework.PackagePermission "org.json" "import")
+(org.osgi.framework.PackagePermission "org.apache.commons.io" "import")
+(org.osgi.framework.PackagePermission "org.apache.commons.fileupload" "import")
+(org.ogema.accesscontrol.WebAccessPermission "name=de.iwes.widgets.ogema-js-bundle")
+
+(org.ogema.accesscontrol.ResourcePermission "type=*" "read,write,addsub,create,activity,delete")
+
+# custom type
+(org.osgi.framework.PackagePermission "org.smartrplace.resadmin.config" "exportonly")
+
+# FIXME special permissions
+(java.util.PropertyPermission "org.ogema.app.resadmin.backup_base_path" "read")
+(java.util.PropertyPermission "org.ogema.app.resadmin.replay_oncleanstart_path" "read")
+(java.util.PropertyPermission "user.dir" "read")
+(java.util.PropertyPermission "org.ogema.sim.simulationdelay" "read")
+(java.util.PropertyPermission "org.ogema.resadmin.replaynum" "read")
+(java.util.PropertyPermission "os.name" "read")
+
+# file permissions relative to rundir
+# not working
+#(java.io.FilePermission "${user.dir}/backup" "read,write,delete")
+#(java.io.FilePermission "${user.dir}/replay-on-clean" "read,write,delete")
+(org.ogema.permissions.OgemaFilePermission "./backup" "read,write,delete")
+(org.ogema.permissions.OgemaFilePermission "./replay-on-clean" "read,write,delete")
+(org.ogema.permissions.OgemaFilePermission "./backup/-" "read,write,delete")
+(org.ogema.permissions.OgemaFilePermission "./replay-on-clean/-" "read,write,delete")
+# FIXME needed by certain applications, but these are in fact high-risk permissions which should not be granted
+(org.ogema.permissions.OgemaFilePermission "./" "read,write,delete")
+(org.ogema.permissions.OgemaFilePermission "./-" "read,write,delete")
+#Special permission for sema
+(org.ogema.permissions.OgemaFilePermission "./data/semabox_01/extBackup" "read")
+(java.io.FilePermission "<<ALL FILES>>" "read,write,delete")

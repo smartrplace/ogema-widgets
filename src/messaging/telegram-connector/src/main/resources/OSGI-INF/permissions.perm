@@ -1,0 +1,22 @@
+# OGEMA standard permissions
+(org.osgi.framework.ServicePermission "org.ogema.core.application.Application" "register")
+(org.osgi.framework.ServicePermission "de.iwes.widgets.api.messaging.listener.MessageListener" "register")
+
+(org.osgi.framework.PackagePermission "org.ogema.core.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.model.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.tools.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.util.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.widgets.api.*" "import")
+(org.osgi.framework.PackagePermission "org.json" "import")
+(org.osgi.framework.PackagePermission "org.slf4j" "import")
+(org.osgi.framework.PackagePermission "org.apache.http" "import")
+(org.osgi.framework.PackagePermission "org.apache.http.*" "import")
+
+(org.ogema.accesscontrol.WebAccessPermission "name=org.ogema.widgets.ogema-js-bundle")
+
+#  custom types
+(org.osgi.framework.PackagePermission "org.ogema.messaging.telegram.connector.TelegramContact" "exportonly")
+(org.ogema.accesscontrol.ResourcePermission "type=org.ogema.messaging.telegram.connector.TelegramContact,path=telegramContactList/*" "*")
+
+(java.util.PropertyPermission "org.ogema.messaging.telegram.username" "read")
+(java.util.PropertyPermission "org.ogema.messaging.telegram.key" "read")

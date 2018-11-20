@@ -1,23 +1,17 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package de.iwes.widgets.reswidget.schedulecsvdownload;
 
@@ -57,7 +51,6 @@ import org.osgi.framework.FrameworkUtil;
 import org.slf4j.LoggerFactory;
 
 import de.iwes.widgets.api.extended.html.bricks.PageSnippet;
-import de.iwes.widgets.api.extended.html.bricks.PageSnippetData;
 import de.iwes.widgets.api.widgets.WidgetPage;
 import de.iwes.widgets.api.widgets.dynamics.TriggeredAction;
 import de.iwes.widgets.api.widgets.dynamics.TriggeringAction;
@@ -66,10 +59,11 @@ import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
 import de.iwes.widgets.html.alert.Alert;
 import de.iwes.widgets.html.calendar.datepicker.Datepicker;
+import de.iwes.widgets.html.emptywidget.EmptyData;
+import de.iwes.widgets.html.emptywidget.EmptyWidget;
 import de.iwes.widgets.html.filedownload.FileDownload;
 import de.iwes.widgets.html.filedownload.FileDownloadData;
 import de.iwes.widgets.html.form.button.Button;
-import de.iwes.widgets.html.form.button.ButtonData;
 import de.iwes.widgets.html.form.label.Label;
 import de.iwes.widgets.resource.timeseries.OnlineTimeSeries;
 import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
@@ -80,6 +74,8 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 	private static final long serialVersionUID = 1L;
 	// may be null
 	private final Alert alert; 
+	// we need this, because the ScheduleCsvDonwload itself is necessarily global (why?)
+	private final DataWidget dataWidget;
 	public final Button downloadCSVButton;
 	public final Button downloadJSONButton;
 	private final Label nrItemsLabel;
@@ -121,8 +117,9 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 			}
 		});
 		this.alert = alert;
+		this.dataWidget = new DataWidget(page, id + "_dataWidget");
 		this.showUserInput = showUserInput;
-		this.nrItemsLabel = new Label(page, "nrItemsLabel_" + id) {
+		this.nrItemsLabel = new Label(page, id + "_nrItemsLabel") {
 
 			private static final long serialVersionUID = 1L;
 
@@ -134,7 +131,7 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 		};
 		
 		if(startPicker == null) {
-			this.startPicker = new Datepicker(page, "startPicker_" + id) {
+			this.startPicker = new Datepicker(page, id +  "_startPicker") {
 	
 				private static final long serialVersionUID = 1L;
 	
@@ -160,7 +157,7 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 		}
 		
 		if(endPicker == null) {
-			this.endPicker = new Datepicker(page, "endPicker_" + id) {
+			this.endPicker = new Datepicker(page, id + "_endPicker") {
 	
 				private static final long serialVersionUID = 1L;
 	
@@ -185,25 +182,40 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 			this.endPicker = endPicker;
 		}
 		
-		this.downloadCSVButton = new Button(page, "downloadButtonCSV_" + id, "download CSV") {
+		this.downloadCSVButton = new Button(page, id + "_downloadButtonCSV", "download CSV") {
 			private static final long serialVersionUID = -6547975805917435860L;
 
+			@Override
+			public void onGET(OgemaHttpRequest req) {
+				if (dataWidget.getData(req).isEmpty()) 
+					disable(req);
+				else 
+					enable(req);
+			}
 	
 			@Override
 			public void onPrePOST(String data, OgemaHttpRequest req) {
-				ScheduleCsvDownload.this.getData(req).buttonPressed = ScheduleCsvDownload.CSV;
+				dataWidget.getData(req).buttonPressed = ScheduleCsvDownload.CSV;
 			}
 		};
-		this.downloadJSONButton = new Button(page, "downloadButtonJSON_" + id, "download JSON") {
+		this.downloadJSONButton = new Button(page, id + "_downloadButtonJSON", "download JSON") {
 			private static final long serialVersionUID = -6547975805437435860L;
 
 			@Override
+			public void onGET(OgemaHttpRequest req) {
+				if (dataWidget.getData(req).isEmpty()) 
+					disable(req);
+				else 
+					enable(req);
+			}
+			
+			@Override
 			public void onPrePOST(String data, OgemaHttpRequest req) {
-				ScheduleCsvDownload.this.getData(req).buttonPressed = ScheduleCsvDownload.JSON;
+				dataWidget.getData(req).buttonPressed = ScheduleCsvDownload.JSON;
 			}
 	
 		};
-		this.download = new FileDownload(page, "download_" + id, wam);
+		this.download = new FileDownload(page, id + "_download", wam);
 		buildWidget();
 		setDependencies();
 	}
@@ -219,6 +231,7 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 		}else {
 			this.append(downloadCSVButton, null).append(download, null);
 		}
+		this.linebreak(null).append(dataWidget, null);
 	}
 		
 	private final void setDependencies() {
@@ -229,48 +242,60 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 		this.triggerAction(startPicker, TriggeringAction.GET_REQUEST, TriggeredAction.GET_REQUEST,1);
 		this.triggerAction(endPicker, TriggeringAction.GET_REQUEST, TriggeredAction.GET_REQUEST,1);
 		
-		downloadCSVButton.triggerAction(this, TriggeringAction.POST_REQUEST, TriggeredAction.POST_REQUEST);
-		downloadJSONButton.triggerAction(this, TriggeringAction.POST_REQUEST, TriggeredAction.POST_REQUEST);
+		downloadCSVButton.triggerAction(dataWidget, TriggeringAction.POST_REQUEST, TriggeredAction.POST_REQUEST);
+		downloadJSONButton.triggerAction(dataWidget, TriggeringAction.POST_REQUEST, TriggeredAction.POST_REQUEST);
 
-		this.triggerAction(download, TriggeringAction.POST_REQUEST, FileDownloadData.GET_AND_STARTDOWNLOAD);
+		dataWidget.triggerAction(download, TriggeringAction.POST_REQUEST, FileDownloadData.GET_AND_STARTDOWNLOAD);
 		if (alert != null)
-			this.triggerAction(alert, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+			dataWidget.triggerAction(alert, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public ScheduleCsvDownloadData<T> getData(OgemaHttpRequest req) {
-		return (ScheduleCsvDownloadData<T>) super.getData(req);
-	}
-	
 	public void setSchedules(Collection<T> schedules, OgemaHttpRequest req) {
-		getData(req).setSchedules(schedules);
+		dataWidget.getData(req).setSchedules(schedules);
 	}
 	
 	public List<T> getSchedules(OgemaHttpRequest req) {
-		return getData(req).getSchedules();
+		return dataWidget.getData(req).getSchedules();
 	}
 
-	
 	public void addSchedule(T schedule, OgemaHttpRequest req) {
-		getData(req).addSchedule(schedule);
+		dataWidget.getData(req).addSchedule(schedule);
 	}
 
 	public boolean isEmpty(OgemaHttpRequest req) {
-		return getData(req).isEmpty();
+		return dataWidget.getData(req).isEmpty();
 	}
 
 	public int size(OgemaHttpRequest req) {
-		return getData(req).size();
+		return dataWidget.getData(req).size();
 	}	
 
-	@Override
-	public ScheduleCsvDownloadData<T> createNewSession() {
-		return new ScheduleCsvDownloadData<T>(this, startPicker, endPicker, download, tempFolder, alert);
+	
+	
+	private class DataWidget extends EmptyWidget {
+
+		private static final long serialVersionUID = 1L;
+
+		DataWidget(WidgetPage<?> page, String id) {
+			super(page, id);
+		}
+		
+		@Override
+		public ScheduleCsvDownloadData<T> createNewSession() {
+			return new ScheduleCsvDownloadData<T>(this, ScheduleCsvDownload.this , startPicker, endPicker, download, tempFolder, alert);
+		}
+		
+		@SuppressWarnings("unchecked")
+		@Override
+		public ScheduleCsvDownloadData<T> getData(OgemaHttpRequest req) {
+			return (ScheduleCsvDownloadData<T>) super.getData(req);
+		}
+		
 	}
 
-	static class ScheduleCsvDownloadData<T extends ReadOnlyTimeSeries> extends PageSnippetData {
+	static class ScheduleCsvDownloadData<T extends ReadOnlyTimeSeries> extends EmptyData {
 		
+		private final ScheduleCsvDownload<?> master;
 		// illegal in file names; not necessarily comlete
 		// https://stackoverflow.com/questions/893977/java-how-to-find-out-whether-a-file-name-is-valid
 		private static final char[] ILLEGAL_CHARACTERS = { '/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':' };
@@ -284,14 +309,14 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 		public String buttonPressed = "";
 		
 
-		protected ScheduleCsvDownloadData(ScheduleCsvDownload<T> snippet,Datepicker start, Datepicker end, FileDownload download, File tempFolder, Alert alert) {
+		protected ScheduleCsvDownloadData(EmptyWidget snippet, ScheduleCsvDownload<?> master, Datepicker start, Datepicker end, FileDownload download, File tempFolder, Alert alert) {
 			super(snippet);
-			
 			this.downloadStartPicker = start;
 			this.downloadEndPicker = end;
 			this.tempFolder = tempFolder.toPath();
 			this.download = download; 
 			this.alert = alert;
+			this.master = master;
 		}
 		
 
@@ -316,10 +341,6 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 		}
 		
 		private Path generateFile(OgemaHttpRequest req) throws IOException {
-			
-			ScheduleCsvDownload<T> master = (ScheduleCsvDownload<T>) widget;
-			ScheduleCsvDownloadData<T> data = master.getData(req);
-		
 			
 			final List<T> schedules = getSchedules();
 			if (!Files.exists(tempFolder))
@@ -355,9 +376,9 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 						filename = filename.replace(c, '_');
 					}
 					
-					if(data.buttonPressed.equals(ScheduleCsvDownload.JSON)) {
+					if(buttonPressed.equals(ScheduleCsvDownload.JSON)) {
 						writeValuesToFile(base, start, end, zipfs, rd, filename+".json");
-					}else if(data.buttonPressed.equals(ScheduleCsvDownload.CSV)){
+					}else if(buttonPressed.equals(ScheduleCsvDownload.CSV)){
 						writeValuesToFile(base, start, end, zipfs, rd, filename+".csv");
 					}
 					
@@ -465,11 +486,10 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 			}
 		}
 
-		
+		// XXX this does not work... moved to Buttons' onGET method
+		/*
 		@Override
 		public JSONObject retrieveGETData(OgemaHttpRequest req) {
-			@SuppressWarnings("unchecked")
-			ScheduleCsvDownload<T> master = (ScheduleCsvDownload<T>) widget;
 			if (master.isEmpty(req) && master.showUserInput) {
 				master.downloadCSVButton.disable(req);
 				master.downloadJSONButton.disable(req);
@@ -480,6 +500,6 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 			}
 			return super.retrieveGETData(req);
 		}
-		
+		*/
 	}	
 }

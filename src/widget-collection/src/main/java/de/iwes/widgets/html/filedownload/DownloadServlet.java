@@ -1,23 +1,17 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package de.iwes.widgets.html.filedownload;
 
@@ -51,6 +45,7 @@ public class DownloadServlet extends HttpServlet {
 	// exactly one of the following three fields is non-null 
 	private final ByteSource in;
 	private final Consumer<Writer> writerConsumer;
+	private final Consumer<OutputStream> outputConsumer;
 	// 
 	private final boolean isReusable;
 	// null unless isReusable is false
@@ -67,18 +62,25 @@ public class DownloadServlet extends HttpServlet {
 	
 	protected DownloadServlet(final ByteSource source, boolean isReusable, String contentType, 
 				ApplicationManager appMan, List<DownloadListener> listeners) {
-		this(Objects.requireNonNull(source), null, isReusable, contentType, appMan, listeners);
+		this(Objects.requireNonNull(source), null, null, isReusable, contentType, appMan, listeners);
 	}
 	
 	protected DownloadServlet(final Consumer<Writer> consumer, boolean isReusable, String contentType, 
 			ApplicationManager appMan, List<DownloadListener> listeners) {
-		this(null, Objects.requireNonNull(consumer), isReusable, contentType, appMan, listeners);
+		this(null, Objects.requireNonNull(consumer), null, isReusable, contentType, appMan, listeners);
 	}
 	
-	private DownloadServlet(final ByteSource source, final Consumer<Writer> consumer, boolean isReusable, String contentType, 
+	protected DownloadServlet(final Consumer<OutputStream> consumer, boolean isReusable, String contentType, 
+			ApplicationManager appMan, List<DownloadListener> listeners, boolean dummy) {
+		this(null, null, Objects.requireNonNull(consumer), isReusable, contentType, appMan, listeners);
+	}
+	
+	private DownloadServlet(final ByteSource source, final Consumer<Writer> consumer, final Consumer<OutputStream> outputConsumer,
+			boolean isReusable, String contentType, 
 			ApplicationManager appMan, List<DownloadListener> listeners) {
 		this.in= source;
 		this.writerConsumer = consumer;
+		this.outputConsumer = outputConsumer;
 		this.isReusable = isReusable;
 		this.sema = isReusable ? null : new Semaphore(1);
 		this.contentType = contentType; 
@@ -102,9 +104,13 @@ public class DownloadServlet extends HttpServlet {
 				try (final InputStream input = in.openStream(); final OutputStream output = resp.getOutputStream()) {
 					ByteStreams.copy(input, output);
 				}
-			} else {
+			} else if (writerConsumer != null) {
 				try (final Writer writer = resp.getWriter()) {
 					writerConsumer.accept(writer);
+				}
+			} else {
+				try (final OutputStream stream = resp.getOutputStream()) {
+					outputConsumer.accept(stream);
 				}
 			}
 			first = false;

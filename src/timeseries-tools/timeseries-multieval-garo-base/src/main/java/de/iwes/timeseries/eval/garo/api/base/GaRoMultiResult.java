@@ -1,3 +1,18 @@
+/**
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.iwes.timeseries.eval.garo.api.base;
 
 import java.util.ArrayList;
@@ -13,9 +28,16 @@ import de.iwes.timeseries.eval.api.SingleEvaluationResult;
 import de.iwes.timeseries.eval.api.configuration.ConfigurationInstance;
 import de.iwes.timeseries.eval.api.extended.MultiEvaluationInputGeneric;
 import de.iwes.timeseries.eval.api.extended.util.AbstractMultiResult;
+import de.iwes.timeseries.eval.api.helper.EfficientTimeSeriesArray;
 import de.iwes.timeseries.eval.garo.api.helper.base.SpecialGaRoEvalResult;
 
-public class GaRoMultiResult<R> extends AbstractMultiResult<R> {
+/** Result for the evaluations of all rooms and gateways in the multi-evaluation for a single evaluation interval*/
+public class GaRoMultiResult extends AbstractMultiResult {
+	/**Overwrite this to provide your own instance of RoomData*/
+	public RoomData getNewRoomEval() {
+		return new RoomData();
+	}
+	
 	public static class RoomData {
 		public String id;
 		public String gwId;
@@ -24,6 +46,9 @@ public class GaRoMultiResult<R> extends AbstractMultiResult<R> {
 		public int roomType = -1;
 		
 		public Map<String, String> evalResults;
+		/** Time series results are not stored in evalResults. This map has to be initialized on first
+		 * entry written to it*/
+		public Map<String, EfficientTimeSeriesArray> timeSeriesResults;
 		/*We expect a single result object for each input here. Note that this by standard only
 		 * contains the SingleValueResults*/
 		Map<ResultType, SingleEvaluationResult> evalResultObjects;
@@ -64,7 +89,7 @@ public class GaRoMultiResult<R> extends AbstractMultiResult<R> {
 	/**Information on time series evaluated, e.g. used to determine CSV export*/
 	public List<GaRoTimeSeriesId> timeSeriesEvaluated = new ArrayList<>();
 
-	public GaRoMultiResult(List<MultiEvaluationInputGeneric<R>> inputData, long start, long end, Collection<ConfigurationInstance> configurations) {
+	public GaRoMultiResult(List<MultiEvaluationInputGeneric> inputData, long start, long end, Collection<ConfigurationInstance> configurations) {
 		super(inputData, start, end, configurations);
 	}
 	

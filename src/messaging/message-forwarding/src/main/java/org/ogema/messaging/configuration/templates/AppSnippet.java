@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.ogema.messaging.configuration.templates;
 
 import java.util.ArrayList;
@@ -207,93 +200,6 @@ public class AppSnippet extends PageSnippet {
 		return anyServiceChanged;
 	}
 		
-//updating Services
-		
-//		Map<String,MessageListener> messageListeners = messageReader.getMessageListeners();
-//		List<MessagingService> oldServices = serviceList.getAllElements();
-//		for (MessagingService oldService: oldServices) {
-//			if (!messageListeners.containsKey(oldService.serviceId().getValue())) {
-//				oldService.delete();
-//			}
-//		}
-		
-//		oldServices = serviceList.getAllElements();
-//		Set<String> allUsers = new HashSet<>();
-		
-//updating Users for each Service
-		
-//		for (Map.Entry<String, MessageListener> entry: messageListeners.entrySet()) {
-//			String serviceId = ResourceUtils.getValidResourceName(entry.getKey());
-//			MessagingService serviceRes;
-//			try {
-//				serviceRes = serviceList.getSubResource(serviceId,MessagingService.class).create();
-//			} catch (Exception e) {
-//				logger.warn("Could not add messaging service " + serviceId,e);
-//				continue;
-//			}
-//			serviceRes.serviceId().<StringResource> create().setValue(entry.getKey());
-//			serviceRes.users().create();
-//			
-//			MessageListener listener = entry.getValue();
-//			allUsers.addAll(listener.getKnownUsers());
-//		}
-		
-//refreshUserTable
-		
-//		List<String> oldUsers = userTable.getItems(null);
-//		oldUsers.remove(DynamicTable.HEADER_ROW_ID);
-//		
-//		for (String oldUser: oldUsers) {
-//			if (!allUsers.contains(oldUser))
-//				userTable.removeItem(oldUser, null);
-//		}
-//		
-//		for (String newUser: allUsers) {
-//			if (!oldUsers.contains(newUser)) 
-//				userTable.addItem(newUser, null);
-//		}
-		
-		//TODO Refreshing Select Connector if a User from Message-Settings was deleted. Updating Select Connector does not work atm
-//		for(String user : userTable.getRows(null)) {
-//			if(user.equals(DynamicTable.HEADER_ROW_ID))
-//				continue;
-//			String validUserId = ResourceUtils.getValidResourceName(user);
-//			for(String column : userTable.getColumns(null)) {
-//				if(column.equals("userNameColumn"))
-//					continue;
-//				if(userTable.getCellContent(validUserId, column, null) == null /*&& ReceiverConfig got subResource*/) {
-//					userTable.removeItem(validUserId, null);
-//					userTable.addItem(validUserId, null);
-//				}
-//				if(!userTable.getCellContent(user, column, null).equals(null) /*&& ReceiverConfig don't got subResource*/) {
-//					//TODO delete existing Resources
-//					String validServiceId = ResourceUtils.getValidResourceName((String)userTable.getCellContent(DynamicTable.HEADER_ROW_ID, column, null));
-//					System.out.println("service Id = " + validServiceId);
-//					
-//					MessagingService serviceRes;
-//					try {
-//						serviceRes = serviceList.getSubResource(validServiceId,MessagingService.class).create();
-//					} catch (Exception e) {
-//						logger.warn("Could not add messaging service " + validServiceId,e);
-//						continue;
-//					}
-//					serviceRes.serviceId().<StringResource> create().setValue(validServiceId);
-//					serviceRes.users().create();
-//					System.out.println("serviceRes : " + serviceRes.serviceId().getValue());
-//					System.out.println("serviceRes.users().size() : " + serviceRes.users().size());
-//					for(UserConfig uc : serviceRes.users().getAllElements()) {
-//						System.out.println("Comparison : " + uc.userName().getValue() + " with " + user);
-//						if(uc.userName().getValue().equals(user))
-//							uc.delete();
-//						System.out.println("UserConfig : " + uc.userName().getValue() + " deleted from Service " + validServiceId);
-//					}
-//					userTable.removeItem(validUserId, null);
-//					userTable.addItem(validUserId, null);
-//				}
-//			}
-//		}
-
-	
 	public void createUserTable() {
 		
 		UserTemplate userTemplate = new UserTemplate(userTable, page, getId(), messagingApp, messageReader);

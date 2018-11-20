@@ -1,23 +1,17 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package de.iwes.widgets.html.selectiontree;
 
@@ -32,6 +26,7 @@ import java.util.Map;
 
 import org.json.JSONObject;
 import org.ogema.tools.resource.util.ResourceUtils;
+import org.slf4j.LoggerFactory;
 
 import de.iwes.widgets.api.extended.plus.MultiSelectorTemplate;
 import de.iwes.widgets.api.widgets.OgemaWidget;
@@ -284,21 +279,26 @@ public class SelectionTreeData extends FlexboxData {
 		
 		@Override
 		public void onGET(OgemaHttpRequest req) {
-			final LinkingOption[] los = opt.dependencies();
-			final List<Collection<SelectionItem>> dependencyItems;
-			if (los != null) {
-				dependencyItems = new ArrayList<>();
-				SelectionTreeData.this.readLock();
-				try {
-					for (LinkingOption lo : los) {
-						dependencyItems.add(getSelectedLinkingItems(lo, req));
+			try {
+				final LinkingOption[] los = opt.dependencies();
+				final List<Collection<SelectionItem>> dependencyItems;
+				if (los != null) {
+					dependencyItems = new ArrayList<>();
+					SelectionTreeData.this.readLock();
+					try {
+						for (LinkingOption lo : los) {
+							dependencyItems.add(getSelectedLinkingItems(lo, req));
+						}
+					} finally {
+						SelectionTreeData.this.readUnlock();
 					}
-				} finally {
-					SelectionTreeData.this.readUnlock();
-				}
-			} else
-				dependencyItems = Collections.emptyList();
-			update(opt.getOptions(dependencyItems), req);
+				} else
+					dependencyItems = Collections.emptyList();
+				update(opt.getOptions(dependencyItems), req);
+			} catch (Exception e) { // the LinkingOption implementation may be buggy
+				LoggerFactory.getLogger(SelectionTreeData.class).warn("Error updating selection tree widget",e);
+				update(Collections.emptyList(), req);
+			}
 			if (terminalField != null && terminalField.multiselect == this) {
 				((SelectionTree) widget).onTerminalFieldGetComplete(req);;
 			}

@@ -1,54 +1,48 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.tools.system.supervision;
 
 import java.util.Hashtable;
+import java.util.concurrent.ForkJoinPool;
+
 import org.apache.felix.service.command.Descriptor;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceRegistration;
 
 import de.iwes.tools.system.supervision.model.SystemSupervisionConfig;
 
 @Descriptor("OGEMA system supervision commands")
-public class ShellCommands {
+class ShellCommands {
 
 	private final ServiceRegistration<ShellCommands> ownReg;
 	private final Tasks tasks;
 	private final SystemSupervisionConfig config;
 	
-	public ShellCommands(Tasks tasks, SystemSupervisionConfig config) {
+	ShellCommands(Tasks tasks, SystemSupervisionConfig config, BundleContext ctx) {
 		this.tasks = tasks;
 		this.config = config;
 		Hashtable<String, Object> props = new Hashtable<String, Object>();
 		props.put("osgi.command.scope", "ogmsys");
 		props.put("osgi.command.function", new String[] { "countResources", "diskUsage", "memoryUsage" });
-		this.ownReg = FrameworkUtil.getBundle(getClass()).getBundleContext().registerService(ShellCommands.class, this, props);
+		this.ownReg = ctx.registerService(ShellCommands.class, this, props);
 	}
 	
 	public void close() {
-		try {
-			ownReg.unregister();
-		} catch (Exception ignore) {}
+		ForkJoinPool.commonPool().submit(() ->  { try { ownReg.unregister(); } catch (Exception ignore) {} });
 	}
 	
 	@Descriptor("Count OGEMA resources in the system")

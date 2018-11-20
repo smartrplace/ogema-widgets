@@ -1,0 +1,9 @@
+(org.osgi.service.event.TopicPermission "ogema/*" "subscribe")
+(org.osgi.framework.PackagePermission "org.ogema.core.application" "import")
+(org.osgi.framework.PackagePermission "org.slf4j" "import")
+(org.osgi.framework.PackagePermission "org.osgi.service.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.widgets.api.*" "import")
+
+# Let bnd generate service and capability permissions
+${permissions;services;capabilities}
+

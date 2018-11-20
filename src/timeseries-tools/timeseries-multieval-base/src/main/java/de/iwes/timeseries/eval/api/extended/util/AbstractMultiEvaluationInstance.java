@@ -1,3 +1,18 @@
+/**
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.iwes.timeseries.eval.api.extended.util;
 
 import java.time.temporal.TemporalUnit;
@@ -13,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 
-import de.iwes.timeseries.eval.api.EvaluationInput;
 import de.iwes.timeseries.eval.api.Status;
 import de.iwes.timeseries.eval.api.Status.EvaluationStatus;
 import de.iwes.timeseries.eval.api.TimeSeriesData;
@@ -35,29 +49,29 @@ import de.iwes.widgets.html.selectiontree.SelectionItem;
  * For this reason {@link MultiEvaluationInput#itemsSelected()} only needs to be non-null for the
  * first maximum tree input, the method is not called for the other inputs.
  */
-public abstract class AbstractMultiEvaluationInstance<R, T extends MultiResult<R>, S extends SelectionItem> implements MultiEvaluationInstance<R, T> {
+public abstract class AbstractMultiEvaluationInstance<T extends MultiResult, S extends SelectionItem> implements MultiEvaluationInstance<T> {
     protected final static AtomicLong idcounter = new AtomicLong(0); // TODO initialize from existing stored eval resources
     protected final String id;
     
-	protected final List<MultiEvaluationInputGeneric<R>> input;
-	protected AbstractSuperMultiResult<R, T> superResult;
+	protected final List<MultiEvaluationInputGeneric> input;
+	protected AbstractSuperMultiResult<T> superResult;
 	private volatile Status status = StatusImpl.RUNNING;
 	private final CountDownLatch evalLatch = new CountDownLatch(1);
 	//private final long time;
 	//protected final int size;
-	private final Set<MultiEvaluationListener<R, T>> listeners = Collections.synchronizedSet(new HashSet<MultiEvaluationListener<R, T>>());
+	private final Set<MultiEvaluationListener<T>> listeners = Collections.synchronizedSet(new HashSet<MultiEvaluationListener<T>>());
 	protected final TemporalUnit resultStepSize;
 	protected final Collection<ConfigurationInstance> configurations;
 	
-	protected final AbstractMultiEvaluationProvider<R, T> provider;
-	private final MultiEvaluationInputGeneric<R> governingInput;
+	protected final AbstractMultiEvaluationProvider<T> provider;
+	private final MultiEvaluationInputGeneric governingInput;
 	private final MultiEvaluationItemSelector governingItemsSelected;
 	protected final LinkingOption[] linkingOptions;
 	//protected final Collection<ConfigurationInstance> superConfigurations;
 	
-    public AbstractMultiEvaluationInstance(List<MultiEvaluationInputGeneric<R>> input, 
+    public AbstractMultiEvaluationInstance(List<MultiEvaluationInputGeneric> input, 
 			Collection<ConfigurationInstance> configurations, TemporalUnit resultStepSize,
-			String evalId, AbstractMultiEvaluationProvider<R, T> provider) {
+			String evalId, AbstractMultiEvaluationProvider<T> provider) {
 		this.id = evalId;
 		this.input = input;
 		this.provider = provider;
@@ -66,15 +80,17 @@ public abstract class AbstractMultiEvaluationInstance<R, T extends MultiResult<R
         startEnd = EvaluationUtils.getStartAndEndTime(configurations);
         governingInput = input.get(provider.maxTreeIndex);
 		governingItemsSelected = input.get(provider.maxTreeIndex).itemSelector();
-		linkingOptions = governingInput.dataProvider().selectionOptions();
+		//This should be the same for all providers
+		linkingOptions = getLinkingOptions(governingInput); //governingInput.dataProvider().get(0).selectionOptions();
 	}
 
 	private final long[] startEnd;
 	
 	public abstract T initNewResult(long start, long end, Collection<ConfigurationInstance> configurations);
-	public abstract AbstractSuperMultiResult<R, T> initSuperResult(List<MultiEvaluationInputGeneric<R>> inputData, long startTime, Collection<ConfigurationInstance> configurations);
-	
-	/** Evaluate time series
+	public abstract AbstractSuperMultiResult<T> initSuperResult(List<MultiEvaluationInputGeneric> inputData, long startTime, Collection<ConfigurationInstance> configurations);
+	protected abstract LinkingOption[] getLinkingOptions(MultiEvaluationInputGeneric governingInput);
+	/** Evaluate time series. The method performs checking whether all required input data is available, so
+	 * it is called with all combinations provided by the DataProvider that fit the required input definition
 	 * 
 	 * @param keys SelectionItems for the hierarchy levels that were used to determine the timeSeries
 	 * @param timeSeries index of array: input requested; index of list: timeseries found for the index,
@@ -103,21 +119,27 @@ public abstract class AbstractMultiEvaluationInstance<R, T extends MultiResult<R
 	 * @param dependencyLevel
 	 * @return
 	 */
-	protected R getResource(SelectionItem item) {
+	/*protected R getResource(SelectionItem item) {
 		return input.get(provider.maxTreeIndex).dataProvider().getResource(item);
-	}
+	}*/
 	/**Provide resource for terminal option.
 	 * @param item SelectionItem fitting the TerminalOption of the respective DataProvider*/
-	protected R getResourceForTerminalOption(SelectionItem item, int inputIdx) {
+	/*protected R getResourceForTerminalOption(SelectionItem item, int inputIdx) {
 		return input.get(inputIdx).dataProvider().getResource(item);
-	}
+	}*/
 	
 	static class InputData {
 		public List<SelectionItem> options;
 	}
 	@Override
 	public Status execute() {
-		if(resultStepSize == null) {
+		if(stopExecution) return finish();
+		if(provider.executeSuperLevelOnly()) {
+			this.superResult = initSuperResult(input, startEnd[0], configurations);
+			this.superResult.intervalResults = new ArrayList<>();
+			superResult.endTime = startEnd[1];
+			provider.performSuperEval(superResult);
+		} else if(resultStepSize == null) {
 			this.superResult = initSuperResult(input, startEnd[0], configurations);
 			this.superResult.intervalResults = new ArrayList<>();
 			superResult.endTime = startEnd[1];
@@ -145,6 +167,7 @@ public abstract class AbstractMultiEvaluationInstance<R, T extends MultiResult<R
 	}
 	
 	private void executeInterval(long start, long end) {
+		if(stopExecution) return;
 		try {
 		T result = initNewResult(start, end, EvalHelperExtended.addStartEndTime(start, end, null));
 		//result.startTime = start;
@@ -161,6 +184,12 @@ public abstract class AbstractMultiEvaluationInstance<R, T extends MultiResult<R
 		}
 	}
 	
+	boolean stopExecution = false;
+	@Override
+	public void stopExecution() {
+		stopExecution = true;
+	}
+	
 	/** Execute all gateways, rooms or timeseries
 	 * 
 	 * @param level
@@ -174,6 +203,8 @@ public abstract class AbstractMultiEvaluationInstance<R, T extends MultiResult<R
 	private void executeAllOfLevel(int level,
 			ArrayList<S> upperDependencies2,
 			List<Collection<SelectionItem>> upperDependencies, T result) {
+		if(stopExecution) return;
+		
 		List<SelectionItem> levelOptionsAll = linkingOptions[level].getOptions(upperDependencies);
 		List<S> levelOptions = new ArrayList<>();
 		for(SelectionItem lvlAll: levelOptionsAll) {
@@ -185,6 +216,9 @@ public abstract class AbstractMultiEvaluationInstance<R, T extends MultiResult<R
 		//	levelOptions = linkingOptions[level].getOptions(upperDependencies);
 		//}
 		try {
+			//This method is overriden e.g. by GaRoMultiEvaluationInstance to perform checking of
+			// gateway-Ids, roomTypes etc. Note that gateway-ids are also coded into MultiEvaluationInputGeneric
+			// so they should be sorted out before-hand
 			levelOptions = startInputLevel(levelOptions, upperDependencies2, level, result);
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -197,15 +231,25 @@ public abstract class AbstractMultiEvaluationInstance<R, T extends MultiResult<R
 		if(status != StatusImpl.RUNNING || levelOptions == null) return;
 		if(level >= (provider.maxTreeSize-1)) {
 			//we should execute
-			List<TimeSeriesData>[] currentData = new List[input.size()];
+			if(status != StatusImpl.RUNNING) return;
+			List<TimeSeriesData>[] currentData = MultiEvaluationUtils.getDataForInput(input, upperDependencies);
+			if(currentData == null) return;
+			/*List<TimeSeriesData>[] currentData = new List[input.size()];
 			for(int tsIdx = 0; tsIdx < input.size(); tsIdx++) {
 				//first we call start level also here
-				MultiEvaluationInputGeneric<R> in = input.get(tsIdx);
-				List<SelectionItem> levelOptionsTerminalAll = in.dataProvider().getTerminalOption().getOptions(upperDependencies);
+				MultiEvaluationInputGeneric in = input.get(tsIdx);
+				List<SelectionItem> levelOptionsTerminalAll = new ArrayList<>();
+				for(DataProvider<?> dp: in.dataProvider()) {
+					levelOptionsTerminalAll.addAll(dp.getTerminalOption().getOptions(upperDependencies));
+				}
+				//List<SelectionItem> levelOptionsTerminalAll = in.dataProvider().getTerminalOption().getOptions(upperDependencies);
 				List<S> levelOptionsTerminal = new ArrayList<>();
 				for(SelectionItem lvlAll: levelOptionsTerminalAll) {
-					if(in.itemSelector().useDataProviderItem(in.dataProvider().getTerminalOption(), lvlAll))
-						levelOptionsTerminal.add((S) lvlAll);
+					for(DataProvider<?> dp: in.dataProvider()) {
+						if(in.itemSelector().useDataProviderItem(dp.getTerminalOption(), lvlAll))
+						//if(in.itemSelector().useDataProviderItem(in.dataProvider().getTerminalOption(), lvlAll))
+							levelOptionsTerminal.add((S) lvlAll);
+					}
 				}
 				//try {
 				//	levelOptionsTerminal = startInputLevel(levelOptionsTerminal, upperDependencies2, level+1, result);
@@ -216,10 +260,16 @@ public abstract class AbstractMultiEvaluationInstance<R, T extends MultiResult<R
 				if(status != StatusImpl.RUNNING || levelOptionsTerminal == null) return;
 				
 				//now we actually perform the evaluation
-				EvaluationInput evalInput = in.dataProvider().getData((List<SelectionItem>) levelOptionsTerminal);
-				List<TimeSeriesData> tsList = evalInput.getInputData();
+				//EvaluationInputImpl evalInput = null;
+				List<TimeSeriesData> tsList = new ArrayList<>();;
+				for(DataProvider<?> dp: in.dataProvider()) {
+					EvaluationInput evalInputLoc = dp.getData((List<SelectionItem>) levelOptionsTerminal);
+					tsList.addAll(evalInputLoc.getInputData());
+				}
+				//EvaluationInput evalInput = in.dataProvider().getData((List<SelectionItem>) levelOptionsTerminal);
+				//List<TimeSeriesData> tsList = evalInput.getInputData();
 				currentData[tsIdx] = tsList; //new ArrayList<>();
-			} //for
+			} //for*/
 
 			try {
 				evaluateDataSet(upperDependencies2, currentData, result);
@@ -252,13 +302,14 @@ public abstract class AbstractMultiEvaluationInstance<R, T extends MultiResult<R
 		}
 	}
 	
+	
 	@Override
 	public String id() {
 		return id;
 	}
 
 	@Override
-	public List<MultiEvaluationInputGeneric<R>> getInputData() {
+	public List<MultiEvaluationInputGeneric> getInputData() {
 		return input;
 	}
 
@@ -268,9 +319,9 @@ public abstract class AbstractMultiEvaluationInstance<R, T extends MultiResult<R
 	}
 
 	@Override
-	public void addListener(MultiEvaluationListener<R, T> listener) {
+	public void addListener(MultiEvaluationListener<T> listener) {
 		if (isDone()) {
-			new Thread(new ListenerRunnable<R>(this, status, listener), 
+			new Thread(new ListenerRunnable(this, status, listener), 
 					"EvaluationListenerThread").start();
 			return;
 		} 
@@ -284,21 +335,21 @@ public abstract class AbstractMultiEvaluationInstance<R, T extends MultiResult<R
 	
 	private void informListeners() {
 		synchronized (listeners) {
-			for (MultiEvaluationListener<R, T> listener: listeners) {
-				new Thread(new ListenerRunnable<R>(this, status, listener), 
+			for (MultiEvaluationListener<T> listener: listeners) {
+				new Thread(new ListenerRunnable(this, status, listener), 
 						"EvaluationListenerThread").start();
 			}
 			listeners.clear();
 		}
 	}
 
-	private static class ListenerRunnable<R> implements Runnable {
+	private static class ListenerRunnable implements Runnable {
 		
-		private final MultiEvaluationInstance<R, ?> eval;
+		private final MultiEvaluationInstance<?> eval;
 		private final Status status;
-		private final MultiEvaluationListener<R, ?> listener;
+		private final MultiEvaluationListener<?> listener;
 
-		public ListenerRunnable(MultiEvaluationInstance<R, ?> eval, Status status, MultiEvaluationListener<R, ?> listener) {
+		public ListenerRunnable(MultiEvaluationInstance<?> eval, Status status, MultiEvaluationListener<?> listener) {
 			this.eval = eval;
 			this.status = status;
 			this.listener = listener;
@@ -313,6 +364,7 @@ public abstract class AbstractMultiEvaluationInstance<R, T extends MultiResult<R
 	
 	@Override
 	public boolean isDone() {
+		if(stopExecution) return true;
 		return evalLatch.getCount() <= 0;
 	}
 
@@ -348,7 +400,7 @@ public abstract class AbstractMultiEvaluationInstance<R, T extends MultiResult<R
 	}
 	
 	@Override
-	public AbstractSuperMultiResult<R, T> getResult() throws IllegalStateException {
+	public AbstractSuperMultiResult<T> getResult() throws IllegalStateException {
 		if (!isDone())
 			throw new IllegalStateException("Evaluation not done yet");
 		if (status.getStatus() == EvaluationStatus.FAILED)

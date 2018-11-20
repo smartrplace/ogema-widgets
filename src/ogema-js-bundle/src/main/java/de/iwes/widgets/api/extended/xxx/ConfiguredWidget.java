@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.api.extended.xxx;
 
 import java.util.Iterator;
@@ -29,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import de.iwes.widgets.api.extended.OgemaWidgetBase;
 import de.iwes.widgets.api.extended.PageRegistration;
+import de.iwes.widgets.api.extended.PageRegistrationI;
 import de.iwes.widgets.api.extended.WidgetData;
 import de.iwes.widgets.api.extended.impl.Session;
 import de.iwes.widgets.api.extended.impl.SessionManagement;
@@ -49,14 +43,14 @@ public class ConfiguredWidget<T extends WidgetData> implements WidgetSessionMana
     // if null this is valid for all sessions
     private final String sessionId;
     private final SessionManagement sessions;
-    private final PageRegistration page;
+    private final PageRegistrationI page;
 //    private boolean isInitWidget = false;
     
-    public ConfiguredWidget(OgemaWidgetBase<T> widget2, String systemResourcePath, String webResourcePath, PageRegistration page){
+    public ConfiguredWidget(OgemaWidgetBase<T> widget2, String systemResourcePath, String webResourcePath, PageRegistrationI page){
     	this(widget2, systemResourcePath, webResourcePath, null, page);
     }
     
-    public ConfiguredWidget(OgemaWidgetBase<T> widget2, String systemResourcePath, String webResourcePath, String sessionId, PageRegistration page){
+    public ConfiguredWidget(OgemaWidgetBase<T> widget2, String systemResourcePath, String webResourcePath, String sessionId, PageRegistrationI page){
         this.widget = widget2;
         this.systemResourcePath = systemResourcePath;
         this.webResourcePath = webResourcePath;

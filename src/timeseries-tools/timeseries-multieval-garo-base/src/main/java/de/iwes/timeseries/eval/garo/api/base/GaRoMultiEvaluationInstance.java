@@ -1,3 +1,18 @@
+/**
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.iwes.timeseries.eval.garo.api.base;
 
 import java.io.IOException;
@@ -20,8 +35,10 @@ import de.iwes.timeseries.eval.api.configuration.ConfigurationInstance;
 import de.iwes.timeseries.eval.api.extended.MultiEvaluationInputGeneric;
 import de.iwes.timeseries.eval.api.extended.util.AbstractMultiEvaluationInstance;
 import de.iwes.timeseries.eval.api.extended.util.AbstractSuperMultiResult;
+import de.iwes.timeseries.eval.base.provider.utils.TimeSeriesDataImpl;
 import de.iwes.timeseries.eval.garo.api.base.GaRoMultiResult.GaRoStdOverallResults;
-import de.iwes.timeseries.eval.garo.api.base.GaRoMultiResult.RoomData;
+import de.iwes.timeseries.eval.garo.multibase.GenericGaRoMultiProvider;
+import de.iwes.widgets.html.selectiontree.LinkingOption;
 
 /**
  * 
@@ -30,7 +47,7 @@ import de.iwes.timeseries.eval.garo.api.base.GaRoMultiResult.RoomData;
  * @param <R> org.ogema...resource or JAXB-resource
  * @param <T>
  */
-public abstract class GaRoMultiEvaluationInstance<R, T extends GaRoMultiResult<R>> extends AbstractMultiEvaluationInstance<R, T, GaRoSelectionItem<R>> {
+public abstract class GaRoMultiEvaluationInstance<T extends GaRoMultiResult> extends AbstractMultiEvaluationInstance<T, GaRoSelectionItem> {
 	public static Path evalOutputPath = null;
 	
 	private final static AtomicLong idcounter = new AtomicLong(0); // TODO initialize from existing stored eval resources
@@ -38,28 +55,43 @@ public abstract class GaRoMultiEvaluationInstance<R, T extends GaRoMultiResult<R
 	public static final long GAP_THRESHOLD = 30*60000;
 
 	private final String id;
-	protected final GaRoDataType[] inputTypesFromRoom;
-	protected final GaRoDataType[] inputTypesFromGw;
+	protected final GaRoDataTypeI[] inputTypesFromRoom;
+	protected final GaRoDataTypeI[] inputTypesFromGw;
 
 	//protected final List<String> gwIds;
 	
-	protected void startGwLevel(List<GaRoSelectionItem<R>> levelItems, T result) {};
-	protected abstract List<GaRoSelectionItem<R>> startRoomLevel(List<GaRoSelectionItem<R>> levelItems, T result, String gw);
-	protected abstract void startTSLevel(List<GaRoSelectionItem<R>> levelItems, T result, R room);
+	protected void startGwLevel(List<GaRoSelectionItem> levelItems, T result) {};
+	protected abstract List<GaRoSelectionItem> startRoomLevel(List<GaRoSelectionItem> levelItems, T result, String gw);
+	//protected abstract void startTSLevel(List<GaRoSelectionItem> levelItems, T result, R room);
+	protected abstract void startTSLevel(List<GaRoSelectionItem> levelItems, T result, GaRoSelectionItem roomItem);
 	protected void finishGwLevel(T result) {};
 	protected void finishRoomLevel(T result) {};
 	protected void finishTSLevel(T result) {};
-	protected abstract void processInputType(int inputIdx, List<TimeSeriesData> tsList, GaRoDataType dt, T result);
+	protected abstract void processInputType(int inputIdx, List<TimeSeriesData> tsList, GaRoDataTypeI dt, T result);
 	protected abstract void performRoomEvaluation(List<TimeSeriesData>[] inputTimeSeries, T result);
-	protected abstract GaRoMultiResult<?> initNewResultGaRo(long start, long end, Collection<ConfigurationInstance> configurations);
-	protected abstract Integer getRoomType(R room);
-	protected abstract String getName(R room);
-	protected abstract String getPath(R room);
+	protected abstract GaRoMultiResult initNewResultGaRo(long start, long end, Collection<ConfigurationInstance> configurations);
 	
-	public GaRoMultiEvaluationInstance(List<MultiEvaluationInputGeneric<R>> input,
+	
+	/*protected abstract Integer getRoomType(GaRoSelectionItem roomItem);
+	protected abstract String getName(GaRoSelectionItem roomItem);
+	protected abstract String getPath(GaRoSelectionItem roomItem);*/
+	
+	protected Integer getRoomType(GaRoSelectionItem roomItem) {
+		return roomItem.getRoomType();
+	}
+
+	protected String getName(GaRoSelectionItem roomItem) {
+		return roomItem.getRoomName();
+	}
+
+	protected String getPath(GaRoSelectionItem roomItem) {
+		return roomItem.getPath();
+	}
+	
+	public GaRoMultiEvaluationInstance(List<MultiEvaluationInputGeneric> input,
 			Collection<ConfigurationInstance> configurations,
-			final GaRoEvalProvider<R, T> dataProviderAccess,
-			TemporalUnit resultStepSize, GaRoDataType[] inputTypesFromRoom, GaRoDataType[] inputTypesFromGw) {
+			final GaRoEvalProvider<T> dataProviderAccess,
+			TemporalUnit resultStepSize, GaRoDataTypeI[] inputTypesFromRoom, GaRoDataTypeI[] inputTypesFromGw) {
 		super(input, configurations, resultStepSize, dataProviderAccess.id(), dataProviderAccess);
 		this.id = "EnergyEvaluation_" + idcounter.getAndIncrement();
 		this.inputTypesFromGw = inputTypesFromGw;
@@ -88,9 +120,10 @@ public abstract class GaRoMultiEvaluationInstance<R, T extends GaRoMultiResult<R
 		return result;
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public AbstractSuperMultiResult<R, T> initSuperResult(List<MultiEvaluationInputGeneric<R>> inputData, long startTime, Collection<ConfigurationInstance> configurations) {
-		return (AbstractSuperMultiResult<R, T>) new GaRoSuperEvalResult<R, T>(inputData, startTime, configurations);
+	public AbstractSuperMultiResult<T> initSuperResult(List<MultiEvaluationInputGeneric> inputData, long startTime, Collection<ConfigurationInstance> configurations) {
+		return (AbstractSuperMultiResult<T>) new GaRoSuperEvalResult<T>((List)inputData, startTime, configurations);		
 	}
 	
 	@Override
@@ -99,13 +132,20 @@ public abstract class GaRoMultiEvaluationInstance<R, T extends GaRoMultiResult<R
 	}
 	
 	@Override
-	public List<GaRoSelectionItem<R>> startInputLevel(List<GaRoSelectionItem<R>> levelItems,
-			List<GaRoSelectionItem<R>> dependecyTreeSelection, int level, T result) {
+	public List<GaRoSelectionItem> startInputLevel(List<GaRoSelectionItem> levelItems,
+			List<GaRoSelectionItem> dependecyTreeSelection, int level, T result) {
 		switch(level) {
 		case GaRoMultiEvalDataProvider.GW_LEVEL:
 			if(result.overallResults != null)
 				result.overallResults.gwCount = levelItems.size();
-			System.out.println("Starting GaRoWinMultiEval with "+levelItems.size()+" gateways.");
+			String evalId;
+			if(this.provider instanceof GenericGaRoMultiProvider) {
+				//evalId = this.provider.id();
+				evalId = ((GenericGaRoMultiProvider<?>)(provider)).getSingleEvalId();
+			} else {
+				evalId = this.provider.id();
+			}
+			System.out.println("Starting "+evalId+" with "+levelItems.size()+" gateways.");
 			result.roomEvals = new ArrayList<>(); //new HashMap<>();
 			break;
 		case GaRoMultiEvalDataProvider.ROOM_LEVEL:
@@ -113,27 +153,29 @@ public abstract class GaRoMultiEvaluationInstance<R, T extends GaRoMultiResult<R
 			result.gwId = dependecyTreeSelection.get(0).id();
 			levelItems = startRoomLevel(levelItems, result, result.gwId);
 			
-			System.out.println("Starting Gw:"+result.gwId+" with "+ levelItems.size() +" rooms from "+TimeUtils.getDateAndTimeString(result.startTime)+
+			int ll = Integer.getInteger("org.ogema.multieval.loglevel", 10);
+			if(ll >= 6) System.out.println("Starting Gw:"+result.gwId+" with "+ levelItems.size() +" rooms from "+TimeUtils.getDateAndTimeString(result.startTime)+
 					" to "+TimeUtils.getDateAndTimeString(result.endTime));
-			System.out.println("Starting Gw:"+result.gwId+" from "+new Date(result.startTime)+
+			if(ll >= 6) System.out.println("Starting Gw:"+result.gwId+" from "+new Date(result.startTime)+
 					" to "+new Date(result.endTime));
 			break;
 		case GaRoMultiEvalDataProvider.TS_LEVEL:
 			try {
-				GaRoSelectionItem<R> roomFullData = dependecyTreeSelection.get(1);
-				R room = getResource(roomFullData);
-				result.roomData = new RoomData();
+				GaRoSelectionItem roomFullData = dependecyTreeSelection.get(1);
+				//R room = getResource(roomFullData);
+				String room = roomFullData.getRoomName();
+				result.roomData = result.getNewRoomEval(); //new RoomData();
 				if(room == null)
 					result.roomData.id = roomFullData.id();
 				else
-					result.roomData.id = getPath(room);
+					result.roomData.id = roomFullData.getPath(); //getPath(room);
 				result.roomData.gwId = result.gwId;
 				//Resource typeRes = room.get("type");
 				final Integer roomType;
 				if(room == null)
 					roomType = -1;
 				else
-					roomType = getRoomType(room);
+					roomType = roomFullData.getRoomType(); //getRoomType(room);
 				//if(typeRes instanceof IntegerResource) {
 				if(roomType != null) {
 					result.roomData.roomType = roomType; //((IntegerResource)typeRes).getValue();
@@ -148,9 +190,10 @@ public abstract class GaRoMultiEvaluationInstance<R, T extends GaRoMultiResult<R
 				}
 				result.roomEvals.add(result.roomData); //put(room.getPath(), result.roomData);
 
-				startTSLevel(levelItems, result, room);
+				startTSLevel(levelItems, result, roomFullData);
 				
-				System.out.println("Init room "+result.roomData.id+" type:"+result.roomData.roomType);
+				ll = Integer.getInteger("org.ogema.multieval.loglevel", 10);
+				if(ll >= 10) System.out.println("Init room "+result.roomData.id+" type:"+result.roomData.roomType);
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
@@ -170,10 +213,10 @@ public abstract class GaRoMultiEvaluationInstance<R, T extends GaRoMultiResult<R
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void evaluateDataSet(List<GaRoSelectionItem<R>> keys, List<TimeSeriesData>[] timeSeries, T result) {
+	public void evaluateDataSet(List<GaRoSelectionItem> keys, List<TimeSeriesData>[] timeSeries, T result) {
 		int inputIdx = 0;
-		@SuppressWarnings("unchecked")
 		List<TimeSeriesData>[] inputTimeSeries = new List[timeSeries.length];
 		
 		for(List<TimeSeriesData> tsList: timeSeries) {
@@ -200,9 +243,23 @@ public abstract class GaRoMultiEvaluationInstance<R, T extends GaRoMultiResult<R
 			}
 		}
 		for(int i=0; i<timeSeries.length; i++) {
-			if(inputTimeSeries[i].isEmpty()) {
-				LoggerFactory.getLogger(GaRoEvalProvider.class).info(inputTypesFromRoom[i].toString()+" not found in room {}, skipping room base evaluation", result.roomData.id);
+			if(inputTimeSeries[i].isEmpty() && (inputTypesFromRoom[i] != GaRoDataType.PreEvaluated)
+					&& (inputTypesFromRoom[i].primaryEvalProvider() == null)) {
+				if(inputTypesFromRoom[i] instanceof GaRoDataTypeParam) {
+					GaRoDataTypeParam inputType = (GaRoDataTypeParam)inputTypesFromRoom[i];
+					if(!inputType.isRequired()) continue;
+				}
+				int ll = Integer.getInteger("org.ogema.multieval.loglevel", 10);
+				if(ll >= 8) LoggerFactory.getLogger(GaRoEvalProvider.class).info(inputTypesFromRoom[i].toString()+" not found in room {}, skipping room base evaluation", result.roomData.id);
 				return;
+			}
+			if(inputTypesFromRoom[i] instanceof GaRoDataTypeParam) {
+				GaRoDataTypeParam inputType = (GaRoDataTypeParam)inputTypesFromRoom[i];
+				if(i==0) inputType.inputInfo = new ArrayList<>();
+				inputType.inputInfo = new ArrayList<>();
+				for(TimeSeriesData tsh: inputTimeSeries[i]) {
+					inputType.inputInfo.add((TimeSeriesDataImpl) tsh);
+				}
 			}
 		}
 		if(result.overallResults != null && result.overallResults instanceof GaRoStdOverallResults) {
@@ -210,5 +267,10 @@ public abstract class GaRoMultiEvaluationInstance<R, T extends GaRoMultiResult<R
 			overallResults.countRoomsWithAllDeviceData++;
 		}		
 		performRoomEvaluation(inputTimeSeries, result);
+	}
+	
+	@Override
+	protected LinkingOption[] getLinkingOptions(MultiEvaluationInputGeneric governingInput) {
+		return governingInput.dataProvider().get(0).selectionOptions();
 	}
 }

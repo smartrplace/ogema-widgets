@@ -11,7 +11,7 @@
 (org.osgi.framework.PackagePermission "org.apache.felix.scr.annotations" "import")
 
 (org.osgi.framework.PackagePermission "org.ogema.messaging.basic.services.config.model" "exportonly")
-(org.ogema.accesscontrol.WebAccessPermission "name=de.iwes.widgets.ogema-js-bundle")
+(org.ogema.accesscontrol.WebAccessPermission "name=org.ogema.widgets.ogema-js-bundle")
 
 (org.ogema.accesscontrol.ResourcePermission "type=org.ogema.messaging.basic.services.config.model.*" "read,write,create,addsub,activity")
 # FIXME remove once bug is fixed; above permission should imply all the ones below

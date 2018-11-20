@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.resource.widget.init;
 
 import org.ogema.core.model.Resource;
@@ -35,7 +28,7 @@ import de.iwes.widgets.resource.widget.dropdown.ResourceDropdown;
 /**
  * A pattern dropdown that is initialized from the url parameter "configId".
  * Include it in a page and open the url:<br> 
- * <code>https://<HOST>:<PORT>/path/to/page?configId=<SELECTED_RESOURCe></code>
+ * <code>https://&lt;HOST&gt;:&lt;PORT&gt;/path/to/page?configId=&lt;SELECTED_RESOURCe&gt;</code>
  * <br>
  * where SELECTED_RESOURCE is the path to some resource included in the dropdown options. 
  * The resource will then be preselected on the new page.
@@ -64,7 +57,7 @@ public class ResourceInitDropdown<R extends Resource> extends ResourceDropdown<R
 	 * @param page
 	 * @param id
 	 * @param defaultType
-	 * @param rpa
+	 * @param ra
 	 */
 	public ResourceInitDropdown(WidgetPage<?> page, String id, Class<? extends R> defaultType, ResourceAccess ra) {
 		this(page, id, false, UpdateMode.AUTO_ON_GET, defaultType, ra);
@@ -77,7 +70,7 @@ public class ResourceInitDropdown<R extends Resource> extends ResourceDropdown<R
 	 * @param globalWidget
 	 * @param updateMode
 	 * @param defaultType
-	 * @param rpa
+	 * @param ra
 	 */
 	public ResourceInitDropdown(WidgetPage<?> page, String id, boolean globalWidget, UpdateMode updateMode,  Class<? extends R> defaultType, ResourceAccess ra) {
 		super(page, id, globalWidget, defaultType, updateMode, ra);
@@ -90,7 +83,7 @@ public class ResourceInitDropdown<R extends Resource> extends ResourceDropdown<R
 	 * @param req
 	 * @param updateMode
 	 * @param defaultType
-	 * @param rpa
+	 * @param ra
 	 */
 	public ResourceInitDropdown(OgemaWidget parent, String id, OgemaHttpRequest req, UpdateMode updateMode,  Class<? extends R> defaultType, ResourceAccess ra) {
 		super(parent, id, defaultType, updateMode, ra, req);

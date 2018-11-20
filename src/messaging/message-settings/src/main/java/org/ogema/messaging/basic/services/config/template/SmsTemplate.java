@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.ogema.messaging.basic.services.config.template;
 
 import java.util.LinkedHashMap;
@@ -49,7 +42,7 @@ import de.iwes.widgets.html.form.textfield.TextField;
 import de.iwes.widgets.html.popup.Popup;
 
 public class SmsTemplate extends RowTemplate<SmsConfiguration> {
-	
+
 	protected final ResourceList<SmsConfiguration> list;
 	protected final DynamicTable<SmsConfiguration> table;
 	protected final Alert alert;
@@ -57,8 +50,9 @@ public class SmsTemplate extends RowTemplate<SmsConfiguration> {
 	protected final ApplicationManager am;
 	protected final OgemaLogger logger;
 	protected final ResourceAccess ra;
-	
-	public SmsTemplate(ResourceList<SmsConfiguration> list, ApplicationManager am , DynamicTable<SmsConfiguration> table, Alert alert, WidgetPage<?> page) {
+
+	public SmsTemplate(ResourceList<SmsConfiguration> list, ApplicationManager am, DynamicTable<SmsConfiguration> table,
+			Alert alert, WidgetPage<?> page) {
 		this.list = list;
 		this.table = table;
 		this.alert = alert;
@@ -67,225 +61,237 @@ public class SmsTemplate extends RowTemplate<SmsConfiguration> {
 		this.logger = am.getLogger();
 		this.ra = am.getResourceAccess();
 	}
-	
+
 	@Override
 	public Map<String, Object> getHeader() {
 		Map<String, Object> smsHeader = new LinkedHashMap<String, Object>();
-		smsHeader.put("smsNameColumn", "Name :");
-		smsHeader.put("smsEmailColumn", "E-Mail-Adress :");
-		smsHeader.put("smsEmailPasswordColumn", "Password :");
-		smsHeader.put("smsEmailServerColumn", "Server-URL :");
-		smsHeader.put("smsEmailPortColumn", "Port :");
-		smsHeader.put("editSmsPopupColumn", "");
-		smsHeader.put("editSmsColumn", "");
-		smsHeader.put("deleteSmsColumn", "");
+		smsHeader.put("nameColumn", "Name:");
+		smsHeader.put("smsColumn", "Sms-email-address:");
+		smsHeader.put("passwordColumn", "Password:");
+		smsHeader.put("hostColumn", "Server-URL:");
+		smsHeader.put("portColumn", "Port:");
+		smsHeader.put("editPopupColumn", "");
+		smsHeader.put("editColumn", "");
+		smsHeader.put("deleteColumn", "");
 		return smsHeader;
-		
+
 	}
-	
+
 	@Override
 	public String getLineId(SmsConfiguration object) {
 		return ResourceUtils.getValidResourceName(object.userName().getValue());
 	}
-	
+
+	@SuppressWarnings("serial")
 	@Override
 	public Row addRow(final SmsConfiguration config, OgemaHttpRequest req) {
 		Row row = new Row();
-		
-		
-//NEW
+
+		// NEW
 		final String id = getLineId(config);
-		
-		final Label smsNameLabel = new Label(page, "smsNameLabel_" + id, true){
+
+		final Label nameLabel = new Label(page, "nameLabel_" + id, true) {
+			
 			@Override
 			public void onGET(OgemaHttpRequest req) {
 				setText(config.userName().getValue(), req);
 			}
+			
 		};
-		row.addCell("smsNameColumn", smsNameLabel);
-		
-		final Label smsEmailLabel = new Label(page, "smsEmailLabel_" + id, true) {
-			@Override
-			public void onGET(OgemaHttpRequest req) {
-				setText(config.smsEmail().getValue(),req);
-			}
-		};
-		row.addCell("smsEmailColumn", smsEmailLabel);
-		
-		final Label smsEmailPasswordLabel = new Label(page, "smsEmailPasswordLabel_" + id, true) {
-			@Override
-			public void onGET(OgemaHttpRequest req) {
-				setText(config.smsEmailPassword().getValue(),req);
-			}
-		};
-		row.addCell("smsEmailPasswordColumn", smsEmailPasswordLabel);
-		
-		final Label smsEmailServerLabel = new Label(page, "smsEmailServerLabel_" + id, true) {
-			@Override
-			public void onGET(OgemaHttpRequest req) {
-				setText(config.smsEmailServer().getValue(),req);
-			}
-		};
-		row.addCell("smsEmailServerColumn", smsEmailServerLabel);
-		
-		final Label smsEmailPortLabel = new Label(page, "smsEmailPortLabel_" + id, true) {
-			@Override
-			public void onGET(OgemaHttpRequest req) {
-				setText(String.valueOf(config.smsEmailPort().getValue()),req);
-			}
-		};
-		row.addCell("smsEmailPortColumn", smsEmailPortLabel);
+		row.addCell("nameColumn", nameLabel);
 
-		
-//EDIT
-		final Label editSmsNameLabel = new Label(page, "editSmsNameLabel_" + id, true);
-		editSmsNameLabel.setDefaultText("Name :");
-		final Label editSmsEmailLabel = new Label(page, "editSmsLabel_" + id, true);
-		editSmsEmailLabel.setDefaultText("new E-Mail-Address :");
-		final Label editSmsEmailPasswordLabel = new Label(page, "editSmsPasswordLabel_" + id, true);
-		editSmsEmailPasswordLabel.setDefaultText("new Password :");
-		final Label editSmsEmailServerLabel = new Label(page, "editSmsEmailServerLabel_" + id, true);
-		editSmsEmailServerLabel.setDefaultText("new Server-URL :");
-		final Label editSmsEmailPortLabel = new Label(page, "editSmsEmailPortLabel_" + id, true);
-		editSmsEmailPortLabel.setDefaultText("new Port :");
-		
-		final TextField editSmsEmailTextField = new TextField(page, "smsEmailTextField_" + id, true) {
+		final Label smsLabel = new Label(page, "smsLabel_" + id, true) {
+			
 			@Override
 			public void onGET(OgemaHttpRequest req) {
-				setValue(config.smsEmail().getValue(),req);
+				setText(config.smsEmail().getValue(), req);
 			}
+			
 		};
-		
-		final TextField editSmsEmailPasswordTextField = new TextField(page, "smsEmailPasswordTextField_" + id, true) {
+		row.addCell("smsColumn", smsLabel);
+
+		final Label passwordLabel = new Label(page, "passwordLabel_" + id, true) {
+			
 			@Override
 			public void onGET(OgemaHttpRequest req) {
-				setValue(config.smsEmailPassword().getValue(),req);
+				setText(config.smsEmailPassword().getValue(), req);
 			}
+			
 		};
-		
-		final TextField editSmsEmailServerTextField = new TextField(page, "smsEmailServerTextField_" + id, true) {
+		row.addCell("smsEmailPasswordColumn", passwordLabel);
+
+		final Label hostLabel = new Label(page, "hostLabel_" + id, true) {
+			
 			@Override
 			public void onGET(OgemaHttpRequest req) {
-				setValue(config.smsEmailServer().getValue(),req);
+				setText(config.smsEmailServer().getValue(), req);
 			}
+			
 		};
-		
-		final TextField editSmsEmailPortTextField = new TextField(page, "smsEmailPortTextField_" + id, true) {
+		row.addCell("hostColumn", hostLabel);
+
+		final Label portLabel = new Label(page, "portLabel_" + id, true) {
+			
 			@Override
 			public void onGET(OgemaHttpRequest req) {
-				setValue(String.valueOf(config.smsEmailPort().getValue()),req);
+				setText(String.valueOf(config.smsEmailPort().getValue()), req);
 			}
+			
 		};
-		
-		row.addCell("emptySmsColumn4", "");
-		
-		final Popup editSmsUserPopup = new Popup(page, "editSmsUserPopup_" + id , true);
-		editSmsUserPopup.setTitle("Edit User", null);
-		row.addCell("editSmsPopupColumn", editSmsUserPopup);
-		
-		final Button editSmsUserButton = new Button(page, "editSmsUserButton" + id);
-		editSmsUserButton.triggerAction(table, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
-		editSmsUserButton.triggerAction(editSmsUserPopup, TriggeringAction.POST_REQUEST, TriggeredAction.SHOW_WIDGET);
-		editSmsUserButton.triggerAction(editSmsEmailTextField, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
-		editSmsUserButton.triggerAction(editSmsEmailPasswordTextField, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
-		editSmsUserButton.triggerAction(editSmsEmailServerTextField, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
-		editSmsUserButton.triggerAction(editSmsEmailPortTextField, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
-		editSmsUserButton.addDefaultStyle(ButtonData.BOOTSTRAP_GREEN);
-		editSmsUserButton.setDefaultText("Edit");
-		row.addCell("editSmsColumn", editSmsUserButton);
-		
-		final ButtonConfirm confirmSmsChangesButton = new ButtonConfirm(page, "confirmSmsChangesButton_" + id){
+		row.addCell("portColumn", portLabel);
+
+		// EDIT
+		final Label editNameLabel = new Label(page, "editNameLabel_" + id, true);
+		editNameLabel.setDefaultText("Name:");
+		final Label editSmsLabel = new Label(page, "editSmsLabel_" + id, true);
+		editSmsLabel.setDefaultText("New sms-email-address:");
+		final Label editPasswordLabel = new Label(page, "editPasswordLabel_" + id, true);
+		editPasswordLabel.setDefaultText("New password:");
+		final Label editHostLabel = new Label(page, "editHostLabel_" + id, true);
+		editHostLabel.setDefaultText("New server-URL:");
+		final Label editPortLabel = new Label(page, "editPortLabel_" + id, true);
+		editPortLabel.setDefaultText("New port:");
+
+		final TextField editSmsTextField = new TextField(page, "smsTextField_" + id, true) {
+			
+			@Override
+			public void onGET(OgemaHttpRequest req) {
+				setValue(config.smsEmail().getValue(), req);
+			}
+			
+		};
+
+		final TextField editPasswordTextField = new TextField(page, "passwordTextField_" + id, true) {
+			
+			@Override
+			public void onGET(OgemaHttpRequest req) {
+				setValue(config.smsEmailPassword().getValue(), req);
+			}
+			
+		};
+
+		final TextField editHostTextField = new TextField(page, "hostTextField_" + id, true) {
+			
+			@Override
+			public void onGET(OgemaHttpRequest req) {
+				setValue(config.smsEmailServer().getValue(), req);
+			}
+			
+		};
+
+		final TextField editPortTextField = new TextField(page, "portTextField_" + id, true) {
+			
+			@Override
+			public void onGET(OgemaHttpRequest req) {
+				setValue(String.valueOf(config.smsEmailPort().getValue()), req);
+			}
+			
+		};
+
+		final Popup editUserPopup = new Popup(page, "editUserPopup_" + id, true);
+		editUserPopup.setTitle("Edit User", null);
+		row.addCell("editPopupColumn", editUserPopup);
+
+		final Button editUserButton = new Button(page, "editSmsUserButton" + id);
+		editUserButton.triggerAction(table, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		editUserButton.triggerAction(editUserPopup, TriggeringAction.POST_REQUEST, TriggeredAction.SHOW_WIDGET);
+		editUserButton.triggerAction(editSmsTextField, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		editUserButton.triggerAction(editPasswordTextField, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		editUserButton.triggerAction(editHostTextField, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		editUserButton.triggerAction(editPortTextField, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		editUserButton.addDefaultStyle(ButtonData.BOOTSTRAP_GREEN);
+		editUserButton.setDefaultText("Edit");
+		row.addCell("editColumn", editUserButton);
+
+		final ButtonConfirm confirmSmsChangesButton = new ButtonConfirm(page, "confirmSmsChangesButton_" + id) {
+			
+			@Override
 			public void onPOSTComplete(String data, OgemaHttpRequest req) {
-				
-				String emailRegex = "[A-Za-z0-9]+[A-Za-z0-9.-]*[@][A-Za-z0-9.-]+[.][a-zA-Z_0-9]+$";
+
+				String smsRegex = "[A-Za-z0-9]+[A-Za-z0-9.-]*[@][A-Za-z0-9.-]+[.][a-zA-Z_0-9]+$";
 				String serverRegex = "[A-Za-z0-9.-]+[.][A-Za-z0-9.-]+[.][a-zA-Z_0-9]+$";
 				String portRegex = "[0-9]{1,5}$";
+
+				String serverPort = editPortTextField.getValue(req);
+				String sms = editSmsTextField.getValue(req);
+				String host = editHostTextField.getValue(req);
+				String pw = editPasswordTextField.getValue(req);
+				
+				
 				int port = 70000;
-				
-				if (editSmsEmailPortTextField.getValue(req).matches(portRegex)) {
-					port = Integer.parseInt(editSmsEmailPortTextField.getValue(req));
+
+				if (serverPort.matches(portRegex)) {
+					port = Integer.parseInt(serverPort);
 				}
-				
-				if((port <= 65535) && editSmsEmailTextField.getValue(req).matches(emailRegex) && editSmsEmailServerTextField.getValue(req).matches(serverRegex) 
-						&& !editSmsEmailPasswordTextField.getValue(req).isEmpty()){
-					config.smsEmail().setValue(editSmsEmailTextField.getValue(req));
-					config.smsEmailPassword().setValue(editSmsEmailPasswordTextField.getValue(req));
-					config.smsEmailServer().setValue(editSmsEmailServerTextField.getValue(req));
+
+				if ((port <= 65535) && sms.matches(smsRegex) && host.matches(serverRegex) && !pw.isEmpty()) {
+					config.smsEmail().setValue(sms);
+					config.smsEmailPassword().setValue(pw);
+					config.smsEmailServer().setValue(host);
 					config.smsEmailPort().setValue(port);
 					alert.showAlert("Changes on User '" + id + "' confirmed", true, req);
 				} else {
-					if(port > 65535) 
+					if (port > 65535)
 						alert.showAlert("Invalid Port", false, req);
-					if(!editSmsEmailTextField.getValue(req).matches(emailRegex))
-						alert.showAlert("Invalid Sms-E-mail-Address", false, req);
-					if(!editSmsEmailServerTextField.getValue(req).matches(serverRegex))
-						alert.showAlert("Invalid Server-URL", false, req);
-					if(editSmsEmailPasswordTextField.getValue(req).isEmpty())
-						alert.showAlert("No Password entered", false, req);
+					if (!sms.matches(smsRegex))
+						alert.showAlert("Invalid sms-email-Address", false, req);
+					if (!host.matches(serverRegex))
+						alert.showAlert("Invalid server-URL", false, req);
+					if (pw.isEmpty())
+						alert.showAlert("No password entered", false, req);
 				}
 			}
+			
 		};
-		confirmSmsChangesButton.triggerAction(smsEmailLabel, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
-		confirmSmsChangesButton.triggerAction(editSmsUserPopup, TriggeringAction.POST_REQUEST, TriggeredAction.HIDE_WIDGET);
-		confirmSmsChangesButton.triggerAction(smsEmailLabel, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
-		confirmSmsChangesButton.triggerAction(smsEmailPasswordLabel, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
-		confirmSmsChangesButton.triggerAction(smsEmailServerLabel, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
-		confirmSmsChangesButton.triggerAction(smsEmailPortLabel, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		confirmSmsChangesButton.triggerAction(smsLabel, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		confirmSmsChangesButton.triggerAction(editUserPopup, TriggeringAction.POST_REQUEST, TriggeredAction.HIDE_WIDGET);
+		confirmSmsChangesButton.triggerAction(smsLabel, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		confirmSmsChangesButton.triggerAction(passwordLabel, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		confirmSmsChangesButton.triggerAction(hostLabel, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		confirmSmsChangesButton.triggerAction(portLabel, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		confirmSmsChangesButton.triggerAction(alert, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		confirmSmsChangesButton.setDefaultText("Save Changes");
 		confirmSmsChangesButton.setDefaultConfirmPopupTitle("Edit " + id);
 		confirmSmsChangesButton.setDefaultConfirmMsg("Accept changes ?");
 		confirmSmsChangesButton.addDefaultStyle(ButtonData.BOOTSTRAP_GREEN);
-		
-		final StaticTable editSmsUserTable = new StaticTable(5, 2);
-		editSmsUserTable.setContent(0, 0, editSmsNameLabel);
-		editSmsUserTable.setContent(1, 0, editSmsEmailLabel);
-		editSmsUserTable.setContent(2, 0, editSmsEmailPasswordLabel);
-		editSmsUserTable.setContent(3, 0, editSmsEmailServerLabel);
-		editSmsUserTable.setContent(4, 0, editSmsEmailPortLabel);
-		editSmsUserTable.setContent(0, 1, config.userName().getValue());
-		editSmsUserTable.setContent(1, 1, editSmsEmailTextField);
-		editSmsUserTable.setContent(2, 1, editSmsEmailPasswordTextField);
-		editSmsUserTable.setContent(3, 1, editSmsEmailServerTextField);
-		editSmsUserTable.setContent(4, 1, editSmsEmailPortTextField);
-		
-		final PageSnippet editSmsUserSnippet = new PageSnippet(page, "editSmsUserSnippet" + id, true);
-		editSmsUserSnippet.append(editSmsUserTable, null);
-		editSmsUserSnippet.append(confirmSmsChangesButton, null);
-		
-		editSmsUserPopup.setBody(editSmsUserSnippet, null);
 
-		
-//DELETE
-		final ButtonConfirm deleteSmsUserButton = new ButtonConfirm(page, "deleteSmsUserButton_" + id){
+		final StaticTable editUserTable = new StaticTable(5, 2);
+		editUserTable.setContent(0, 0, editNameLabel);
+		editUserTable.setContent(1, 0, editSmsLabel);
+		editUserTable.setContent(2, 0, editPasswordLabel);
+		editUserTable.setContent(3, 0, editHostLabel);
+		editUserTable.setContent(4, 0, editPortLabel);
+		editUserTable.setContent(0, 1, config.userName().getValue());
+		editUserTable.setContent(1, 1, editSmsTextField);
+		editUserTable.setContent(2, 1, editPasswordTextField);
+		editUserTable.setContent(3, 1, editHostTextField);
+		editUserTable.setContent(4, 1, editPortTextField);
+
+		final PageSnippet editUserSnippet = new PageSnippet(page, "editUserSnippet" + id, true);
+		editUserSnippet.append(editUserTable, null);
+		editUserSnippet.append(confirmSmsChangesButton, null);
+
+		editUserPopup.setBody(editUserSnippet, null);
+
+		// DELETE
+		final ButtonConfirm deleteSmsUserButton = new ButtonConfirm(page, "deleteSmsUserButton_" + id) {
+			
+			@Override
 			public void onPOSTComplete(String data, OgemaHttpRequest req) {
 				config.delete();
 				alert.showAlert("User '" + id + "' successfully deleted", true, req);
 			}
+			
 		};
 		deleteSmsUserButton.addDefaultStyle(ButtonData.BOOTSTRAP_RED);
 		deleteSmsUserButton.setDefaultText("Delete");
-		deleteSmsUserButton.setDefaultConfirmPopupTitle("Delete Sms-User : " + id);
-		deleteSmsUserButton.setDefaultConfirmMsg("Are you sure deleting " + id + " from this list ?");
+		deleteSmsUserButton.setDefaultConfirmPopupTitle("Delete sms-user: " + id);
+		deleteSmsUserButton.setDefaultConfirmMsg("Do you really want to delete '" + id + "' from this list ?");
 		deleteSmsUserButton.triggerAction(table, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		deleteSmsUserButton.triggerAction(alert, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
-		row.addCell("deleteSmsColumn", deleteSmsUserButton);
+		row.addCell("deleteColumn", deleteSmsUserButton);
 
 		return row;
 	}
-
-//	private SmsConfiguration getSmsConfiguration(String user) {
-//		for (SmsConfiguration config: list.getAllElements()) {
-//			StringResource actUser = config.userName();	
-//			//System.out.println("------> Act Sms User : " + actUser.getValue());
-//			if (!actUser.isActive())  {
-//				continue;
-//			}
-//			if (actUser.getValue().equals(user)) {
-//				return config;
-//			}
-//		}
-//		return null;
-//	}
 
 }

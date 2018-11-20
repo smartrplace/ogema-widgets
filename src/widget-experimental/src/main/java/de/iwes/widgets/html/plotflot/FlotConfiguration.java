@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.html.plotflot;
 
 import java.util.Objects;
@@ -29,26 +22,30 @@ import org.json.JSONObject;
 import de.iwes.widgets.html.plot.api.Plot2DConfiguration;
 import de.iwes.widgets.html.plot.api.PlotType;
 
-public class FlotConfiguration extends Plot2DConfiguration {  
-	
+public class FlotConfiguration extends Plot2DConfiguration {
+
+	/**
+	 * use {@link Plot2DConfiguration.AxisType} instead
+	 */
+	@Deprecated
 	public enum AxisType {
-		
+
 		DEFAULT("x"),
 		TIME("time");
-		
+
 		private final String type;
-		
+
 		private AxisType(String type) {
 			this.type = type;
 		}
-		
+
 		public String getTypeId() {
 			return type;
 		}
-		
+
 	}
-	
-	private AxisType axisType = AxisType.DEFAULT;
+
+	private AxisType axisType = null;
 	private boolean enableOverviewPlot = false;
 	private int overviewHeight = 200;
 
@@ -56,19 +53,19 @@ public class FlotConfiguration extends Plot2DConfiguration {
 		this.enableOverviewPlot  = enable;
 		return this;
 	}
-	
+
 	public boolean isEnableOverviewPlot() {
 		return enableOverviewPlot;
 	}
-	
+
 	public int getOverviewHeight() {
 		return overviewHeight;
 	}
-	
+
 	public AxisType getXAxisType() {
 		return axisType;
 	}
-	
+
 	public FlotConfiguration setXAxisType(AxisType type) {
 		this.axisType = Objects.requireNonNull(type);
 		return this;
@@ -95,15 +92,16 @@ public class FlotConfiguration extends Plot2DConfiguration {
 			showlines = true;
 			showpoints = true;
 		}
-		else if (type.equals(PlotType.LINE) || type.equals(PlotType.STEPS)) {
+		else if (type.equals(PlotType.LINE) || type.equals(PlotType.STEPS) || type.equals(PlotType.LINE_STACKED)) {
 			showlines = true;
 		}
 		else if (type.equals(PlotType.POINTS)) {
 			showpoints = true;
 		}
-		else if (type.equals(PlotType.BAR)) {
+		else if (type.equals(PlotType.BAR) || type.equals(PlotType.BAR_STACKED)) {
 			showbars = true;
 		}
+
 		lines.put("show", showlines);
 		if (showlines) {
 			lines.put("lineWidth", getLineWidth());
@@ -118,9 +116,14 @@ public class FlotConfiguration extends Plot2DConfiguration {
 		if (showbars) {
 			bars.put("barWidth", getLineWidth());
 		}
+
+		if(asStackedVersion()) {
+			series.put("stack", 0);
+		}
 		series.put("lines", lines);
 		series.put("points", points);
 		series.put("bars", bars);
+
 		JSONObject grid = new JSONObject();
 		grid.put("show", isShowYGrid());
 		json.put("grid", grid);
@@ -145,9 +148,17 @@ public class FlotConfiguration extends Plot2DConfiguration {
 				yaxis.put("max", ymax);
 			json.put("yaxis", yaxis);
 		}
-		json.put("xtype", axisType.getTypeId());
+		final AxisType axisType = this.axisType;
+		if (axisType != null) // if it is set explicitly we use the legacy setting
+			json.put("xtype", axisType.type);
+		else
+			json.put("xtype", mapAxis(getXAxisType0()));
 		return json;
-		
+
 	}
- 
+
+	private static String mapAxis(Plot2DConfiguration.AxisType type) {
+		return type == Plot2DConfiguration.AxisType.DEFAULT ? "x" : "time";
+	}
+
 }

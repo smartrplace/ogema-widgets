@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.html.multiselect;
 
 import java.util.Collection;
@@ -48,7 +41,6 @@ public class Multiselect extends OgemaWidgetBase<MultiselectData> {
 
     private static final long serialVersionUID = -7033410423559705108L;
     private Collection<DropdownOption> defaultOptions = null;
-    private String defaultWidth = null; 
 
 
 	/*********** Constructors **********/
@@ -113,8 +105,8 @@ public class Multiselect extends OgemaWidgetBase<MultiselectData> {
 		if (defaultOptions != null) {
 			opt.setOptions(defaultOptions);
 		}
-		if (defaultWidth != null)
-			opt.setWidth(defaultWidth);
+//		if (defaultWidth != null)
+//			opt.setWidth(defaultWidth);
 		super.setDefaultValues(opt);
 	}
 
@@ -145,6 +137,10 @@ public class Multiselect extends OgemaWidgetBase<MultiselectData> {
     	getData(req).addOption(label, value, selected);
     }
     
+    public boolean isEmpty(OgemaHttpRequest req) {
+    	return getData(req).isEmpty();
+    }
+    
     public Collection<DropdownOption> getSelected(OgemaHttpRequest req) {
     	return getData(req).getSelected();
     }
@@ -173,22 +169,29 @@ public class Multiselect extends OgemaWidgetBase<MultiselectData> {
     	getData(req).removeOption(value);
     }
 
+    
 	public String getDefaultWidth() {
-		return defaultWidth;
+		throw new UnsupportedOperationException("is this required?");
 	}
 	
-	/**
+	/*
 	 * @param defaultWidth
 	 * 		e.g. a percentage: "30%",
 	 * 		or nr of pixels: "100px"
 	 */
+	/*
 	public void setDefaultWidth(String defaultWidth) {
 		this.defaultWidth = defaultWidth;
 	}
+	*/
 	
 	public String getWidth(OgemaHttpRequest req) {
-		return getData(req).getWidth();
+		final Map<String,String> items = getData(req).getCssItem("width");
+		if (items == null || items.isEmpty())
+			return null;
+		return items.get("width");
 	}
+	
 	public void setWidth(String width,OgemaHttpRequest req) {
 		getData(req).setWidth(width);
 	}

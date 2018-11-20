@@ -1,3 +1,18 @@
+/**
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.iwes.timeseries.eval.garo.api.base;
 
 import java.util.Arrays;
@@ -13,9 +28,9 @@ import de.iwes.widgets.html.selectiontree.LinkingOptionType;
 /**
  * Calculate basic field test evaluations
  */
-public abstract class GaRoEvalProvider<R, T extends GaRoMultiResult<R>> extends AbstractMultiEvaluationProvider<R, T> {
-	protected final GaRoDataType[] inputTypesFromRoom;
-	protected final GaRoDataType[] inputTypesFromGw;
+public abstract class GaRoEvalProvider<T extends GaRoMultiResult> extends AbstractMultiEvaluationProvider<T> {
+	protected final GaRoDataTypeI[] inputTypesFromRoom;
+	protected final GaRoDataTypeI[] inputTypesFromGw;
 	private List<DataProviderType> inputDataTypes;
 	
 	@Override
@@ -27,39 +42,11 @@ public abstract class GaRoEvalProvider<R, T extends GaRoMultiResult<R>> extends 
 	public static LinkingOptionType gw = new GenericLinkingOptionType(GaRoMultiEvalDataProvider.GW_LINKINGOPTION_ID, "Select gateways", null);
 	public static LinkingOptionType room = new GenericLinkingOptionType(GaRoMultiEvalDataProvider.ROOM_LINKINGOPTION_ID, "Select rooms", new LinkingOptionType[]{gw});
 	
-	/*private static class TempSensDataProvider implements DataProviderType {
-		@Override
-		public LinkingOptionType[] selectionOptions() {
-			LinkingOptionType tempSens = new GenericLinkingOptionType(GaRoDataType.TemperatureMeasurement.name(), "Select temperature sensors",
-					new LinkingOptionType[]{room});
-			return new LinkingOptionType[]{gw, room, tempSens};
-		}
-		
-	}
-	private static class WindowSensDataProvider implements DataProviderType {
-		@Override
-		public LinkingOptionType[] selectionOptions() {
-			LinkingOptionType winSens = new GenericLinkingOptionType(GaRoDataType.WindowOpen.name(), "Select window sensors",
-					new LinkingOptionType[]{room});
-			return new LinkingOptionType[]{gw, room, winSens};
-		}
-		
-	}
-	private static class ValveSensDataProvider implements DataProviderType {
-		@Override
-		public LinkingOptionType[] selectionOptions() {
-			LinkingOptionType valveSens = new GenericLinkingOptionType(GaRoDataType.ValvePosition.name(), "Select valve position sensors",
-					new LinkingOptionType[]{room});
-			return new LinkingOptionType[]{gw, room, valveSens};
-		}
-		
-	}*/
-	
 	public static class InitData {
-		GaRoDataType[] inputTypesFromRoom;
-		GaRoDataType[] inputTypesFromGw;
-		public InitData(GaRoDataType[] inputTypesFromRoom, GaRoDataType[] inputTypesFromGw) {
-			this.inputTypesFromRoom = inputTypesFromRoom;
+		GaRoDataTypeI[] inputTypesFromRoom;
+		GaRoDataTypeI[] inputTypesFromGw;
+		public InitData(GaRoDataTypeI[] gaRoDataTypeIs, GaRoDataTypeI[] inputTypesFromGw) {
+			this.inputTypesFromRoom = gaRoDataTypeIs;
 			this.inputTypesFromGw = inputTypesFromGw;
 		}
 	}
@@ -72,11 +59,11 @@ public abstract class GaRoEvalProvider<R, T extends GaRoMultiResult<R>> extends 
 		DataProviderType[] arr = new DataProviderType[len];
 		int idx = 0;
 		
-		if(in.inputTypesFromRoom != null) for(final GaRoDataType type: in.inputTypesFromRoom) {
+		if(in.inputTypesFromRoom != null) for(final GaRoDataTypeI type: in.inputTypesFromRoom) {
 			DataProviderType dataProvider = new DataProviderType() {
 				@Override
 				public LinkingOptionType[] selectionOptions() {
-					LinkingOptionType lot = new GenericLinkingOptionType(type.name(), "Select "+type.name(),
+					LinkingOptionType lot = new GenericLinkingOptionType(type.id(), "Select "+type.label(null),
 							new LinkingOptionType[]{room});
 					return new LinkingOptionType[]{gw, room, lot};
 				}
@@ -85,11 +72,11 @@ public abstract class GaRoEvalProvider<R, T extends GaRoMultiResult<R>> extends 
 			arr[idx] = dataProvider;
 			idx++;
 		}
-		if(in.inputTypesFromGw != null) for(final GaRoDataType type: in.inputTypesFromGw) {
+		if(in.inputTypesFromGw != null) for(final GaRoDataTypeI type: in.inputTypesFromGw) {
 			DataProviderType dataProvider = new DataProviderType() {
 				@Override
 				public LinkingOptionType[] selectionOptions() {
-					LinkingOptionType lot = new GenericLinkingOptionType(type.name(), "Select "+type.name(),
+					LinkingOptionType lot = new GenericLinkingOptionType(type.id(), "Select "+type.label(null),
 							new LinkingOptionType[]{gw});
 					return new LinkingOptionType[]{gw, lot};
 				}
@@ -100,28 +87,22 @@ public abstract class GaRoEvalProvider<R, T extends GaRoMultiResult<R>> extends 
 		}
 		inputDataTypes = Collections.<DataProviderType> unmodifiableList(Arrays.asList(arr));
 	}
-	public GaRoEvalProvider(GaRoDataType[] inputTypesFromRoom, GaRoDataType[] inputTypesFromGw) {
-		super(new InitData(inputTypesFromRoom, inputTypesFromGw));
+	public GaRoEvalProvider(GaRoDataTypeI[] gaRoDataTypeIs, GaRoDataType[] inputTypesFromGw) {
+		super(new InitData(gaRoDataTypeIs, inputTypesFromGw));
 		this.inputTypesFromGw = inputTypesFromGw;
-		this.inputTypesFromRoom = inputTypesFromRoom;
+		this.inputTypesFromRoom = gaRoDataTypeIs;
 	}	
 	
-	/*private static DataProviderType TempSensProvider = new TempSensDataProvider();
-	private static DataProviderType WindowSensProvider = new WindowSensDataProvider();
-	private static DataProviderType ValveSensProvider = new ValveSensDataProvider();
-	private static List<DataProviderType> inputDataTypes = Collections.<DataProviderType> unmodifiableList(Arrays.asList(
-			new DataProviderType[]{TempSensProvider, WindowSensProvider, ValveSensProvider}));
-	*/
 	@Override
 	public List<DataProviderType> inputDataTypes() {
 		return inputDataTypes;
 	}
 	
-	public GaRoDataType[] getInputTypesFromRoom() {
+	public GaRoDataTypeI[] getInputTypesFromRoom() {
 		return inputTypesFromRoom;
 	}
 
-	public GaRoDataType[] getInputTypesFromGw() {
+	public GaRoDataTypeI[] getInputTypesFromGw() {
 		return inputTypesFromGw;
 	}
 }

@@ -1,39 +1,46 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.html.plot.api;
+
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * This is cloneable using the default implementation, since
  * it only contains primitive fields. In case a derived class
- * contains complex objects, it should override the {@link #clone()} method. 
+ * contains complex objects, it should override the {@link #clone()} method.
  */
 public class Plot2DConfiguration implements Cloneable {
-	
+
+	public enum AxisType {
+
+		DEFAULT,
+		TIME;
+
+	}
+
+	private AxisType axisType = AxisType.DEFAULT;
 	/**
 	 * default values
 	 */
-	private PlotType type = PlotType.LINE_WITH_POINTS;
-	// XXX 
+	private PlotType type = PlotType.LINE;
+	private boolean asStackedVersion = false;
+	// XXX
 	private boolean typeSetExplicitly = false;
 	private boolean interactionsEnabled = true;
 	private boolean smoothLines = false;
@@ -65,13 +72,13 @@ public class Plot2DConfiguration implements Cloneable {
 			throw new RuntimeException("Strange exception",e);
 		}
 	}
-	
+
 	// TODO colors & fonts
 
 	/*** Setters ***/
-	
+
 	/**
-	 * 
+	 *
 	 * @param type
 	 * @return
 	 * 		this
@@ -79,7 +86,7 @@ public class Plot2DConfiguration implements Cloneable {
 	public Plot2DConfiguration setPlotType(PlotType type) {
 		return setPlotType(type, false);
 	}
-	
+
 	// XXX ugly
 	/**
 	 * Hacky method... don't use it.
@@ -93,7 +100,7 @@ public class Plot2DConfiguration implements Cloneable {
 			this.typeSetExplicitly = type != null;
 		return this;
 	}
-	
+
 	/**
 	 * Check whether default plot type is used, or the type has been set.
 	 * @return
@@ -101,13 +108,13 @@ public class Plot2DConfiguration implements Cloneable {
 	public boolean isPlotTypeSetExplicitly() {
 		return typeSetExplicitly;
 	}
-	
+
 	//
-	
+
 	/**
 	 * Default: true
 	 * @param enable
-	 * 		if false, the plot will be made static, i.e. not react to 
+	 * 		if false, the plot will be made static, i.e. not react to
 	 * 		mouse hover, etc. This can improve performance in case of large
 	 * 		data sets
 	 * @return
@@ -122,9 +129,9 @@ public class Plot2DConfiguration implements Cloneable {
 		}
 		return this;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param smooth
 	 * @return
 	 * 		this
@@ -133,9 +140,9 @@ public class Plot2DConfiguration implements Cloneable {
 		this.smoothLines = smooth;
 		return this;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param nrPixels
 	 * @return
 	 * 		this
@@ -144,7 +151,7 @@ public class Plot2DConfiguration implements Cloneable {
 		this.pointSize = nrPixels;
 		return this;
 	}
-	
+
 	/**
 	 * @param nrPixels
 	 * @return
@@ -154,7 +161,7 @@ public class Plot2DConfiguration implements Cloneable {
 		this.lineWidth = nrPixels;
 		return this;
 	}
-	
+
 	/**
 	 * Default: false
 	 * @param enable
@@ -180,7 +187,7 @@ public class Plot2DConfiguration implements Cloneable {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param showYGrid
 	 * @return
 	 *  	this
@@ -189,7 +196,7 @@ public class Plot2DConfiguration implements Cloneable {
 		this.showYGrid = showYGrid;
 		return this;
 	}
-	
+
 	/**
 	 * Default: false
 	 * @param hoverable
@@ -200,7 +207,7 @@ public class Plot2DConfiguration implements Cloneable {
 		this.hoverable = hoverable;
 		return this;
 	}
-	
+
 	/**
 	 * Default: false
 	 * @param clickable
@@ -211,7 +218,7 @@ public class Plot2DConfiguration implements Cloneable {
 		this.clickable = clickable;
 		return this;
 	}
-	
+
 	/**
 	 * Restrict the view to a minimum value.
 	 * @param ymin
@@ -222,7 +229,7 @@ public class Plot2DConfiguration implements Cloneable {
 		this.ymin = ymin;
 		return this;
 	}
-	
+
 	/**
 	 * Restrict the view to a maximum value.
 	 * @param ymax
@@ -233,20 +240,20 @@ public class Plot2DConfiguration implements Cloneable {
 		this.ymax = ymax;
 		return this;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param xmin
 	 * @return
-	 *		this 
+	 *		this
 	 */
 	public Plot2DConfiguration setXmin(float xmin) {
 		this.xmin = xmin;
 		return this;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param xmax
 	 * @return
 	 * 		this
@@ -266,7 +273,7 @@ public class Plot2DConfiguration implements Cloneable {
 
 	/**
 	 * Filter out all values greater then the argument
-	 * @param yminFilter
+	 * @param ymaxFilter
 	 */
 	public void setYmaxFilter(float ymaxFilter) {
 		this.ymaxFilter = ymaxFilter;
@@ -282,17 +289,26 @@ public class Plot2DConfiguration implements Cloneable {
 		this.doScale = scale;
 		return this;
 	}
-	
+
 	public Plot2DConfiguration setYUnit(String unit) {
 		this.yUnit = unit;
 		return this;
 	}
-	
+
 	public Plot2DConfiguration setXUnit(String unit) {
 		this.xUnit = unit;
 		return this;
 	}
-	
+
+	public AxisType getXAxisType0() {
+		return axisType;
+	}
+
+	public Plot2DConfiguration setXAxisType0(AxisType type) {
+		this.axisType = Objects.requireNonNull(type);
+		return this;
+	}
+
 	public float getYmin() {
 		return ymin;
 	}
@@ -308,65 +324,105 @@ public class Plot2DConfiguration implements Cloneable {
 	public float getXmax() {
 		return xmax;
 	}
-	
+
 	public float getYminFilter() {
 		return yminFilter;
 	}
-	
+
 	public float getYmaxFilter() {
 		return ymaxFilter;
 	}
-	
+
 	public PlotType getPlotType() {
 		return type;
 	}
-	
+
 	public boolean isInteractionsEnabled() {
 		return interactionsEnabled;
 	}
-	
+
 	public boolean isSmoothLine() {
 		return smoothLines;
 	}
-	
+
 	public float getPointSize() {
 		return pointSize;
 	}
-	
+
 	public float getLineWidth() {
 		return lineWidth;
 	}
-	
+
 	public boolean isZoomEnabled() {
 		return zoomEnabled;
 	}
-	
+
 	public boolean isShowXGrid() {
 		return showXGrid;
 	}
-	
+
 	public boolean isShowYGrid() {
 		return showYGrid;
 	}
-	
+
 	public boolean isHoverable() {
 		return hoverable;
 	}
-	
+
 	public boolean isClickable() {
 		return clickable;
 	}
-	
+
 	public boolean isScale() {
 		return doScale;
 	}
-	
+
 	public String getYUnit() {
 		return yUnit;
 	}
-	
+
 	public String getXUnit() {
 		return xUnit;
 	}
-	
+
+	/**
+	 * @return
+	 * @deprecated use {@link #getPlotType()} instead
+	 */
+	@Deprecated
+	public boolean asStackedVersion() {
+		return asStackedVersion;
+	}
+
+	/**
+	 * @param asStackedVersion
+	 * @deprecated use {@link #setPlotType(PlotType) setPlotType(PlotType.LINE_STACKED)} instead
+	 */
+	@Deprecated
+	public void setAsStackedVersion(boolean asStackedVersion) {
+		this.asStackedVersion = asStackedVersion;
+	}
+
+
+	public static void copyValues(final Plot2DConfiguration source, final Plot2DConfiguration target) {
+		AccessController.doPrivileged(new PrivilegedAction<Void>() {
+
+			@Override
+			public Void run() {
+				Arrays.asList(Plot2DConfiguration.class.getDeclaredFields())
+					.forEach(field -> {
+						field.setAccessible(true);
+						try {
+							field.set(target, field.get(source));
+						} catch (IllegalArgumentException | IllegalAccessException e) {
+							throw new RuntimeException("Unexpected exception", e);
+						}
+					});
+
+				return null;
+			}
+		});
+	}
+
+
 }

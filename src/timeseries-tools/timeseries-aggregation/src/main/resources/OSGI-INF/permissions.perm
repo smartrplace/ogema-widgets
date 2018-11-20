@@ -8,10 +8,6 @@
 (org.osgi.framework.PackagePermission "de.iwes.widgets.*" "import")
 (org.osgi.framework.PackagePermission "org.slf4j" "import")
 
-(org.osgi.framework.PackagePermission "javax.servlet" "import")
-(org.osgi.framework.PackagePermission "javax.servlet.*" "import")
-(org.osgi.framework.PackagePermission "org.apache.felix.scr.annotations" "import")
-
 (org.osgi.framework.PackagePermission "de.iwes.timeseries.aggregation.api" "exportonly")
 
 # import permissions
@@ -20,6 +16,5 @@
 (org.osgi.framework.PackagePermission "de.iwes.timeseries.eval.base.provider.utils"  "import")
 (org.osgi.framework.PackagePermission "de.iwes.timeseries.eval.base.provider"  "import")
 
-# export/custom type permissions
-
-# resource permissions
+# Require capability permissions
+(org.osgi.framework.CapabilityPermission "osgi.extender" "require")

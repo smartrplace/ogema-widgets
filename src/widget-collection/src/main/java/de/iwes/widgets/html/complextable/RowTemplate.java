@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.html.complextable;
 
 import java.util.HashMap;
@@ -38,7 +31,7 @@ public abstract class RowTemplate<T>  {
 		 * 
 		 * @param columnId
 		 * @param cellContent can be of simple type (String or wrapper for primitives, like Integer, Float, ...), or of type
-		 * {@link GlobalWidget}.
+		 * global widget
 		 */
 		public final void addCell(String columnId, Object cellContent) {
 			cells.put(columnId,cellContent);
@@ -48,7 +41,7 @@ public abstract class RowTemplate<T>  {
 		}
 		
 		/**
-		 * 1 <= columnSize <= 12 (Bootstrap grid system). It is not required to set the column size explicitly.
+		 * 1 &lt;= columnSize &lt;= 12 (Bootstrap grid system). It is not required to set the column size explicitly.
 		 */
 		public final void addCell(String columnId, Object cellContent, int columnSize) {
 			cells.put(columnId,cellContent);
@@ -68,7 +61,7 @@ public abstract class RowTemplate<T>  {
 	}
 	
 	/**
-	 * This function will be executed upon calling the {@link DynamicTable#addRow(String) addRow} method of a {@link DynamicTable} that uses this RowTemplate.<br>
+	 * This function will be executed upon calling the {@link DynamicTable#addRow(String, Map, OgemaHttpRequest) addRow} method of a {@link DynamicTable} that uses this RowTemplate.<br>
 	 * Use method {@link Row#addCell(String, Object) Row.addCell} to add columns to your row template.<br>
 	 * For a global table pass null as second argument (req), for a page- or session-specific table the request must be provided
 	 * Return null to indicate that no row shall be added. 
@@ -86,12 +79,12 @@ public abstract class RowTemplate<T>  {
 	/**
 	 * Add a header to the table. This may return null or an empty map, in 
 	 * which case no header will be shown. Otherwise, the map keys (= column identifiers) must be 
-	 * the same as the cell identifiers in the row returned by {@link #addRowItem(Object, OgemaHttpRequest)}.<br>
-	 * The values of the map may either Strings, or widgets (typically {@see org.ogema.tools.widget.html.form.label.Labels}).
+	 * the same as the cell identifiers in the row returned by {@link #addRow(Object, OgemaHttpRequest)}.<br>
+	 * The values of the map may either Strings, or widgets (typically org.ogema.tools.widget.html.form.label.Labels).
 	 * The advantage of using widgets over strings is that they can adapt to the language setting.
 	 * @return
 	 * 		<code>Map&lt;column id, column header&gt;</code><br>
-	 * 		It is recommended to return a {@see java.util.LinkedHashMap}, then the order of columns will be preserved
+	 * 		It is recommended to return a {@link java.util.LinkedHashMap}, then the order of columns will be preserved
 	 * 
 	 */
 	public abstract Map<String,Object> getHeader();

@@ -197,7 +197,7 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
                     // first remove all CSS rules for this particular widget, otherwise they'd accumulate
                     var arr = sheet.cssRules;
                     var N = arr.length;
-                    for (var i = 0; i < arr.length; i++) {
+                    for (var i = 0; i < N; i++) {
                         if (arr[N - i - 1].cssText.indexOf("#" + gw.widgetID + ".ogema-widget") === 0) {
                             sheet.deleteRule(N - i - 1);
                         }

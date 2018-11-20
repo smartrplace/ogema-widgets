@@ -285,10 +285,10 @@ ogema.menuIdentifier = {}; // only indicates that the script has been loaded
 		}
 	}
 	ogema.logout = function() {
-		// FIXME can this be replaced by window.location.href = "/apps/ogema/framework/gui?action=logout" ?
+		// FIXME can this be replaced by window.location.href = "/ogema/widgets/apps?action=logout" ?
 		$.ajax({
 	        type: "GET",
-	        url: "/apps/ogema/framework/gui?action=logout&user=" + otusr + "&pw=" + otpwd,
+	        url: "/ogema/widget/apps?action=logout&user=" + otusr + "&pw=" + otpwd,
 	        dataType: "html"
 	    }).then(function(response) {
 	    	window.location.href = "/ogema/index.html";

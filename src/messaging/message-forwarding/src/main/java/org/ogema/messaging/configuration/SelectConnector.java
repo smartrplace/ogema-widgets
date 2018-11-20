@@ -1,28 +1,20 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.ogema.messaging.configuration;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -67,11 +59,11 @@ import de.iwes.widgets.messaging.model.MessagingApp;
 import de.iwes.widgets.messaging.model.MessagingService;
 import de.iwes.widgets.messaging.model.UserConfig;
 
-
 @Component(specVersion = "1.2")
 @Service(Application.class)
 public class SelectConnector implements Application {
 
+	// FIXME can we avoid this?
 	private final static long GARBAGE_COLLECTOR_UPDATE_INTERVAL = 30 * 60 * 1000; // every 30 min
 	private OgemaLogger logger;
 	private WidgetApp wApp;
@@ -88,8 +80,6 @@ public class SelectConnector implements Application {
 	@Reference 
 	private MessageReader messageReader;
 	
-//	@Reference(bind="addMessageListener",unbind="removeMessageListener")
-
 	
 	@Override
 	public void stop(AppStopReason reason) {
@@ -110,7 +100,7 @@ public class SelectConnector implements Application {
 		listeners.clear();
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "serial" })
 	@Override
 	public void start(ApplicationManager appManager) {
 		this.logger = appManager.getLogger();
@@ -123,8 +113,6 @@ public class SelectConnector implements Application {
 		
 		Header header =  new Header(page, "header", "Message forwarding configurations") {
 
-			private static final long serialVersionUID = 1L;
-
 			@Override
 			public void onGET(OgemaHttpRequest req) {
 				setText(SelectConnector.this.page.getDictionary(req).header(),req);
@@ -135,8 +123,6 @@ public class SelectConnector implements Application {
 		page.append(header).linebreak();
 		
 	    Alert info = new Alert(page, "description","Explanation") {
-
-			private static final long serialVersionUID = 1L;
 
 			@Override
 	    	public void onGET(OgemaHttpRequest req) {
@@ -150,7 +136,7 @@ public class SelectConnector implements Application {
 	    info.addDefaultStyle(AlertData.BOOTSTRAP_INFO);
 	    info.setDefaultVisibility(true);
 	    
-		final Accordion appAccordion = new Accordion(page, "appAccordion", true){
+		final Accordion appAccordion = new Accordion(page, "appAccordion", true) {
 
 			private static final long serialVersionUID = 1L;
 			private AtomicLong lastUpdate = new AtomicLong(0);
@@ -173,6 +159,7 @@ public class SelectConnector implements Application {
 					writeUnlock(req);
 				}
 			}
+			
 		};
 		appAccordion.addDefaultStyle(AccordionData.BOOTSTRAP_GREEN);
 		page.append(appAccordion);
@@ -189,7 +176,9 @@ public class SelectConnector implements Application {
 		return false;
  	}
 	
+	@SuppressWarnings("deprecation")
 	public void refreshMessagingApps(Accordion appAccordion, OgemaHttpRequest req) {
+		
 		Map<String,MessageListener> newListeners = new HashMap<>();
 		Set<String> listenersToBeRemoved = new HashSet<>();
 		Set<String> newUsers = new HashSet<>();
@@ -197,33 +186,41 @@ public class SelectConnector implements Application {
 		
 		Map<String, MessageListener> localListeners = messageReader.getMessageListeners();
 		Set<String> localUsers = new HashSet<>();
-		Iterator<Map.Entry<String,MessageListener>> it = listeners.entrySet().iterator();
+		
+		// Deleting message forwarding app listeners which aren't available anymore
+		Iterator<Map.Entry<String, MessageListener>> it = listeners.entrySet().iterator();
 		while (it.hasNext()) {
-			Map.Entry<String,MessageListener> entry = it.next();
+			Map.Entry<String, MessageListener> entry = it.next();
 			String key = entry.getKey();
-			if (!localListeners.containsKey(key)) {
+			// Deleting listeners which are gone
+			if (!localListeners.containsKey(key) || (localListeners.containsKey(entry.getKey()) && !localListeners.get(entry.getKey()).equals(entry.getValue()))) {
 				listenersToBeRemoved.add(key);
 				it.remove();
 			}
 		}
+		
+		// Adding new message receivers which were not available before 
 		for (Map.Entry<String, MessageListener> entry : localListeners.entrySet()) {
-			if (!listeners.containsKey(entry.getKey())) {
+			// Adding new listeners
+			if (!listeners.containsKey(entry.getKey()) || (listeners.containsKey(entry.getKey()) && !listeners.get(entry.getKey()).equals(entry.getValue()))) {
 				newListeners.put(entry.getKey(),entry.getValue());
 				listeners.put(entry.getKey(),entry.getValue());
 			}
 			try {
+				// Get all known users for the every message forwarding app
 				for (String user : entry.getValue().getKnownUsers()) {
 					localUsers.add(user);
 					if (!users.contains(user)) {
 						users.add(user);
 						newUsers.add(user);
 					}
-						
-				}	
+				}
 			} catch (Throwable e) {
 				LoggerFactory.getLogger(Util.class).error("",e);
 			}
 		}
+		
+		// Checking all user configs if they're still present or gone
 		Iterator<String> userIt = users.iterator();
 		while (userIt.hasNext()) {
 			String user = userIt.next();
@@ -232,11 +229,15 @@ public class SelectConnector implements Application {
 				usersToBeRemoved.add(user);
 			}
 		}
-		boolean changedAtAll = !newUsers.isEmpty() || !newListeners.isEmpty() || !listenersToBeRemoved.isEmpty() || !usersToBeRemoved.isEmpty();
-		List<de.iwes.widgets.messaging.MessagingApp> appIds = new ArrayList<>();
-		appIds.add(allApps);	
-		appIds.addAll(messageReader.getMessageSenders());
+		
+		boolean somethingChanged = !newUsers.isEmpty() || !newListeners.isEmpty() || !listenersToBeRemoved.isEmpty() || !usersToBeRemoved.isEmpty();
+		
+		
+		List<de.iwes.widgets.messaging.MessagingApp> appIds = messageReader.getMessageSenders();
+		appIds.add(allApps);
 		List<MessagingApp> apps = appList.getAllElements();
+		
+		// Deleting unexistent messaging apps. For example: Messaging_test_app or Window_opened_detector_app
 		for(int i = 0 ; i < apps.size() ; i++) {
 			MessagingApp app = apps.get(i);
 			String appId = app.appId().getValue();
@@ -245,11 +246,13 @@ public class SelectConnector implements Application {
 				continue;
 			} else {
 				app.delete();
-				try { 
+				try {
 					appAccordion.removeItem(appId, req);
 				} catch (Exception e) {}
 			}
 		}
+		
+		// Adding new messaging apps to the accordion
 //		List<MessagingApp> oldApps = appList.getAllElements();
 		for(de.iwes.widgets.messaging.MessagingApp app : appIds) {
 			String appId = app.getMessagingId();
@@ -263,6 +266,8 @@ public class SelectConnector implements Application {
 //			appendServiceResources(messagingApp, messageListeners);  // updates or creates service resource list
 //			if (containsAppId(oldApps, appId)) // it is not sufficient to check the resources; on unclean start they are available, but the accordion item no
 //				continue;
+			
+			// Checking if the messaging app already got an accordionentry
 			AccordionItem item = appAccordion.getItem(resourceName, req);
 			boolean isNew = item == null;
 			if (isNew) {
@@ -272,7 +277,7 @@ public class SelectConnector implements Application {
 			} 
 			boolean tableRefreshed = false;
 			AppSnippet snippet = (AppSnippet) item.getWidget();
-			if (isNew || changedAtAll) {
+			if (isNew || somethingChanged) {
 				// check... or do we need to do this even for new items?
 				tableRefreshed = snippet.update(newUsers, usersToBeRemoved, newListeners, listenersToBeRemoved);
 			}
@@ -319,7 +324,7 @@ public class SelectConnector implements Application {
 									uc.delete();
 								}
 							} catch (Exception e) {
-								logger.info("Could not determine whether user config is real, removing it: " +uc,e);
+								logger.info("Could not determine whether user config is real, removing it: " + uc, e);
 								uc.delete();
 							}
 								
@@ -330,6 +335,7 @@ public class SelectConnector implements Application {
 				}
 			}
 		}
+		
 	};
 	
 }

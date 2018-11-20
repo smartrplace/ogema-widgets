@@ -1,0 +1,107 @@
+<!--
+
+    ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!--
+
+    Copyright 2009 - 2016
+
+    Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
+
+    Fraunhofer IWES
+
+    All Rights reserved
+
+-->
+<!--
+
+    Copyright 2009 - 2014
+
+    Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
+
+    Fraunhofer IIS
+    Fraunhofer ISE
+    Fraunhofer IWES
+
+    All Rights reserved
+
+<!DOCTYPE html>
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 4.1 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <head>
+        <script src="/ogema/jslib/jquery/jquery-1.11.1.min.js"></script>
+        <script src="/ogema/jslib/GenericWidget.js"></script>
+        <script src="/ogema/jslib/WidgetGroups.js"></script>
+        <script src="/ogema/jslib/widgetLoader.js"></script>
+        <link href="/ogema/jslib/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/> 
+        <title>Resource Backup and Cleaner</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style type="text/css">.table td {text-align: center; vertical-align: center;  }</style>
+    </head>
+
+    <body class="myBackground">
+
+        <div id="header" class="page-header">
+            <h2>Resource Backup and Cleaner</h2>
+         </div>
+
+		<div class='container-fluid'>
+		
+		<div class="row">
+        	<div class="col-xs-12 col-sm-6"><div id="alert"></div></div>
+ 		</div>
+ 		<br>
+		<div class="row">
+        	<div class="col-xs-6 col-sm-3"><div id="dropProgram"></div></div>
+        	<div class="col-xs-3 col-sm-3"><div id="buttonStartProgram"></div></div>
+        	<div class="col-xs-3 col-sm-3"><div id="buttonDeleteProgram"></div></div>
+		</div>
+		<br>
+		<div class="row">
+        	<div class="col-xs-6 col-sm-4"><div id="editNewProgramName"></div></div>
+        	<div class="col-xs-6 col-sm-3"><div id="buttonSaveAsNewProgram"></div></div>
+ 		</div>
+		<div class="row">
+        	<div class="col-xs-6 col-sm-4">Backup every (hours):</div>
+        	<div class="col-xs-6 col-sm-3"><div id="editBackupInterval"></div></div>
+ 		</div>
+		<div class="row">
+        	<div class="col-xs-4 col-sm-3">Directory:</div>
+        	<div class="col-xs-4 col-sm-3"><div id="editDirectory"></div></div>
+        	<div class="col-xs-4 col-sm-3"><div id="checkIncludeRefs"></div></div>
+ 		</div>
+		<div class="row">
+        	<div class="col-xs-6 col-sm-4"><div id="dropKnownBackups"></div></div>
+        	<div class="col-xs-6 col-sm-3"><div id="buttonReplay"></div></div>
+ 		</div>
+		<div class="row">
+        	<div class="col-xs-8 col-sm-8"><div id="checkAllExcept"></div></div>
+        	<div class="col-xs-4 col-sm-4"><div id="checkWriteJSON"></div></div>
+ 		</div>
+		<div class="row">
+        	<div class="col-xs-2 col-sm-2">Show:</div>
+        	<div class="col-xs-6 col-sm-3"><div id="dropResType"></div></div>
+        	<div class="col-xs-4 col-sm-2"><div id="buttonResListTypes"></div></div>
+		</div>
+		<br>
+       	<div id="tableResources"></div>
+
+		</div>
+   </body>
+</html>

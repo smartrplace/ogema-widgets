@@ -1,19 +1,38 @@
+/**
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.iwes.timeseries.eval.garo.api.base;
 
 import java.io.UncheckedIOException;
 import java.util.List;
 
 import de.iwes.timeseries.eval.api.extended.util.HierarchySelectionItemGeneric;
+import de.iwes.timeseries.eval.garo.api.helper.base.GaRoEvalHelper;
 
 /** Selection item for {@link GaRoEvalDataProviderGateway}
- * 
+ * @param id if this is a terminal option the id must contain the String specified for the
+ * respective {@link GaRoDataType} in {@link GaRoEvalHelper#getDataType(String)}. Otherwise
+ * GaRoMultiEvalDataProvider.GW_LINKINGOPTION_ID or
+ * GaRoMultiEvalDataProvider.ROOM_LINKINGOPTION_ID.
  */
-public abstract class GaRoSelectionItem<R> extends HierarchySelectionItemGeneric<R> {
+public abstract class GaRoSelectionItem extends HierarchySelectionItemGeneric {
 	public GaRoSelectionItem(int level, String id) {
 		super(level, id);
 	}
 
-	public R resource;
+	//public R resource;
 	//private final ApplicationManager appMan;
 
 	//only relevant for level GW_LEVEL
@@ -23,10 +42,10 @@ public abstract class GaRoSelectionItem<R> extends HierarchySelectionItemGeneric
 	protected List<String> devicePath;
 	
 	//only relevant for level ROOM_LEVEL, TS_LEVEL
-	protected GaRoSelectionItem<R> gwSelectionItem;
+	protected GaRoSelectionItem gwSelectionItem;
 	
 	//only relevant for level TS_LEVEL
-	protected GaRoSelectionItem<R> roomSelectionItem;	
+	protected GaRoSelectionItem roomSelectionItem;	
 	//private String tsId;
 	
 	public List<String> getDevicePaths() {
@@ -49,20 +68,16 @@ public abstract class GaRoSelectionItem<R> extends HierarchySelectionItemGeneric
 		}
 	}
 	
-	protected abstract List<String> getDevicePaths(GaRoSelectionItem<R> roomSelItem);
-
-	@Override
-	public R getResource() {
-		if(resource == null) {
-			switch(level) {
-			case GaRoMultiEvalDataProvider.GW_LEVEL:
-				throw new IllegalArgumentException("No gateway resource available");
-			case GaRoMultiEvalDataProvider.ROOM_LEVEL:
-				return resource;
-			case GaRoMultiEvalDataProvider.TS_LEVEL:
-				throw new UnsupportedOperationException("Access to resources of data row parents not implemented yet, but should be done!");
-			}
-		}
-		return resource;
+	//TODO: Not used yet
+	public GaRoDataType getTypeForTerminalOption() {
+		return GaRoEvalHelper.getDataType(id());
 	}
+	
+	protected abstract List<String> getDevicePaths(GaRoSelectionItem roomSelItem);
+
+	//TODO: This shall replace getResource and make typing superflucious
+	public abstract Integer getRoomType();
+	public abstract String getRoomName();
+	public abstract String getPath();
+
 }

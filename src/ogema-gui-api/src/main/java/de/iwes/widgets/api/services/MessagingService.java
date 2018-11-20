@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.api.services;
 
 import java.util.concurrent.RejectedExecutionException;
@@ -38,7 +31,7 @@ public interface MessagingService {
 	 * @param am
 	 * @param message
 	 * @throws RejectedExecutionException
-	 * 			if app sends too many messages (> 25 per 5 min), or there are overall too many unread messages in the queue
+	 * 			if app sends too many messages (&gt; 25 per 5 min), or there are overall too many unread messages in the queue
 	 * @throws IllegalStateException
 	 * 			if app has not been registered to send messages. See {@link #registerMessagingApp(AppID, String)}.
 	 * @deprecated use {@link #sendMessage(AppID, Message)} instead
@@ -50,7 +43,7 @@ public interface MessagingService {
 	 * @param appId
 	 * @param message
 	 * @throws RejectedExecutionException
-	 * 			if app sends too many messages (> 25 per 5 min), or there are overall too many unread messages in the queue
+	 * 			if app sends too many messages (&gt; 25 per 5 min), or there are overall too many unread messages in the queue
 	 * @throws IllegalStateException
 	 * 			if app has not been registered to send messages. See {@link #registerMessagingApp(AppID, String)}.
 	 */

@@ -3,12 +3,12 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
     <artifactId>widget-apps</artifactId>
-    <groupId>de.iwes.widgets</groupId>
-    <version>2.1.3</version>
+    <groupId>org.ogema.widgets</groupId>
+    <version>2.2.0</version>
   </parent>
     
     <artifactId>device-configuration</artifactId>
-    <groupId>de.iwes.apps</groupId>
+    <groupId>org.ogema.apps</groupId>
     <packaging>bundle</packaging>
     <name>Device configuration app</name>
     <description>A basic configuration app for devices</description>
@@ -61,15 +61,15 @@
             <artifactId>resource-utils</artifactId>
         </dependency>
         <dependency>
-            <groupId>de.iwes.widgets</groupId>
+            <groupId>org.ogema.widgets</groupId>
             <artifactId>ogema-js-bundle</artifactId>
         </dependency>
         <dependency>
-            <groupId>de.iwes.widgets</groupId>
+            <groupId>org.ogema.widgets</groupId>
             <artifactId>widget-collection</artifactId>
         </dependency>  
         <dependency>
-            <groupId>de.iwes.widgets</groupId>
+            <groupId>org.ogema.widgets</groupId>
             <artifactId>widget-experimental</artifactId>
         </dependency> 
         <dependency>

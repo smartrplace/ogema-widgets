@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.experimental.general;
 
 import org.apache.felix.scr.annotations.Component;
@@ -34,7 +27,9 @@ import de.iwes.widgets.html.chart.C3Chart;
 import de.iwes.widgets.html.geomap.GeoMap;
 import de.iwes.widgets.html.listselect.ListSelect;
 import de.iwes.widgets.html.plotc3.PlotC3;
+import de.iwes.widgets.html.plotchartjs.PlotChartjs;
 import de.iwes.widgets.html.plotflot.PlotFlot;
+import de.iwes.widgets.html.plotlyjs.Plotlyjs;
 import de.iwes.widgets.html.plotmorris.PlotMorris;
 import de.iwes.widgets.html.plotnvd3.PlotNvd3;
 import de.iwes.widgets.html.tilearea.TileArea;
@@ -64,6 +59,8 @@ public class WidgetsExperimentalStartApp implements Application {
 	        wam.registerBasicResource("/ogema/widget/plotc3", getPackageResourceReferenz(PlotC3.class)); // experimental
 	        wam.registerBasicResource("/ogema/widget/plotmorris", getPackageResourceReferenz(PlotMorris.class)); // experimental
 	        wam.registerBasicResource("/ogema/widget/plotflot", getPackageResourceReferenz(PlotFlot.class)); // experimental
+	        wam.registerBasicResource("/ogema/widget/plotlyjs", getPackageResourceReferenz(Plotlyjs.class)); // experimental
+	        wam.registerBasicResource("/ogema/widget/plotchartjs", getPackageResourceReferenz(PlotChartjs.class)); // experimental
 	        wam.registerBasicResource("/ogema/widget/plotnvd3", getPackageResourceReferenz(PlotNvd3.class)); // experimental
 	        wam.registerBasicResource("/ogema/widget/listselect", getPackageResourceReferenz(ListSelect.class));
 	        wam.registerBasicResource("/ogema/widget/urlredirect", getPackageResourceReferenz(UrlRedirect.class));
@@ -78,12 +75,14 @@ public class WidgetsExperimentalStartApp implements Application {
  	        wam.registerWebResource("/ogema/widget/plotc3", getPackageResourceReferenz(PlotC3.class)); // experimental
  	        wam.registerWebResource("/ogema/widget/plotmorris", getPackageResourceReferenz(PlotMorris.class)); // experimental
  	        wam.registerWebResource("/ogema/widget/plotflot", getPackageResourceReferenz(PlotFlot.class)); // experimental
+ 	        wam.registerWebResource("/ogema/widget/plotlyjs", getPackageResourceReferenz(Plotlyjs.class)); // experimental
+	        wam.registerWebResource("/ogema/widget/plotchartjs", getPackageResourceReferenz(PlotChartjs.class)); // experimental
  	        wam.registerWebResource("/ogema/widget/plotnvd3", getPackageResourceReferenz(PlotNvd3.class)); // experimental
  	        wam.registerWebResource("/ogema/widget/listselect", getPackageResourceReferenz(ListSelect.class));
  	        wam.registerWebResource("/ogema/widget/urlredirect", getPackageResourceReferenz(UrlRedirect.class));
  	        wam.registerWebResource("/ogema/widget/geomap", getPackageResourceReferenz(GeoMap.class));
     	}
-        wam.registerStartUrl(null); 
+        wam.registerStartUrl(null);
     }
 
     @Override
@@ -92,10 +91,12 @@ public class WidgetsExperimentalStartApp implements Application {
     	wam.unregisterWebResource("/ogema/widget/appbox");
     	wam.unregisterWebResource("/ogema/widget/tilearea");
     	wam.unregisterWebResource("/ogema/widget/chart");
-        wam.unregisterWebResource("/ogema/widget/c3chart"); 
-        wam.unregisterWebResource("/ogema/widget/plotc3"); 
+        wam.unregisterWebResource("/ogema/widget/c3chart");
+        wam.unregisterWebResource("/ogema/widget/plotc3");
         wam.unregisterWebResource("/ogema/widget/plotmorris");
         wam.unregisterWebResource("/ogema/widget/plotflot");
+        wam.unregisterWebResource("/ogema/widget/plotlyjs");
+        wam.unregisterWebResource("/ogema/widget/plotchartjs");
         wam.unregisterWebResource("/ogema/widget/plotnvd3");
         wam.unregisterWebResource("/ogema/widget/listselect");
         wam.unregisterWebResource("/ogema/widget/urlredirect");

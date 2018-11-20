@@ -16,18 +16,10 @@
 (org.osgi.framework.PackagePermission "javax.servlet" "import")
 (org.osgi.framework.PackagePermission "javax.servlet.*" "import")
 (org.osgi.framework.PackagePermission "javax.annotation" "import")
-(org.osgi.framework.PackagePermission "org.apache.felix.scr.annotations" "import")
 
 (org.osgi.framework.PackagePermission "de.iwes.timeseries.aggregation.api" "import")
 (org.osgi.framework.PackagePermission "de.iwes.timeseries.eval.api"  "import")
 (org.osgi.framework.PackagePermission "de.iwes.timeseries.eval.api.configuration"  "import")
 (org.osgi.framework.PackagePermission "de.iwes.timeseries.eval.base.provider"  "import")
 (org.osgi.framework.PackagePermission "de.iwes.timeseries.eval.base.provider.utils"  "import")
-(org.ogema.accesscontrol.WebAccessPermission "name=de.iwes.widgets.ogema-js-bundle")
-
-# export/custom type permissions
-
-# resource permissions
-(org.ogema.accesscontrol.ResourcePermission "type=*" "read,write")
-
-# export/custom type permissions
+(org.ogema.accesscontrol.WebAccessPermission "name=org.ogema.widgets.ogema-js-bundle")

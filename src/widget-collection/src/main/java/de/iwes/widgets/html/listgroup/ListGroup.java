@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.html.listgroup;
 
 import java.util.Collection;
@@ -31,6 +24,7 @@ import de.iwes.widgets.api.widgets.OgemaWidget;
 import de.iwes.widgets.api.widgets.WidgetPage;
 import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
 import de.iwes.widgets.template.PageSnippetTemplate;
+import de.iwes.widgets.template.WidgetTemplate;
 
 /**
  * Displays a list of items of type T. 
@@ -40,22 +34,48 @@ import de.iwes.widgets.template.PageSnippetTemplate;
 public class ListGroup<T> extends OgemaWidgetBase<ListGroupData<T>> implements TemplateWidget<T> {
 
 	private static final long serialVersionUID = 1L;
+	@Deprecated
 	protected final PageSnippetTemplate<T> template;
+	protected final WidgetTemplate<T> widgetTemplate;
+	
+	{
+		setDynamicWidget(true);
+		addDefaultStyle(ListGroupData.BOOTSTRAP_LIST_GROUP);
+	}
 
+	public ListGroup(WidgetPage<?> page, String id, WidgetTemplate<T> template) {
+		this(page, id, false, template);
+	}
+	
+	public ListGroup(WidgetPage<?> page, String id, boolean globalWidget, WidgetTemplate<T> template) {
+		super(page, id, globalWidget);
+		this.template = null;
+		this.widgetTemplate = template;
+	}
+	
+	public ListGroup(OgemaWidget parent, String id, OgemaHttpRequest req, WidgetTemplate<T> template) {
+		super(parent, id, req);
+		this.widgetTemplate = template;
+		this.template = null;
+	}
+	
+	@Deprecated
 	public ListGroup(WidgetPage<?> page, String id, PageSnippetTemplate<T> template) {
 		this(page, id, false, template);
 	}
 	
+	@Deprecated
 	public ListGroup(WidgetPage<?> page, String id, boolean globalWidget, PageSnippetTemplate<T> template) {
 		super(page, id, globalWidget);
 		this.template = template;
-		setDynamicWidget(true);
-		addDefaultStyle(ListGroupData.BOOTSTRAP_LIST_GROUP);
+		this.widgetTemplate = null;
 	}
 	
+	@Deprecated
 	public ListGroup(OgemaWidget parent, String id, PageSnippetTemplate<T> template, OgemaHttpRequest req) {
 		super(parent,id,req);
 		this.template = template;
+		this.widgetTemplate = null;
 		setDynamicWidget(true);
 		addDefaultStyle(ListGroupData.BOOTSTRAP_LIST_GROUP);
 	}
@@ -68,7 +88,7 @@ public class ListGroup<T> extends OgemaWidgetBase<ListGroupData<T>> implements T
 
 	@Override
 	public ListGroupData<T> createNewSession() {
-		return new ListGroupData<T>(this,template);
+		return new ListGroupData<T>(this,template, widgetTemplate);
 	}
 
 	@Override

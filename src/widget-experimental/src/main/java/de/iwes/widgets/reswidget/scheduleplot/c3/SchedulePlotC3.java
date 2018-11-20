@@ -1,31 +1,27 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.reswidget.scheduleplot.c3;
 
 import java.util.Map;
 
+import de.iwes.widgets.api.widgets.OgemaWidget;
 import de.iwes.widgets.api.widgets.WidgetPage;
 import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
+import de.iwes.widgets.html.plot.api.Plot2DConfiguration.AxisType;
+import de.iwes.widgets.html.plotc3.C3ChartConfiguration;
 import de.iwes.widgets.html.plotc3.C3DataSet;
 import de.iwes.widgets.html.plotc3.PlotC3;
 import de.iwes.widgets.html.plotc3.PlotC3Options;
@@ -33,29 +29,34 @@ import de.iwes.widgets.reswidget.scheduleplot.api.ScheduleData;
 import de.iwes.widgets.reswidget.scheduleplot.api.TimeSeriesPlot;
 import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
 
-public class SchedulePlotC3 extends PlotC3 implements TimeSeriesPlot<C3DataSet, ScheduleDataC3>{
-	
+public class SchedulePlotC3 extends PlotC3 implements TimeSeriesPlot<C3ChartConfiguration, C3DataSet, ScheduleDataC3>{
+
 	private static final long serialVersionUID = 1L;
 	private Map<String,SchedulePresentationData> defaultSchedules = null;
-	
+
 	/****** Constructor *******/
-	
+
 	public SchedulePlotC3(WidgetPage<?> page, String id, boolean globalWidget) {
 		super(page, id, globalWidget);
 	}
 
+	public SchedulePlotC3(OgemaWidget parent, String id, OgemaHttpRequest req) {
+		super(parent, id, req);
+		getDefaultConfiguration().setXAxisType0(AxisType.TIME);
+	}
+
 	/***** Inherited methods ******/
-	
+
 	@Override
 	public SchedulePlotC3Options createNewSession() {
 		return new SchedulePlotC3Options(this);
 	}
-	
+
 	@Override
 	public SchedulePlotC3Options getData(OgemaHttpRequest req) {
 		return (SchedulePlotC3Options) super.getData(req);
 	}
-	
+
 	@Override
 	protected void setDefaultValues(PlotC3Options opt) {
 		super.setDefaultValues(opt);
@@ -63,10 +64,10 @@ public class SchedulePlotC3 extends PlotC3 implements TimeSeriesPlot<C3DataSet, 
 		if (defaultSchedules != null)
 			opt2.getScheduleData().setSchedules(defaultSchedules);
 	}
-	
-	
+
+
 	/****** Public methods ********/
-	
+
 	@Override
 	public void setDefaultSchedules(Map<String, SchedulePresentationData> schedules) {
 		this.defaultSchedules = schedules;
@@ -76,7 +77,7 @@ public class SchedulePlotC3 extends PlotC3 implements TimeSeriesPlot<C3DataSet, 
 	public ScheduleDataC3 getScheduleData(OgemaHttpRequest req) {
 		return getData(req).getScheduleData();
 	}
-	
+
 	@Override
 	public void setInterval(long startTime, long endTime, OgemaHttpRequest req) {
 		if (endTime < startTime) throw new IllegalArgumentException("Start time after end time: " + startTime + ": " + endTime);

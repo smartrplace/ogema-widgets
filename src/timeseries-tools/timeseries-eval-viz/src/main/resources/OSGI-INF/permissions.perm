@@ -1,0 +1,30 @@
+(org.osgi.framework.ServicePermission "de.iwes.timeseries.eval.api.EvaluationProvider" "get")
+(org.osgi.framework.ServicePermission "de.iwes.timeseries.eval.api.DataProvider" "get")
+(org.osgi.framework.ServicePermission "de.iwes.timeseries.eval.api.EvaluationManager" "get")
+(org.osgi.framework.ServicePermission "de.iwes.widgets.api.OgemaGuiService" "get")
+(org.osgi.framework.ServicePermission "org.ogema.core.application.Application" "register")
+
+(org.osgi.framework.PackagePermission "org.ogema.core.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.model.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.pattern.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.tools.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.widgets.*" "import")
+(org.osgi.framework.PackagePermission "org.slf4j" "import")
+(org.osgi.framework.PackagePermission "com.google.common.*" "import")
+(org.osgi.framework.PackagePermission "org.apache.commons.lang3" "import")
+
+(org.osgi.framework.PackagePermission "javax.servlet" "import")
+(org.osgi.framework.PackagePermission "javax.servlet.*" "import")
+(org.osgi.framework.PackagePermission "org.apache.felix.scr.annotations" "import")
+
+(org.osgi.framework.PackagePermission "de.iwes.timeseries.eval.api"  "import")
+(org.osgi.framework.PackagePermission "de.iwes.timeseries.eval.api.configuration"  "import")
+(org.osgi.framework.PackagePermission "de.iwes.timeseries.eval.base.provider"  "import")
+(org.osgi.framework.PackagePermission "de.iwes.timeseries.eval.base.provider.utils"  "import")
+(org.ogema.accesscontrol.WebAccessPermission "name=org.ogema.widgets.ogema-js-bundle")
+
+# export/custom type permissions
+
+# resource permissions
+
+# export/custom type permissions

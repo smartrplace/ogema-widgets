@@ -1,59 +1,61 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.reswidget.scheduleplot.flot;
 
 import java.util.Map;
+import java.util.function.Supplier;
 
 import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-
+import de.iwes.widgets.api.widgets.OgemaWidget;
 import de.iwes.widgets.api.widgets.WidgetPage;
 import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
-import de.iwes.widgets.html.plotflot.FlotConfiguration.AxisType;
+import de.iwes.widgets.html.plotflot.FlotConfiguration;
 import de.iwes.widgets.html.plotflot.FlotDataSet;
 import de.iwes.widgets.html.plotflot.PlotFlot;
 import de.iwes.widgets.html.plotflot.PlotFlotOptions;
+import de.iwes.widgets.reswidget.scheduleplot.api.DefaultMaxValuesSupplier;
 import de.iwes.widgets.reswidget.scheduleplot.api.MaxValBuffer;
 import de.iwes.widgets.reswidget.scheduleplot.api.ScheduleData;
 import de.iwes.widgets.reswidget.scheduleplot.api.TimeSeriesPlot;
 import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
 
-public class SchedulePlotFlot extends PlotFlot implements TimeSeriesPlot<FlotDataSet, ScheduleDataFlot> {
-	
+public class SchedulePlotFlot extends PlotFlot implements TimeSeriesPlot<FlotConfiguration, FlotDataSet, ScheduleDataFlot> {
+
 	private static final long serialVersionUID = 1L;
 	private Map<String,SchedulePresentationData> defaultSchedules = null;
-	final Cache<String, MaxValBuffer> maxValues;
+	final Supplier<Cache<String, MaxValBuffer>> maxValues;
 	final Long bufferWindow;
 
-	
+
 	/****** Constructor *******/
-	
+
 	public SchedulePlotFlot(WidgetPage<?> page, String id, boolean globalWidget) {
 		this(page, id, globalWidget, null);
 	}
-	
+
+	public SchedulePlotFlot(OgemaWidget parent, String id, OgemaHttpRequest req) {
+		super(parent, id, req);
+		getDefaultConfiguration().setXAxisType0(de.iwes.widgets.html.plot.api.Plot2DConfiguration.AxisType.TIME);
+		// TODO?
+		this.bufferWindow = null;
+		this.maxValues = null;
+	}
+
 	/**
-	 * 
+	 *
 	 * @param page
 	 * @param id
 	 * @param globalWidget
@@ -65,28 +67,28 @@ public class SchedulePlotFlot extends PlotFlot implements TimeSeriesPlot<FlotDat
 		super(page, id, globalWidget);
 		this.bufferWindow = bufferWindow;
 		if (bufferWindow != null) {
-			if (bufferWindow < 0) 
+			if (bufferWindow < 0)
 				throw new IllegalArgumentException("Buffer window must be non-negative, got " + bufferWindow);
-			maxValues = CacheBuilder.newBuilder().softValues().build();
+			maxValues = new DefaultMaxValuesSupplier();
 		}
 		else {
 			maxValues = null;
 		}
-		getDefaultConfiguration().setXAxisType(AxisType.TIME);
+		getDefaultConfiguration().setXAxisType0(de.iwes.widgets.html.plot.api.Plot2DConfiguration.AxisType.TIME);
 	}
 
 	/***** Inherited methods ******/
-	
+
 	@Override
 	public SchedulePlotFlotOptions createNewSession() {
 		return new SchedulePlotFlotOptions(this);
 	}
-	
+
 	@Override
 	public SchedulePlotFlotOptions getData(OgemaHttpRequest req) {
 		return (SchedulePlotFlotOptions) super.getData(req);
 	}
-	
+
 	@Override
 	protected void setDefaultValues(PlotFlotOptions opt) {
 		super.setDefaultValues(opt);
@@ -94,10 +96,10 @@ public class SchedulePlotFlot extends PlotFlot implements TimeSeriesPlot<FlotDat
 		if (defaultSchedules != null)
 			opt2.getScheduleData().setSchedules(defaultSchedules);
 	}
-	
-	
+
+
 	/****** Public methods ********/
-	
+
 	@Override
 	public void setDefaultSchedules(Map<String,SchedulePresentationData> schedules) {
 		this.defaultSchedules = schedules;
@@ -115,5 +117,5 @@ public class SchedulePlotFlot extends PlotFlot implements TimeSeriesPlot<FlotDat
 		data.setStartTime(startTime);
 		data.setEndTime(endTime);
 	}
-	
+
 }

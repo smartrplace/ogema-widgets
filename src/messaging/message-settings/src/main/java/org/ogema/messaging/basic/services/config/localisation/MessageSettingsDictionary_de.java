@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.ogema.messaging.basic.services.config.localisation;
 
 import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
@@ -38,32 +31,32 @@ public class MessageSettingsDictionary_de implements MessageSettingsDictionary {
 	
 	@Override
 	public String headerReceivers() {
-		return "Empf�nger-Konfiguration der Basis-Messengerdienste";
+		return "Empfänger-Konfiguration der Basis-Messengerdienste";
 	}
 
 	@Override
 	public String descriptionReceivers() {
-		return "Auf dieser Seite kannst Du Empf�nger f�r Nachrichten von OGEMA-Apps einrichten, f�r die drei"
-				+ " Basisdienste Email, SMS und XMPP. Das Anlegen der Empf�nger auf dieser Seite f�hrt noch"
+		return "Auf dieser Seite kannst Du Empfänger für Nachrichten von OGEMA-Apps einrichten, für die drei"
+				+ " Basisdienste Email, SMS und XMPP. Das Anlegen der Empfänger auf dieser Seite führt noch"
 				+ " nicht dazu, dass Nachrichten verschickt werden. Dazu gibt es eine weitere Seite, auf der "
-				+ "zu jeder App einzeln festgelegt werden kann, welcher Empf�nger die gesendeten Nachrichten"
+				+ "zu jeder App einzeln festgelegt werden kann, welcher Empfänger die gesendeten Nachrichten"
 				+ " erhalten soll. Du findest die Seite <a href=\"" + SELECT_CONNECTOR_LINK + "\"><b>hier</b></a>.\n"   
-				+ "Au�erdem muss f�r die drei Basisdienste jeweils ein Absenderkonto angegeben werden, bevor"
-				+ " sie Nachrichten verschicken k�nnen. Die entsprechende Seite findest Du <a href=\""
+				+ "Außerdem muss für die drei Basisdienste jeweils ein Absenderkonto angegeben werden, bevor"
+				+ " sie Nachrichten verschicken können. Die entsprechende Seite findest Du <a href=\""
 				+  SENDER_LINK + "\"><b>hier</b></a>.\n"
 				+ "Die eingegebenen Daten werden nur lokal auf dem Gateway gespeichert.\n"
-				+ "Alle Nachrichten die von OGEMA Apps verschickt wurden k�nnen auch im Browser angesehen werden: "
+				+ "Alle Nachrichten die von OGEMA Apps verschickt wurden können auch im Browser angesehen werden: "
 				+ "<a href=\"" + MESSAGE_READER_LINK + "\"><b>OGEMA Message Reader</b></a>.";
 	}
 
 	@Override
 	public String descriptionSenders() {
-		return "Hier kannst Du Absenderkonten f�r die drei Basis-Messengerdienste Email, SMS und XMPP angeben. "
-				+ "Bevor kein Absenderkonto konfiguriert ist, k�nnen keine Nachrichten �ber den jeweiligen Dienst "
-				+ "versendet werden. Um Nachrichten �ber einen Dienst verschicken k�nnen, muss das Passwort f�r "
+		return "Hier kannst Du Absenderkonten für die drei Basis-Messengerdienste Email, SMS und XMPP angeben. "
+				+ "Bevor kein Absenderkonto konfiguriert ist, können keine Nachrichten über den jeweiligen Dienst "
+				+ "versendet werden. Um Nachrichten über einen Dienst verschicken können, muss das Passwort für "
 				+ "das Konto angegeben werden. Es ist deshalb empfehlenswert, einen eigenen Account nur zu diesem "
-				+ "Zweck anzulegen, und nicht bspw. einen pers�nlichen Email-Account zu verwenden.\n"
-				+ "Empf�ngeradressen f�r die jeweiligen Dienste k�nnen auf <a href=\"" + RECEIVER_LINK +"\"><b>dieser Seite</b></a> "
+				+ "Zweck anzulegen, und nicht bspw. einen persönlichen Email-Account zu verwenden.\n"
+				+ "Empfängeradressen für die jeweiligen Dienste können auf <a href=\"" + RECEIVER_LINK +"\"><b>dieser Seite</b></a> "
 				+ "konfiguriert werden.";
 	}
 

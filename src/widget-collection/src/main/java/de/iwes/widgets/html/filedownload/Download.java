@@ -1,29 +1,24 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package de.iwes.widgets.html.filedownload;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
@@ -42,7 +37,6 @@ import com.google.common.io.Resources;
 import de.iwes.widgets.api.extended.OgemaWidgetBase;
 import de.iwes.widgets.api.widgets.WidgetPage;
 import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
-import de.iwes.widgets.html.form.button.Button;
 
 public class Download extends OgemaWidgetBase<DownloadData> {
 
@@ -51,6 +45,7 @@ public class Download extends OgemaWidgetBase<DownloadData> {
 	private List<DownloadListener> defaultListeners;
 	private ByteSource defaultSource;
 	private Consumer<Writer> defaultConsumer;
+	private Consumer<OutputStream> defaultOutputConsumer;
 	private String defaultContentType;
 	
 	public Download(WidgetPage<?> page, String id, ApplicationManager appMan) {
@@ -83,42 +78,56 @@ public class Download extends OgemaWidgetBase<DownloadData> {
 			}
 		}
 		if (defaultSource != null)
-			opt.setSource(defaultSource, null, true, defaultContentType);
+			opt.setSource(defaultSource, null, null, true, defaultContentType);
 		else if (defaultConsumer != null)
-			opt.setSource(null, defaultConsumer, true, defaultContentType);
+			opt.setSource(null, defaultConsumer, null, true, defaultContentType);
+		else if (defaultOutputConsumer != null)
+			opt.setSource(null, null, defaultOutputConsumer, true, defaultContentType);
 	}
 	
 	public void setDefaultSource(final ByteSource source, final String contentType) {
 		this.defaultSource = source;
 		this.defaultContentType = contentType;
 		this.defaultConsumer = null;
+		this.defaultOutputConsumer = null;
 	}
 	
 	public void setDefaultSource(final URL url, final String contentType) {
 		this.defaultSource = Resources.asByteSource(url);
 		this.defaultContentType = contentType;
 		this.defaultConsumer = null;
+		this.defaultOutputConsumer = null;
 	}
 	
 	public void setDefaultSource(final File file, final String contentType) {
 		this.defaultSource = Files.asByteSource(file);
 		this.defaultContentType = contentType;
 		this.defaultConsumer = null;
+		this.defaultOutputConsumer = null;
 	}
 	
 	public void setDefaultSource(final byte[] bytes, final String contentType) {
 		this.defaultSource = ByteSource.wrap(bytes);
 		this.defaultContentType = contentType;
 		this.defaultConsumer = null;
+		this.defaultOutputConsumer = null;
 	}
 	
 	public void setDefaultSource(final String content, final String contentType) {
 		setDefaultSource(content.getBytes(StandardCharsets.UTF_8), contentType);
 	}
 	
-	public void setDefaultSource(final Consumer<Writer> source, final boolean reusable, final String contentType) {
+	public void setDefaultStringSource(final Consumer<Writer> source, final boolean reusable, final String contentType) {
 		this.defaultConsumer = source;
 		this.defaultSource = null;
+		this.defaultOutputConsumer = null;
+		this.defaultContentType = contentType;
+	}
+	
+	public void setDefaultSource(final Consumer<OutputStream> consumer, final boolean reusable, final String contentType) {
+		this.defaultConsumer = null;
+		this.defaultSource = null;
+		this.defaultOutputConsumer = consumer;
 		this.defaultContentType = contentType;
 	}
 	
@@ -144,7 +153,7 @@ public class Download extends OgemaWidgetBase<DownloadData> {
 	 * @param req
 	 * @throws IOException 
 	 */
-	public void setSource(final Reader reader, final String contentType, final OgemaHttpRequest req) throws IOException {
+	public void setStringSource(final Reader reader, final String contentType, final OgemaHttpRequest req) throws IOException {
 		getData(req).setSource(reader, contentType);
 	}
 	
@@ -165,12 +174,17 @@ public class Download extends OgemaWidgetBase<DownloadData> {
 	}
 	
 	public void setSource(final ByteSource source, final boolean reusable, final String contentType, final OgemaHttpRequest req) {
-		getData(req).setSource(source, null, reusable, contentType);
+		getData(req).setSource(source, null, null, reusable, contentType);
 	}
 	
-	public void setSource(final Consumer<Writer> source, final boolean reusable, final String contentType, final OgemaHttpRequest req) {
-		getData(req).setSource(null, source, reusable, contentType);
+	public void setStringSource(final Consumer<Writer> source, final boolean reusable, final String contentType, final OgemaHttpRequest req) {
+		getData(req).setSource(null, source, null, reusable, contentType);
 	}
+	
+	public void setSource(final Consumer<OutputStream> consumer, final boolean reusable, final String contentType, final OgemaHttpRequest req) {
+		getData(req).setSource(null, null, consumer, reusable, contentType);
+	}
+	
 	
 	/**
 	 * Must be called before setting the source

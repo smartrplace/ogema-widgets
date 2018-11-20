@@ -1,30 +1,26 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.api.extended.impl;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -49,14 +45,18 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.ogema.core.application.ApplicationManager;
+import org.ogema.accesscontrol.AccessManager;
+import org.ogema.core.application.AppID;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.security.WebAccessManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.iwes.widgets.api.extended.LazyPage;
+import de.iwes.widgets.api.extended.LazyPageRegistration;
 import de.iwes.widgets.api.extended.OgemaWidgetBase;
 import de.iwes.widgets.api.extended.PageRegistration;
+import de.iwes.widgets.api.extended.PageRegistrationI;
 import de.iwes.widgets.api.extended.WidgetAdminService;
 import de.iwes.widgets.api.extended.WidgetAppImpl;
 import de.iwes.widgets.api.extended.WidgetPageBase;
@@ -78,7 +78,7 @@ import de.iwes.widgets.start.JsBundleApp;
 //@Service(WidgetAdminService.class)
 public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdminService, OgemaOsgiWidgetService {
 	
-	private final static Logger logger = LoggerFactory.getLogger(JsBundleApp.class);
+	public final static Logger logger = LoggerFactory.getLogger(JsBundleApp.class);
 	private static final long serialVersionUID = 1L;
 	
 	// initialized sessions Map<sessionId, lastUpdateTime>
@@ -92,6 +92,7 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
 
 	//private final static String PATH_PREFIX = "/ogema/";
     private final static String PATH_PREFIX = "/ogema/widget/";
+    private final AccessManager accessManager;
     
     // FIXME use only logging mechanism!
     @Deprecated
@@ -110,7 +111,7 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
     //Map<boundPagePath, Map<WidgetId, Widget>>
 //    private final ConcurrentMap<String, ConcurrentMap<String, ConfiguredWidget>> registeredWidgets = new ConcurrentHashMap<>();
     // replaced: Map<bound page path, PageRegistration>
-    private final ConcurrentMap<String, PageRegistration> registeredPages = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, PageRegistrationI> registeredPages = new ConcurrentHashMap<>();
     
     // Map<sessionId, Widget>   // note that these widgets are also registered in the registeredWidgets field; this one is mainly for convenience 
 //    private final ConcurrentMap<String, List<ConfiguredWidget>> sessionWidgets = new ConcurrentHashMap<>();
@@ -122,7 +123,8 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
 //    private final ConcurrentMap<String, ConcurrentMap<String,WidgetGroupDerived>> widgetGroups = new ConcurrentHashMap<String, ConcurrentMap<String,WidgetGroupDerived>>();
     private final Map<String, WidgetAppImpl> apps = new LinkedHashMap<>();
     
-    {
+    public OgemaOsgiWidgetServiceImpl(AccessManager accessManager) {
+    	this.accessManager = accessManager;
     	timer.schedule(sessionManagement, Constants.SESSION_CHECK_PERIOD, Constants.SESSION_CHECK_PERIOD);
     }
     
@@ -130,21 +132,20 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
     public void deactivate() {
 		sessionManagement.close();
 		timer.cancel();
-    	synchronized (apps) {
-    		Iterator<WidgetAppImpl> itApp = apps.values().iterator();
-    		while (itApp.hasNext()) {
-    			WidgetAppImpl a = itApp.next();
-   				a.close();
-    			itApp.remove();
-    		}
+		final Collection<WidgetAppImpl> apps;
+    	synchronized (this.apps) {
+    		apps = new ArrayList<>(this.apps.values());
+    		this.apps.clear();
     	}
+    	for (WidgetAppImpl a : apps)
+    		a.close();
     }
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
     public List<OgemaWidget> getPageWidgets(WidgetPage<?> page) {
     	Objects.requireNonNull(page);
-    	PageRegistration pr = registeredPages.get(((WidgetPageBase<?>) page).getServletBase());
+    	PageRegistration pr = getPageRegistration(((WidgetPageBase<?>) page).getServletBase());
     	if (pr == null)
     		return Collections.emptyList();
     	return (List) pr.getWidgetsBase(null);
@@ -201,7 +202,7 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
         
         widgetWebResourcePath = widgetWebResourcePath.replaceAll("/+", "/");
         widgetServletPath = widgetServletPath.replaceAll("/+", "/");
-        PageRegistration pr = createPageRegistration(widget.getPage(), wam);
+        PageRegistrationI pr = createPageRegistration(widget.getPage(), wam);
 //        if(registeredWidgets.get(boundPagePath) == null) {
 //	        synchronized (registeredWidgets) {
 //		        if(registeredWidgets.get(boundPagePath) == null){
@@ -228,7 +229,7 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
           widgetWebResourcePath = widgetWebResourcePath.replaceAll("/+", "/");
           widgetServletPath = widgetServletPath.replaceAll("/+", "/");
           
-          PageRegistration newPage = createPageRegistration(widget.getPage(), wam);
+          PageRegistrationI newPage = createPageRegistration(widget.getPage(), wam);
           String sessionId = request.getSessionId();
 //          this.pageSpecificId.putIfAbsent(boundAppPath, pageSpecific);
           @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -244,7 +245,7 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
   
     @Override
 	public void unregisterWidget(String boundPagePath,OgemaWidgetBase<?> widget) {	
-    	PageRegistration pr = registeredPages.get(boundPagePath);
+    	PageRegistrationI pr = registeredPages.get(boundPagePath);
     	if (pr == null)
     		return;
         pr.removeWidget(widget);
@@ -299,8 +300,6 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
     try {
-//    	final ExecutionTimeLogger etl = null;
-    	// System.out.println("   WidgetSErvice GET with params " + req.getParameterMap());
         resp.setCharacterEncoding("UTF-8");
     	String initalWidgetInformation = req.getParameter("initialWidgetInformation");
     	String configParameters = req.getParameter("getConfigurationParameters");
@@ -332,19 +331,12 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
 		}
 		
         if(initalWidgetInformation != null) {
-            // System.out.println("      initialWidgetInfo: registered widgets for pages "  + registeredWidgets.keySet());
-        	// this has been superseded by WidgetPage#getPageParameters
-//        	int i = initalWidgetInformation.indexOf("?configId=");
-//        	if(i >= 0) {
-//        		ogReq.configId = initalWidgetInformation.substring(i+10);
-//        	}
-        	       	
-//            String boundPagePath = initalWidgetInformation;
         	boundPagePath = getPageServletUrl(initalWidgetInformation);
-        	PageRegistration page = registeredPages.get(boundPagePath);
-        	if (page == null) 
+        	PageRegistrationI pageReg0 = registeredPages.get(boundPagePath);
+        	if (pageReg0 == null) 
         		throw new IllegalArgumentException("Invalid page: " + boundPagePath);
-        	
+        	PageRegistration page = pageReg0 instanceof PageRegistration ? (PageRegistration) pageReg0 : 
+        			((LazyPageRegistration) pageReg0).getOrCreateRegistration(); // get or create?
 			String sessionId;
 			sessionId = ogReq.getSessionId();
 			
@@ -356,69 +348,32 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
             	zerothParam = initalWidgetInformation.substring(j+1);
             	params = getPageParameters(boundPagePath,sessionId,zerothParam,req);
             }
+        	pageReg0.increaseAccessCount(params);
             
 			sessionManagement.createNewSession(sessionId, page, params);
 			
             if (expiryTimes.containsKey(boundPagePath)) {
             	sessionManagement.setExpiryTime(sessionId, expiryTimes.get(boundPagePath));
             }
-//            if (maxNrSessions.containsKey(boundPagePath)) {
-//            	sessionManagement.setMaxNrSessions(sessionId, maxNrSessions.get(boundPagePath));
-//            }
-            
-            // TODO test
-//			ConfiguredWidget initWidget = initWidgets.get(boundPagePath);
-//			if(initWidget != null) {
-//				initWidget.getWidget().appendWidgetInformation(ogReq,result);
-//			}
-//           if(etl != null ) etl.intermediateStep("BeforeInitialize");
-//           page.initialize(); // sorts widgets once
-//           if(etl != null) etl.intermediateStep("AfterInitialize");
-//           page.increaseAccessCount(params);
-//           if(etl != null) etl.intermediateStep("AfterAccessCount");
-           
-//			ConcurrentMap<String, ConfiguredWidget> map = pr.pageWidgets;
-//            if(map != null) {
-//            	// TODO test
-//            	List<ConfiguredWidget> cwidgets = new ArrayList<ConfiguredWidget>(map.values());
-//            	WidgetComparator comparator = new WidgetComparator(map, widgetGroups.get(boundPagePath));
-//            	// FIXME need synchronization?
-//            	Collections.sort(cwidgets,comparator); // try to assure widgets are loaded in right order // somewhat expensive! only executed in first request // TODO order upon page/widget registration?
-//                // FIXME
-//            	System.out.println("    xxx  + widgets order: "+ cwidgets );
-//            	
-//            	for(ConfiguredWidget confWidget : cwidgets){
-//                	 TODO test
-//                    if(confWidget.isInitWidget()) continue;
-           //Session session = sessionManagement.getSession(sessionId);
            for (ConfiguredWidget<?> confWidget: page.getWidgets(sessionId)) {
-            
-//                    String widgetSessionId = confWidget.getSessionId();
-//                	if((widgetSessionId != null) && (!widgetSessionId.equals(sessionId))) continue;
-                	try {
-                		OgemaWidgetBase<?> widget = confWidget.getWidget();
-                		if (widget.isPostponeLoading())
-                			continue;
-                		if (widget instanceof InitWidget) 
-                			((InitWidget) widget).init(ogReq);
-                		widget.appendWidgetInformation(ogReq,result);
-                		widget.updateDependentWidgets(ogReq);
-                		//session.wigetIdsProcessed.add(widget.getId());
-//                        if(etl != null) etl.intermediateStep(widget.getId(), false);
+            	try {
+            		OgemaWidgetBase<?> widget = confWidget.getWidget();
+            		if (widget.isPostponeLoading())
+            			continue;
+            		if (widget instanceof InitWidget) 
+            			((InitWidget) widget).init(ogReq);
+            		widget.appendWidgetInformation(ogReq,result);
+            		widget.updateDependentWidgets(ogReq);
                	} catch (Exception e) {
-                		LoggerFactory.getLogger(JsBundleApp.class).error("Error retrieving widget data ",e);
-                	}
-                }
-//            }
+                	LoggerFactory.getLogger(JsBundleApp.class).error("Error retrieving widget data ",e);
+               	}
+            }
             result.append("pageInstance", ogReq.getPageInstanceId());
             resp.setContentType("application/json");
             resp.getWriter().write(result.toString());
             resp.setStatus(200);
             
         } else if (configParameters != null) {
-        	/*String locl = req.getParameter("locale");
-        	if (locl == null) locl = "en";
-        	 */
         	String locl = req.getHeader("Accept-Language");
         	if (locl == null) locl = "en";
         	if (locl.contains(",")) {
@@ -460,27 +415,13 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
         	long pollingInterval;
         	// treat differently the case that all widgets are requested from the generic one
         	if (groupId.trim().toLowerCase().equals("all")) {
-//        		Collection<ConfiguredWidget> cwidgets = registeredWidgets.get(boundPagePath).getWidgets();
-//        		widgets = new HashSet<OgemaWidgetBase<?>>();
-//        		Iterator<ConfiguredWidget> it = cwidgets.iterator();
-//        		while (it.hasNext()) {
-//        			ConfiguredWidget w = it.next();
-//        			widgets.add(w.getWidget());
-//        		}
         		String sessionId = ogReq.getSessionId();
-        		widgets = new HashSet<>(registeredPages.get(boundPagePath).getWidgetsBase(sessionId));
+        		widgets = new LinkedHashSet<>(getPageRegistration(boundPagePath).getWidgetsBase(sessionId));
         		pollingInterval = -1; // TODO
         	}
         	else {
-//	        	ConcurrentMap<String, WidgetGroupDerived> grps = widgetGroups.get(boundPagePath);
-//	        	if (grps == null) {
-//	        		LoggerFactory.getLogger(JsBundleApp.class).debug("Widget groups for page {} not found. Current keys: {}", boundPagePath, widgetGroups.keySet());
-//	                resp.setStatus(400); // bad request
-//	                return;
-//	        	}
-	        	PageRegistration pr = registeredPages.get(boundPagePath);
+	        	PageRegistrationI pr = registeredPages.get(boundPagePath);
 	        	WidgetGroupDerived group = pr.getGroup(groupId);
-//	        	WidgetGroupDerived group = grps.get(groupId);
 	        	if (group == null) {
 	        		LoggerFactory.getLogger(JsBundleApp.class).debug("Widget group {} page {} not found.", groupId, boundPagePath);
 	                resp.setStatus(400); // bad request
@@ -490,31 +431,21 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
 	        	pollingInterval = group.getPollingInterval();
 	        	result.put("polling", pollingInterval);
         	}
-            //Session session = sessionManagement.getSession(ogReq.getSessionId());
             Iterator<OgemaWidgetBase<?>> it = widgets.iterator();
         	while (it.hasNext()) {
         		OgemaWidgetBase<?> widget = it.next();
-        		//if(session.wigetIdsProcesseded.contains(widget.getId())) continue;
         		widget.appendWidgetInformation(ogReq,result); // executes onGET and appends widget info to ogReg
-//                if(etl != null) etl.intermediateStep("GG"+widget.getId(), false);
        	}
         	resp.setContentType("application/json");
             resp.getWriter().write(result.toString());
             resp.setStatus(200);
         }
         else if (getGroup != null) {
-//        	String boundPagePath = getPageServletUrl(req.getParameter("boundPagePath"));
         	Set<String> widgetIds;
         	if (getGroup.trim().toLowerCase().equals("all")) {
-        		widgetIds = registeredPages.get(boundPagePath).getWidgetIds(ogReq.getSessionId()); // FIXME filter out session-specific widgets not meant for this request 
+        		widgetIds = getPageRegistration(boundPagePath).getWidgetIds(ogReq.getSessionId()); // FIXME filter out session-specific widgets not meant for this request 
         	}
         	else {
-//        		ConcurrentMap<String, WidgetGroupDerived> grps = widgetGroups.get(boundPagePath);
-//	        	if (grps == null) {
-//	                resp.setStatus(400); // bad request
-//	                return;
-//	        	}
-//	        	WidgetGroupDerived group = grps.get(getGroup);
         		WidgetGroupDerived group = registeredPages.get(boundPagePath).getGroup(getGroup);
 	        	if (group == null) {
 	                resp.setStatus(400); // bad request
@@ -526,7 +457,6 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
 	        	while (it.hasNext()) {
 	        		OgemaWidgetBase<?> widget = it.next();
 	        		widgetIds.add(widget.getId());
-//	                if(etl != null) etl.intermediateStep("GGG"+widget.getId(), false);
 	        	}
         	}
         	JSONArray array = new JSONArray(widgetIds);
@@ -535,21 +465,9 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
             resp.setStatus(200);
         }
         else {
-        
-//            String boundPagePath = req.getParameter("boundPagePath");	
-            
-            //remove https:// and .htm*
-/*            boundPagePath = boundPagePath.substring(boundPagePath.indexOf("//")+2);
-            int idx = boundPagePath.lastIndexOf(".htm");
-            boundPagePath = boundPagePath.substring(0, idx);
-            //remove hosts ip etc
-            boundPagePath = boundPagePath.substring(boundPagePath.indexOf("/")); */
-
             String sessionId = ogReq.getSessionId();
-            
             final WidgetJsonConfig jsonConf = new WidgetJsonConfig();
-
-            PageRegistration pr = registeredPages.get(boundPagePath);
+            PageRegistration pr = getPageRegistration(boundPagePath);
             //look up the corresponding widgets bound under the given path
             if( pr != null){
             	pr.initialize();
@@ -557,7 +475,6 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
                     final String className = w.getWidget().getWidgetClass().getSimpleName();
                     jsonConf.addScriptResourcePath(w.getWidget().getId(), className, 
                             w.getWebResourcePath()+"/"+className+".html");
-//                    if(etl != null) etl.intermediateStep("CC"+className, false);
                }
             }
             //System.out.println("jsonConf.toJson(): " + jsonConf.toJson());
@@ -565,7 +482,6 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
             resp.getWriter().write(jsonConf.toJson());
             resp.setStatus(200);
         }
-//        if(etl != null) etl.finish(false);
     } catch(Throwable e) {
     	e.printStackTrace();
         resp.setContentType("text/plain"); // correct?
@@ -579,14 +495,40 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
 //		// TODO Auto-generated method stub
 //	}
     
-    public PageRegistration createPageRegistration(WidgetPageBase<?> page, WebAccessManager wam) {
+    /**
+     * Note: this may return null, for instance for LazyWidgetPages which have not been
+     * accessed yet. See {@link #getPageRegistrationInternal(String)} for a method to get 
+     * the non-null registration object in this case
+     * @param boundPagePath
+     * @return
+     */
+    public PageRegistration getPageRegistration(String boundPagePath) {
+    	final PageRegistrationI pageI = registeredPages.get(boundPagePath);
+    	if (pageI instanceof PageRegistration)
+    		return (PageRegistration) pageI;
+    	if (pageI instanceof LazyPageRegistration)
+    		return ((LazyPageRegistration) pageI).getRegistration();
+    	return null;
+    }
+    
+    public PageRegistrationI getPageRegistrationInternal(String boundPagePath) {
+    	return registeredPages.get(boundPagePath);
+    }
+    
+    
+    public PageRegistrationI createPageRegistration(WidgetPageBase<?> page, WebAccessManager wam) {
     	String boundPagePath = page.getServletBase();
-    	PageRegistration pr = registeredPages.get(boundPagePath);
+    	PageRegistrationI pr = registeredPages.get(boundPagePath);
     	if (pr == null) {
 	    	synchronized (registeredPages) {
 	    		pr = registeredPages.get(boundPagePath);
 				if (pr == null) {
-					pr = new PageRegistration(page, sessionManagement);
+					if (page instanceof LazyPage<?>) {
+						pr = new LazyPageRegistration((LazyPage) page, sessionManagement, accessManager, page.getApp());
+					}
+					else {
+						pr = new PageRegistration(page, sessionManagement, accessManager);
+					}
 					wam.registerWebResource(boundPagePath, pr);
 					registeredPages.put(boundPagePath, pr);
 				}
@@ -596,7 +538,7 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
     }
     
 	public WidgetGroup registerWidgetGroup(WidgetPageBase<?> page, String groupId, Collection<OgemaWidget> widgets, WebAccessManager wam) throws IllegalArgumentException {
-		PageRegistration pr = createPageRegistration(page,wam);
+		PageRegistrationI pr = createPageRegistration(page,wam);
 //		widgetGroups.putIfAbsent(baseUrl, new ConcurrentHashMap<String, WidgetGroupDerived>());
 		if (pr.getGroup(groupId) != null)  throw new IllegalArgumentException("WidgetGroup with id " + groupId + " already exists");
 //		ConcurrentMap<String,WidgetGroupDerived> groups = widgetGroups.get(baseUrl);		
@@ -608,7 +550,7 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
 	}
 	
 	public void update(OgemaWidgetBase<?> widget) {
-		PageRegistration pr = registeredPages.get(widget.getPage().getServletBase());
+		PageRegistration pr = getPageRegistration(widget.getPage().getServletBase());
 		if (pr == null) return;
 		ConfiguredWidget<?> cw = pr.getConfiguredWidget(widget);
 		if (cw == null) return; // may be null, e.g. if it is a session widget..
@@ -616,16 +558,16 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
 	}
 	
 	public boolean removeWidgetGroup(WidgetPageBase<?> page, WidgetGroup group) {
-		PageRegistration pr = registeredPages.get(page.getServletBase());
+		PageRegistrationI pr = registeredPages.get(page.getServletBase());
 		if (pr == null)
 			return false;
 		return pr.removeGroup(group.getId()) != null;
 	}
 	
-	public PageRegistration removePage(WidgetPageBase<?> page) {
+	public PageRegistrationI removePage(WidgetPageBase<?> page) {
 		String boundPagePath = page.getServletBase();
 //		widgetGroups.remove(boundPagePath);
-		PageRegistration registration = registeredPages.remove(boundPagePath);
+		PageRegistrationI registration = registeredPages.remove(boundPagePath);
 		if (registration != null)
 			registration.close();
 		// removes all cached sessions for this page
@@ -715,8 +657,36 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
 			String url = app.appUrl();
 			if (url == null) 
 				throw new NullPointerException("URL is null for app " + app);
-			if (apps.containsKey(url))
-				throw new IllegalStateException("There is already an app registered at the URL " + url);
+			if (apps.containsKey(url)) {
+				// check if app is still active, otherwise simply replace the registration
+				final WidgetAppImpl impl = apps.get(url);
+				if (impl != null) {
+					boolean active = true;
+					try {
+						active = AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
+	
+							@Override
+							public Boolean run() {
+								try {
+									final Field appId = WidgetAppImpl.class.getDeclaredField("appId");
+									appId.setAccessible(true);
+									final AppID id = (AppID) appId.get(impl);
+									// FIXME new API method in OGEMA 2.1.4, currently using reflections for backwards compatibility
+									final Method isActive = id.getClass().getMethod("isActive");
+									return (Boolean) isActive.invoke(id);
+								} catch (Exception e) {
+									if (e instanceof RuntimeException)
+										throw (RuntimeException) e;
+									throw new RuntimeException(e);
+								}
+							}
+							
+						});
+					} catch (RuntimeException e) { /* assume active == true */ }
+					if (active)
+						throw new IllegalStateException("There is already an app registered at the URL " + url);
+				}
+			}
 			apps.put(app.appUrl(), app);
 		}
 	}
@@ -748,7 +718,7 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
 	public void sortWidgets(List<OgemaWidgetBase<?>> widgets) {
 		if (widgets == null || widgets.size() < 2)
 			return;
-		PageRegistration pr = registeredPages.get(widgets.get(0).getPage().getServletBase());
+		PageRegistration pr = getPageRegistration(widgets.get(0).getPage().getServletBase());
 		if (pr != null)
 			pr.sortWidgets((List) widgets);
 	}
@@ -777,7 +747,7 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
 	// FIXME what if the page is reregistered?
 	@Override
 	public void setPersistentAccessCount(WidgetPage<?> page, IntegerResource count) {
-		final PageRegistration pr = getPageRegistration(page);
+		final PageRegistrationI pr = getPageRegistrationInternal(((WidgetPageBase<?>) page).getServletBase());
 		pr.setPersistentAccessCount(count);
 	}
 	
@@ -785,18 +755,14 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
 	@Override
 	public void setPersistentAccessCountForParameters(WidgetPage<?> page, IntegerResource count,
 			Map<String, String[]> parameters) {
-		final PageRegistration pr = getPageRegistration(page);
+		final PageRegistrationI pr = getPageRegistrationInternal(((WidgetPageBase<?>) page).getServletBase());
 		pr.setPersistentAccessCountForParameters(page, count, parameters);
 	}
 
 	@Override
 	public int getAccessCount(WidgetPage<?> page) {
-		final PageRegistration pr = getPageRegistration(page);
+		final PageRegistrationI pr = getPageRegistrationInternal(((WidgetPageBase<?>) page).getServletBase());
 		return pr.getAccessCount();
-	}
-	
-	private final PageRegistration getPageRegistration(WidgetPage<?> page) {
-		return registeredPages.get(((WidgetPageBase<?>) page).getServletBase());
 	}
 	
 }

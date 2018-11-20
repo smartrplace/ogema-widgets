@@ -1,29 +1,24 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.ogema.messaging.basic.services.config;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.ogema.core.application.ApplicationManager;
 import org.ogema.core.model.ResourceList;
@@ -52,143 +47,167 @@ import de.iwes.widgets.html.form.label.Label;
 import de.iwes.widgets.html.form.textfield.TextField;
 import de.iwes.widgets.html.popup.Popup;
 
-public class ReceiverPageBuilder implements ResourceDemandListener<ReceiverConfiguration>{
+public class ReceiverPageBuilder implements ResourceDemandListener<ReceiverConfiguration> {
+
+	private static final String EMAIL_REGEX = "[A-Za-z0-9.-]+[@][A-Za-z0-9.-]+[.][a-zA-Z_0-9]+$";
+	private static final String SMS_REGEX = "[0-9]+[A-Za-z0-9.-]+[@][A-Za-z0-9.-]+[.][a-zA-Z_0-9]+$";
+	private static final String XMPP_REGEX = "[A-Za-z0-9.-]+[@][A-Za-z0-9.-]+[.][a-zA-Z_0-9]+$";
 	
 	private final ResourceList<ReceiverConfiguration> receiverConfigs;
 	private final DynamicTable<ReceiverConfiguration> receiverTable;
-	private final TextField newReceiverNameTextField;
-	private final TextField newReceiverEMailTextField;
-	private final TextField newReceiverSmsTextField;
-	private final TextField newReceiverXmppTextField;
-	private static final String emailRegex = "[A-Za-z0-9.-]+[@][A-Za-z0-9.-]+[.][a-zA-Z_0-9]+$";
-	private static final String smsRegex = "[0-9]+[A-Za-z0-9.-]+[@][A-Za-z0-9.-]+[.][a-zA-Z_0-9]+$";
 
+	
 	@SuppressWarnings({ "serial", "unchecked" })
 	public ReceiverPageBuilder(final WidgetPage<MessageSettingsDictionary> page, ApplicationManager appMan) {
-		
+
 		ResourceManagement resMan = appMan.getResourceManagement();
-		
-//New Receiver Table
+
+		// New Receiver Table
 		receiverConfigs = resMan.createResource("receiverConfigurations", ResourceList.class);
-	    receiverConfigs.setElementType(ReceiverConfiguration.class);
-	    receiverConfigs.activate(false);        
+		receiverConfigs.setElementType(ReceiverConfiguration.class);
+		receiverConfigs.activate(false);
 		receiverTable = new DynamicTable<ReceiverConfiguration>(page, "receiverTable", true);
-	    
-// create test resources if system property is set (see rundir file config/ogema.properties)
-		if (Boolean.getBoolean("org.ogema.apps.createtestresources")) 
-			createTestReceiverResource(receiverConfigs,appMan);
 
-	    final Header header = new Header(page, "header","Receiver configurations") {
-	    	
-	    	@Override
-	    	public void onGET(OgemaHttpRequest req) {
-	    		setText(((MessageSettingsDictionary) getPage().getDictionary(req)).headerReceivers(), req);
-	    	}
-	    	
-	    };
-	    header.addDefaultStyle(WidgetData.TEXT_ALIGNMENT_CENTERED);
-	    page.append(header).linebreak();
-	    
-	    Alert info = new Alert(page, "description","Explanation") {
-	    	
-	    	@Override
-	    	public void onGET(OgemaHttpRequest req) {
-	    		setHtml(((MessageSettingsDictionary) getPage().getDictionary(req)).descriptionReceivers(), req);
-	    		allowDismiss(true, req);
-	    		autoDismiss(-1, req);
-	    	}
-	    	
-	    };
-	    page.append(info).linebreak();
-	    info.addDefaultStyle(AlertData.BOOTSTRAP_INFO);
-	    info.setDefaultVisibility(true);
-
-	    final Alert alert = new Alert(page, "myAlert", "");
-	    alert.setDefaultVisibility(false);
-	    page.append(alert).linebreak();
+		// create test resources if system property is set (see rundir file config/ogema.properties)
+		if (Boolean.getBoolean("org.ogema.apps.createtestresources")) {
+			createTestReceiverResource(receiverConfigs, appMan);
+		}
 		
+		final Header header = new Header(page, "header", "Receiver configurations") {
+
+			@Override
+			public void onGET(OgemaHttpRequest req) {
+				setText(((MessageSettingsDictionary) getPage().getDictionary(req)).headerReceivers(), req);
+			}
+
+		};
+		header.addDefaultStyle(WidgetData.TEXT_ALIGNMENT_CENTERED);
+		page.append(header).linebreak();
+
+		Alert info = new Alert(page, "description", "Explanation") {
+
+			@Override
+			public void onGET(OgemaHttpRequest req) {
+				setHtml(((MessageSettingsDictionary) getPage().getDictionary(req)).descriptionReceivers(), req);
+				allowDismiss(true, req);
+				autoDismiss(-1, req);
+			}
+
+		};
+		page.append(info).linebreak();
+		info.addDefaultStyle(AlertData.BOOTSTRAP_INFO);
+		info.setDefaultVisibility(true);
+
+		final Alert alert = new Alert(page, "myAlert", "");
+		alert.setDefaultVisibility(false);
+		page.append(alert).linebreak();
+
 		ReceiverTemplate receiverTemplate = new ReceiverTemplate(receiverConfigs, appMan, receiverTable, alert, page);
 		receiverTable.setRowTemplate(receiverTemplate);
 		receiverTable.setDefaultRowIdComparator(null);
-		
+
 		List<WidgetStyle<?>> styles = new ArrayList<>();
 		styles.add(WidgetData.TEXT_ALIGNMENT_CENTERED);
 		receiverTable.setDefaultStyles(styles);
+
+		final Label nameLabel = new Label(page, "nameLabel");
+		final Label emailLabel = new Label(page, "emailLabel");
+		final Label smsLabel = new Label(page, "smsLabel");
+		final Label xmppLabel = new Label(page, "xmppLabel");
+		final Label restLabel = new Label(page, "restLabel");
+		final Label restUserLabel = new Label(page, "restUserLabel");
+		final Label restPwLabel = new Label(page, "restPwLabel");
 		
-		final Label newReceiverNameLabel = new Label(page, "newReceiverNameLabel");
-		newReceiverNameLabel.setDefaultText("Name : ");
-		
-		final Label newReceiverEMailLabel = new Label(page, "newReceiverEMailLabel");
-		newReceiverEMailLabel.setDefaultText("E-Mail-Address : ");
-		
-		final Label newReceiverSmsLabel = new Label(page, "newReceiverSmsLabel");
-		newReceiverSmsLabel.setDefaultText("Sms-Number : ");
-		
-		final Label newReceiverXmppLabel = new Label(page, "newReceiverXmppLabel");
-		newReceiverXmppLabel.setDefaultText("Xmpp-Adress : ");
-		
-		newReceiverNameTextField = new TextField(page, "newReceiverNameTextField");
-		newReceiverEMailTextField = new TextField(page, "newReceiverEMailTextField");
-		newReceiverSmsTextField = new TextField(page, "newReceiverSmsTextField");
-		newReceiverXmppTextField = new TextField(page, "newReceiverXmppTextField");
-		
-		final StaticTable newReceiverTable = new StaticTable(4, 2);
-		newReceiverTable.setContent(0, 0, newReceiverNameLabel);
-		newReceiverTable.setContent(1, 0, newReceiverEMailLabel);
-		newReceiverTable.setContent(2, 0, newReceiverSmsLabel);
-		newReceiverTable.setContent(3, 0, newReceiverXmppLabel);
-		newReceiverTable.setContent(0, 1, newReceiverNameTextField);
-		newReceiverTable.setContent(1, 1, newReceiverEMailTextField);
-		newReceiverTable.setContent(2, 1, newReceiverSmsTextField);
-		newReceiverTable.setContent(3, 1, newReceiverXmppTextField);
-		
-		final Popup newReceiverPopup = new Popup(page, "newReceiverPopup",true);
-		newReceiverPopup.setTitle("New Receiver", null);
-		
-		final Button acceptNewReceiverButton = new Button(page, "acceptNewReceiverButton"){
+		nameLabel.setDefaultText("Name: ");
+		emailLabel.setDefaultText("Email-address: ");
+		smsLabel.setDefaultText("Sms-number: ");
+		xmppLabel.setDefaultText("Xmpp-address: ");
+		restLabel.setDefaultText("Remote-message-address: ");
+		restUserLabel.setDefaultText("Remote-message-user: ");
+		restPwLabel.setDefaultText("Remote-message-password: ");
+
+		final TextField nameInput = new TextField(page, "nameInput");
+		final TextField emailInput = new TextField(page, "emailInput");
+		final TextField smsInput = new TextField(page, "smsInput");
+		final TextField xmppInput = new TextField(page, "xmppInput");
+		final TextField restInput = new TextField(page, "restInput");
+		final TextField restUserInput = new TextField(page, "restUserInput");
+		final TextField restPwInput = new TextField(page, "restPwInput");
+
+		final StaticTable newReceiverTable = new StaticTable(7, 2);
+		newReceiverTable.setContent(0, 0, nameLabel);
+		newReceiverTable.setContent(1, 0, emailLabel);
+		newReceiverTable.setContent(2, 0, smsLabel);
+		newReceiverTable.setContent(3, 0, xmppLabel);
+		newReceiverTable.setContent(4, 0, restLabel);
+		newReceiverTable.setContent(5, 0, restUserLabel);
+		newReceiverTable.setContent(6, 0, restPwLabel);
+		newReceiverTable.setContent(0, 1, nameInput);
+		newReceiverTable.setContent(1, 1, emailInput);
+		newReceiverTable.setContent(2, 1, smsInput);
+		newReceiverTable.setContent(3, 1, xmppInput);
+		newReceiverTable.setContent(4, 1, restInput);
+		newReceiverTable.setContent(5, 1, restUserInput);
+		newReceiverTable.setContent(6, 1, restPwInput);
+
+		final Popup newReceiverPopup = new Popup(page, "newReceiverPopup", true);
+		newReceiverPopup.setTitle("New receiver", null);
+
+		final Button acceptNewReceiverButton = new Button(page, "acceptNewReceiverButton") {
+			
+			@Override
 			public void onPOSTComplete(String data, OgemaHttpRequest req) {
+
+				String name = nameInput.getValue(req).trim();
+				String email = emailInput.getValue(req).trim();
+				String sms = smsInput.getValue(req).trim();
+				String xmpp = xmppInput.getValue(req).trim();
+				String rest = restInput.getValue(req).trim();
+				String restUser = restUserInput.getValue(req).trim();
+				String restPw = restPwInput.getValue(req);
 				
 				try {
-					filter(req);
-					addNewReceiver(receiverConfigs, newReceiverNameTextField.getValue(req), newReceiverEMailTextField.getValue(req), 
-							newReceiverSmsTextField.getValue(req), newReceiverXmppTextField.getValue(req));
-					alert.showAlert("Receiver '" + newReceiverNameTextField.getValue(req) + "' successfully created", true, req);
+					
+					Logger.getGlobal().info(rest + ", " + restUser + ", " + restPw);					
+					filter(name, email, sms, xmpp, rest, restUser, restPw, req);
+					addNewReceiver(receiverConfigs, name, email, sms, xmpp, rest, restUser, restPw);
+					alert.showAlert("Receiver '" + name + "' successfully created",	true, req);
 				} catch (Exception e) {
-					alert.showAlert("Could not create new user: " +e.getMessage() ,false, req);
+					alert.showAlert("Could not create new user: " + e.getMessage(), false, req);
 				}
 			}
-			
+
 		};
 		acceptNewReceiverButton.triggerAction(alert, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		acceptNewReceiverButton.triggerAction(acceptNewReceiverButton, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		acceptNewReceiverButton.triggerAction(newReceiverPopup, TriggeringAction.POST_REQUEST, TriggeredAction.HIDE_WIDGET);
-		acceptNewReceiverButton.triggerAction(receiverTable,TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		acceptNewReceiverButton.triggerAction(receiverTable, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		acceptNewReceiverButton.setDefaultText("Accept");
 		acceptNewReceiverButton.addDefaultStyle(ButtonData.BOOTSTRAP_GREEN);
 
 		final PageSnippet newReceiverSnippet = new PageSnippet(page, "newReceiverSnippet", true);
 		newReceiverSnippet.append(newReceiverTable, null);
 		newReceiverSnippet.append(acceptNewReceiverButton, null);
-		
+
 		newReceiverPopup.setBody(newReceiverSnippet, null);
 
-		final Button createNewReceiverButton = new Button(page, "newReceiverButton"){
-		};
+		final Button createNewReceiverButton = new Button(page, "newReceiverButton");
 		createNewReceiverButton.triggerAction(newReceiverPopup, TriggeringAction.POST_REQUEST, TriggeredAction.SHOW_WIDGET);
-		createNewReceiverButton.setDefaultText("create new Receiver");
+		createNewReceiverButton.setDefaultText("create new receiver");
 		createNewReceiverButton.addDefaultStyle(ButtonData.BOOTSTRAP_GREEN);
-		
+
 		PageSnippet receiverSnippet = new PageSnippet(page, "receiverSnippet", true);
 		receiverSnippet.append(receiverTable, null);
 		receiverSnippet.append(createNewReceiverButton, null);
-		
+
 		page.append(receiverSnippet);
 		page.append(newReceiverPopup);
-		
+
 	}
-	
-	private void createTestReceiverResource(ResourceList<ReceiverConfiguration> receiverConfigs , ApplicationManager appMan) {
-		
+
+	private void createTestReceiverResource(ResourceList<ReceiverConfiguration> receiverConfigs,
+			ApplicationManager appMan) {
+
 		ReceiverConfiguration testConfig = receiverConfigs.add();
 		StringResource name = testConfig.userName().create();
 		name.setValue("XAll");
@@ -198,88 +217,109 @@ public class ReceiverPageBuilder implements ResourceDemandListener<ReceiverConfi
 		sms.setValue("49157123456789.testtransmitter@tmsg.de");
 		StringResource xmpp = testConfig.xmpp().create();
 		xmpp.setValue("testtransmitter2@jabber.de");
+		StringResource rest = testConfig.remoteMessageRestUrl().create();
+		rest.setValue("https://localhost:8444/rest/resources");
+		StringResource restUser = testConfig.remoteMessageRestUrl().create();
+		restUser.setValue("rest");
+		StringResource restPw = testConfig.remoteMessagePassword().create();
+		restPw.setValue("rest");
 		
 		testConfig.activate(true);
 	}
 
 	public static boolean checkIfReceiverExists(ResourceList<ReceiverConfiguration> receiverConfigs, String userName) {
-		for (ReceiverConfiguration receiver: receiverConfigs.getAllElements()) {
-			if(receiver.userName().getValue().equals(userName)){
+		
+		for (ReceiverConfiguration receiver : receiverConfigs.getAllElements()) {
+			if (receiver.userName().getValue().equals(userName)) {
 				return true;
 			}
 		}
+		
 		return false;
 	}
-	
-	public static void addNewReceiver(ResourceList<ReceiverConfiguration> receiverConfigs, String newName, String newEMailAddress, String newSmsNumber, String newXmppAddress) {
-		
+
+	public static void addNewReceiver(ResourceList<ReceiverConfiguration> receiverConfigs, String name,
+			String email, String sms, String xmpp, String rest, String restUser, String restPw) {
+
 		ReceiverConfiguration newReceiver = receiverConfigs.add();
-		
-		StringResource userName = newReceiver.userName().create();
-		userName.setValue(newName);
-		
-		if (newEMailAddress != null) {
-			newEMailAddress = newEMailAddress.trim();
-			if(!newEMailAddress.isEmpty()) {
-				StringResource email = newReceiver.email().create();
-				email.setValue(newEMailAddress);
-			}
-		}
-		if (newSmsNumber != null) {
-			newSmsNumber = newSmsNumber.trim();
-			if(!newSmsNumber.isEmpty()) {
-				StringResource sms = newReceiver.sms().create();
-				sms.setValue(newSmsNumber);
-			}
-		}
-		if (newXmppAddress != null) {
-			newXmppAddress = newXmppAddress.trim();
-			if(!newXmppAddress.isEmpty()) {
-				StringResource xmpp = newReceiver.xmpp().create();
-				xmpp.setValue(newXmppAddress);
-			}
-		}
+
+		newReceiver.userName().<StringResource>create().setValue(name);
+		if(!email.isEmpty())
+			newReceiver.email().<StringResource>create().setValue(email);
+		if(!sms.isEmpty())
+			newReceiver.sms().<StringResource>create().setValue(sms);
+		if(!xmpp.isEmpty())
+			newReceiver.xmpp().<StringResource>create().setValue(xmpp);
+		if(!rest.isEmpty())
+			newReceiver.remoteMessageRestUrl().<StringResource>create().setValue(
+					rest.endsWith("/") ? rest : rest+"/");
+		if(!restUser.isEmpty())
+			newReceiver.remoteMessageUser().<StringResource>create().setValue(restUser);
+		if(!restPw.isEmpty())
+			newReceiver.remoteMessagePassword().<StringResource>create().setValue(restPw);
 		
 		newReceiver.activate(true);
 	}
-	
+
 	@Override
 	public void resourceAvailable(ReceiverConfiguration receiver) {
 		receiverTable.addItem(receiver, null);
 	}
-	
+
 	@Override
 	public void resourceUnavailable(ReceiverConfiguration receiver) {
 		receiverTable.removeItem(receiver, null);
 	}
-	
-	private void filter(OgemaHttpRequest req) throws IllegalArgumentException {
-		atLeastOneAddress(newReceiverEMailTextField.getValue(req), 
-				newReceiverSmsTextField.getValue(req), newReceiverXmppTextField.getValue(req));
-		if (newReceiverNameTextField.getValue(req).trim().isEmpty())
-			throw new IllegalArgumentException("Please enter a user name");
-		String user  = newReceiverNameTextField.getValue(req);
-		boolean userExists = checkIfReceiverExists(receiverConfigs, user);
-		if (userExists) 
-			throw new IllegalArgumentException("The entered user name " + user + " already exists, please choose a different one");
-	}
-	
-	private static void atLeastOneAddress(String emailValue, String smsValue, String xmppValue) throws IllegalArgumentException {
+
+	private void filter(String name, String email, String sms, String xmpp, String rest, String restUser, 
+			String restPw, OgemaHttpRequest req) throws IllegalArgumentException {
 		
-		boolean emailAccepted = (!emailValue.trim().isEmpty() && emailValue.matches(emailRegex));
-		boolean smsAccepted = (!smsValue.trim().isEmpty() && smsValue.matches(smsRegex));
-		boolean xmppAccepted = (!xmppValue.trim().isEmpty() && xmppValue.matches(emailRegex));
+		atLeastOneAddress(email, sms, xmpp, rest);
 		
-		if(!emailAccepted && emailValue.length() > 0) {
-			throw new IllegalArgumentException("Invalid EMail-Address");
-		} else if(!smsAccepted && smsValue.length() > 0) {
-			throw new IllegalArgumentException("Invalid Sms-Address");
-		} else if(!xmppAccepted && xmppValue.length() > 0) {
-			throw new IllegalArgumentException("Invalid Xmpp-Address");
-		} else if( (emailValue.trim().length() == 0) && (smsValue.trim().length() == 0) && (xmppValue.trim().length() == 0) ) {
-			throw new IllegalArgumentException("You entered less than one Address");
+		if (name.isEmpty()) {
+			throw new IllegalArgumentException("Empty username");
+		}
+		if (!rest.isEmpty()) {
+			if (restUser.isEmpty())  {
+				throw new IllegalArgumentException("Empty REST-user");
+			} else if (restPw.isEmpty())  {
+				throw new IllegalArgumentException("Empty REST-password");
+			}
+		} else {
+			if(!restUser.isEmpty() || !restPw.isEmpty()) {
+				throw new IllegalArgumentException("REST-user/REST-password without REST-server");
+			}
 		}
 		
+		if (checkIfReceiverExists(receiverConfigs, name)) {
+			throw new IllegalArgumentException("The entered username " + name + " already exists, please choose a different one");
+		}
 	}
-	
+
+	private static void atLeastOneAddress(String email, String sms, String xmpp, String rest) throws IllegalArgumentException {
+
+		boolean emailMatchesRegex = (!email.isEmpty() && email.matches(EMAIL_REGEX));
+		boolean smsMatchesRegex = (!sms.isEmpty() && sms.matches(SMS_REGEX));
+		boolean xmppMatchesRegex = (!xmpp.isEmpty() && xmpp.matches(XMPP_REGEX));
+
+		if (!emailMatchesRegex && !email.isEmpty()) {
+			throw new IllegalArgumentException("Invalid email-address");
+		} else if (!smsMatchesRegex && !sms.isEmpty()) {
+			throw new IllegalArgumentException("Invalid sms-address");
+		} else if (!xmppMatchesRegex && !xmpp.isEmpty()) {
+			throw new IllegalArgumentException("Invalid xmpp-address");
+		} else if (!rest.isEmpty())  {
+			try {
+				// Checking if the entered rest string is a valid URL
+				new URI(rest);
+			} catch (Exception e) {
+				throw new IllegalArgumentException("Invalid REST-address");
+			}
+		} else if ((email.isEmpty()) && (sms.isEmpty())
+				&& (xmpp.isEmpty()) && (rest.isEmpty())) {
+			throw new IllegalArgumentException("Please enter atleast one address");
+		}
+
+	}
+
 }

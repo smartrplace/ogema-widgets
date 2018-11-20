@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.api.extended;
 
 import java.util.ArrayList;
@@ -34,6 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.Map.Entry;
 
@@ -79,7 +73,11 @@ public abstract class WidgetData {
     protected final ReentrantReadWriteLock lock;
     protected final boolean globalWidget;
 
-    protected Set<OgemaWidgetBase<?>> sessionDependencies = new HashSet<OgemaWidgetBase<?>>();
+    /**
+     * Use {@link #getsessionDependencies()} to initialize this on demand
+     */
+    @Deprecated
+    Set<OgemaWidgetBase<?>> sessionDependencies;
     
     /***************** Constructor ********************/
     
@@ -118,7 +116,7 @@ public abstract class WidgetData {
     
     /**
      * Override this if your widget supports width configuration. Return a CSS selector for the tag to which the width 
-     * setting shall be applied, such as ">div" for an immediate child tag of the widget, or ".someClass" for a 
+     * setting shall be applied, such as "&gt;div" for an immediate child tag of the widget, or ".someClass" for a 
      * class-based selection.
      * @return
      */
@@ -189,7 +187,7 @@ public abstract class WidgetData {
     }
     
     /**
-    * @param pollingInterval; in ms; if <=0, then no polling
+    * @param pollingInterval; in ms; if &lt;=0, then no polling
     */
    protected void setPollingInterval(long pollingInterval) {
 	   writeLock();
@@ -232,8 +230,10 @@ public abstract class WidgetData {
 	   writeLock();
 	   try {
 		   this.cssMap.clear();
-		   for (Map.Entry<String, Map<String,String>> entry :css.entrySet()) {
-			   addCssItem(entry.getKey(), entry.getValue());
+		   if (css != null) {
+			   css.entrySet().stream()
+			   		.filter(entry -> entry.getValue() != null && !entry.getValue().isEmpty())
+			   		.forEach(entry -> cssMap.put(entry.getKey(), new HashMap<>(entry.getValue())));
 		   }
 	   } finally {
 		   writeUnlock();
@@ -255,7 +255,7 @@ public abstract class WidgetData {
     * <li>"tagName", in which case it applies to all tags of the specified type
     * (e.g. "tr" means it will apply to all rows of a table, "tr:first-child"
     * only applies to the first row, etc)</li>
-    * <li>">tagName", in which case it applies to all immediate child tags of
+    * <li>"&gt;tagName", in which case it applies to all immediate child tags of
     * the specified type</li>
     * <li>"#myId", in which case it only applies to a subelement with the
     * specified ID</li>
@@ -272,6 +272,27 @@ public abstract class WidgetData {
 		   }
 		   for (Map.Entry<String, String> entry : value.entrySet()) {
 			   old.put(entry.getKey(), escapeHtmlAttributeValue(entry.getValue()));
+		   }
+	   } finally {
+		   writeUnlock();
+	   }
+   }
+   
+   /**
+    * Unsafe, but sometimes required. Accessed by reflections, do not remove or refactor.
+    * @param selector
+    * @param value
+    */
+   private void addCssItemUnescaped(String selector, Map<String, String> value) {
+	   writeLock();
+	   try {
+		   Map<String,String> old = cssMap.get(selector);
+		   if (old == null) {
+			   old = new HashMap<>(4);
+			   cssMap.put(selector, old);
+		   }
+		   for (Map.Entry<String, String> entry : value.entrySet()) {
+			   old.put(entry.getKey(), entry.getValue());
 		   }
 	   } finally {
 		   writeUnlock();
@@ -345,6 +366,16 @@ public abstract class WidgetData {
 		if (width.charAt(width.length()-1) == ';')
 			width = width.substring(0, width.length()-1);
 		addCssItem(getWidthSelector(), Collections.singletonMap("max-width", width));
+	}
+	
+	public void setMinWidth(String width) {
+		if (width == null || width.isEmpty()) {
+			removeCSSItem(getWidthSelector(), "min-width");
+			return;
+		}
+		if (width.charAt(width.length()-1) == ';')
+			width = width.substring(0, width.length()-1);
+		addCssItem(getWidthSelector(), Collections.singletonMap("min-width", width));
 	}
 	
 	/**
@@ -554,7 +585,7 @@ public abstract class WidgetData {
        triggerGroupAction(triggeredGroup, triggeringAction, triggeredAction, null,0);
    }
 
-   /**
+   /*
     * A dependent widget will updated itself on the client side when a POST
     * request on the governing widget is finished. In this way the server can
     * update the dependent widgets when a new value for the governing widget is
@@ -566,7 +597,7 @@ public abstract class WidgetData {
     * @param widget
     * @return
     */
-   /**<S extends OgemaWidget<?>> S registerDependentWidget(S widget) {
+   /*<S extends OgemaWidget<?>> S registerDependentWidget(S widget) {
        triggerAction(widget.getId(), TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
        dependencies.add(widget);
        //widget.getPage().setWidgetDepedencyStatus(widget, true);
@@ -733,8 +764,9 @@ public abstract class WidgetData {
        JSONObject results = retrieveGETData(req); // must not hold a lock while calling uncontrolled code... may lead to deadlock
        readLock();
        try {
-	       if (!widget.groups.isEmpty())
-	    	   results.put("widgetGroups", widget.groups);
+    	   final Set<String> groups = widget.groups;
+	       if (groups != null && !groups.isEmpty())
+	    	   results.put("widgetGroups", groups);
 	  		//Map<String, String> pars = req.getParams();
 	       //For now every widgets gets information on the page it sits separatly
 	       //pars.put("pageInstance", req.getPageInstanceId());
@@ -884,6 +916,21 @@ public abstract class WidgetData {
 	   } finally {
 		   readUnlock();
 	   }
+   }
+   
+   @Deprecated
+   Set<OgemaWidgetBase<?>> getsessionDependencies() {
+   	Set<OgemaWidgetBase<?>> sessionDependencies = this.sessionDependencies;
+   	if (sessionDependencies == null) {
+   		synchronized (this) {
+   			sessionDependencies = this.sessionDependencies;
+   	    	if (sessionDependencies == null) {
+   	    		sessionDependencies = Collections.newSetFromMap(new ConcurrentHashMap<>());
+   	    		this.sessionDependencies = sessionDependencies;
+   	    	}
+			}
+   	}
+   	return sessionDependencies;
    }
    
    // no locks are required if the widget is not global. In this case all requests associated to one session

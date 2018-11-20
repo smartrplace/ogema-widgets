@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.api.extended;
 
 import java.io.BufferedReader;
@@ -35,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.servlet.ServletException;
@@ -49,11 +43,10 @@ import org.slf4j.LoggerFactory;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
+import de.iwes.widgets.api.extended.HtmlLibrary.LibType;
 import de.iwes.widgets.api.extended.impl.HistoricHttpRequest;
-import de.iwes.widgets.api.extended.impl.HtmlLibrary;
 import de.iwes.widgets.api.extended.impl.SessionExpiredException;
 import de.iwes.widgets.api.extended.impl.WidgetSessionManagement;
-import de.iwes.widgets.api.extended.impl.HtmlLibrary.LibType;
 import de.iwes.widgets.api.services.IconService;
 import de.iwes.widgets.api.services.NameService;
 import de.iwes.widgets.api.widgets.OgemaWidget;
@@ -81,7 +74,9 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
     private boolean defaultVisibility  =true;
 	private String defaultWidth = null;
 	private String defaultMaxWidth = null;
+	private String defaultMinWidth = null;
 	private String defaultHeight = null;
+	private String defaultTooltip = null;
 	private String defaultBackgroundColor = null;
 	private Map<String, Map<String, String>> defaultCssMap;
     private final WidgetSessionManagement<T> sessionManagement;  // never null
@@ -96,24 +91,31 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
     private boolean forceUpdate = false;
     private boolean defaultWaitForPendingRequest = false;
     private boolean postponeLoading = false;
-    final Set<String> groups = new HashSet<String>(); // entries: groupIds 
+    /**
+     * Use {@link #getGroups()} to initialize this on demand
+     */
+    volatile Set<String> groups; // entries: groupIds 
 
 	private boolean dynamicWidget = false;
 	private final String id;
 	// must not be visible to subwidgets/apps rely on this not being visible
 	private final WidgetPageBase<?> page;
 	
-	/*
+	/**
 	 * FIXME synchronization; weak references?
+	 * Use {@link #getDependencies()} to initialize this on demand
 	 */
-    protected Set<OgemaWidgetBase<?>> dependencies = new HashSet<OgemaWidgetBase<?>>();
-    protected boolean governingWidget = false;
+	@Deprecated
+    private volatile Set<OgemaWidgetBase<?>> dependencies;
+    protected volatile boolean governingWidget = false;
     /**
      * The set of widgets which have this one as a dependency. This has weak values for the following reason: 
      * if the parent widget is session-dependent, but this one is not, a hard reference may lead to a 
-     * memory leak.
+     * memory leak.<br>
+     * Use {@link #getParents()} to initialize this on demand
      */
-    protected final Cache<String, OgemaWidgetBase<T>> parents = CacheBuilder.newBuilder().weakValues().build();
+    @Deprecated
+    private volatile Cache<String, OgemaWidgetBase<T>> parents;
     
     
 //    protected Set<OgemaWidgetBase<?>> parents = new HashSet<OgemaWidgetBase<?>>();
@@ -139,6 +141,7 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
 	 * 		must be a valid Java variable name
 	 * @param sendValueOnChange
 	 */
+	@Deprecated
 	protected OgemaWidgetBase(WidgetPage<?> page, String id, SendValue sendValueOnChange) {	 // default: session-dependent options objects
 		this(page, id,false, sendValueOnChange);
 	}
@@ -153,24 +156,17 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
     protected OgemaWidgetBase(WidgetPage<?> page, String id, boolean globalWidget) {
     	if (!isValidJavaIdentifier(id))
     		throw new IllegalArgumentException("Could not create new widget, id " + id + " is not a valid Java identifier.");
-    	// TODO check for widgets with same id and throw exception
     	this.id = id;
 		this.page = (WidgetPageBase<?>) page;
         this.globalWidget = globalWidget;
         this.isSessionSpecific = false;
- /*       if (page instanceof WidgetPageSimple && ((WidgetPageSimple) page).getRootWidget() != null) { 
-        	OgemaWidget<?> rootWidget = ((WidgetPageSimple) page).getRootWidget();
-        	this.parent = rootWidget;
-        	rootWidget.registerSubWidget(this, null);
-        } else {
-        	this.parent = null;
-        } */
     	this.sessionManagement = this.page.registerNew(this, globalWidget);
     	this.registerJsDependencies();
     	if (!globalWidget && this.sessionManagement == null)
     		throw new NullPointerException("Session management is null");
     }
     
+    @Deprecated
     protected OgemaWidgetBase(WidgetPage<?> page, String id, boolean globalWidget, SendValue sendValueOnChange) {
     	this(page, id, globalWidget);
 		if(sendValueOnChange == SendValue.TRUE) {
@@ -216,11 +212,13 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
     	OgemaWidgetBase<?> par = (OgemaWidgetBase<?>) parent;
     	this.id = id + "_" + req.getSessionId();
 		this.page = par.page;
-        this.globalWidget = false; //displayed for a single page anyways // FIXME? think of influence on thread handling
+        this.globalWidget = false;
         this.isSessionSpecific = true;
     	this.sessionManagement = par.page.registerNew(this, req);
     	this.registerJsDependencies();
     }  
+    
+    @Deprecated
     protected OgemaWidgetBase(OgemaWidget parent, String id, SendValue sendValueOnChange, OgemaHttpRequest req) {
     	this(parent, id, req);
 		if(sendValueOnChange == SendValue.TRUE) {
@@ -316,12 +314,16 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
 			opt.setWidth(defaultWidth);
 		if (defaultMaxWidth != null)
 			opt.setMaxWidth(defaultMaxWidth);
+		if (defaultMinWidth != null)
+			opt.setMinWidth(defaultMinWidth);
 		if (defaultHeight != null)
 			opt.setHeight(defaultHeight);
 		if (defaultBackgroundColor != null)
 			opt.setBackgroundColor(defaultBackgroundColor);
 		if (defaultCssMap != null)
 			opt.addCssMap(defaultCssMap);
+		if (defaultTooltip != null)
+			opt.setToolTip(defaultTooltip);
     }
     
     /*
@@ -373,9 +375,12 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
     									 // TODO remove subwidgets of non-global widgets?
     		}
     	}
-    	for(OgemaWidgetBase<?> p: parents.asMap().values()) {
-    		p.unregisterDependentWidget(this);
-    	}
+        final Cache<String, OgemaWidgetBase<T>> parents = this.parents;
+        if (parents != null) {
+	    	for(OgemaWidgetBase<?> p: parents.asMap().values()) {
+	    		p.unregisterDependentWidget(this);
+	    	}
+        }
         page.unregister(this);
 //		sessionManagement and options will be destroyed via  OSGi service
     }
@@ -629,7 +634,7 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
 
 	/**
 	 * Use to force HTML rewrites on every GET, even though the content has not changed. <br>
-	 * Note: this parameter is only evaluated by certain widgets (e.g. {@see org.ogema.tools.widget.html.popup.Popup})
+	 * Note: this parameter is only evaluated by certain widgets (e.g. see org.ogema.tools.widget.html.popup.Popup)
 	 */
 	public void setForceUpdate(boolean forceUpdate) {
 		this.forceUpdate = forceUpdate;
@@ -669,7 +674,7 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
 
     /**
      *
-     * @param pollingInterval; in ms; if <=0, then no polling
+     * @param pollingInterval; in ms; if &lt;=0, then no polling
      */
     @Override
 	public void setPollingInterval(long pollingInterval, OgemaHttpRequest req) {
@@ -679,7 +684,7 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
     /**
      * outer key is the classname to which the CSS properties apply, inner keys
      * are CSS-properties<br>
-     * see {@link #addCssItem(String, Map)}
+     * see {@link #addCssItem(String, Map, OgemaHttpRequest)}
      */
     @Override
 	public Map<String, Map<String, String>> getCssMap(OgemaHttpRequest req) {
@@ -687,7 +692,7 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
     }
 
     /**
-     * see {@link #addCssItem(String, Map)}
+     * see {@link #addCssItem(String, Map, OgemaHttpRequest)}
      */
     @Override
 	public void setCssMap(Map<String, Map<String, String>> css, OgemaHttpRequest req) {
@@ -739,7 +744,7 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
     }
     
     /**
-     * see {@link #addCssItem(String, Map)}
+     * see {@link #addCssItem(String, Map, OgemaHttpRequest)}
      */
     @Override
 	public void removeCSSItems(String selector, OgemaHttpRequest req) {
@@ -747,7 +752,7 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
     }
 
     /**
-     * see {@link #addCssItem(String, Map)}
+     * see {@link #addCssItem(String, Map, OgemaHttpRequest)}
      */
     @Override
 	public void removeCSSItem(String selector, String property, OgemaHttpRequest req) {
@@ -762,6 +767,10 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
     	getData(req).setBackgroundColor(color);
     }
 
+    public void setDefaultToolTip(String tooltip) {
+    	this.defaultTooltip = tooltip;
+    }
+    
     public void setToolTip(String tooltip, OgemaHttpRequest req) {
 		this.getData(req).addAttribute("title", tooltip);
 	}
@@ -947,34 +956,86 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
      * is triggered by the governing widget so that the page contains consistent
      * data
      *
-     * @param widget
-     * @return
+     * @param other
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
+    @Deprecated
     public void registerDependentWidget(OgemaWidget other) {
     	OgemaWidgetBase<?> widget = (OgemaWidgetBase<?>) other;
     	// TODO group dependency 
     	triggerAction(widget, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
     	//triggerAction(widget, TriggeringAction.GET_REQUEST, TriggeredAction.GET_REQUEST);
-        dependencies.add(widget);
-        widget.parents.put(id,(OgemaWidgetBase) this);
+        getDependencies().add(widget);
+        widget.getParents().put(id,(OgemaWidgetBase) this);
         governingWidget = true;
     }
 
+    @Deprecated
     @Override
     public void registerDependentWidget(OgemaWidget other, OgemaHttpRequest req) {
     	OgemaWidgetBase<?> widget = (OgemaWidgetBase<?>) other;
         getData(req).triggerAction(widget, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
-        getData(req).sessionDependencies.add(widget);
+        getData(req).getsessionDependencies().add(widget);
         governingWidget = true;
     }
     
+    @Deprecated
+    private Cache<String, OgemaWidgetBase<T>> getParents() {
+        Cache<String, OgemaWidgetBase<T>> parents = this.parents;
+        if (parents == null) {
+        	synchronized (this) {
+        		parents = this.parents;
+        		if (parents == null) {
+        			parents = CacheBuilder.newBuilder()
+        					.initialCapacity(4)
+        					.concurrencyLevel(2)
+        					.weakValues()
+        					.build();
+        			this.parents = parents;
+        		}
+			}
+        }
+        return parents;
+    }
+    
+    @Deprecated
+    private Set<OgemaWidgetBase<?>> getDependencies() {
+    	Set<OgemaWidgetBase<?>> dependencies = this.dependencies;
+    	if (dependencies == null) {
+    		synchronized (this) {
+    			dependencies = this.dependencies;
+    	    	if (dependencies == null) {
+    	    		dependencies = Collections.newSetFromMap(new ConcurrentHashMap<>(4));
+    	    		this.dependencies = dependencies;
+    	    	}
+			}
+    	}
+    	return dependencies;
+    }
+    
+    private Set<String> getGroups() {
+    	Set<String> groups = this.groups;
+    	if (groups == null) {
+    		synchronized (this) {
+				groups = this.groups;
+				if (groups==null) {
+					groups = new HashSet<>(4);
+					this.groups = groups;
+				}
+			}
+    	}
+    	return groups;
+    }
+    
+    @Deprecated
     @Override
     public void unregisterDependentWidget(OgemaWidget other) {
     	OgemaWidgetBase<?> widget = (OgemaWidgetBase<?>) other;
     	removeTriggerAction(widget, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
-    	dependencies.remove(widget);
+    	final Set<OgemaWidgetBase<?>> dependencies = this.dependencies;
+    	if (dependencies != null)
+    		dependencies.remove(widget);
     }
 
     @Override
@@ -1018,6 +1079,18 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
 	}
 	
 	/**
+	 * Set the default min-width
+	 * @param width
+	 * 		An HTML width identifier, such as "20%", or "60px";
+	 */
+	@Override
+	public void setDefaultMinWidth(String width) {
+		this.defaultMinWidth = width;
+		WidgetData o = createNewSession();
+		o.getWidthSelector(); // just to test that this is implemented
+	}
+	
+	/**
 	 * Set the width
 	 * @param width
 	 * 		An HTML width identifier, such as "20%", or "60px";
@@ -1039,6 +1112,17 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
 		getData(req).setMaxWidth(width);
 	}
     
+	/**
+	 * Set the min-width
+	 * @param width
+	 * 		An HTML width identifier, such as "20%", or "60px";
+	 * @param req
+	 */
+	@Override
+	public void setMinWidth(String width, OgemaHttpRequest req) {
+		getData(req).setMinWidth(width);
+	}
+	
 	@Override
 	public void setDefaultHeight(String height) {
 		this.defaultHeight = height;
@@ -1143,8 +1227,10 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
 	 * 		relative url w.r.t. OGEMA base URL, e.g. "/ogema/jslib/widgetLoader.js"
 	 */
     protected final void registerLibrary(boolean type, String identifier,String path) {
-    	HtmlLibrary library = new HtmlLibrary(type ? LibType.JS : LibType.CSS, identifier, path);
-    	page.registerLibrary(library);
+    	if (page instanceof ServletBasedWidgetPage) {
+	    	HtmlLibrary library = new HtmlLibrary(type ? LibType.JS : LibType.CSS, identifier, path);
+	    	((ServletBasedWidgetPage<?>) page).registerLibrary(library);
+    	}
     }
 
     /**
@@ -1206,11 +1292,17 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
     		return;
     	if (!init)
     		dependencies.add(widget); // base widget is not added to its own dependencies
-    	for (OgemaWidgetBase<?> dep: widget.dependencies) {
-    		gatherTransitiveDependencies(dep, dependencies, false, req);
+    	final Set<OgemaWidgetBase<?>> deps = widget.dependencies;
+    	if (deps != null) {
+	    	for (OgemaWidgetBase<?> dep: deps) {
+	    		gatherTransitiveDependencies(dep, dependencies, false, req);
+	    	}
     	}
-    	for (OgemaWidgetBase<?> dep: widget.getData(req).sessionDependencies) {
-    		gatherTransitiveDependencies(dep, dependencies, false, req);
+    	final Set<OgemaWidgetBase<?>> sessionDeps = widget.getData(req).sessionDependencies;
+    	if (sessionDeps != null) {
+	    	for (OgemaWidgetBase<?> dep: sessionDeps) {
+	    		gatherTransitiveDependencies(dep, dependencies, false, req);
+	    	}
     	}
     	
     }
@@ -1373,15 +1465,19 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
      * @param groupId
      */
     public void addGroup(String groupId) { // FIXME should not be public, but necessary since WidgetGroupImpl must access the method
-    	groups.add(groupId);
+    	getGroups().add(groupId);
     }
     
     /**
      * Internal method
      * @param groupId
      */
-    public boolean removeGroup(String groupId) {  // FIXME should not be public, but necessary since WidgetGroupImpl must access the method
-    	return groups.remove(groupId);
+    public boolean removeGroup(final String groupId) {  // FIXME should not be public, but necessary since WidgetGroupImpl must access the method
+    	final Set<String> groups = this.groups;
+    	if (groupId != null && groups != null)
+    		return groups.remove(groupId);
+    	else
+    		return false;
     }
     
     private final static String serializeHtml(Throwable e) {

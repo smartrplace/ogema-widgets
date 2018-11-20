@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.resource.widget.init;
 
 import java.util.Arrays;
@@ -40,7 +33,7 @@ import de.iwes.widgets.resource.widget.multiselect.ResourceMultiselect;
  * be specified either through the pattern type (see {@link #setType(Class, OgemaHttpRequest)},
  * or can be set explicitly (see {@link #update(Collection, OgemaHttpRequest)}). <br>
  * 
- * This is similar to a {@see ResourceInitDropdown}, but allows to select more than one resource at a time.
+ * This is similar to a ResourceInitDropdown, but allows to select more than one resource at a time.
  * @param <R>
  */
 // TODO listener based updates
@@ -55,7 +48,7 @@ public class ResourceInitMultiselect<R extends Resource> extends ResourceMultise
 	 * Constructor for default update mode AUTO_ON_GET.
 	 * @param page
 	 * @param id
-	 * @param rpa
+	 * @param ra
 	 * @param baseType
 	 */
 	public ResourceInitMultiselect(WidgetPage<?> page, String id,ResourceAccess ra, Class<R> baseType) {
@@ -65,7 +58,7 @@ public class ResourceInitMultiselect<R extends Resource> extends ResourceMultise
 	/**
 	 * @param page
 	 * @param id
-	 * @param rpa
+	 * @param ra
 	 * 		may be null if and only if updateMode is MANUAL
 	 * @param updateMode
 	 * @param baseType
@@ -79,7 +72,7 @@ public class ResourceInitMultiselect<R extends Resource> extends ResourceMultise
 	 * Constructor for session-specific widget with default update mode AUTO_ON_GET
 	 * @param parent
 	 * @param id
-	 * @param rpa
+	 * @param ra
 	 * @param baseType
 	 * @param req
 	 */
@@ -91,7 +84,7 @@ public class ResourceInitMultiselect<R extends Resource> extends ResourceMultise
      * 
      * @param parent
      * @param id
-     * @param rpa
+     * @param ra
      * 		may be null if and only if updateMode is MANUAL
      * @param updateMode
      * @param baseType

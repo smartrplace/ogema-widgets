@@ -1,3 +1,18 @@
+/**
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.iwes.timeseries.eval.api.helper;
 
 import java.util.ArrayList;
@@ -7,17 +22,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ogema.core.timeseries.ReadOnlyTimeSeries;
+
 import de.iwes.timeseries.eval.api.EvaluationInstance;
 import de.iwes.timeseries.eval.api.EvaluationResult;
 import de.iwes.timeseries.eval.api.ResultType;
 import de.iwes.timeseries.eval.api.SingleEvaluationResult;
 import de.iwes.timeseries.eval.api.SingleEvaluationResult.SingleValueResult;
+import de.iwes.timeseries.eval.api.SingleEvaluationResult.TimeSeriesResult;
 import de.iwes.timeseries.eval.api.TimeSeriesData;
 import de.iwes.timeseries.eval.api.configuration.ConfigurationInstance;
 import de.iwes.timeseries.eval.api.configuration.ConfigurationInstance.DateConfiguration;
 import de.iwes.timeseries.eval.api.configuration.StartEndConfiguration;
 import de.iwes.timeseries.eval.base.provider.utils.EvaluationResultImpl;
 import de.iwes.timeseries.eval.base.provider.utils.SingleValueResultImpl;
+import de.iwes.timeseries.eval.base.provider.utils.TimeSeriesResultImpl;
 
 public class EvalHelperExtended {
 	
@@ -88,7 +107,7 @@ public class EvalHelperExtended {
     	for (ResultType type : instance.getResultTypes()) {
     		if (results.containsKey(type)) {
     			final SingleEvaluationResult r = results.get(type).getResults().iterator().next();
-    			if (r instanceof SingleValueResult<?>) {
+    			if (r instanceof SingleValueResult<?> && (!(r instanceof TimeSeriesResultImpl))) {
     				final Object value = ((SingleValueResult<?>) r).getValue();
     				result.put(type.id(), value.toString());
     			}
@@ -96,7 +115,24 @@ public class EvalHelperExtended {
     	}
     	return result;
 	}
-	
+
+	/**Provide time series results as EfficientTimeSeries objects into Map, other results are omitted*/
+	public static Map<String, EfficientTimeSeriesArray> getResultsTS(EvaluationInstance instance) {
+		Map<String, EfficientTimeSeriesArray> result = new HashMap<>();
+		final Map<ResultType, EvaluationResult> results = instance.getResults();
+    	for (ResultType type : instance.getResultTypes()) {
+    		if (results.containsKey(type)) {
+    			final SingleEvaluationResult r = results.get(type).getResults().iterator().next();
+    			if (r instanceof TimeSeriesResult) {
+    				ReadOnlyTimeSeries value = ((TimeSeriesResult) r).getValue();
+    				result.put(type.id(), EfficientTimeSeriesArray.getInstance(value));
+    			}
+    		}
+    	}
+    	if(result.isEmpty()) return null;
+    	return result;
+	}
+
 	public enum PrintMode {
 		OverallEval,
 		PerGW
@@ -119,14 +155,15 @@ public class EvalHelperExtended {
      * for the evaluation
      * @return list of configurations with start and end time
      */
-    public static Collection<ConfigurationInstance> addStartEndTime(long startTime, long endTime, Collection<ConfigurationInstance> configurations) {
-        if (configurations == null) {
-            configurations = new ArrayList<>();
-        }
+    public static Collection<ConfigurationInstance> addStartEndTime(long startTime, long endTime,
+    		final Collection<ConfigurationInstance> configurations) {
+        List<ConfigurationInstance> configurationsRet;
+        if (configurations == null) configurationsRet = new ArrayList<>();
+        else configurationsRet = new ArrayList<>(configurations);
         ConfigurationInstance config = new DateConfiguration(startTime, StartEndConfiguration.START_CONFIGURATION);
-        configurations.add(config);
+        configurationsRet.add(config);
         config = new DateConfiguration(endTime, StartEndConfiguration.END_CONFIGURATION);
-        configurations.add(config);
-        return configurations;
+        configurationsRet.add(config);
+		return configurationsRet;
     }
 }

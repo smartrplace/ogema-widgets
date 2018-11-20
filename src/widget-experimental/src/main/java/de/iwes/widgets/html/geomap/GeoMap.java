@@ -1,23 +1,17 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package de.iwes.widgets.html.geomap;
 
@@ -82,7 +76,6 @@ public class GeoMap extends OgemaWidgetBase<GeoMapData> {
 	/**
 	 * 
 	 * @param mapType
-	 * @param displayStyle
 	 * 		may be null, in which case hte key applies to all display styles of the map type
 	 * @param apiKey
 	 */
@@ -102,7 +95,7 @@ public class GeoMap extends OgemaWidgetBase<GeoMapData> {
 	 * @param height
 	 * 		Can be either an explicit height (like "100%", "500px"), or null,
 	 *      in which case the height is set to full window size 
-	 *      -> this implies that no other widgets will be visible -> ?
+	 *      -&gt; this implies that no other widgets will be visible -&gt; ?
 	 * @param req
 	 */
 	public void setHeight(String height, OgemaHttpRequest req) {
@@ -113,8 +106,7 @@ public class GeoMap extends OgemaWidgetBase<GeoMapData> {
 	 * @param height
 	 * 		Can be either an explicit height (like "100%", "500px"), or null,
 	 *      in which case the height is set to full window size 
-	 *      -> this implies that no other widgets will be visible -> ?
-	 * @param req
+	 *      -&gt; this implies that no other widgets will be visible -&gt; ?
 	 */
 	public void setDefaultHeight(String height) {
 		this.defaultHeight = height;
@@ -197,7 +189,7 @@ public class GeoMap extends OgemaWidgetBase<GeoMapData> {
 
 	/**
 	 * @param lib
-	 * @param type
+	 * @param provider
 	 * @param displayStyle
 	 * 		One of the supported display types of type. See {@link MapProvider#getSupportedDisplayTypes()}.
 	 * @param req
@@ -209,7 +201,8 @@ public class GeoMap extends OgemaWidgetBase<GeoMapData> {
 	}
 	
 	/**
-	 * @param type
+	 * @param lib
+	 * @param provider
 	 * @param displayStyle
 	 * 		One of the supported display types of type. See {@link MapProvider#getSupportedDisplayTypes()}.
 	 * @throws IllegalArgumentException

@@ -8,4 +8,4 @@
 
 # not read or write
 #(org.ogema.accesscontrol.ResourcePermission "path=*" "create,read,activity,delete,addsub") 
-(org.ogema.accesscontrol.WebAccessPermission "name=de.iwes.widgets.ogema-js-bundle")
+(org.ogema.accesscontrol.WebAccessPermission "name=org.ogema.widgets.ogema-js-bundle")

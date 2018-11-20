@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.reswidget.scheduleviewer;
 
 import java.util.ArrayList;
@@ -41,7 +34,6 @@ import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.recordeddata.RecordedData;
 import org.ogema.core.resourcemanager.pattern.ResourcePattern;
 import org.ogema.core.timeseries.ReadOnlyTimeSeries;
-
 import de.iwes.widgets.api.extended.html.bricks.PageSnippet;
 import de.iwes.widgets.api.widgets.OgemaWidget;
 import de.iwes.widgets.api.widgets.WidgetPage;
@@ -65,13 +57,24 @@ import de.iwes.widgets.html.form.label.Label;
 import de.iwes.widgets.html.form.textfield.ValueInputField;
 import de.iwes.widgets.html.html5.Flexbox;
 import de.iwes.widgets.html.multiselect.TemplateMultiselect;
+import de.iwes.widgets.html.plot.api.Plot2DConfiguration;
 import de.iwes.widgets.html.plot.api.PlotType;
-import de.iwes.widgets.html.plotflot.FlotConfiguration;
 import de.iwes.widgets.html.schedulemanipulator.ScheduleManipulator;
 import de.iwes.widgets.html.schedulemanipulator.ScheduleManipulatorConfiguration;
+import de.iwes.widgets.resource.timeseries.OnlineTimeSeries;
 import de.iwes.widgets.reswidget.schedulecsvdownload.ScheduleCsvDownload;
+import de.iwes.widgets.reswidget.scheduleplot.api.ScheduleData;
+import de.iwes.widgets.reswidget.scheduleplot.api.TimeSeriesPlot;
+import de.iwes.widgets.reswidget.scheduleplot.c3.SchedulePlotC3;
+import de.iwes.widgets.reswidget.scheduleplot.container.PlotTypeSelector;
+import de.iwes.widgets.reswidget.scheduleplot.container.SchedulePlotWidgetSelector;
+import de.iwes.widgets.reswidget.scheduleplot.container.TimeSeriesPlotGeneric;
 import de.iwes.widgets.reswidget.scheduleplot.flot.ScheduleDataFlot;
 import de.iwes.widgets.reswidget.scheduleplot.flot.SchedulePlotFlot;
+import de.iwes.widgets.reswidget.scheduleplot.morris2.SchedulePlotMorris;
+import de.iwes.widgets.reswidget.scheduleplot.nvd3.SchedulePlotNvd3;
+import de.iwes.widgets.reswidget.scheduleplot.plotchartjs.SchedulePlotChartjs;
+import de.iwes.widgets.reswidget.scheduleplot.plotlyjs.SchedulePlotlyjs;
 import de.iwes.widgets.reswidget.scheduleviewer.api.ConditionalTimeSeriesFilter;
 import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
 import de.iwes.widgets.reswidget.scheduleviewer.api.ScheduleViewer;
@@ -125,9 +128,11 @@ public class ScheduleViewerBasic<T extends ReadOnlyTimeSeries> extends PageSnipp
 	protected final Label scheduleStartLabel;
 	protected final Label scheduleEndLabel;
 	protected final Label nrDataPointsLabel;
+	protected final Label libraryLabel;
 	protected final Label lineTypeLabel;
 	protected final Label downsampleLabel;
 	protected final Label triggerIndividualConfigLabel;
+	protected final Label updateIntervalLabel;
 	protected final List<TemplateMultiselect<TimeSeriesFilter>> programSelectors;
 	protected final List<ConditionalProgramSelector> filterSelectors;
 	protected final ScheduleSelector scheduleSelector;
@@ -135,7 +140,7 @@ public class ScheduleViewerBasic<T extends ReadOnlyTimeSeries> extends PageSnipp
 	protected final ViewerDatepicker scheduleEndPicker;
 	protected final Label nrDataPoints;
 	protected final Button updateButton;
-	protected final SchedulePlotFlot schedulePlot; // TODO generic interface
+	protected final TimeSeriesPlot<?, ?, ?> schedulePlot;
 	protected final ScheduleManipulator manipulator;
 	protected final StaticHeader manipulatorHeader;
 	protected final ScheduleCsvDownload<T> csvDownload;
@@ -144,10 +149,12 @@ public class ScheduleViewerBasic<T extends ReadOnlyTimeSeries> extends PageSnipp
 	protected final Checkbox optionsCheckbox;
 	protected final Button triggerIndividualConfigPopupButton;
 	protected final ConfigPopup<T> individualConfigPopup;
+	protected final SchedulePlotWidgetSelector librarySelector; // null unless the schedule plot widget is of type TimeSeriesPlotGeneric
 	protected final TemplateDropdown<PlotType> lineTypeSelector;
 	protected final Checkbox2 doDownsample;
 	protected final ValueInputField<Long> downsampleInterval;
 	protected final Flexbox downsampleFlexbox;
+	protected final ValueInputField<Long> updateInterval;
 	private final static String FIX_INTERVAL_OPT = "Fix interval on schedule switch";
 	private final static String SHOW_EMPTY_OPT = "Show empty schedules";
 	
@@ -168,7 +175,7 @@ public class ScheduleViewerBasic<T extends ReadOnlyTimeSeries> extends PageSnipp
 	 * chosen by user). Note that these items are not selected automatically.
 	 * By default, the method returns those schedules 
 	 * that have been set via the methods
-	 * {@link #setDefaultSchedules(Collection)} or {@link #setSchedules(List, OgemaHttpRequest)}.<br> 
+	 * {@link #setDefaultSchedules(Collection)} or {@link #setSchedules(Collection, OgemaHttpRequest)}.<br> 
 	 * 
 	 * Override in subclass to specify a different behaviour and to perform other operations that
 	 * would be placed in the onGET method of a widget. 
@@ -192,7 +199,7 @@ public class ScheduleViewerBasic<T extends ReadOnlyTimeSeries> extends PageSnipp
 	}
 	
 	@Override
-	public final SchedulePlotFlot getSchedulePlot() {
+	public final TimeSeriesPlot<?, ?, ?> getSchedulePlot() {
 		return schedulePlot;
 	}
 	
@@ -262,7 +269,7 @@ public class ScheduleViewerBasic<T extends ReadOnlyTimeSeries> extends PageSnipp
 	 * @return
 	 */
 	@Override
-	public FlotConfiguration getDefaultPlotConfiguration() {
+	public Plot2DConfiguration getDefaultPlotConfiguration() {
 		return schedulePlot.getDefaultConfiguration();
 	}
 	
@@ -272,7 +279,7 @@ public class ScheduleViewerBasic<T extends ReadOnlyTimeSeries> extends PageSnipp
 	 * @return
 	 */
 	@Override
-	public FlotConfiguration getPlotConfiguration(OgemaHttpRequest req) {
+	public Plot2DConfiguration getPlotConfiguration(OgemaHttpRequest req) {
 		return schedulePlot.getConfiguration(req);
 	}
 	
@@ -408,20 +415,6 @@ public class ScheduleViewerBasic<T extends ReadOnlyTimeSeries> extends PageSnipp
 			this.optionsCheckbox = null;
 			this.optionsLabel = null;
 		}
-		if (config.isShowPlotTypeSelector()) {
-			this.lineTypeSelector = new TemplateDropdown<PlotType>(page, id + "_lineTypeSelector");
-			lineTypeSelector.setDefaultItems(Arrays.asList(
-					PlotType.LINE,
-					PlotType.LINE_WITH_POINTS,
-					PlotType.POINTS,
-					PlotType.STEPS,
-					PlotType.BAR
-			));
-			this.lineTypeLabel = new Label(page, id + "_lineTypeLabel", "Select the line type");
-		} else {
-			this.lineTypeSelector = null;
-			this.lineTypeLabel = null;
-		}
 		if (config.isShowDownsampleInterval()) {
 			this.downsampleLabel = new Label(page, id + "_downsampleLabel", "Downsampling interval (ms)");
 			this.doDownsample = new Checkbox2(page, id + "_doDownsample");
@@ -450,6 +443,28 @@ public class ScheduleViewerBasic<T extends ReadOnlyTimeSeries> extends PageSnipp
 			this.doDownsample = null;
 			this.downsampleLabel = null;
 			this.downsampleFlexbox = null;
+		}
+		if (!config.isShowUpdateInterval()) {
+			this.updateInterval = null;
+			this.updateIntervalLabel = null;
+		} else {
+			this.updateIntervalLabel = new Label(page, id + "_updateItvLabel", "Update interval (s)");
+			this.updateInterval = new ValueInputField<Long>(page, id + "_updateItv", Long.class) {
+				
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void onPOSTComplete(String data, OgemaHttpRequest req) {
+					final Long v = getNumericalValue(req);
+					if (v == null || v <=0 )
+						schedulePlot.setPollingInterval(-1, req);
+					else
+						schedulePlot.setPollingInterval(v * 1000, req);
+				}
+				
+			};
+			updateInterval.setDefaultNumericalValue(0L);
+			updateInterval.setDefaultLowerBound(1);
 		}
 		
 //		final BooleanValueCheckBox fixInterval = new BooleanValueCheckBox(page, "fixInterval", "", SendValue.TRUE);
@@ -497,9 +512,9 @@ public class ScheduleViewerBasic<T extends ReadOnlyTimeSeries> extends PageSnipp
 			this.nrDataPointsLabel =null;
 		}
 		if (config.showIndividualConfigBtn) {
-			this.triggerIndividualConfigLabel = new Label(page, "triggerIndvConfigLabel", "Configure display settings");
-			this.triggerIndividualConfigPopupButton = new Button(page, "triggerIndividualConfigPopup", "Open settings");
-			this.individualConfigPopup = new ConfigPopup<>(page, "individualConfigPopup", this);
+			this.triggerIndividualConfigLabel = new Label(page, id + "_triggerIndvConfigLabel", "Configure display settings");
+			this.triggerIndividualConfigPopupButton = new Button(page, id + "_triggerIndividualConfigPopup", "Open settings");
+			this.individualConfigPopup = new ConfigPopup<>(page, id + "_individualConfigPopup", this);
 		}
 		else {
 			this.triggerIndividualConfigLabel = null;
@@ -509,66 +524,28 @@ public class ScheduleViewerBasic<T extends ReadOnlyTimeSeries> extends PageSnipp
 		
 		this.updateButton = new Button(page,  id + "_updateButton", "Apply");
 		
-		final boolean showCheckboxes = configuration.showOptionsSwitch;
-		
-		schedulePlot = new SchedulePlotFlot(page,  id + "_schedulePlot", false, config.bufferWindow) {
-
-			private static final long serialVersionUID = 1L;
-			
-			@Override
-			public void onGET(OgemaHttpRequest req) {
-//				Schedule schedule = scheduleSelector.getSelectedResource(req);
-				final List<T> selectedSchedules = scheduleSelector.getSelectedItems(req);
-				long startTime = scheduleStartPicker.getDateLong(req);
-				long endTime = scheduleEndPicker.getDateLong(req);
-				boolean showEmpty = showCheckboxes ? optionsCheckbox.getCheckboxList(req).get(SHOW_EMPTY_OPT) : true;
-				if (startTime > endTime)
-					startTime = endTime;
-				setInterval(startTime, endTime, req);
-				Map<String, SchedulePresentationData> schedules = new LinkedHashMap<String, SchedulePresentationData>();
-				for (T sched: selectedSchedules) {
-					if (!showEmpty && sched.isEmpty(startTime, endTime))
-						continue;
-					Resource parent = null;
-					Class<?> type = null;
-					if (sched instanceof SchedulePresentationData) {
-						type = ((SchedulePresentationData) sched).getScheduleType();
-					} else if (sched instanceof Schedule) {
-						parent = ((Schedule) sched).getParent();
-					} else if (sched instanceof RecordedData) {
-						String path = ((RecordedData) sched).getPath();
-						parent = am.getResourceAccess().getResource(path);
-					} else 
-						continue;
-					if (parent != null) { 
-						if (!(parent instanceof SingleValueResource) || parent instanceof StringResource)
-							continue;
-						type = parent.getResourceType();
-					}
-					String label = ScheduleViewerBasic.this.displayTemplate.getLabel(sched, req.getLocale());
-					schedules.put(label, new DefaultSchedulePresentationData(sched, type, label));
-				}
-				 final ScheduleDataFlot data = getScheduleData(req);
-				 data.setSchedules(schedules);
-				 if (lineTypeSelector != null) {
-					 final PlotType type = lineTypeSelector.getSelectedItem(req);
-					 if (type != null)
-						 getConfiguration(req).setPlotType(type);
-				 }
-				 final Long itv = downsampleInterval == null ? null : downsampleInterval.getNumericalValue(req);
-				 if (itv != null && doDownsample.isChecked("0", req) && itv > 0)
-					data.setDownsamplingInterval(itv);
-				 else
-					data.setDownsamplingInterval(-1);
-			}
-			
-		};
+		schedulePlot = createPlotWidget(page, id, config);
 		schedulePlot.getDefaultConfiguration().doScale(true); // can be overwritten in app
+		
+		if (config.isShowPlotTypeSelector()) {
+			this.lineTypeSelector = new PlotTypeSelector(page, id + "_lineTypeSelector", schedulePlot);
+			this.lineTypeLabel = new Label(page, id + "_lineTypeLabel", "Select the line type");
+		} else {
+			this.lineTypeSelector = null;
+			this.lineTypeLabel = null;
+		}
+		if (schedulePlot instanceof TimeSeriesPlotGeneric) {
+			this.libraryLabel = new Label(page, id + "_libraryLabel", "Select the plot library");
+			this.librarySelector = new SchedulePlotWidgetSelector(page, id + "_librarySelector");
+		} else {
+			this.libraryLabel = null;
+			this.librarySelector = null;
+		}
 		
 		if (configuration.showCsvDownload) {
 			downloadHeader = new StaticHeader(3, "Download CSV data");
 			downloadHeader.addStyle(HtmlStyle.ALIGNED_CENTER);
-			this.csvDownload = new ScheduleCsvDownload<T>(page, "csvDownload", am.getWebAccessManager()) {
+			this.csvDownload = new ScheduleCsvDownload<T>(page, id + "_csvDownload", am.getWebAccessManager()) {
 
 				private static final long serialVersionUID = 1L;
 				
@@ -589,7 +566,7 @@ public class ScheduleViewerBasic<T extends ReadOnlyTimeSeries> extends PageSnipp
 			manipulatorHeader.addStyle(HtmlStyle.ALIGNED_CENTER);
 			ScheduleManipulatorConfiguration smc = configuration.manipulatorConfiguration;
 			ScheduleManipulatorConfiguration newConfig = new ScheduleManipulatorConfiguration(alert, smc.isShowInterpolationMode(),smc.isShowQuality()); // TODO
-			this.manipulator = new ScheduleManipulator(page, "manipulator", newConfig) {
+			this.manipulator = new ScheduleManipulator(page, id + "_manipulator", newConfig) {
 	
 				private static final long serialVersionUID = 1L;
 				
@@ -617,7 +594,7 @@ public class ScheduleViewerBasic<T extends ReadOnlyTimeSeries> extends PageSnipp
 			this.intervalDropLabel = null;
 //			this.updateIntervalButton = null;
 		} else {
-			this.intervalDropLabel = new Label(page, "intervalDropLabel","Select interval");
+			this.intervalDropLabel = new Label(page, id + "_intervalDropLabel","Select interval");
 			// TODO configurable
 			/*List<String> displayedValues = new ArrayList<>();
 			displayedValues.add("all");
@@ -637,14 +614,15 @@ public class ScheduleViewerBasic<T extends ReadOnlyTimeSeries> extends PageSnipp
 					30*24*60*60*1000L,
 					365*24*60*60*1000L);
 //			this.intervalDrop = new ValueResourceDropdown<IntegerResource>(page, "intervalDrop", null, displayedValues);
-			this.intervalDrop = new TemplateDropdown<Long>(page, "intervalDrop") {
+			this.intervalDrop = new TemplateDropdown<Long>(page, id + "_intervalDrop") {
 				
 				private static final long serialVersionUID = 1L;
 
 				@Override
 				public void onPOSTComplete(String data, OgemaHttpRequest req) {
-					scheduleStartPicker.getData(req).fixedInterval = true;
-					scheduleEndPicker.getData(req).fixedInterval = true;
+					final boolean intervalSelected = (getSelectedItem(req) > 0);
+					scheduleStartPicker.getData(req).fixedInterval = intervalSelected;
+					scheduleEndPicker.getData(req).fixedInterval = intervalSelected;
 				}
 			};
 			intervalDrop.setTemplate(intervalDisplayTemplate);
@@ -669,7 +647,7 @@ public class ScheduleViewerBasic<T extends ReadOnlyTimeSeries> extends PageSnipp
 		}
 		
 		
-		finishBuildingPage(showProgramSelector, showFilterSelector);
+		buildPage(showProgramSelector, showFilterSelector);
 		setDependencies();
 		
 		/*new PageBuilderFinalizer() {
@@ -697,7 +675,7 @@ public class ScheduleViewerBasic<T extends ReadOnlyTimeSeries> extends PageSnipp
 		};*/
 	}
 	
-	protected void finishBuildingPage(boolean showProgramSelector, boolean showFilterSelector) {
+	protected void buildPage(boolean showProgramSelector, boolean showFilterSelector) {
 		int diff = 0;
 		if (configuration.showOptionsSwitch)
 			diff++;
@@ -710,6 +688,10 @@ public class ScheduleViewerBasic<T extends ReadOnlyTimeSeries> extends PageSnipp
 		if (configuration.isShowPlotTypeSelector())
 			diff++;
 		if (configuration.isShowDownsampleInterval())
+			diff++;
+		if (configuration.isShowUpdateInterval())
+			diff++;
+		if (librarySelector != null)
 			diff++;
 		if (showProgramSelector)
 			diff += programSelectors.size();
@@ -736,6 +718,10 @@ public class ScheduleViewerBasic<T extends ReadOnlyTimeSeries> extends PageSnipp
 			table.setContent(row, 0, nrDataPointsLabel).setContent(row++, 1, nrDataPoints);
 		if (configuration.isShowDownsampleInterval())
 			table.setContent(row, 0, downsampleLabel).setContent(row++, 1, downsampleFlexbox);
+		if (configuration.isShowUpdateInterval())
+			table.setContent(row, 0, updateIntervalLabel).setContent(row++, 1, updateInterval);
+		if (librarySelector != null)
+			table.setContent(row, 0, libraryLabel).setContent(row++, 1, librarySelector);
 		if (configuration.isShowPlotTypeSelector())
 			table.setContent(row, 0, lineTypeLabel).setContent(row++, 1, lineTypeSelector);
 		if (configuration.showOptionsSwitch)
@@ -815,16 +801,23 @@ public class ScheduleViewerBasic<T extends ReadOnlyTimeSeries> extends PageSnipp
 		this.triggerAction(scheduleEndPicker, TriggeringAction.GET_REQUEST, TriggeredAction.GET_REQUEST,1);
 		if (configuration.showNrPointsPreview)
 			this.triggerAction(nrDataPoints, TriggeringAction.GET_REQUEST, TriggeredAction.GET_REQUEST,2);
-		this.triggerAction(schedulePlot, TriggeringAction.GET_REQUEST, TriggeredAction.GET_REQUEST,2);
+		// do not update schedule plot automatically, since this may be a very time-consuming operation... wait for user to click 'Apply' button,
+		// or trigger in app
+//		this.triggerAction(schedulePlot, TriggeringAction.GET_REQUEST, TriggeredAction.GET_REQUEST,2);
 		if (triggerIndividualConfigPopupButton != null) 
 			individualConfigPopup.trigger(triggerIndividualConfigPopupButton);
 		if (downsampleInterval != null) {
 			doDownsample.triggerAction(downsampleInterval, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
-			doDownsample.triggerAction(nrDataPoints, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST, 1);
-			downsampleInterval.triggerAction(nrDataPoints, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+			if (nrDataPoints != null) {
+				doDownsample.triggerAction(nrDataPoints, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST, 1);
+				downsampleInterval.triggerAction(nrDataPoints, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+			}
 		}
-			
-	}
+		if (updateInterval !=  null)
+			updateInterval.triggerAction(schedulePlot, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		if (librarySelector != null)
+			librarySelector.triggerAction(schedulePlot, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+	} 
 	
 	protected class ScheduleSelector extends TemplateMultiselect<T> {
 
@@ -884,8 +877,28 @@ public class ScheduleViewerBasic<T extends ReadOnlyTimeSeries> extends PageSnipp
 						
 					}
 				}
-				if (filterSet)
+				// if the request was triggered by any of the filter selectors, do update in any case
+				if (filterSet) {
 					selectMultipleItems(items, req);
+				}
+				else {
+					// if the request was triggered by any of the filter selector but no filter is selected, do update too
+					final OgemaWidget trigger = getPage().getTriggeringWidget(req);
+					if (trigger != null) {
+						if (programSelectors != null) {
+							filterSet = programSelectors.stream()
+								.filter(selector -> selector == trigger)
+								.findAny().isPresent();
+						}
+						if (!filterSet && filterSelectors != null) {
+							filterSet = filterSelectors.stream()
+								.filter(selector -> selector == trigger)
+								.findAny().isPresent();
+						}
+					}
+					if (filterSet)
+						selectMultipleItems(Collections.emptyList(), req);
+				}
 			}
 		}
 	}
@@ -951,6 +964,7 @@ public class ScheduleViewerBasic<T extends ReadOnlyTimeSeries> extends PageSnipp
 					long start0 = sv.getTimestamp();
 					if ((isStart && start0 < startTime) || (!isStart && start0 > startTime)) 
 						startTime = start0;
+					
 				}
 			}
 			if (isStart) {
@@ -1020,6 +1034,141 @@ public class ScheduleViewerBasic<T extends ReadOnlyTimeSeries> extends PageSnipp
 				String.valueOf(object) + "ms"; // should not occur
 		}
 	}; 
+	
+	@SuppressWarnings("serial")
+	private final TimeSeriesPlot<?, ?, ?> createPlotWidget(final WidgetPage<?> page, final String id, 
+			final ScheduleViewerConfiguration config) {
+//		return new SchedulePlotFlot(page,  id + "_schedulePlot", false, config.bufferWindow)
+		@SuppressWarnings("rawtypes")
+		final Class<? extends TimeSeriesPlot> type = config.getPlotLibrary();
+		final TimeSeriesPlot<?, ?, ?> plot;
+		if (type == SchedulePlotFlot.class) { // FIXME not very elegant...
+			plot = new SchedulePlotFlot(page,  id + "_schedulePlot", false, config.bufferWindow) {
+				
+				@Override
+				public void onGET(OgemaHttpRequest req) {
+					updateOnGet(this, configuration.showOptionsSwitch, configuration.isLoadSchedulesOnInit(), req);
+				}
+			
+			};
+		} else if (type == SchedulePlotlyjs.class) {
+			plot = new SchedulePlotlyjs(page,  id + "_schedulePlot", false, config.bufferWindow) {
+				
+				@Override
+				public void onGET(OgemaHttpRequest req) {
+					updateOnGet(this, configuration.showOptionsSwitch, configuration.isLoadSchedulesOnInit(), req);
+				}
+			
+			};
+		} else if (type == SchedulePlotC3.class) {
+			plot = new SchedulePlotC3(page, id, false) {
+				
+				@Override
+				public void onGET(OgemaHttpRequest req) {
+					updateOnGet(this, configuration.showOptionsSwitch, configuration.isLoadSchedulesOnInit(), req);
+				}
+			
+			};
+		} else if (type == SchedulePlotChartjs.class) {
+			plot = new SchedulePlotChartjs(page,  id + "_schedulePlot", false, config.bufferWindow) {
+				
+				@Override
+				public void onGET(OgemaHttpRequest req) {
+					updateOnGet(this, configuration.showOptionsSwitch, configuration.isLoadSchedulesOnInit(), req);
+				}
+			
+			};
+			
+		} else if (type == SchedulePlotNvd3.class) {
+			plot = new SchedulePlotNvd3(page,  id + "_schedulePlot", false, config.bufferWindow) {
+				
+				@Override
+				public void onGET(OgemaHttpRequest req) {
+					updateOnGet(this, configuration.showOptionsSwitch, configuration.isLoadSchedulesOnInit(), req);
+				}
+			
+			};
+		} else if (type == SchedulePlotMorris.class) {
+			plot = new SchedulePlotMorris(page,  id + "_schedulePlot", false) {
+				
+				@Override
+				public void onGET(OgemaHttpRequest req) {
+					updateOnGet(this, configuration.showOptionsSwitch, configuration.isLoadSchedulesOnInit(), req);
+				}
+			
+			};
+		} else if (type == TimeSeriesPlotGeneric.class) {
+			plot = new TimeSeriesPlotGeneric(page, id + "_schedulePlot") {
+				
+				@Override
+				public void onGET(OgemaHttpRequest req) {
+					setPlotWidget(librarySelector.getSelectedItem(req), req);
+					updateOnGet(this, configuration.showOptionsSwitch, configuration.isLoadSchedulesOnInit(), req);
+				}
+				
+			};
+		} else {
+			throw new IllegalArgumentException("Schedule plot type " + type.getName() + " not supported.");
+		}
+		return plot;
+	}
+	
+	private void updateOnGet(final TimeSeriesPlot<?,?,?> plot, final boolean showCheckboxes, 
+				final boolean loadOnFirstInit, final OgemaHttpRequest req) {
+		if (!loadOnFirstInit && getPage().getTriggeringWidget(req) == null)
+			return;
+		final List<T> selectedSchedules = scheduleSelector.getSelectedItems(req);
+		long startTime = scheduleStartPicker.getDateLong(req);
+		long endTime = scheduleEndPicker.getDateLong(req);
+		boolean showEmpty = showCheckboxes ? optionsCheckbox.getCheckboxList(req).get(SHOW_EMPTY_OPT) : true;
+		if (startTime > endTime)
+			startTime = endTime;
+		plot.setInterval(startTime, endTime, req);
+		Map<String, SchedulePresentationData> schedules = new LinkedHashMap<String, SchedulePresentationData>();
+		for (T sched: selectedSchedules) {
+			if (!showEmpty && sched.isEmpty(startTime, endTime))
+				continue;
+			Resource parent = null;
+			Class<?> type = null;
+			if (sched instanceof SchedulePresentationData) {
+				type = ((SchedulePresentationData) sched).getScheduleType();
+			} else if (sched instanceof Schedule) {
+				parent = ((Schedule) sched).getParent();
+			} else if (sched instanceof RecordedData) {
+				String path = ((RecordedData) sched).getPath();
+				parent = am.getResourceAccess().getResource(path);
+			} else if (sched instanceof OnlineTimeSeries) {
+				parent = ((OnlineTimeSeries) sched).getResource();
+			}
+			if (parent instanceof SingleValueResource && !(parent instanceof StringResource)) { 
+				type = parent.getResourceType();
+			}
+			if (type == null)
+				type = Float.class;
+			try {
+				String label = ScheduleViewerBasic.this.displayTemplate.getLabel(sched, req.getLocale());
+				if (label == null)
+					throw new NullPointerException("Null label returned");
+				schedules.put(label, new DefaultSchedulePresentationData(sched, type, label));
+			} catch (Exception e) { // if the display template cannot handle the schedule type
+				am.getLogger().warn("Display template cannot handle schedule {}",sched,e);
+				continue;
+			}
+		}
+		 final ScheduleData<?> data = plot.getScheduleData(req);
+		 data.setSchedules(schedules);
+		 if (lineTypeSelector != null) {
+			 final PlotType type = lineTypeSelector.getSelectedItem(req);
+			 if (type != null)
+				 plot.getConfiguration(req).setPlotType(type);
+		 }
+		 final Long itv = downsampleInterval == null ? null : downsampleInterval.getNumericalValue(req);
+		 if (itv != null && doDownsample.isChecked("0", req) && itv > 0)
+			data.setDownsamplingInterval(itv);
+		 else
+			data.setDownsamplingInterval(-1);
+		
+	}
 	
 //	private static List<Schedule> convertListToScheduls(List<Resource> resList) {
 //		List<Schedule> retval = new ArrayList<>();

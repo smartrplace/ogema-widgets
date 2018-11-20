@@ -1,3 +1,18 @@
+/**
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.iwes.timeseries.eval.viewer.gui;
 
 import java.time.temporal.ChronoUnit;
@@ -33,7 +48,7 @@ import de.iwes.widgets.reswidget.scheduleviewer.DefaultTimeSeriesDisplayTemplate
 import de.iwes.widgets.template.DisplayTemplate;
 
 class ConfigPopupTimeseries extends Popup {
-	
+
 	private static final long serialVersionUID = 1L;
 	private final TemplateDropdown<ReadOnlyTimeSeries> selector;
 	private final ValueInputField<Float> scaleField;
@@ -45,23 +60,23 @@ class ConfigPopupTimeseries extends Popup {
 	private final ReadOnlyTimeSeriesSettingsWidget settings;
 	private final DisplayTemplate<ReadOnlyTimeSeries> scheduleTemplate;
 
-	ConfigPopupTimeseries(WidgetPage<?> page, String id, final DataTree dataTree, final TimeSeriesPlot<?, ?> schedulePlot) {
+	ConfigPopupTimeseries(WidgetPage<?> page, String id, final DataTree dataTree, final TimeSeriesPlot<?, ?, ?> schedulePlot) {
 		super(page, id, true);
 		this.scheduleTemplate = new DefaultTimeSeriesDisplayTemplate<>(getNameService());
 		this.selector = new TemplateDropdown<ReadOnlyTimeSeries>(page, "selector_" + id) {
 
 			private static final long serialVersionUID = 1L;
-			
+
 			@Override
 			public void onGET(OgemaHttpRequest req) {
 				final List<ReadOnlyTimeSeries> schedules = dataTree.getSelectedSchedules(req);
 				update(schedules, req);
 			}
-			
+
 		};
 		selector.setTemplate(scheduleTemplate);
 		this.scaleField = new ValueInputField<Float>(page, "scaleField_" + id, Float.class) {
-			
+
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -76,23 +91,23 @@ class ConfigPopupTimeseries extends Popup {
 				final float val = schedulePlot.getScheduleData(req).getScale(label, req);
 				setNumericalValue(val, req);
 			}
-			
+
 			@Override
 			public void onPOSTComplete(String data, OgemaHttpRequest req) {
 				final Float val = getNumericalValue(req);
 				if (val == null || val <= 0)
 					return;
 				final ReadOnlyTimeSeries schedule = selector.getSelectedItem(req);
-				if (schedule == null) 
+				if (schedule == null)
 					return;
 				final String label = scheduleTemplate.getId(schedule);
 				schedulePlot.getScheduleData(req).setScale(label, val, req);
 			}
-			
+
 		};
-		
+
 		this.offsetField = new ValueInputField<Float>(page, "offsetField_" + id, Float.class) {
-			
+
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -107,22 +122,22 @@ class ConfigPopupTimeseries extends Popup {
 				final float val = schedulePlot.getScheduleData(req).getOffset(label, req);
 				setNumericalValue(val, req);
 			}
-			
+
 			@Override
 			public void onPOSTComplete(String data, OgemaHttpRequest req) {
 				final Float val = getNumericalValue(req);
 				if (val == null)
 					return;
 				final ReadOnlyTimeSeries schedule = selector.getSelectedItem(req);
-				if (schedule == null) 
+				if (schedule == null)
 					return;
 				final String label = scheduleTemplate.getId(schedule);
 				schedulePlot.getScheduleData(req).setOffset(label, val, req);
 			}
-			
+
 		};
 	this.doResampleField = new SimpleCheckbox(page, "doResample_" + id, "") {
-			
+
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -135,7 +150,7 @@ class ConfigPopupTimeseries extends Popup {
 				final ConfigPopupTimeseriesData data = (ConfigPopupTimeseriesData) settings.getData(req);
 				setValue(data.isResampling(profile), req);
 			}
-			
+
 			@Override
 			public void onPOSTComplete(String data, OgemaHttpRequest req) {
 				final ReadOnlyTimeSeries profile = selector.getSelectedItem(req);
@@ -144,13 +159,13 @@ class ConfigPopupTimeseries extends Popup {
 				final boolean resample = getValue(req);
 				((ConfigPopupTimeseriesData) settings.getData(req)).setResampling(profile, resample);
 			}
-			
-			
+
+
 		};
 		this.resampleDurationField = new ValueInputField<Long>(page, "resampleDurationField_" + id, Long.class) {
 
 			private static final long serialVersionUID = 1L;
-			
+
 			@Override
 			public void onGET(OgemaHttpRequest req) {
 				final ReadOnlyTimeSeries profile = selector.getSelectedItem(req);
@@ -163,7 +178,7 @@ class ConfigPopupTimeseries extends Popup {
 				enable(req);
 				setNumericalValue(data.getDuration(profile), req);
 			}
-			
+
 			@Override
 			public void onPOSTComplete(String data, OgemaHttpRequest req) {
 				final ReadOnlyTimeSeries profile = selector.getSelectedItem(req);
@@ -174,12 +189,12 @@ class ConfigPopupTimeseries extends Popup {
 					duration = 0L;
 				((ConfigPopupTimeseriesData) settings.getData(req)).setDuration(profile, duration);
 			}
-			
+
 		};
 		this.resampleUnitField = new TemplateDropdown<TemporalUnit>(page, "resampleUnitField_" + id) {
-			
+
 			private static final long serialVersionUID = 1L;
-			
+
 			@Override
 			public void onGET(OgemaHttpRequest req) {
 				final ConfigPopupTimeseriesData data = (ConfigPopupTimeseriesData) settings.getData(req);
@@ -196,7 +211,7 @@ class ConfigPopupTimeseries extends Popup {
 				else
 					selectItem(unit, req);
 			}
-			
+
 			@Override
 			public void onPOSTComplete(String data, OgemaHttpRequest req) {
 				final ReadOnlyTimeSeries profile = selector.getSelectedItem(req);
@@ -204,7 +219,7 @@ class ConfigPopupTimeseries extends Popup {
 					return;
 				((ConfigPopupTimeseriesData) settings.getData(req)).setUnit(profile, getSelectedItem(req));
 			}
-			
+
 		};
 		resampleUnitField.setDefaultItems(Arrays.asList(
 				ChronoUnit.MINUTES,
@@ -217,12 +232,12 @@ class ConfigPopupTimeseries extends Popup {
 		));
 		resampleUnitField.selectDefaultItem(ChronoUnit.HOURS);
 		resampleUnitField.setTemplate(new DisplayTemplate<TemporalUnit>() {
-			
+
 			@Override
 			public String getLabel(TemporalUnit object, OgemaLocale locale) {
 				return object.toString();
 			}
-			
+
 			@Override
 			public String getId(TemporalUnit object) {
 				return object.toString();
@@ -230,13 +245,13 @@ class ConfigPopupTimeseries extends Popup {
 		});
 		this.settings = new ReadOnlyTimeSeriesSettingsWidget(page, "settings_" + id);
 		this.closeBtn = new Button(page, "closeBtn_" + id, "Close");
-		
-		
+
+
 		final Flexbox resampleDurationBox = new Flexbox(page, "resampleDurationBox_" + id, true);
 		resampleDurationBox.addItem(resampleDurationField, null).addItem(resampleUnitField, null);
 		resampleDurationBox.setDefaultJustifyContent(JustifyContent.SPACE_BETWEEN);
 		resampleDurationBox.setDefaultAlignContent(AlignContent.CENTER);
-		
+
 		PageSnippet snippet = new PageSnippet(page, "snippet_"+id, true);
 		int row = 0;
 		final StaticTable t = new StaticTable(5, 2, new int[]{4,8})
@@ -249,14 +264,14 @@ class ConfigPopupTimeseries extends Popup {
 		this.setBody(snippet, null);
 		this.setTitle("Schedule viewer configuration", null);
 		this.setFooter(closeBtn, null);
-		
+
 		closeBtn.triggerAction(this, TriggeringAction.POST_REQUEST, TriggeredAction.HIDE_WIDGET);
 		selector.triggerAction(offsetField, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		selector.triggerAction(scaleField, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		doResampleField.triggerAction(resampleDurationField, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		doResampleField.triggerAction(resampleUnitField, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 	}
-	
+
 	void trigger(final OgemaWidget widget) {
 		widget.triggerAction(selector, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		widget.triggerAction(scaleField, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
@@ -266,23 +281,23 @@ class ConfigPopupTimeseries extends Popup {
 		widget.triggerAction(resampleUnitField, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		widget.triggerAction(this, TriggeringAction.POST_REQUEST, TriggeredAction.SHOW_WIDGET);
 	}
-	
+
 	 TemporalUnit getResampleUnit(final ReadOnlyTimeSeries profile, final OgemaHttpRequest req) {
 		 return settings.getResampleUnit(profile, req);
 	 }
-		
+
 	long getResampleDuration(final ReadOnlyTimeSeries profile, final OgemaHttpRequest req) {
 		return settings.getResampleDuration(profile, req);
 	}
-	 
+
 	boolean isResampling(final ReadOnlyTimeSeries profile, final OgemaHttpRequest req) {
 		return ((ConfigPopupTimeseriesData) settings.getData(req)).isResampling(profile);
 	}
-	
+
 	void clear(final OgemaHttpRequest req) {
 		((ConfigPopupTimeseriesData) settings.getData(req)).profileSettings.clear();
 	}
-	 
+
 	private static class ReadOnlyTimeSeriesSettingsWidget extends EmptyWidget {
 
 		private static final long serialVersionUID = 1L;
@@ -290,30 +305,30 @@ class ConfigPopupTimeseries extends Popup {
 		public ReadOnlyTimeSeriesSettingsWidget(WidgetPage<?> page, String id) {
 			super(page, id);
 		}
-		
+
 		@Override
 		public EmptyData createNewSession() {
 			return new ConfigPopupTimeseriesData(this);
 		}
-		
+
 		private TemporalUnit getResampleUnit(final ReadOnlyTimeSeries profile, final OgemaHttpRequest req) {
 			return ((ConfigPopupTimeseriesData) getData(req)).getUnit(profile);
 		}
-		
+
 		private long getResampleDuration(final ReadOnlyTimeSeries profile, final OgemaHttpRequest req) {
 			return ((ConfigPopupTimeseriesData) getData(req)).getDuration(profile);
 		}
-		
+
 	}
-	
+
 	private static class ConfigPopupTimeseriesData extends EmptyData {
-		
+
 		private final Map<ReadOnlyTimeSeries, PlotSettings> profileSettings = new HashMap<>(2);
 
 		public ConfigPopupTimeseriesData(EmptyWidget empty) {
 			super(empty);
 		}
-		
+
 		private PlotSettings getOrCreateSettings(ReadOnlyTimeSeries profile) {
 			if (profile == null)
 				return null;
@@ -324,19 +339,19 @@ class ConfigPopupTimeseries extends Popup {
 			}
 			return settings;
 		}
-		
+
 		private void setResampling(final ReadOnlyTimeSeries profile, boolean resample) {
 			if (profile == null)
 				return;
 			getOrCreateSettings(profile).doResample = resample;
 		}
-		
+
 		private boolean isResampling(final ReadOnlyTimeSeries profile) {
 			if (profile == null || !profileSettings.containsKey(profile))
 				return false;
 			return profileSettings.get(profile).doResample;
 		}
-		
+
 		private long getDuration(final ReadOnlyTimeSeries profile) {
 			if (profile == null || !profileSettings.containsKey(profile))
 				return 1;
@@ -345,7 +360,7 @@ class ConfigPopupTimeseries extends Popup {
 				duration = 1;
 			return duration;
 		}
-		
+
 		private void setDuration(final ReadOnlyTimeSeries profile, long duration) {
 			if (profile == null)
 				return;
@@ -354,13 +369,13 @@ class ConfigPopupTimeseries extends Popup {
 			final PlotSettings settings = getOrCreateSettings(profile);
 			settings.resampleDuration = duration;
 		}
-		
+
 		private TemporalUnit getUnit(final ReadOnlyTimeSeries profile) {
 			if (profile == null || !profileSettings.containsKey(profile))
 				return null;
 			return profileSettings.get(profile).resampleUnit;
 		}
-		
+
 		private void setUnit(final ReadOnlyTimeSeries profile,TemporalUnit unit) {
 			if (profile == null)
 				return;
@@ -369,17 +384,17 @@ class ConfigPopupTimeseries extends Popup {
 				unit = ChronoUnit.HOURS;
 			settings.resampleUnit = unit;
 		}
-		
-		
+
+
 	}
-	
+
 	// one instance per time serise per session
-	private static class PlotSettings {		
+	private static class PlotSettings {
 		// [scale, offset]
-		private long resampleDuration = 1; 
+		private long resampleDuration = 1;
 		private TemporalUnit resampleUnit = ChronoUnit.HOURS;
 		private boolean doResample = false;
-		
+
 	}
-	
+
 }

@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.html.listgroup;
 
 import java.util.ArrayList;
@@ -33,12 +26,14 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import de.iwes.widgets.api.extended.OgemaWidgetBase;
 import de.iwes.widgets.api.extended.WidgetData;
 import de.iwes.widgets.api.extended.plus.TemplateData;
 import de.iwes.widgets.api.widgets.OgemaWidget;
 import de.iwes.widgets.api.widgets.WidgetStyle;
 import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
 import de.iwes.widgets.template.PageSnippetTemplate;
+import de.iwes.widgets.template.WidgetTemplate;
 
 public class ListGroupData<T> extends WidgetData implements TemplateData<T> {
 	
@@ -52,15 +47,18 @@ public class ListGroupData<T> extends WidgetData implements TemplateData<T> {
 		BOOTSTRAP_LIST_GROUP = new WidgetStyle<>(css,2);
 	}
 
+	@Deprecated
 	protected final PageSnippetTemplate<T> template;
+	protected final WidgetTemplate<T> widgetTemplate;
 	// elements and snippets must be kept parallel
 	protected final List<T> elements = new ArrayList<>(); 
-	protected final List<OgemaWidget> snippets = new ArrayList<>();
+	protected final List<Object> snippets = new ArrayList<>();
 	protected T selected;
 	
-	protected ListGroupData(ListGroup<T> widget, PageSnippetTemplate<T> template) {
+	protected ListGroupData(ListGroup<T> widget, PageSnippetTemplate<T> template, WidgetTemplate<T> widgetTemplate) {
 		super(widget);
 		this.template = template;
+		this.widgetTemplate = widgetTemplate;
 	}
 
 	@Override
@@ -69,8 +67,8 @@ public class ListGroupData<T> extends WidgetData implements TemplateData<T> {
 		JSONArray data = new JSONArray();
 		readLock();
 		try {
-			for (OgemaWidget snippet: snippets) {
-				data.put(snippet.getId());
+			for (Object snippet: snippets) {
+				data.put(getHtml(snippet));
 			}
 		} finally {
 			readUnlock();
@@ -103,7 +101,8 @@ public class ListGroupData<T> extends WidgetData implements TemplateData<T> {
 			if (elements.contains(resource))
 				return false;
 			elements.add(resource);
-			OgemaWidget snippet = template.getSnippet(resource, getInitialRequest());
+			final Object snippet = template != null ? template.getSnippet(resource, getInitialRequest())
+					: widgetTemplate.getItem(resource, widget, getInitialRequest());
 			return snippets.add(snippet);
 		} finally {
 			writeUnlock();
@@ -118,8 +117,9 @@ public class ListGroupData<T> extends WidgetData implements TemplateData<T> {
 			if (idx < 0) 
 				return false;
 			elements.remove(idx);
-			OgemaWidget snippet = snippets.remove(idx);
-			snippet.destroyWidget();
+			final Object snippet = snippets.remove(idx);
+			if (snippet instanceof OgemaWidgetBase<?>)
+				((OgemaWidgetBase<?>) snippet).destroyWidget();
 			return true;
 		} finally {
 			writeUnlock();
@@ -166,4 +166,13 @@ public class ListGroupData<T> extends WidgetData implements TemplateData<T> {
 		return selected;
 	}
 
+	private final JSONObject getHtml(final Object item) {
+		if (widgetTemplate != null)
+			return widgetTemplate.serialize(item);
+		final JSONObject json = new JSONObject();
+		json.put("type",2);
+		json.put("content", ((OgemaWidgetBase<?>) item).getId());
+		return json;
+	}
+	
 }

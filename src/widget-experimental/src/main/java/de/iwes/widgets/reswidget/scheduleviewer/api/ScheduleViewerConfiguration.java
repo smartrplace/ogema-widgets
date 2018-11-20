@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.reswidget.scheduleviewer.api;
 
 import java.util.ArrayList;
@@ -30,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 import de.iwes.widgets.html.schedulemanipulator.ScheduleManipulatorConfiguration;
+import de.iwes.widgets.reswidget.scheduleplot.api.TimeSeriesPlot;
+import de.iwes.widgets.reswidget.scheduleplot.flot.SchedulePlotFlot;
 import de.iwes.widgets.reswidget.scheduleviewer.ScheduleViewerBasic;
 
 /**
@@ -46,7 +41,15 @@ public class ScheduleViewerConfiguration {
 	public final boolean showNrPointsPreview;
 	private final boolean showPlotTypeSelector;
 	private final boolean showDownsampleInterval;
+	private final boolean showUpdateInterval;
+	private final boolean loadSchedulesOnInit;
+	@SuppressWarnings("rawtypes")
+	private final Class<? extends TimeSeriesPlot> plotType;
 	// FIXME final
+	/**
+	 * @deprecated Non-final fields will be removed in a future version of this
+	 */
+	@Deprecated
 	public boolean showIndividualConfigBtn;
 	public final Long bufferWindow;
 	
@@ -104,8 +107,6 @@ public class ScheduleViewerConfiguration {
 	 * 		Add a download field for CSV data?
 	 * @param useNameService
 	 * 		For use with Schedules. If true, the schedule viewer uses the NameService to label the schedule resources.
-	 * @param plotConfiguration 
-	 * 		May be null, in which case for instance the plot type is determined by the interpolation mode of the schedules passed.
 	 * @param manipulatorConfiguration
 	 * 		Configuration for the schedule manipulator. Ignored if showManipulator is false. <br>
 	 * 		Note: the alert field is ignored, instead the alert of the SCheduleViewer is used.
@@ -135,6 +136,7 @@ public class ScheduleViewerConfiguration {
 		this.useNameService = useNameService;
 		this.showOptionsSwitch = showOptionsSwitch;
 		this.showNrPointsPreview = showNrPointsPreview;
+		this.loadSchedulesOnInit = false;
 		this.startTime = startTime;
 		this.endTime = endTime;
 		if (bufferWindow != null && bufferWindow < 0)
@@ -185,12 +187,15 @@ public class ScheduleViewerConfiguration {
 		}
 		this.showPlotTypeSelector = false;
 		this.showDownsampleInterval = false;
+		this.showUpdateInterval = false;
+		this.plotType = SchedulePlotFlot.class;
 	}
 	
 	ScheduleViewerConfiguration(boolean showManipulator, boolean showCsvDownload, boolean useNameService, boolean showOptionsSwitch, 
 			ScheduleManipulatorConfiguration manipulatorConfiguration, boolean showNrPointsPreview, Long startTime, Long endTime, 
 			List<Map<String,TimeSeriesFilter>> programs, List<Map<String,ConditionalTimeSeriesFilter<?>>> filters, Long bufferWindow,
-			boolean showIndividualConfigPopup, boolean showIntervals, boolean showPlotTypeSelector, boolean downsamplingItv) {
+			boolean showIndividualConfigPopup, boolean showIntervals, boolean showPlotTypeSelector, boolean downsamplingItv, boolean showUpdateInterval,
+			Class<? extends TimeSeriesPlot> plotType, boolean loadSchedulesOnInit) {
 		this.showManipulator = showManipulator;
 		this.showCsvDownload = showCsvDownload;
 		this.useNameService = useNameService;
@@ -198,6 +203,8 @@ public class ScheduleViewerConfiguration {
 		this.showNrPointsPreview = showNrPointsPreview;
 		this.startTime = startTime;
 		this.endTime = endTime;
+		this.loadSchedulesOnInit = loadSchedulesOnInit;
+		this.showUpdateInterval = showUpdateInterval;
 		if (bufferWindow != null && bufferWindow < 0)
 			throw new IllegalArgumentException();
 		this.bufferWindow = bufferWindow;
@@ -214,6 +221,7 @@ public class ScheduleViewerConfiguration {
 		this.showStandardIntervals = showIntervals;
 		this.showPlotTypeSelector = showPlotTypeSelector;
 		this.showDownsampleInterval = downsamplingItv;
+		this.plotType = plotType;
 	}
 
 	public boolean isShowManipulator() {
@@ -274,6 +282,19 @@ public class ScheduleViewerConfiguration {
 
 	public boolean isShowDownsampleInterval() {
 		return showDownsampleInterval;
+	}
+	
+	public boolean isShowUpdateInterval() {
+		return showUpdateInterval;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public Class<? extends TimeSeriesPlot> getPlotLibrary() {
+		return plotType;
+	}
+	
+	public boolean isLoadSchedulesOnInit() {
+		return loadSchedulesOnInit;
 	}
 	
 }

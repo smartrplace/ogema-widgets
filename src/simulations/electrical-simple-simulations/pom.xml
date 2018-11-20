@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   	<modelVersion>4.0.0</modelVersion>
+    <parent>
+       <artifactId>ogema-simulations</artifactId>
+       <groupId>org.ogema.apps</groupId>
+   	   <version>2.2.0</version>
+    </parent>
+    
+    <artifactId>electrical-simple-simulations</artifactId>
+    <groupId>org.ogema.sim</groupId>
+    <name>OGEMA Simulation: Electrical devices</name>
+    <description>OGEMA Simulation: Electrical devices</description>
+    
+    <packaging>bundle</packaging>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-scr-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <!-- FIXME all these packages need to be exported in order to for the resource types contained to be visible...
+                        	it would be better to put them into one package
+                         -->
+                        <Export-Package>
+                        	de.iwes.elsim.battery,
+                        	de.iwes.elsim.hmswitchbox,
+                        	de.iwes.elsim.meter.bpunit,
+                        	de.iwes.elsim.meter.elconbox,
+                        	de.iwes.elsim.pv
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.scr.annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.core</groupId>
+            <artifactId>api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.core</groupId>
+            <artifactId>models</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.apps</groupId>
+            <artifactId>simulation-service</artifactId>
+         </dependency>
+        <dependency>
+            <groupId>org.ogema.tools</groupId>
+            <artifactId>standard-patterns</artifactId>
+            <version>2.2.0</version>
+         </dependency>
+         <dependency>
+            <groupId>org.ogema.widgets</groupId>
+            <artifactId>util-extended</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+   </dependencies>
+</project>

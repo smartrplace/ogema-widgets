@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.api.extended;
 
 import java.security.AccessController;
@@ -34,8 +27,6 @@ import java.util.Set;
 
 import org.slf4j.LoggerFactory;
 
-import de.iwes.widgets.api.OgemaGuiService;
-import de.iwes.widgets.api.extended.impl.HtmlLibrary;
 import de.iwes.widgets.api.extended.impl.OgemaOsgiWidgetService;
 import de.iwes.widgets.api.extended.impl.OgemaOsgiWidgetServiceImpl;
 import de.iwes.widgets.api.extended.impl.WidgetSessionManagement;
@@ -54,13 +45,14 @@ public class WidgetPageBase<S extends LocaleDictionary> implements WidgetPage<S>
 
 	private final String startHtml;
 	final WidgetAppImpl app; // need to be public?
-	private WidgetGroup allWidgets = null; 
+	private WidgetGroup allWidgets = null;
 	/**
 	 * Of type
 	 *  org.ogema.webadmin.AdminWebAccessManager.StaticRegistration
 	 */
-	final Object staticRegistration;
-	
+	// quasi-final
+	volatile Object staticRegistration;
+
 	/***************** Constructors ********************/
 
 //	private Map<String, OgemaWidgetBase<?>> simpleWidgets = new ConcurrentHashMap<String, OgemaWidgetBase<?>>();
@@ -71,15 +63,15 @@ public class WidgetPageBase<S extends LocaleDictionary> implements WidgetPage<S>
 	public WidgetPageBase(WidgetAppImpl app) {
 		this(app, "index.html",false);
 	}
-	
+
 	public WidgetPageBase(WidgetAppImpl app, boolean setAsStartPage) {
 		this(app, "index.html", setAsStartPage);
 	}
-	
+
 	public WidgetPageBase(WidgetAppImpl app, String startHtml) {
 		this(app, startHtml, false);
 	}
-	
+
 	/**
 	 * Create page with specified start HTML page
 	 * @param startHtml
@@ -89,7 +81,17 @@ public class WidgetPageBase<S extends LocaleDictionary> implements WidgetPage<S>
 		this.app = app;
 		if (!startHtml.contains(".htm")) startHtml = startHtml +".html"; // required later on
 		this.startHtml = startHtml;
-		initBeforeRegistration();
+//		initBeforeRegistration();
+		// hacky; must not call register if page is a WidgetPageSimple or LazyPage
+//		if (getClass() == WidgetPageBase.class)
+		if (!(this instanceof ServletBasedWidgetPage))
+			register(setAsStartPage, this, app);
+
+//		app.widgetService.setSessionExpiryTime(this, app.getSessionExpiryTime());
+//		app.widgetService.setMaxNrSessions(this, app.getMaxNrSessions());
+	}
+
+	public void register(final boolean setAsStartPage, final WidgetPageBase<?> page, final WidgetAppImpl app) {
 		Object staticReg = null;
 		try {
 			staticReg = AccessController.doPrivileged(new PrivilegedAction<Object>() {
@@ -103,18 +105,9 @@ public class WidgetPageBase<S extends LocaleDictionary> implements WidgetPage<S>
 			app.registerFallback(this, setAsStartPage);
 		}
 		this.staticRegistration = staticReg;
-			
-//		app.widgetService.setSessionExpiryTime(this, app.getSessionExpiryTime());
-//		app.widgetService.setMaxNrSessions(this, app.getMaxNrSessions());
 	}
-	
+
 	/*************** Public methods *****************/
-	
-//	//Override if required 
-//	public void init() {};
-//	
-	//Override if required
-	protected void initBeforeRegistration() {};
 
 	/**
 	 *  returns the URL relative to app base
@@ -123,13 +116,13 @@ public class WidgetPageBase<S extends LocaleDictionary> implements WidgetPage<S>
 	public String getUrl() {
 		return startHtml;
 	}
-	
+
 	@Override
 	public String getFullUrl() {
 		String appUrl = getApp().htmlPath;
 		return appUrl + "/" + startHtml;
 	}
-	
+
 	public final String unregister(OgemaWidgetBase<?> widget) {
 		// remove widget from service
 		final OgemaOsgiWidgetService widgetService = getApp().getWidgetService();
@@ -137,7 +130,7 @@ public class WidgetPageBase<S extends LocaleDictionary> implements WidgetPage<S>
 			widgetService.unregisterWidget(getServletBase(), widget);
 		return widget.getId();
 	}
-	
+
 	final void close() {
 //		Iterator<Entry<String, OgemaWidgetBase<?>>> it = simpleWidgets.entrySet().iterator();
 //		while (it.hasNext()) {
@@ -163,7 +156,7 @@ public class WidgetPageBase<S extends LocaleDictionary> implements WidgetPage<S>
 //	public Map<String, OgemaWidgetBase<?>> getWidgets() {
 //		return simpleWidgets;
 //	}
-	
+
 	//@Deprecated
     //public AppSessionData getSession(OgemaHttpRequest req) {
     //	return getApp().sessions.getSessionData(req);
@@ -172,29 +165,25 @@ public class WidgetPageBase<S extends LocaleDictionary> implements WidgetPage<S>
 //    public final boolean usePageSpecificId() {
 //    	return getApp().pageSpecificId;
 //    }
-	
+
 	public final String getServletBase() {
 		String servletPath =  getApp().appUrl()+"/"+getUrl();
 		int idx = servletPath.lastIndexOf(".htm");
 		return servletPath.substring(0, idx);
-		
+
 	}
-	
+
 	@Override
 	public Map<String,String[]> getPageParameters(OgemaHttpRequest req) {
 		return getWidgetService().getPageParameters(this, req);
 	}
-	
-	
+
+
 	/*************** Internal methods *****************/
-	
-	void registerLibrary(HtmlLibrary lib) {
-		// currently only used by WidgetPageSimple
-	}
-	
+
 	/**
 	 * Register a SimpleWidget on a page.
-	 * 
+	 *
 	 * @param widget
 	 * @return widget id
 	 */
@@ -217,7 +206,7 @@ public class WidgetPageBase<S extends LocaleDictionary> implements WidgetPage<S>
 		String servletPath = getServletBase();
 		return (WidgetSessionManagement<T>) getWidgetService().registerWidgetNew(widget,servletPath,getApp().wam,session);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	final  <T extends WidgetData> WidgetSessionManagement<T> registerNew(OgemaWidget widget, OgemaHttpRequest session) {
 		return registerNew((OgemaWidgetBase<T>) widget, session);
@@ -226,7 +215,7 @@ public class WidgetPageBase<S extends LocaleDictionary> implements WidgetPage<S>
 	public final WidgetAppImpl getApp() {
 		return app;
 	}
-	
+
 	private final Map<String, S> dicts = new HashMap<String, S>();
 
 /*	public WidgetPage<S> registerLocalisation(S dict) {
@@ -234,8 +223,8 @@ public class WidgetPageBase<S extends LocaleDictionary> implements WidgetPage<S>
 		String code = dict.getLocale().getLanguage();
 		dicts.put(code, dict);
 		return this;
-	} */ 
-	
+	} */
+
 	@Override
 	public final <T extends S> WidgetPageBase<S> registerLocalisation(final Class<T> clazz) {
 		return AccessController.doPrivileged(new PrivilegedAction<WidgetPageBase<S>>() {  // need reflection permission here
@@ -244,7 +233,7 @@ public class WidgetPageBase<S extends LocaleDictionary> implements WidgetPage<S>
 				try {
 					T object = clazz.getConstructor().newInstance();
 					String code = object.getLocale().getLanguage();
-					dicts.put(code, object); 
+					dicts.put(code, object);
 				} catch (NoSuchMethodException e) {
 					LoggerFactory.getLogger(JsBundleApp.class).error("Class {} does not provide a public default constructor.",clazz);
 				} catch (Exception e) {
@@ -254,11 +243,11 @@ public class WidgetPageBase<S extends LocaleDictionary> implements WidgetPage<S>
 			}
 		});
 	}
-	
-	
+
+
 	@Override
 	public final S getDictionary(String language) {  // TODO let app/user set a fallback language
-		if (dicts.isEmpty()) 
+		if (dicts.isEmpty())
 			throw new IllegalStateException("No dictionary has been registered with the page " + getUrl());
 		S dict = dicts.get(language);
 		if (dict == null) {
@@ -272,17 +261,17 @@ public class WidgetPageBase<S extends LocaleDictionary> implements WidgetPage<S>
 		}
 		return dict;
 	}
-	
+
 	@Override
 	public final S getDictionary(OgemaHttpRequest req) {
 		return getDictionary(req.getLocaleString());
 	}
-	
+
 	/**
 	 * @param groupId
 	 * 		a unique id
 	 * @param widgets
-	 * 		widgets constituting the group. It is possible to add widgets to the group later on, using {@see WidgetGroup#addWidget(OgemaWidget)}
+	 * 		widgets constituting the group. It is possible to add widgets to the group later on, using {@link WidgetGroup#addWidget(OgemaWidget)}
 	 * @return
 	 * 		the newly created WidgetGroup
 	 * @throws IllegalArgumentException
@@ -290,7 +279,7 @@ public class WidgetPageBase<S extends LocaleDictionary> implements WidgetPage<S>
 	 */
 	@Override
 	public final WidgetGroup registerWidgetGroup(String groupId, Collection<OgemaWidget> widgets) throws IllegalArgumentException {
-		if (widgets == null) 
+		if (widgets == null)
 			widgets = Collections.emptySet();
 		Iterator<OgemaWidget> it = widgets.iterator();
 		while(it.hasNext()) {
@@ -299,14 +288,14 @@ public class WidgetPageBase<S extends LocaleDictionary> implements WidgetPage<S>
 				throw new IllegalArgumentException("Cannot assign widget belonging to another page to a WidgetGroup");
 			((OgemaWidgetBase<?>) widget).addGroup(groupId);
 		}
-		return getWidgetService().registerWidgetGroup(this, groupId, widgets, app.wam);		
+		return getWidgetService().registerWidgetGroup(this, groupId, widgets, app.wam);
 	}
-	
+
 	@Override
 	public WidgetGroup registerWidgetGroup(String groupId) {
 		return registerWidgetGroup(groupId, null);
 	}
-	
+
 	@Override
 	public void removeWidgetGroup(WidgetGroup group) {
 		Set<OgemaWidget> widgets  = group.getWidgets();
@@ -316,17 +305,17 @@ public class WidgetPageBase<S extends LocaleDictionary> implements WidgetPage<S>
 			} catch (Exception e) {}
 		}
 		getWidgetService().removeWidgetGroup(this, group);
-		
+
 	}
-	
+
 	@Override
 	public final synchronized WidgetGroup getAllWidgets() {
 		if (allWidgets == null) {
 			allWidgets = new AllWidgetsGroupImpl(getPageRegistration());
 		}
-		return allWidgets;	
+		return allWidgets;
 	}
-	
+
 //	/*
 //	 * handle POST requests triggered in some other widget's onPrePOST method
 //	 * @param request
@@ -356,7 +345,7 @@ public class WidgetPageBase<S extends LocaleDictionary> implements WidgetPage<S>
 //				app.log.error("Error executing triggered POST: {}",widget, e);
 //			}
 //		}
-//		
+//
 //	}
 
 	@Override
@@ -388,7 +377,7 @@ public class WidgetPageBase<S extends LocaleDictionary> implements WidgetPage<S>
 	public void showOverlay(boolean show) {
 		throw new UnsupportedOperationException("spinner only supported by WidgetPageSimple");
 	}
-	
+
 	private OgemaOsgiWidgetServiceImpl getWidgetService() {
 		return (OgemaOsgiWidgetServiceImpl) app.getWidgetService();
 	}
@@ -402,17 +391,17 @@ public class WidgetPageBase<S extends LocaleDictionary> implements WidgetPage<S>
 	public void setBackgroundImg(String backgroundImg) {
 		throw new UnsupportedOperationException("background image only supported by WidgetPageSimple");
 	}
-	
+
 	@Override
 	public WidgetPage<S> setTitle(String title) {
 		throw new UnsupportedOperationException("Title only supported by WidgetPageSimple");
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return 41 * app.hashCode() + startHtml.hashCode() * 3;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
@@ -422,10 +411,10 @@ public class WidgetPageBase<S extends LocaleDictionary> implements WidgetPage<S>
 		WidgetPageBase<?> other = (WidgetPageBase<?>) obj;
 		if (!other.startHtml.equals(startHtml))
 			return false;
-		return other.getApp().equals(getApp()); 
+		return other.getApp().equals(getApp());
 	}
-	
-	private final PageRegistration getPageRegistration() {
+
+	final PageRegistrationI getPageRegistration() {
 		return getWidgetService().createPageRegistration(this, app.wam);
 	}
 
@@ -439,5 +428,5 @@ public class WidgetPageBase<S extends LocaleDictionary> implements WidgetPage<S>
 			return null;
 		return w.getWidget();
 	}
-	
+
 }

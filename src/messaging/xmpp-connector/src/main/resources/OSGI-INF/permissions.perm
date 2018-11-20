@@ -14,7 +14,7 @@
 
 (org.osgi.framework.PackagePermission "org.jivesoftware.smack" "import")
 (org.osgi.framework.PackagePermission "org.jivesoftware.smack.packet" "import")
-(org.ogema.accesscontrol.WebAccessPermission "name=de.iwes.widgets.ogema-js-bundle")
+(org.ogema.accesscontrol.WebAccessPermission "name=org.ogema.widgets.ogema-js-bundle")
 
 (org.ogema.accesscontrol.ResourcePermission "type=org.ogema.messaging.basic.services.config.model.XmppConfiguration" "read")
 (org.ogema.accesscontrol.ResourcePermission "type=org.ogema.messaging.basic.services.config.model.ReceiverConfiguration" "read")

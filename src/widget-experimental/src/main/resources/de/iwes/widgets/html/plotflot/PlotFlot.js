@@ -4,7 +4,7 @@ PlotFlot.prototype.constructor = PlotFlot;
 function PlotFlot( servletPath, widgetID ) {
 	GenericWidget.call( this, servletPath, widgetID );
 	this.plot = null;
-	this.sendGET();	
+	this.sendGET();
 	var file = null;
 	this.createCsv = function() {
 		var data = this.getData();
@@ -19,21 +19,21 @@ function PlotFlot( servletPath, widgetID ) {
 }
 
 PlotFlot.prototype.update = function( resp ) {
-	
+
 	// console.log("Flot widget updating... ",resp)
-	
+
 	if (!resp.hasOwnProperty("data")) {
 		console.error("Unexpected data format");
 		return;
 	}
-	var data = resp.data;	
+	var data = resp.data;
 	var options = resp.options;
 	options.xaxis = {
     		tickLength: 5,
             mode: resp.options.xtype
         };
 	options.selection = { mode: "x" }
-	
+
 /*   var options = {
         xaxis: {
     		tickLength: 5,
@@ -43,7 +43,7 @@ PlotFlot.prototype.update = function( resp ) {
             mode: "x"
         }
     }; */
-	
+
     var plotContainer = $("#" + this.widgetID + ".ogema-widget");
 	var yaxis = undefined;
 	var xaxis = undefined;
@@ -67,7 +67,7 @@ PlotFlot.prototype.update = function( resp ) {
 		axisLabelX.innerText="";
 		axisLabelX.style.display="none";
 	}
-	
+
     var chart = plotContainer.find(">div>#chart");
 
 	this.plot = $.plot(chart,data,options );
@@ -76,7 +76,7 @@ PlotFlot.prototype.update = function( resp ) {
     var showOverview = resp.enableOverviewPlot && interactionsEnabled;
     var overview;
     var overviewElement = plotContainer.find("#overview");
-    
+
     if (showOverview) {
     	overviewElement[0].style.display="block";
 	    if (resp.hasOwnProperty("overviewHeight")) {
@@ -95,7 +95,7 @@ PlotFlot.prototype.update = function( resp ) {
 	                    mode: "x"
 	            }
 	    };
-	
+
 	    overview = $.plot(overviewElement, data, overviewOptions);
     }
     else {
@@ -122,9 +122,9 @@ PlotFlot.prototype.update = function( resp ) {
     if (showOverview) {
 		overviewElement.bind("plotselected", function (event, ranges) {
 		        gw.plot.setSelection(ranges);
-		});   
+		});
     }
-    
+
 }
 
 // prints current data into a csv format
@@ -194,6 +194,7 @@ PlotFlot.prototype.setPlotType = function(type) {
 	var showPoints=false;
 	switch(type) {
 	case "bar":
+	case "barStacked": // not supported
 		showBars=true;
 		break;
 	case "points":
@@ -208,6 +209,7 @@ PlotFlot.prototype.setPlotType = function(type) {
 		showLines=true;
 		break;
 	case "line":
+	case "lineStacked": // not supported
 		showLines=true;
 		break;
 	default:

@@ -1,51 +1,50 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.api.widgets.sessionmanagement;
 
+import java.security.SecureRandom;
+import java.util.Base64;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 
 public class OgemaHttpRequest {
 	
+	private static final String WIDGET_SESSION_ID = "org.ogema.widgets.session";
 	private static final AtomicInteger lastPageInstanceId = new AtomicInteger(0);
+	private static final SecureRandom rand = new SecureRandom();
 	
 	private final HttpServletRequest req;
 	private volatile OgemaLocale locale = null;
 	private final String localeString;
-	private String pageInstanceId;
+	private final String pageInstanceId;
 	private boolean isPolling;
+	private final String sessionId; 
 	
 	public OgemaHttpRequest(HttpServletRequest req, boolean isPolling) {
 		this.req = req;
 		this.isPolling = isPolling;
-		pageInstanceId = req.getParameter("pageInstance");
-		if(pageInstanceId == null) {
-			pageInstanceId = Integer.toString(lastPageInstanceId.incrementAndGet());
-		}
-		localeString = req.getParameter("locale"); // TODO standard element?
+		final String pageInstanceId0 = req.getParameter("pageInstance");
+		this.pageInstanceId = pageInstanceId0 == null ? Integer.toString(lastPageInstanceId.incrementAndGet()) : pageInstanceId0;
+		this.localeString = req.getParameter("locale"); // TODO standard element?
+		this.sessionId = getSessionId(req.getSession()) + "_" + pageInstanceId;
 	}
 	
 	public HttpServletRequest getReq() {
@@ -58,11 +57,11 @@ public class OgemaHttpRequest {
 
 	/**
 	 * @param configId
-	 * @deprecated ever used?
+	 * @deprecated ever used? If so, implement using reflections to overcome final modifiers
 	 */
 	@Deprecated
 	public void changePageInstanceIdForNewURL(String configId) {
-		pageInstanceId = configId;
+//		pageInstanceId = configId;
 	}
 	
 	public boolean isPolling() {
@@ -70,7 +69,7 @@ public class OgemaHttpRequest {
 	}
 	
 	public String getSessionId() {
-		return req.getSession().getId() + "_" + getPageInstanceId();
+		return sessionId;
 	}
 	
 	/**
@@ -81,17 +80,30 @@ public class OgemaHttpRequest {
 	@Deprecated
 	public String getSessionId(boolean pageSpecificId) {
 		if (pageSpecificId) {
-			return req.getSession().getId() + "_" + getPageInstanceId();
+			return sessionId;
 		} else {
-			return req.getSession().getId();
+			final int lastIdx = sessionId.lastIndexOf('_');
+			return sessionId.substring(0, lastIdx);
 		}
 	}
 
+	@Deprecated
 	public boolean equalsSession(OgemaHttpRequest req2, boolean pageSpecificId) {
-		if (!req2.getReq().getSession().getId().equals(this.getReq().getSession().getId())) return false;
-		if (pageSpecificId) return true;
-		if (!req2.getPageInstanceId().equals(this.getPageInstanceId())) return false;
-		return true;
+		return getSessionId(pageSpecificId).equals(req2.getSessionId(pageSpecificId));
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (!(obj instanceof OgemaHttpRequest))
+			return false;
+		return Objects.equals(this.sessionId, ((OgemaHttpRequest) obj).sessionId);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(sessionId);
 	}
 	
 	public String getLocaleString() {
@@ -107,23 +119,52 @@ public class OgemaHttpRequest {
 		return locale;
 	}
 	
+	/**
+	 * @deprecated use {@link OgemaHttpRequest} directly 
+	 */
+	@Deprecated
 	public final WrappedSession getWrapper() {
 		return new WrappedSession(this);
 	}
 	
 	/**
-	 * For use as keys in a map 
+	 * Generate a random alphanumeric (plus the character '_') string 
+	 * @return
 	 */
+	private static String nextRandomString() {
+		final byte[] bytes = new byte[16];
+		rand.nextBytes(bytes);
+		return Base64.getEncoder().encodeToString(bytes).replace('+', '_').replace('=', '_').replace('/', '_');
+	}
+	
+	private static String getSessionId(final HttpSession session) {
+		Object session0 = session.getAttribute(WIDGET_SESSION_ID);
+		if (!(session0 instanceof String)) {
+			final String session1 = nextRandomString();
+			synchronized (OgemaHttpRequest.class) {
+				session0 = session.getAttribute(WIDGET_SESSION_ID);
+				if (!(session0 instanceof String)) {
+					session0 = session1;
+					session.setAttribute(WIDGET_SESSION_ID, session0);
+				}
+			}
+		}
+		return (String) session0;
+	}
+	
+	/**
+	 * For use as keys in a map
+	 * @deprecated use {@link OgemaHttpRequest} directly 
+	 */
+	@Deprecated
 	public final static class WrappedSession {
 		
 		private final String id;
-		private final String pageInstance;
 		private final int hash;
 		
 		private WrappedSession(OgemaHttpRequest req) {
-			this.id = req.getReq().getSession().getId();
-			this.pageInstance = req.getPageInstanceId();
-			this.hash = hashInternal(id, pageInstance);
+			this.id = req.getPageInstanceId();
+			this.hash = Objects.hash(id);
 		}
 		
 		@Override
@@ -133,11 +174,7 @@ public class OgemaHttpRequest {
 			if (!(obj instanceof WrappedSession) || this.hash != obj.hashCode())
 				return false;
 			final WrappedSession other = (WrappedSession) obj;
-			return this.id.equals(other.id) && this.pageInstance.equals(other.pageInstance);
-		}
-		
-		private static int hashInternal(String id,String instance) {
-			return 23* id.hashCode() + 17*instance.hashCode();
+			return Objects.equals(this.id, other.id);
 		}
 		
 		@Override
@@ -147,7 +184,7 @@ public class OgemaHttpRequest {
 		
 		@Override
 		public String toString() {
-			return "Session " + id + "_" + pageInstance;
+			return "Session " + id;
 		}
 		
 	}

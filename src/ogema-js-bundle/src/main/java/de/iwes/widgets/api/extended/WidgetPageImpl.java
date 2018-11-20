@@ -1,32 +1,24 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.api.extended;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -41,10 +33,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 
+import de.iwes.widgets.api.extended.HtmlLibrary.LibType;
 import de.iwes.widgets.api.extended.html.bricks.PageSnippet;
-import de.iwes.widgets.api.extended.impl.HtmlLibrary;
 import de.iwes.widgets.api.extended.impl.MenuData;
-import de.iwes.widgets.api.extended.impl.HtmlLibrary.LibType;
 import de.iwes.widgets.api.widgets.OgemaWidget;
 import de.iwes.widgets.api.widgets.html.HtmlItem;
 import de.iwes.widgets.api.widgets.localisation.LocaleDictionary;
@@ -54,42 +45,9 @@ import de.iwes.widgets.api.widgets.navigation.NavigationMenu;
 import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
 import de.iwes.widgets.start.JsBundleApp;
 
-public class WidgetPageImpl<S extends LocaleDictionary> extends WidgetPageBase<S> {
+public class WidgetPageImpl<S extends LocaleDictionary> extends WidgetPageBase<S> implements ServletBasedWidgetPage<S> {
 
-	private final static boolean DEBUG;
-
-	static {
-		DEBUG = AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
-
-			@Override
-			public Boolean run() {
-				return Boolean.getBoolean("org.ogema.widgets.debug");
-			}
-		});
-
-	}
-
-
-	// we need not add these widget scripts to the html, since they are preloaded in minified form anyway (unless DEBUG is true)
-	private static final Map<String,String> PRELOADED_WIDGET_SCRIPTS;
-
-	static {
-		PRELOADED_WIDGET_SCRIPTS = new HashMap<>();
-		PRELOADED_WIDGET_SCRIPTS.put("Alert", "/ogema/widget/alert/Alert.js");
-		PRELOADED_WIDGET_SCRIPTS.put("Accordion", "/ogema/widget/accordion/Accordion.js");
-		PRELOADED_WIDGET_SCRIPTS.put("EmptyWidget", "/ogema/widget/emptywidget/EmptyWidget.js");
-		PRELOADED_WIDGET_SCRIPTS.put("Button", "/ogema/widget/button/Button.js");
-		PRELOADED_WIDGET_SCRIPTS.put("Checkbox", "/ogema/widget/checkbox/Checkbox.js");
-		PRELOADED_WIDGET_SCRIPTS.put("Dropdown", "/ogema/widget/dropdown/Dropdown.js");
-		PRELOADED_WIDGET_SCRIPTS.put("Label", "/ogema/widget/label/Label.js");
-		PRELOADED_WIDGET_SCRIPTS.put("TextField", "/ogema/widget/textfield/TextField.js");
-		PRELOADED_WIDGET_SCRIPTS.put("Flexbox", "/ogema/widget/html5/Flexbox.js");
-		PRELOADED_WIDGET_SCRIPTS.put("Icon", "/ogema/widget/icon/Icon.js");
-		PRELOADED_WIDGET_SCRIPTS.put("Multiselect", "/ogema/widget/multiselect/Multiselect.js");
-		PRELOADED_WIDGET_SCRIPTS.put("Popup", "/ogema/widget/popup/Popup.js");
-	}
-
-	private HttpServlet servlet;
+	final WidgetPageServlet servlet;
 	private String title = null;
 	private final PageSnippet rootWidget;
 	private boolean fullScreenWidth = true;
@@ -125,6 +83,7 @@ public class WidgetPageImpl<S extends LocaleDictionary> extends WidgetPageBase<S
 
 	public WidgetPageImpl(WidgetAppImpl app, String url, boolean setAsStartPage) {
 		super(app, url, setAsStartPage);
+		this.servlet = new WidgetPageServlet(this);
 		this.rootWidget = createRootWidget();
 		this.version = app.appVersion;
 		// FIXME load only in WidgetApp?
@@ -226,24 +185,20 @@ public class WidgetPageImpl<S extends LocaleDictionary> extends WidgetPageBase<S
 	}
 
 	/***** internal methods *****/
-
+	
 	@Override
-	protected void initBeforeRegistration() {
-		this.servlet = new WidgetPageServlet(this);
-	}
-
-	protected HttpServlet getServlet() {
+	public WidgetPageServlet getServlet() {
 		return servlet;
 	}
-
+	
 	@Override
-	protected void registerLibrary(HtmlLibrary lib) {
+	public void registerLibrary(HtmlLibrary lib) {
 		if (lib.getType() == LibType.CSS) return; // FIXME CSS not yet supported... how to avoid loading it twice?
 		if (DEBUG || !PRELOADED_WIDGET_SCRIPTS.containsKey(lib.getIdentifier()))
 			externalLibs.add(lib);
 	}
 
-	private final static class WidgetPageServlet extends HttpServlet {
+	protected final static class WidgetPageServlet extends HttpServlet {
 
 		private final WidgetPageImpl<?> page;
 		private static final long serialVersionUID = 1L;
@@ -253,7 +208,7 @@ public class WidgetPageImpl<S extends LocaleDictionary> extends WidgetPageBase<S
 		}
 
 		@Override
-	    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 			if (req.getParameterMap().containsKey("menu")) {
 				JSONObject response = MenuData.getMenuData(new OgemaHttpRequest(req, false));
 	            resp.setContentType("application/json");
@@ -281,7 +236,7 @@ public class WidgetPageImpl<S extends LocaleDictionary> extends WidgetPageBase<S
 		html.append("<!DOCTYPE html><html><head>");
 		String[] otup = null;
 		try {
-			if (staticRegistration == null) 
+			if (staticRegistration == null)
 				throw new NoClassDefFoundError(); // go to catch clause
 			otup = ((org.ogema.webadmin.AdminWebAccessManager.StaticRegistration) staticRegistration).generateOneTimePwd(req);
 		} catch (NoClassDefFoundError | ClassCastException e) { // fallback for OGEMA version < 2.1.2
@@ -363,14 +318,6 @@ public class WidgetPageImpl<S extends LocaleDictionary> extends WidgetPageBase<S
 		else
 			return "<body style=\"background-image:url('" + backgroundImg + "')\">";
 	}
-
-//	private final PrivilegedAction<String> getSystemPropDebug = new PrivilegedAction<String>() {
-//
-//		@Override
-//		public String run() {
-//			return System.getProperty("org.ogema.webresourcemanager.RuntimeConfigurationType","DEPLOYMENT");
-//		}
-//	};
 
 	private void appendLibsHtml(final StringBuilder html, Set<HtmlLibrary> libs, boolean loadEarly) {
 //		int nrScripts = getNrScripts(map);

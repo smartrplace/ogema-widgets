@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.reswidget.scheduleviewer.api;
 
 import java.util.ArrayList;
@@ -28,11 +21,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.ogema.core.resourcemanager.pattern.ResourcePattern;
 
 import de.iwes.widgets.api.services.NameService;
 import de.iwes.widgets.html.schedulemanipulator.ScheduleManipulatorConfiguration;
+import de.iwes.widgets.reswidget.scheduleplot.api.TimeSeriesPlot;
+import de.iwes.widgets.reswidget.scheduleplot.flot.SchedulePlotFlot;
 import de.iwes.widgets.reswidget.scheduleviewer.DefaultTimeSeriesDisplayTemplate;
 import de.iwes.widgets.reswidget.scheduleviewer.ScheduleViewerBasic;
 import de.iwes.widgets.reswidget.scheduleviewer.api.ScheduleViewerConfigurationProvider.SessionConfiguration;
@@ -57,6 +53,10 @@ public class ScheduleViewerConfigurationBuilder {
 	private boolean showOptionsSwitch = true;
 	private boolean showNrPointsPreview = true;
 	private boolean showIndividualConfigBtn = false;
+	private boolean showUpdateInterval = false;
+	private boolean loadSchedulesOnInit = true;
+	@SuppressWarnings("rawtypes")
+	private Class<? extends TimeSeriesPlot> plotType = SchedulePlotFlot.class;
 	private Long bufferWindow = 24 * 60 * 60 * 1000L;
 
 	private boolean showStandardIntervals = false;
@@ -91,7 +91,8 @@ public class ScheduleViewerConfigurationBuilder {
 	public ScheduleViewerConfiguration build() {
 		return new ScheduleViewerConfiguration(showManipulator, showCsvDownload, useNameService, showOptionsSwitch,
 				manipulatorConfiguration, showNrPointsPreview, startTime, endTime, programs, filters, bufferWindow,
-				showIndividualConfigBtn, showStandardIntervals, showPlotTypeSelector, downsamplingInterval);
+				showIndividualConfigBtn, showStandardIntervals, showPlotTypeSelector, downsamplingInterval, showUpdateInterval, plotType,
+				loadSchedulesOnInit);
 	}
 
 	/**
@@ -370,6 +371,37 @@ public class ScheduleViewerConfigurationBuilder {
 	 */
 	public ScheduleViewerConfigurationBuilder setShowDownsamplingInterval(boolean downsamplingInterval) {
 		this.downsamplingInterval = downsamplingInterval;
+		return this;
+	}
+	
+	/**
+	 * Allow for periodic schedule updates.
+	 * @param showUpdateInterval
+	 * @return
+	 */
+	public ScheduleViewerConfigurationBuilder setShowUpdateInterval(boolean showUpdateInterval) {
+		this.showUpdateInterval = showUpdateInterval;
+		return this;
+	}
+	
+	/**
+	 * If set to false, schedules will not be displayed until the user clicks the 'Apply' button
+	 * for the first time. Default: true.
+	 * @param loadSchedulesOnInit
+	 * @return
+	 */
+	public ScheduleViewerConfigurationBuilder setLoadSchedulesOnInit(boolean loadSchedulesOnInit) {
+		this.loadSchedulesOnInit = loadSchedulesOnInit;
+		return this;
+	}
+	
+	/**
+	 * Change the plot library.
+	 * @param plotType
+	 * @return
+	 */
+	public ScheduleViewerConfigurationBuilder setPlotLibrary(Class<? extends TimeSeriesPlot> plotType) {
+		this.plotType = Objects.requireNonNull(plotType);
 		return this;
 	}
 	

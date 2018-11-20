@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.widgets.api;
 
 import org.ogema.core.application.ApplicationManager;
@@ -38,9 +31,8 @@ public interface OgemaGuiService {
 	/**
 	 * Create a new widget app. User sessions are page-specific, i.e. if a user opens
 	 * a new browser tab, no information will be shared between tabs server-side. Use
-	 * {@link #createWidgetApp(String, String, ApplicationManager, boolean)} 
+	 * {@link #createWidgetApp(String, ApplicationManager, boolean)} 
 	 * to change the default behaviour.
-	 * @param appId
 	 * 		A unique id for the new widget app
 	 * @param url
 	 * 		A common url prefix that will be added to the urls of all widget pages
@@ -56,7 +48,7 @@ public interface OgemaGuiService {
 	 * 		A common url prefix that will be added to the urls of all widget pages
 	 * 		registered with this widget app. E.g. "/org/example/superapp"
 	 * @param am
-	 * @param pageSpecficId
+	 * @param pageSpecificId
 	 * 		Set to false in order to share data between tabs server-side.
 	 * @return
 	 * @deprecated page specific id parameter no longer supported, 

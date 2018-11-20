@@ -1,25 +1,18 @@
 /**
- * This file is part of the OGEMA widgets framework.
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
  *
- * OGEMA is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * OGEMA is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with OGEMA. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2014 - 2018
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES/Fraunhofer IEE
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package de.iwes.tools.system.supervision;
 
 import java.util.HashSet;
@@ -33,7 +26,7 @@ import org.ogema.core.resourcemanager.ResourceDemandListener;
 
 import de.iwes.tools.system.supervision.model.SystemSupervisionConfig;
 
-@Component(immediate = true, specVersion = "1.2")
+@Component(specVersion = "1.2")
 @Service(Application.class)
 public class SystemSupervisionApp implements Application, ResourceDemandListener<SystemSupervisionConfig> {
 
@@ -43,15 +36,21 @@ public class SystemSupervisionApp implements Application, ResourceDemandListener
 	private Tasks tasks;
 	private TriggerListener triggerListener;
 	private ShellCommands shellCommands;
+	private ShellCommandsInitial shellInitial;
 	
 	@Override
-	public void start(ApplicationManager appManager) {
-		this.appMan  =appManager;
+	public void start(final ApplicationManager appManager) {
+		this.appMan = appManager;
 		appManager.getResourceAccess().addResourceDemand(SystemSupervisionConfig.class, this);
+		this.shellInitial = new ShellCommandsInitial(appManager, appManager.getAppID().getBundle().getBundleContext());
 	}
 
 	@Override
 	public void stop(AppStopReason reason) {
+		final ShellCommandsInitial initial = this.shellInitial;
+		this.shellInitial = null;
+		if (initial != null)
+			initial.close();
 		stopInternal();
 		if (appMan != null)
 			appMan.getResourceAccess().removeResourceDemand(SystemSupervisionConfig.class, this);
@@ -67,7 +66,7 @@ public class SystemSupervisionApp implements Application, ResourceDemandListener
 		this.tasks = new Tasks(appMan, config);
 		this.triggerListener = new TriggerListener(appMan, config, tasks);
 		try {
-			this.shellCommands = new ShellCommands(tasks, config);
+			this.shellCommands = new ShellCommands(tasks, config, appMan.getAppID().getBundle().getBundleContext());
 		} catch (NoClassDefFoundError e) {} // optional dependency
 	}
 	

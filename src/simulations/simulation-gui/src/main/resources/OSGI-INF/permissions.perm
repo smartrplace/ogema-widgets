@@ -12,8 +12,10 @@
 
 (org.osgi.framework.PackagePermission "org.json" "import")
 
+(org.ogema.accesscontrol.AdminPermission "*" "app")
+
 (org.ogema.accesscontrol.ResourcePermission "type=*" "read,write,addsub,create,activity,delete")
-(org.ogema.accesscontrol.WebAccessPermission "name=de.iwes.widgets.ogema-js-bundle")
+(org.ogema.accesscontrol.WebAccessPermission "name=org.ogema.widgets.ogema-js-bundle")
 
 (org.osgi.framework.PackagePermission "org.ogema.apps.simulation.gui.speed" "exportonly")
 (org.osgi.framework.PackagePermission "org.ogema.apps.simulation.gui.speed.*" "exportonly")

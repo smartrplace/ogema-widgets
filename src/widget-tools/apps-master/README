@@ -1,0 +1,27 @@
+Parent pom for OGEMA applications, providing default versions for a set of 
+OGEMA dependencies (core, widgets, simulations), and some additional libraries.
+
+Deploy to the artifactory:
+ 1) adapt versions in pom.xml
+ 2) mvn clean install
+ 3) mvn deploy -DaltDeploymentRepository=ogema-releases::default::https://www.ogema-source.net/artifactory/libs-release-local
+ 
+As usual, step 3) requires the settings.xml file in .m2 to provide access credentials for the artifactory.
+Note that the pom.xml deliberately does not contain any deployment repository information, so that applications 
+using this as a parent do not try to connect to the OGEMA artifactory for deployment.
+
+Applications who want to use this as a parent need to provide the following pom-entries (adapt version):
+
+    <parent>
+        <artifactId>apps-master</artifactId>
+        <groupId>org.ogema.apps</groupId>
+        <version>2.0.5-alpha-20160701</version>
+    </parent>
+	
+	<repositories>
+    	<repository>
+		    <id>ogema-release</id>
+		    <name>ogema-release</name>
+		    <url>https://www.ogema-source.net/artifactory/libs-release</url>
+   		</repository>
+    </repositories>

@@ -1,10 +1,28 @@
+/**
+ * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.iwes.timeseries.eval.garo.multibase.generic;
 
 import org.ogema.core.channelmanager.measurements.SampledValue;
 import org.ogema.tools.timeseries.iterator.api.SampledValueDataPoint;
 
+import de.iwes.timeseries.eval.api.extended.util.SpecificEvalBaseImpl;
+
 public abstract class GenericGaRoEvaluationCore {
-	protected GenericGaRoSingleEvaluation evalInstance;
+	public GenericGaRoSingleEvaluation evalInstance;
+	public long gapTime;
     /** Process new value
      * 
      * @param idxOfRequestedInput index of requested input
@@ -13,30 +31,22 @@ public abstract class GenericGaRoEvaluationCore {
      * @param timeStamp time of the current value
      * @param sv current SampledValue
      * @param dataPoint access to the input data structure
-     * @param duration duration of the current value based on the assumption of InterpolationMode.STEPS.
-     * 		See {@link #gapNotification()} for details. The duration is the time difference to the next SampledValue
-     * 		in any input time series, so the time difference to the next call of processValue. If two values have
-     * 		exactly the same time stamp for both calls of processValue the duration to the next different time
-     * 		stamp is used.
+     * @param duration 
      */
     protected abstract void processValue(int idxOfRequestedInput, int idxOfEvaluationInput,
     		int totalInputIdx,
     		long timeStamp, SampledValue sv, SampledValueDataPoint dataPoint, long duration);
 
-    /** The concept of gap notification is based on the concept that the incoming values are treated as
-     * InterpolationMode.STEPS. Although for some input data LINEAR may be much more appropriate, this
-     * mode is much more difficult to process correctly in a general case than STEPS. So if the evaluation
-     * needs to process gap notification and duration correctly based on LINEAR this currently has to
-     * be implemented in the application.<br>
-     * Note also that gaps are processed for each input time series individually, so if gaps in one input
-     * should lead to an gap in output this has to be organized by the inheriting evaluation. Only the
-     * calculation of the gapTime takes into account gaps from all time series together and the value
-     * SpecificEvalValueContainer.gapStart can be used to check if any gap is active.
-     * @param duration note that the duration of a gap may not be foreseeable, especially in an online
-     * 		evaluation. So check for negative values indicating that the duration is not known when
-     * 		using this value
+    /** See {@link SpecificEvalBaseImpl#gapNotification(int, int , int ,long , SampledValue , SampledValueDataPoint , long)}
      */
     protected void gapNotification(int idxOfRequestedInput, int idxOfEvaluationInput,
     		int totalInputIdx,
     		long timeStamp, SampledValue sv, SampledValueDataPoint dataPoint, long duration) {}
+    
+    /** See {@link SpecificEvalBaseImpl#getNextFixedTimeStamp(long)}
+     */
+    public long getNextFixedTimeStamp(long currentTime) {
+		return -1;
+	}
+
 }
