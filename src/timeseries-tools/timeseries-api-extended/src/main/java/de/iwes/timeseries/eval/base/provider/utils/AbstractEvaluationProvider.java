@@ -135,8 +135,8 @@ public abstract class AbstractEvaluationProvider implements EvaluationProvider, 
 			List<ResultType> requestedResults, Collection<ConfigurationInstance> configurations) {
 		Objects.requireNonNull(requestedResults);
 		Objects.requireNonNull(input);
-		if (input.isEmpty() || requestedResults.isEmpty())
-			throw new IllegalArgumentException("Input list and requested result types must not be empty");
+		//if (input.isEmpty() || requestedResults.isEmpty())
+		//	throw new IllegalArgumentException("Input list and requested result types must not be empty");
 		final OnlineEvaluation instance = createEvaluation(requestedEvalId, input, requestedResults, configurations);
 		if (instance.isOnlineEvaluation()) 
 			onlineOngoing.put(instance.id(), instance);

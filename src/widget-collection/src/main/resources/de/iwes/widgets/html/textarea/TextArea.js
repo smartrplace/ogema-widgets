@@ -9,7 +9,12 @@ function TextArea(servletPath, widgetID) {
 
 TextArea.prototype.update = function (data) {
     if (data.hasOwnProperty("text")) {
-        this.el.html(data.text);
+        this.el.val(data.text);
+    }
+    this.el.off("change");
+    if (!data.hasOwnProperty("sendValueOnChange") || data.sendValueOnChange) {
+    	const tmp = this;
+    	tmp.el.change(tmp.sendPOST);
     }
 };
 

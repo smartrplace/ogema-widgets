@@ -4,19 +4,58 @@
 
 	<groupId>org.ogema.apps</groupId>
     <artifactId>apps-master</artifactId>
-	<version>2.2.0</version>
+	<version>2.2.1</version>
     <packaging>pom</packaging>
+   	<url>http://ogema.org</url>
     <name>Parent pom for OGEMA apps</name>
+    <description>Parent pom for OGEMA apps</description>
+    
+    <licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<scm>
+		<connection>scm:git:git://github.com/ogema/ogema-widgets.git</connection>
+		<developerConnection>scm:git:git://github.com/ogema/ogema-widgets.git</developerConnection>
+		<url>https://github.com/ogema/ogema-widgets</url>
+		<tag>ogema-widgets-2.2.1</tag>
+	</scm>
+	
+	<developers>
+		<developer>
+			<id>cnoelle</id>
+			<name>Christoph Nölle</name>
+			<organization>Fraunhofer</organization>
+			<organizationUrl>https://www.iee.fraunhofer.de/</organizationUrl>
+		</developer>
+		<developer>
+			<id>jlapp</id>
+			<name>Jan Lapp</name>
+			<organization>Fraunhofer</organization>
+			<organizationUrl>https://www.iee.fraunhofer.de/</organizationUrl>
+		</developer>
+		<developer>
+			<id>dnestle</id>
+			<name>David Nestle</name>
+			<organization>Fraunhofer</organization>
+			<organizationUrl>https://www.iee.fraunhofer.de/</organizationUrl>
+		</developer>
+	</developers>
+	
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven-source-plugin.version>3.0.1</maven-source-plugin.version>
 		<maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>
 		<osgi.version>5.0.0</osgi.version>
-		<ogema.api.version>2.2.0</ogema.api.version>
+		<ogema.api.version>2.2.1-SNAPSHOT</ogema.api.version>
 		<models.proposed.version>2.1.2</models.proposed.version>
-		<ogema.widgets.version>2.2.0</ogema.widgets.version>
-		<ogema.simulation.version>2.2.0</ogema.simulation.version>
+		<ogema.widgets.version>2.2.1-SNAPSHOT</ogema.widgets.version>
+		<ogema.simulation.version>2.2.1-SNAPSHOT</ogema.simulation.version>
 		<jackson.version>2.7.4</jackson.version>
 		<slf4j.version>1.7.2</slf4j.version>
 		<!-- max versions exclusive -->
@@ -30,31 +69,14 @@
 		<org.json.version.max>20180814</org.json.version.max>
 	</properties>
    
-    <repositories>
-    	<repository>
-			<snapshots />
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<id>ogema-snapshots</id>
-			<name>ogema-snapshots</name>
-			<url>https://www.ogema-source.net/artifactory/libs-snapshot</url>
-		</repository>
+   	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
 		<repository>
-			<releases />
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>ogema-releases</id>
-			<name>ogema-releases</name>
-			<url>https://www.ogema-source.net/artifactory/libs-release</url>
-		</repository>
-    </repositories>
-    <distributionManagement>
-		<repository>
-			<id>ogema-releases</id>
-			<name>Internal Releases</name>
-			<url>https://www.ogema-source.net/artifactory/libs-release-local</url>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
 
@@ -259,7 +281,7 @@
 					<groupId>org.apache.felix</groupId>
 					<artifactId>maven-bundle-plugin</artifactId>
 					<extensions>true</extensions>
-					<version>3.5.0</version>
+					<version>4.0.0</version>
 					<executions>
 						<execution>
 							<id>bundle-manifest</id>
@@ -501,7 +523,20 @@
 						</execution>
 					</executions>
 				</plugin>
-
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-gpg-plugin</artifactId>
+					<version>1.6</version>
+					<executions>
+						<execution>
+							<id>sign-artifacts</id>
+							<phase>verify</phase>
+							<goals>
+								<goal>sign</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
@@ -564,6 +599,40 @@
 						<configuration>
 							<pomFileName>src/pom.xml</pomFileName>
 						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<!-- Sign and deploy locally, for testing. Usage: mvn -Psign install -DskipTests 
+			-o -->
+		<profile>
+			<id>sign</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<!-- Generate source, javadoc, sign and deploy. Usage: 
+				mvn -Psign-and-deploy deploy -DskipTests -Ddoclint=none -->
+			<id>sign-and-deploy</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
 					</plugin>
 				</plugins>
 			</build>

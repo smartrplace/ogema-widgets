@@ -18,8 +18,10 @@ package de.iwes.widgets.lazy.pages.impl;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import org.ogema.core.application.Application;
+import org.osgi.framework.Bundle;
 import org.slf4j.LoggerFactory;
 
 import de.iwes.widgets.api.widgets.LazyWidgetPage;
@@ -30,11 +32,25 @@ import net.bytebuddy.dynamic.loading.ClassInjector;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 
 class AppFactory {
+
+	static Application wrapNoSecurity(final Bundle b, final Application delegate) {
+		final Unloaded<AppDelegate> unloaded =  new ByteBuddy()
+				  .subclass(LazyWidgetPage.AppDelegate.class)
+				  .name(getValidClassName(b.getSymbolicName()))
+				  .make();
+		try {
+			return unloaded.load(AppFactory.class.getClassLoader()).getLoaded().getConstructor(Application.class).newInstance(delegate);
+		} catch (Exception e) {
+			LoggerFactory.getLogger(AppFactory.class).warn("Application subclass generation failed, cannot load class ",e);
+			return delegate;
+		}
+	}
 	
 	// we need an app delegate with the protection domain of the bundle that registered the page service
 	static Application wrap(final Class<?> clazzIn, final Application delegate) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		final Unloaded<AppDelegate> unloaded =  new ByteBuddy()
 				  .subclass(LazyWidgetPage.AppDelegate.class)
+				  .name("delegate." + clazzIn.getName())
 				  .make();
 		 Class<?> dynamicType = null;
 		// https://dzone.com/articles/jdk-11-and-proxies-in-a-world-past-sunmiscunsafe
@@ -71,6 +87,19 @@ class AppFactory {
 		return (Application) dynamicType.getConstructor(Application.class).newInstance(delegate);
 	}
 	
+	private static String getValidClassName(final String bsn) {
+		final StringBuilder sb = new StringBuilder();
+		sb.append("delegate.");
+		Arrays.stream(bsn.replace('-', '.').split("\\."))
+			.forEach(string -> {
+				if (!Character.isJavaIdentifierStart(string.charAt(0)))
+					sb.append('_');
+				sb.append(string);
+				sb.append('.');
+			});
+		sb.append("LazyPage");
+		return sb.toString();
+	}
 	
 }
 

@@ -15,13 +15,17 @@
  */
 package de.iwes.widgets.html.datatable;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -36,6 +40,9 @@ public class DataTableData extends WidgetData {
 	private boolean paging = true;
 	private SelectType select = SelectType.SINGLE;
 	private String selectedRow = null; // rowId
+	// Map: keys: column idx, value: true = "asc", false = "desc"
+	// https://datatables.net/examples/basic_init/table_sorting.html
+	private final List<Map<Integer, Boolean>> sortInfo = new ArrayList<>();
 	
 	public enum SelectType {
 		OFF, SINGLE, OS, MULTI;
@@ -75,6 +82,12 @@ public class DataTableData extends WidgetData {
         
     /******* Inherited methods ******/
 	 
+    private static List<Object> toArr(final Map<Integer, Boolean> sortInfo) {
+    	return sortInfo.entrySet().stream()
+    		.flatMap(entry -> Stream.builder().add(entry.getKey()).add(entry.getValue() ? "asc" : "desc").build())
+    		.collect(Collectors.toList());
+    }
+    
     @Override
     public JSONObject retrieveGETData(OgemaHttpRequest req) {  
         JSONObject result = new JSONObject();        
@@ -82,6 +95,9 @@ public class DataTableData extends WidgetData {
         result.put("data", getData());
         result.put("columns", getColMap());
         result.put("select", select.getJson());
+        if (!sortInfo.isEmpty()) {
+        	result.put("order", sortInfo.stream().map(DataTableData::toArr).collect(Collectors.toList()));
+        }
         return result;
     }
 
@@ -142,6 +158,10 @@ public class DataTableData extends WidgetData {
 		return selectedRow;
 	}
 	
+	protected void sort(int columnIdx, boolean ascendingOrDescending) {
+		sortInfo.add(Collections.singletonMap(columnIdx, ascendingOrDescending));
+	}
+	
 	/******** private methods ***********/
 
     private List<Map<String,String>> getColMap() {
@@ -157,15 +177,15 @@ public class DataTableData extends WidgetData {
     	return result;
     }
 	
+    private static Map<String, String> toIdMap(final Map.Entry<String, Map<String, String>> entry) {
+    	final Map<String,String> map = new HashMap<String, String>(entry.getValue());
+		map.put("__id__", entry.getKey());
+		return map;
+    }
+    
     private Collection<Map<String, String>> getData() { // basically one can return data.values() here, except that the id of the rows should be transmitted as well
-    	List<Map<String, String>> list = new LinkedList<Map<String,String>>();
-    	Iterator<Map.Entry<String, Map<String,String>>> it = data.entrySet().iterator();
-    	while (it.hasNext()) {
-    		Map.Entry<String, Map<String,String>> entry = it.next();
-    		Map<String,String> map = new HashMap<String, String>(entry.getValue());
-    		map.put("__id__", entry.getKey());
-    		list.add(map);
-    	}
-    	return list;
+    	return data.entrySet().stream()
+    		.map(DataTableData::toIdMap)
+    		.collect(Collectors.toList());
     }
 }

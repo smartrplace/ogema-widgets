@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,14 +31,17 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.ogema.tools.resource.util.TimeUtils;
 import org.slf4j.LoggerFactory;
 
+import de.iwes.timeseries.eval.api.EvaluationInput;
 import de.iwes.timeseries.eval.api.TimeSeriesData;
 import de.iwes.timeseries.eval.api.configuration.ConfigurationInstance;
 import de.iwes.timeseries.eval.api.extended.MultiEvaluationInputGeneric;
 import de.iwes.timeseries.eval.api.extended.util.AbstractMultiEvaluationInstance;
 import de.iwes.timeseries.eval.api.extended.util.AbstractSuperMultiResult;
+import de.iwes.timeseries.eval.api.extended.util.MultiEvaluationUtils.TimeSeriesInputForSingleRequiredInputIdx;
 import de.iwes.timeseries.eval.base.provider.utils.TimeSeriesDataImpl;
 import de.iwes.timeseries.eval.garo.api.base.GaRoMultiResult.GaRoStdOverallResults;
 import de.iwes.timeseries.eval.garo.multibase.GenericGaRoMultiProvider;
+import de.iwes.util.resource.ResourceHelper.DeviceInfo;
 import de.iwes.widgets.html.selectiontree.LinkingOption;
 
 /**
@@ -150,7 +154,26 @@ public abstract class GaRoMultiEvaluationInstance<T extends GaRoMultiResult> ext
 			break;
 		case GaRoMultiEvalDataProvider.ROOM_LEVEL:
 			//we start into a single gateway here
+			
 			result.gwId = dependecyTreeSelection.get(0).id();
+
+			//check if we have a single-evaluation-per-gateway-with-external-input
+			if((!result.getInputData().isEmpty()) && (result.getInputData().get(0) instanceof GaRoMultiEvaluationInput)) {
+				GaRoMultiEvaluationInput inp = (GaRoMultiEvaluationInput) result.getInputData().get(0);
+				if(inp.terminalDataType.label(null).equals(GaRoDataType.OncePerGateway.label(null))) {
+					String room = GaRoMultiEvalDataProvider.BUILDING_OVERALL_ROOM_ID;
+					result.roomData = result.getNewRoomEval(); //new RoomData();
+					result.roomData.id = room;
+					result.roomData.gwId = result.gwId;
+					final Integer roomType;
+					roomType = -1;
+					result.roomData.roomType = roomType; //((IntegerResource)typeRes).getValue();
+					result.roomEvals.add(result.roomData); //put(room.getPath(), result.roomData);
+					return Arrays.asList(new GaRoSelectionItem[] {null});
+					//levelItems = Arrays.asList(new GaRoSelectionItem[] {AbstractMultiEvaluationInstance.EXECUTE_NOW_ITEM});
+				}
+			}
+			
 			levelItems = startRoomLevel(levelItems, result, result.gwId);
 			
 			int ll = Integer.getInteger("org.ogema.multieval.loglevel", 10);
@@ -215,17 +238,36 @@ public abstract class GaRoMultiEvaluationInstance<T extends GaRoMultiResult> ext
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void evaluateDataSet(List<GaRoSelectionItem> keys, List<TimeSeriesData>[] timeSeries, T result) {
+	public void evaluateDataSet(List<GaRoSelectionItem> keys, TimeSeriesInputForSingleRequiredInputIdx[] timeSeries, T result) {
+		if(timeSeries == null) {
+			performRoomEvaluation(null, result);
+			return;
+		}
 		int inputIdx = 0;
 		List<TimeSeriesData>[] inputTimeSeries = new List[timeSeries.length];
+		List<DeviceInfo>[] deviceInfo = new List[timeSeries.length];
 		
-		for(List<TimeSeriesData> tsList: timeSeries) {
+		for(TimeSeriesInputForSingleRequiredInputIdx extInp: timeSeries) {
+			List<TimeSeriesData> tsList = extInp.tsList;
 			if(result.overallResults != null && result.overallResults instanceof GaRoStdOverallResults) {
 				GaRoStdOverallResults overallResults = (GaRoStdOverallResults)result.overallResults;
 				overallResults.countTimeseries +=tsList.size();
 			}
 			if(inputTypesFromRoom != null) {
 				inputTimeSeries[inputIdx] = tsList;
+				//TODO: For now we only add deviceInfo if the provider itself and all previous providers support
+				//DeviceInfo. There should be a mechanism to skip providers without info
+				List<DeviceInfo> devList = null;
+				for(EvaluationInput ei: extInp.eiList) {
+					if(ei instanceof EvaluationInputImplGaRo) {
+						EvaluationInputImplGaRo eiGaRo = (EvaluationInputImplGaRo)ei;
+						if(devList == null) devList = new ArrayList<>();
+						devList.addAll(eiGaRo.getDeviceInfo());
+					} else {
+						break;
+					}
+				}
+				deviceInfo[inputIdx] = devList;
 			}
 			processInputType(inputIdx, tsList, inputTypesFromRoom[inputIdx], result);
 			
@@ -257,8 +299,18 @@ public abstract class GaRoMultiEvaluationInstance<T extends GaRoMultiResult> ext
 				GaRoDataTypeParam inputType = (GaRoDataTypeParam)inputTypesFromRoom[i];
 				if(i==0) inputType.inputInfo = new ArrayList<>();
 				inputType.inputInfo = new ArrayList<>();
+				List<DeviceInfo> devInfo = deviceInfo[i];
+				if(devInfo != null) {
+					inputType.deviceInfo = new ArrayList<>();
+				}
+				int idx = 0;
 				for(TimeSeriesData tsh: inputTimeSeries[i]) {
 					inputType.inputInfo.add((TimeSeriesDataImpl) tsh);
+					if(devInfo != null) {
+						DeviceInfo di =devInfo.get(idx);
+						inputType.deviceInfo.add(di);
+						idx++;
+					}
 				}
 			}
 		}

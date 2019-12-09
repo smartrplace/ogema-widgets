@@ -27,7 +27,7 @@ import de.iwes.widgets.html.selectiontree.LinkingOptionType;
 import de.iwes.widgets.html.selectiontree.SelectionItem;
 
 public class GaRoMultiEvaluationInput extends AbstractMultiEvaluationInputGeneric {
-	private final GaRoDataTypeI terminalDataType;
+	protected final GaRoDataTypeI terminalDataType;
 	private final List<String> topLevelIdsToEvaluate;
 	private final String topLevelOptionId;
 	//private final LinkingOptionType terminalOptionType;
@@ -61,10 +61,15 @@ public class GaRoMultiEvaluationInput extends AbstractMultiEvaluationInputGeneri
 				if(linkingOptionType.id().equals(GaRoMultiEvalDataProvider.ROOM_LINKINGOPTION_ID)) return true;
 				if(terminalDataType == GaRoDataType.Any) return true;
 				GaRoSelectionItem gsi = (GaRoSelectionItem)item;
-				return GaRoEvalHelper.getDataType(gsi.id()).label(null).equals(terminalDataType.label(null));
+				return useDataProviderItemTerminal(gsi);
+				//return GaRoEvalHelper.getDataType(gsi.id()).label(null).equals(terminalDataType.label(null));
 				//return GaRoEvalHelper.getDataType(gsi.id()) == terminalDataType;
 			}
 		};
+	}
+	
+	protected boolean useDataProviderItemTerminal(GaRoSelectionItem item) {
+		return GaRoEvalHelper.getDataType(item.id()).label(null).equals(terminalDataType.label(null));		
 	}
 	
 	@Override

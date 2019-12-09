@@ -1,89 +1,106 @@
-/**
- * ﻿Copyright 2014-2018 Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package de.iwes.timeseries.eval.garo.resource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import org.ogema.core.application.ApplicationManager;
-import org.ogema.core.model.simple.SingleValueResource;
-import org.ogema.model.devices.buildingtechnology.Thermostat;
-import org.ogema.model.devices.connectiondevices.ElectricityConnectionBox;
 import org.ogema.model.locations.Room;
-import org.ogema.model.prototypes.PhysicalElement;
-import org.ogema.model.sensors.Sensor;
-import org.ogema.tools.resource.util.ResourceUtils;
+import org.ogema.recordeddata.DataRecorder;
 
+import de.iwes.timeseries.eval.api.TimeSeriesData;
+import de.iwes.timeseries.eval.garo.api.base.EvaluationInputImplGaRo;
+import de.iwes.timeseries.eval.garo.api.base.GaRoDataType;
+import de.iwes.timeseries.eval.garo.api.base.GaRoDataTypeI.Level;
 import de.iwes.timeseries.eval.garo.api.base.GaRoMultiEvalDataProvider;
+import de.iwes.timeseries.eval.garo.api.helper.base.GaRoEvalHelper;
+import de.iwes.util.resource.ResourceHelper.DeviceInfo;
+import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 import de.iwes.widgets.html.selectiontree.SelectionItem;
 
-/** Note that this class should inherit from {@link GaRoMultiEvalDataProvider}, but the seconds generic
- * parameter of HierarchyMultiEvalDataProviderGeneric shall be set explicitly here*/
-public class GaRoMultiEvalDataProviderResource extends GaRoMultiEvalDataProvider<GaRoSelectionItemResource> {
-	//HierarchyMultiEvalDataProviderGeneric<GaRoSelectionItemResource> {
-	private final ApplicationManager appMan;
+//@Service(HierarchyMultiEvalDataProvider.class)
+//@Component
+public class GaRoMultiEvalDataProviderResource extends GaRoMultiEvalDataProvider<GaRoSelectionItemResource> { //HierarchyMultiEvalDataProviderGeneric<GaRoSelectionItemResource2> {
+	public static final String PROVIDER_ID = "GaRoMultiEvalDataProviderResource";
+	public static final GaRoSelectionItemResource gwSelectionItem = new GaRoSelectionItemResource(LOCAL_GATEWAY_ID);
 	
-	private List<SelectionItem> gwSelectionItems = null;
+	private final ApplicationManager appMan;
+	private final DataRecorder logData;
+	
+	private final static List<SelectionItem> gwSelectionItems = new ArrayList<>();
+	static {
+		gwSelectionItems.add(gwSelectionItem);		
+	}
 	private List<SelectionItem> roomSelectionItems = null;
+	
 	/*if true the gateways available are fixed and usually less entries than
 	 *the original size providing all gateways that are available in the input data 
 	*/
 	private boolean fixRoomSelectionItems = false;
 	
-	public GaRoMultiEvalDataProviderResource(ApplicationManager appMan) {
+	public GaRoMultiEvalDataProviderResource(ApplicationManager appMan, DataRecorder dataRecorder) {
 		super();
-		//super(new String[]{GaRoMultiEvalDataProvider.GW_LINKINGOPTION_ID, GaRoMultiEvalDataProvider.ROOM_LINKINGOPTION_ID, "timeSeries"});
-		gwSelectionItems = new ArrayList<>();
-		gwSelectionItems.add(new GaRoSelectionItemResource(LOCAL_GATEWAY_ID));
-		this.appMan = appMan; 
+		this.appMan = appMan;
+		this.logData = dataRecorder;
 	}
 
 	@Override
-	protected List<SelectionItem> getOptions(int level, GaRoSelectionItemResource superItem) {
+	public String id() {
+		return PROVIDER_ID;
+	}
+
+	@Override
+	public String label(OgemaLocale locale) {
+		return "Single-Gateway GaRo Dataprovider OGEMA Resources";
+	}
+
+	@Override
+	public String description(OgemaLocale locale) {
+		return "Single-Gateway GaRo Dataprovider on OGEMA Resource (base)";
+	}
+
+	@Override
+	public List<SelectionItem> getOptions(int level, GaRoSelectionItemResource superItem) {
 		switch(level) {
 		case GaRoMultiEvalDataProvider.GW_LEVEL:
 			return gwSelectionItems;
 		case GaRoMultiEvalDataProvider.ROOM_LEVEL:
 			if(fixRoomSelectionItems) return roomSelectionItems;
-			List<Room> roomIds = appMan.getResourceAccess().getResources(Room.class);
-			roomSelectionItems = new ArrayList<>();
-			for(Room room: roomIds)
-				roomSelectionItems.add(new GaRoSelectionItemResource(ResourceUtils.getHumanReadableName(room), room, superItem));
-			roomSelectionItems.add(new GaRoSelectionItemResource(GaRoMultiEvalDataProvider.BUILDING_OVERALL_ROOM_ID, (Room)null, superItem));
-			return roomSelectionItems;
+			List<Room> rooms = appMan.getResourceAccess().getResources(Room.class);
+			/*Optional<Map<String, Resource>> preR = superItem.getGwData().getAllRooms();
+			if(!preR.isPresent()) {
+				System.out.println("No Rooms for superItem "+superItem.id());
+			}
+			Map<String, Resource> roomIds = preR.orElse(new HashMap<>()); //superItem.getGwData().getAllRooms().get();
+			*/
+			List<SelectionItem> result = new ArrayList<>();
+			for(Room room: rooms)
+				result.add(new GaRoSelectionItemResource(room.getLocation(), room, superItem, logData));
+			result.add(new GaRoSelectionItemResource(GaRoMultiEvalDataProvider.BUILDING_OVERALL_ROOM_ID, null, superItem, logData));
+			return result;
 		case GaRoMultiEvalDataProvider.TS_LEVEL:
 			//CloseableDataRecorder logData = superItem.getLogRecorder();
-			List<SelectionItem> result = new ArrayList<>();
+			List<String> recIds = superItem.getLogDataIds();
+			result = new ArrayList<>();
 			if(superItem.resource == null) {
-				//TODO: Also specifiy the types in GaRoEvalHelper or similar
-				addResources(ElectricityConnectionBox.class, result, superItem);
-				addResources(Thermostat.class, result, superItem);
-				addResources(Sensor.class, result, superItem);
-				//We would need to add the sema-info-Resource here
+				for(String tsId: recIds) {
+					result.add(new GaRoSelectionItemResource(tsId, superItem));
+				}				
 			} else {
-				//add resource types that are overall
-				addResources(ElectricityConnectionBox.class, result, superItem);
-
 				//here only use ids that belong to the room
-				Set<PhysicalElement> recIds = GaRoSelectionItemResource.getDevicesByRoom((Room) superItem.getResource());
-				for(PhysicalElement devE: recIds) {
-					for(SingleValueResource ts: getRecordedDataOfDevice(devE)) {
-						result.add(new GaRoSelectionItemResource(ResourceUtils.getHumanReadableName(ts), ts, superItem));
+				List<String> devicePaths = superItem.getDevicePaths();
+				for(String tsId: recIds) {
+					GaRoDataType gtype = GaRoEvalHelper.getDataType(tsId);
+					//Gateway-specific types shall be evaluated for every room
+					if(gtype != null &&  gtype.getLevel() == Level.GATEWAY) { //GaRoEvalHelper.getGatewayTypes().contains(gtype)) {
+						result.add(new GaRoSelectionItemResource(tsId, superItem));
+						continue;
+					}
+					for(String devE: devicePaths) {
+						if(tsId.startsWith(devE)) {
+							result.add(new GaRoSelectionItemResource(tsId, superItem));
+							break;
+						}
 					}
 				}
 			}
@@ -92,34 +109,64 @@ public class GaRoMultiEvalDataProviderResource extends GaRoMultiEvalDataProvider
 			throw new IllegalArgumentException("unknown level");
 		}
 	}
-	
-	private void addResources(Class<? extends PhysicalElement> type, List<SelectionItem> result,
-			GaRoSelectionItemResource superItem) {
-		List<? extends PhysicalElement> recIds = appMan.getResourceAccess().getResources(type);
-		for(PhysicalElement devE: recIds) {
-			for(SingleValueResource ts: getRecordedDataOfDevice(devE)) {
-				result.add(new GaRoSelectionItemResource(ResourceUtils.getHumanReadableName(ts), ts, superItem));
-			}
-		}
-	}
 
-	public static List<SingleValueResource> getRecordedDataOfDevice(PhysicalElement device) {
-		throw new UnsupportedOperationException("not implemented yet!");
-	}
-
+	/** Set gateways to be offered by this data provider instance. This is relevant if a
+	 * MultiEvalation shall not evaluate all gateways in the data set
+	 * 
+	 * @param gwSelectionItemsToOffer must be a subset of the original result of
+	 * {@link #getOptions(int, GaRoSelectionItemResource)} with level GW_LEVEL
+	 */
 	@Override
 	public void setGatewaysOffered(List<SelectionItem> gwSelectionItemsToOffer) {
 		roomSelectionItems = gwSelectionItemsToOffer;
 		fixRoomSelectionItems = true;
 	}
-
+	
 	@Override
 	public boolean providesMultipleGateways() {
-		return false;
+		return true;
 	}
+
+	public void close() {}
+
 
 	@Override
 	public List<String> getGatewayIds() {
-		return Arrays.asList(LOCAL_GATEWAY_ID);
+		return Arrays.asList(new String[] {gwSelectionItem.id()});
+	}
+	
+	@Override
+	public EvaluationInputImplGaRo getData(List<SelectionItem> items) {
+		List<TimeSeriesData> tsList = new ArrayList<>();
+		List<DeviceInfo> devList = new ArrayList<>();
+		for(SelectionItem item: items) {
+			tsList.add(terminalOption.getElement(item));
+			//if(item instanceof GaRoSelectionItemResource2) {
+			//	GaRoSelectionItemResource2 jitem = (GaRoSelectionItemResource2)item;
+				String tsId = terminalOption.getElement(item).id();
+				DeviceInfo dev = new DeviceInfo();
+				dev.setDeviceResourceLocation(getDevicePath(tsId));
+				dev.setDeviceName(getDeviceShortId(dev.getDeviceResourceLocation()));
+				devList.add(dev);				
+			//} else devList.add(null);
+		}
+		return new EvaluationInputImplGaRo(tsList, devList);
+	}
+	
+	public static String getDevicePath(String tsId) {
+		String[] subs = tsId.split("/");
+		if(subs.length > 3) return subs[2];
+		else return tsId; //throw new IllegalStateException("Not a valid tsId for Homematic:"+tsId);
+	}
+	
+	public static String getDeviceShortId(String deviceLongId) {
+		int len = deviceLongId.length();
+		if(len < 4) return deviceLongId;
+		String toTest;
+		if(deviceLongId.charAt(len-2) == '_') {
+			if(len < 6) return deviceLongId;
+			toTest =deviceLongId.substring(len-6, len-2);
+		} else toTest = deviceLongId.substring(len-4);
+		return toTest;
 	}
 }

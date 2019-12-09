@@ -152,13 +152,8 @@ public class GenericGaRoMultiEvaluation<P extends GaRoSingleEvalProvider> extend
 	@Override
 	protected void performRoomEvaluation(List<TimeSeriesData>[] inputTimeSeries, GaRoMultiResult result) {
 		final List<EvaluationInput> inputs = new ArrayList<>();
-		//TODO
-		//if(resultExtended != null) {
-		//	resultExtended.startRoom(resultExtended, currentRoom, );
-		//}
-
 		
-		for(List<TimeSeriesData> tsdList: inputTimeSeries) {
+		if(inputTimeSeries != null) for(List<TimeSeriesData> tsdList: inputTimeSeries) {
 			inputs.add(new EvaluationInputImpl(tsdList));
 		}
 		
@@ -170,13 +165,6 @@ public class GenericGaRoMultiEvaluation<P extends GaRoSingleEvalProvider> extend
 		roomEval.provideCurrentValues(result.gwId(), roomId, startTime, superResult);
 		if(roomEval instanceof GaRoSingleEvalProviderPreEvalRequesting) {
 			GaRoSingleEvalProviderPreEvalRequesting preEvalReq = (GaRoSingleEvalProviderPreEvalRequesting) roomEval;
-			/*long startTime = EvaluationUtils.getStartAndEndTime(result.configurations, inputs, false)[0];
-			String roomId;
-			if(currentRoom == null) {
-				roomId = GaRoMultiEvalDataProvider.BUILDING_OVERALL_ROOM_ID;
-			} else roomId = getPath(currentRoom);
-			preEvalReq.provideCurrentValues(result.gwId(), roomId, startTime);
-			*/
 			List<EvaluationInputImpl> toInject = preEvalReq.timeSeriesToInject();
 			GaRoDataTypeI[] types = roomEval.getGaRoInputTypes();
 			int idx = 0;
@@ -190,19 +178,7 @@ public class GenericGaRoMultiEvaluation<P extends GaRoSingleEvalProvider> extend
 				idx++;
 			}
 		}
-		/*Collection<ConfigurationInstance> myConfigurations = new ArrayList<>();
-		myConfigurations.addAll(result.configurations);
-		ConfigurationBuilder<GenericStringConfiguration> cb = ConfigurationBuilder.newBuilder(GenericStringConfiguration.class).
-				withDescription("").withLabel("").withResultType(new ResultTypeDefault("default"));
-		Configuration<? extends GenericStringConfiguration> config = cb.withId("roomName").build();
-		GenericStringConfiguration addConfig = new GenericStringConfiguration(currentRoom != null?getName(currentRoom):"", config );
-		myConfigurations.add(addConfig);
-		config = cb.withId("roomId").build();
-		addConfig = new GenericStringConfiguration(currentRoom != null?getPath(currentRoom):"", config );
-		myConfigurations.add(addConfig);
-		config = cb.withId("gwId").build();
-		addConfig = new GenericStringConfiguration(result.gwId(), config );
-		myConfigurations.add(addConfig);*/
+		
 		final EvaluationInstance instance = EvaluationUtils.performEvaluationBlocking(roomEval, inputs, resultsRequested, result.configurations); //myConfigurations );
 		final Map<ResultType, EvaluationResult> results = instance.getResults();
 		

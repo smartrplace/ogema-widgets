@@ -17,14 +17,16 @@ package de.iee.sema.remote.message.connector;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
+import java.net.URI;
+import java.security.AccessController;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivilegedAction;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Base64;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,7 +36,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.entity.ContentType;
@@ -51,6 +56,10 @@ import org.ogema.serialization.jaxb.IntegerResource;
 import org.ogema.serialization.jaxb.Resource;
 import org.ogema.serialization.jaxb.StringResource;
 import org.ogema.serialization.jaxb.TimeResource;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
 import de.iee.sema.remote.message.forwarder.config.RemoteMessagePattern;
@@ -65,6 +74,13 @@ public class RemoteMessageConnector implements Application, MessageListener {
 	private ResourcePatternAccess patternAccess;
 	private OgemaLogger logger;
 	
+	private BundleContext ctx;
+	
+	@Activate
+	protected void activate(BundleContext ctx) {
+		this.ctx = ctx;
+	}
+	
 	@Override
 	public void start(ApplicationManager appMan) {
 		this.patternAccess = appMan.getResourcePatternAccess();
@@ -75,6 +91,7 @@ public class RemoteMessageConnector implements Application, MessageListener {
 	public void newMessageAvailable(final ReceivedMessage receivedMessage, final List<String> recipients) {
 		
 		final Message msg = receivedMessage.getOriginalMessage();
+		logger.debug("New message {} for recipients {}", msg, recipients);
 		
 		final StringResource subject = new StringResource();
 		subject.setName("subject");
@@ -130,56 +147,96 @@ public class RemoteMessageConnector implements Application, MessageListener {
 		
 		// Serialize the created message resource
 		final StringWriter writer = new StringWriter();
-		try {
-			final JAXBContext context = JAXBContext.newInstance(Resource.class);
-			final Marshaller marshaller = context.createMarshaller();
-			marshaller.marshal(remoteMessage, writer);
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
-		logger.debug("rest message (xml): " + writer.toString());
-		
-		final List<RemoteMessagePattern> receivers = patternAccess.getPatterns(RemoteMessagePattern.class,
-				AccessPriority.PRIO_LOWEST);
-		
-		// Send the serialized message to all the receivers
-		final CloseableHttpClient client = getClient();
-		
-		for(String receiver : recipients) {
-			final RemoteMessagePattern rec = getReceiver(receiver, receivers);
-			String restAddress = rec.restAddress.getValue();
-			if (!restAddress.endsWith("/"))
-				restAddress = restAddress + "/";
-			final String restUser = rec.restUser.getValue();
-			
-			// Old
-//			final StringJoiner sj = new StringJoiner("/", restAddress, "/?user=" + restUser + "&pw=" + rec.restPassword.getValue());
-//			sj.add(restUser).add("messages");
-			
-			String restUrl = restAddress + restUser + "/messages";
-			
-			logger.debug("rest adress: {}", restUrl);
-			
-			final HttpPost post = new HttpPost(restUrl);
-	        post.setEntity(new StringEntity(writer.getBuffer().toString(), ContentType.APPLICATION_XML));
-	        
-	        final String auth0 = restUser + ":" + rec.restPassword.getValue();
-	        final String auth1 = "Basic "+ Base64.getEncoder().encodeToString(auth0.getBytes(StandardCharsets.UTF_8));
-	        post.setHeader("Authorization", auth1);
-	        
-	        final HttpResponse resp;
-			try {
-				resp = client.execute(post);
-				int code = resp.getStatusLine().getStatusCode();
-		        
-				logger.debug("Remote message sent: Http-code: {}", code);
-			} catch (IOException e) {
-				e.printStackTrace();
+		AccessController.doPrivileged(new PrivilegedAction<Void>() {
+
+			@Override
+			public Void run() {
+				try {
+					final JAXBContext context = JAXBContext.newInstance(Resource.class);
+					final Marshaller marshaller = context.createMarshaller();
+					marshaller.marshal(remoteMessage, writer);
+				} catch (JAXBException e) {
+					logger.error("Failed to send message",e);
+					return null;
+				}
+				logger.debug("rest message (xml): {}", writer);
+				
+				final List<RemoteMessagePattern> receivers = patternAccess.getPatterns(RemoteMessagePattern.class,
+						AccessPriority.PRIO_LOWEST);
+				
+				// Send the serialized message to all the receivers
+				final CloseableHttpClient client = getClient();
+				
+				for(String receiver : recipients) {
+					final RemoteMessagePattern rec = getReceiver(receiver, receivers);
+					String restAddress = rec.restAddress.getValue();
+					if (!restAddress.endsWith("/"))
+						restAddress = restAddress + "/";
+					final String restUser = rec.restUser.getValue();
+					
+					// Old
+//					final StringJoiner sj = new StringJoiner("/", restAddress, "/?user=" + restUser + "&pw=" + rec.restPassword.getValue());
+//					sj.add(restUser).add("messages");
+					
+					String restUrl = restAddress + restUser + "/messages";
+					
+					logger.debug("rest adress: {}", restUrl);
+					
+					final HttpPost post = new HttpPost(restUrl);
+			        post.setEntity(new StringEntity(writer.getBuffer().toString(), ContentType.APPLICATION_XML));
+			        
+//			        final String auth0 = restUser + ":" + rec.restPassword.getValue();
+//			        final String auth1 = "Basic "+ Base64.getEncoder().encodeToString(auth0.getBytes(StandardCharsets.UTF_8));
+//			        post.setHeader("Authorization", auth1);
+			        
+			        final HttpResponse resp;
+					try {
+						resp = sendViaAuthService(client, post);
+						int code = resp.getStatusLine().getStatusCode();
+				        if (code < 300)
+				        	logger.debug("Remote message sent: Http-code: {}", code);
+				        else 
+				        	logger.error("Remote message sending failed: Http-code: {}: {}, address {}", 
+				        			code, resp.getStatusLine().getReasonPhrase(), restUrl);
+					} catch (Exception e) {
+						logger.error("Failed to send message",e);
+					}
+				}
+				return null;
 			}
+		});
+		
+		
 	        
-		}
 		
 	}
+	
+	private CloseableHttpResponse sendViaAuthService(final CloseableHttpClient client, final HttpUriRequest request) throws ClientProtocolException, IOException {
+    	final URI uri = request.getURI();
+    	final ServiceReference<org.ogema.tools.remote.ogema.auth.RemoteOgemaAuth> ref = getAuthService(uri.getHost(), uri.getPort());
+    	final org.ogema.tools.remote.ogema.auth.RemoteOgemaAuth auth = ref != null ? ctx.getService(ref) : null;
+    	if (auth == null)
+    		return null;
+		try {
+			return auth.execute(client, request);
+		} finally {
+			try {
+				ctx.ungetService(ref);
+			} catch (Exception ignore) {}
+    	}
+    }
+	
+	 private final ServiceReference<org.ogema.tools.remote.ogema.auth.RemoteOgemaAuth> getAuthService(final String host, final int port) {
+	    	final Collection<ServiceReference<org.ogema.tools.remote.ogema.auth.RemoteOgemaAuth>> services;
+			try {
+				services = ctx.getServiceReferences(org.ogema.tools.remote.ogema.auth.RemoteOgemaAuth.class, 
+						"(&(" + org.ogema.tools.remote.ogema.auth.RemoteOgemaAuth.REMOTE_HOST_PROPERTY + "=" + host 
+								+ ")(" + org.ogema.tools.remote.ogema.auth.RemoteOgemaAuth.REMOTE_PORT_PROPERTY + "=" + port + "))");
+			} catch (InvalidSyntaxException e) {
+				throw new RuntimeException(e);
+			}
+	    	return services != null && !services.isEmpty() ? services.iterator().next() : null;
+	    }
 	
 	final static TrustStrategy TRUST_ALL = new TrustStrategy() {
 		

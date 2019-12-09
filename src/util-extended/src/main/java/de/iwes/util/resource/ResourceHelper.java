@@ -282,12 +282,20 @@ public class ResourceHelper {
 				.equals(ResourceHelper.getFirstParentOfType(res2ToUse, resType)));
 	}
 	
+	/** Information on the device to which a resource or a timeSeries belongs*/
 	public static class DeviceInfo {
+		/** Human readable device name. Note that this information may be null if no such name
+		 * is provided by the source*/
 		String deviceName;
+		/** Device location or another unique deviceID. Required to be provided by the source.*/
 		String deviceResourceLocation;
+		/** Device type. Note that this information may be null if not be provided by the source*/
 		Class<? extends PhysicalElement> deviceType;
+		/** Reference to the Location object of the device. Note that this information may be null
+		 * if not provided by the source. The Location resource may be accessible by applications even
+		 * if the device resource may not be accessible based on the application permissions.
+		 */
 		Location deviceLocation;
-		
 		
 		// getters and setters
 		public String getDeviceName() {
@@ -316,7 +324,6 @@ public class ResourceHelper {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	/** Find device to be used as primary device to which subResource shall be attached
 	 * for user interaction etc. (see {@link #getDeviceResource()}). Here we do not return
 	 * the resource, but the information usually required for user interaction, device
@@ -328,7 +335,11 @@ public class ResourceHelper {
 	 * @return
 	 */
 	public static DeviceInfo getDeviceInformation(Resource subResource) {
+		return getDeviceInformation(subResource, true);
+	}
+	public static DeviceInfo getDeviceInformation(Resource subResource, boolean locationRelevant) {
 		return AccessController.doPrivileged(new PrivilegedAction<DeviceInfo>() {
+			@SuppressWarnings("unchecked")
 			public DeviceInfo run() {
 				ApplicationManager appManPriv = UtilExtendedApp.getApplicationManager();
 				final Resource inputResourceToUse;
@@ -338,7 +349,7 @@ public class ResourceHelper {
 					inputResourceToUse = subResource;
 					LoggerFactory.getLogger("UtilExtended").warn("Could not use Application Manager of util-extended for resource permissions");
 				}
-				PhysicalElement device = LogHelper.getDeviceResource(inputResourceToUse, true);
+				PhysicalElement device = LogHelper.getDeviceResource(inputResourceToUse, locationRelevant);
 				if(device == null) return null;
 				DeviceInfo result = new DeviceInfo();
 				result.deviceName = ResourceUtils.getHumanReadableShortName(device);

@@ -17,11 +17,10 @@ package de.iwes.timeseries.eval.garo.multibase;
 
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.ogema.core.timeseries.ReadOnlyTimeSeries;
 
 import de.iwes.timeseries.eval.api.EvaluationInstance.EvaluationListener;
 import de.iwes.timeseries.eval.api.EvaluationProvider;
@@ -32,6 +31,7 @@ import de.iwes.timeseries.eval.garo.api.base.GaRoMultiResult;
 import de.iwes.timeseries.eval.garo.api.base.GaRoSuperEvalResult;
 import de.iwes.timeseries.eval.garo.api.helper.base.GaRoEvalHelper;
 import de.iwes.timeseries.eval.garo.api.helper.base.GaRoSuperEvalResultDeser;
+import de.iwes.widgets.api.messaging.MessagePriority;
 
 /**
  * Calculate the comfort temperature that was defined by the user.
@@ -60,6 +60,9 @@ public interface GaRoSingleEvalProvider extends EvaluationProvider, EvaluationLi
     * supported.<br>
     * Other negative values than -1 mean that any specific room with a negative roomType shall be
     * used (including a room that has type == -1)
+    * Note that this specification requires each implementation of {@link GaRoMultiEvalDataProvider} to
+    * return a SelectionItem for room level with id BUILDING_OVERALL_ROOM_ID and to return terminal SelectionItems
+    * for all time series for this room-level SelectionItem.
     */
    int[] getRoomTypes();
    
@@ -106,7 +109,7 @@ public interface GaRoSingleEvalProvider extends EvaluationProvider, EvaluationLi
 
 	public static final ChronoUnit DEFAULT_CHRONO = ChronoUnit.DAYS;
 	public static final int DEFAULT_INTERVALS_TO_CALC = 3;
-	public static interface MessageGenerator {
+	//public static interface MessageGenerator {
 		/** Determine after calculation of new KPIs whether a message shall be generated to be
 		 * sent to support
 		 * @param timeSeriesToCheck KPIs for base time interval or the
@@ -115,10 +118,18 @@ public interface GaRoSingleEvalProvider extends EvaluationProvider, EvaluationLi
 		 * 		the first element is the title of the message, more elements are
 		 * 		rows
 		 */
-		String[] sendMessage(List<ReadOnlyTimeSeries[]> timeSeriesToCheck,
-				int intervalType);
+		//String[] sendMessage(List<ReadOnlyTimeSeries[]> timeSeriesToCheck,
+		//		int intervalType);
+	//}
+	public static interface MessageDefinition {
+		String getTitle();
+		String getMessage();
+		default MessagePriority getPriority() {return MessagePriority.MEDIUM;}
 	}
-	public static class KPIPageDefintion {
+	public static interface KPIMessageDefinitionProvider {
+		MessageDefinition getMessage(Collection<KPIStatisticsManagementI> kpis, long currentTime);
+	}
+	public static class KPIPageDefinition {
 		public List<String> providerId;
 		public List<String[]> resultIds = new ArrayList<>();
 		public String configName;
@@ -127,6 +138,9 @@ public interface GaRoSingleEvalProvider extends EvaluationProvider, EvaluationLi
 		public int defaultIntervalsToCalc = DEFAULT_INTERVALS_TO_CALC;
 		public int defaultIntervalsPerColumnType = 2;
 		public Map<String, Integer> specialIntervalsPerColumn = new HashMap<>();
+		public Boolean hideOverallLine = null;
+		public String messageProvider = null;
 	}
-	default List<KPIPageDefintion> getPageDefinitionsOffered() {return null;}
+	default List<KPIPageDefinition> getPageDefinitionsOffered() {return null;}
+	default KPIMessageDefinitionProvider getMessageProvider(String messageProviderId) {return null;}
 }

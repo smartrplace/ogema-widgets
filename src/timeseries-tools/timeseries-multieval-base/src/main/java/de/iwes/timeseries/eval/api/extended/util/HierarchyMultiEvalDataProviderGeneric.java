@@ -33,7 +33,7 @@ import de.iwes.widgets.html.selectiontree.TerminalOption;
  */
 public abstract class HierarchyMultiEvalDataProviderGeneric<T extends HierarchySelectionItemGeneric> extends MultiEvalDataProviderGeneric
 		implements HierarchyMultiEvalDataProvider<T> {
-	private HierarchyTerminalOptionGeneric<T> terminalOption;
+	protected HierarchyTerminalOptionGeneric<T> terminalOption;
 	
 	public HierarchyMultiEvalDataProviderGeneric(String[] linkingOptionNames) {
 		super(null);

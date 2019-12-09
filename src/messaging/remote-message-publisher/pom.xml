@@ -1,0 +1,66 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+       <groupId>org.ogema.messaging</groupId>
+        <artifactId>ogema-messaging</artifactId>
+        <version>2.2.1</version> 
+    </parent>
+    
+    <artifactId>remote-message-publisher</artifactId>
+    <name>remote-message-publisher</name>
+    <description>Re-publishes received client messages on the server</description>
+
+    <packaging>bundle</packaging>
+   
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                	<instructions>
+                		<Export-Package>
+                		</Export-Package>
+                	</instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+     <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.core</artifactId>
+            <version>6.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.cmpn</artifactId>
+            <version>6.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.core</groupId>
+            <artifactId>api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.core</groupId>
+            <artifactId>models</artifactId>
+        </dependency>
+        <dependency>
+	        <groupId>org.ogema.widgets</groupId>
+	        <artifactId>ogema-gui-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.messaging</groupId>
+            <artifactId>remote-message-receiver</artifactId>
+	    <version>${project.parent.version}</version>
+       	</dependency>
+    </dependencies>
+
+</project>

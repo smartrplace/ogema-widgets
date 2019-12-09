@@ -26,6 +26,8 @@ public interface TimeSeriesFilterExtended extends TimeSeriesFilter {
 	 */
 	String longName(ReadOnlyTimeSeries schedule);
 	
+	/** May be null if not provided*/
+	Class<?> type(ReadOnlyTimeSeries schedule);
 	/** Provide time series accepted by the filter. In this case also MemoryTimeSeries can be provided
 	 * that would not be accessible for the ScheduleViewer otherwise.
 	 * 

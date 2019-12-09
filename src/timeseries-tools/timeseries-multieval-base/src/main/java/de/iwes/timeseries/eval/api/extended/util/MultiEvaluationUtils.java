@@ -46,11 +46,8 @@ import de.iwes.timeseries.eval.api.configuration.ConfigurationInstance;
 import de.iwes.timeseries.eval.api.configuration.ConfigurationInstance.DateConfiguration;
 import de.iwes.timeseries.eval.api.configuration.StartEndConfiguration;
 import de.iwes.timeseries.eval.api.extended.MultiEvaluationInputGeneric;
-import de.iwes.timeseries.eval.api.extended.MultiEvaluationItemSelector;
 import de.iwes.timeseries.eval.api.extended.MultiResult;
 import de.iwes.timeseries.eval.base.provider.utils.EvaluationUtils;
-import de.iwes.timeseries.eval.base.provider.utils.TimeSeriesDataImpl;
-import de.iwes.widgets.html.selectiontree.LinkingOption;
 import de.iwes.widgets.html.selectiontree.SelectionItem;
 
 public class MultiEvaluationUtils {
@@ -223,115 +220,20 @@ public class MultiEvaluationUtils {
         }
     }
     
-	/** Get time series that will be evaluated for a certain input configuration.
-	 * Note that {@link AbstractMultiEvaluationInstance#startInputLevel(List, List, int, MultiResult)}
-	 * will not be evaluated here to reduce the time series actually used.
-	 * Also {@link #finishInputLevel(int, MultiResult)} is not called here and no status information
-	 * is processed. Of course, also {@link #evaluateDataSet(List, List[], MultiResult)} is not
-	 * called here. Note that this method also does not take into account a roomType-limitation of
-	 * the EvaluationProvider.
-	 * @param dp DataProvider to use
-	 * @param provider EvaluationProvider to use
-	 * @return the result is not structured here in contrast would is needed for real evaluation.
-	 * 		All input time series are just collected in a list. We do not check for the same time
-	 * 		series being in the list here. We get new TimeSeriesData object usually, so using
-	 * 		a Set would probably not help
-	 */
-	public static <SI extends SelectionItem> List<TimeSeriesData> getFittingTSforEval(DataProvider<?> dp,
-			AbstractMultiEvaluationProvider<?> provider,
-			List<MultiEvaluationInputGeneric> input) {
-        
-		MultiEvaluationInputGeneric governingInput2 = input.get(provider.maxTreeIndex);
-        MultiEvaluationItemSelector governingItemsSelected2 = input.get(provider.maxTreeIndex).itemSelector();
-        LinkingOption[] linkingOptions2 = governingInput2.dataProvider().get(0).selectionOptions(); //getLinkingOptions(governingInput2);
-		return executeAllOfLevelStatic(provider, 0, new ArrayList<SI>(), new ArrayList<Collection<SelectionItem>>(),
-				linkingOptions2, governingItemsSelected2, input, true);		
+	public static class TimeSeriesInputForSingleRequiredInputIdx {
+		public List<TimeSeriesData> tsList;
+		/**Note that in this list one entry per DataProvider is added. So the length and the index of this list
+		 * is different from the length/index of tsList
+		 */
+		public List<EvaluationInput> eiList;
 	}
-	@SuppressWarnings("unchecked")
-	public static <SI extends SelectionItem> List<TimeSeriesData> executeAllOfLevelStatic(
-			AbstractMultiEvaluationProvider<?> provider,
-			int level,
-			ArrayList<SI> upperDependencies2,
-			List<Collection<SelectionItem>> upperDependencies,
-			LinkingOption[] linkingOptions,
-			MultiEvaluationItemSelector governingItemsSelected,
-			List<MultiEvaluationInputGeneric> input, boolean addContextData) {
-
-		List<SelectionItem> levelOptionsAll = linkingOptions[level].getOptions(upperDependencies);
-		List<SI> levelOptions = new ArrayList<>();
-		for(SelectionItem lvlAll: levelOptionsAll) {
-			if(governingItemsSelected.useDataProviderItem(linkingOptions[level], lvlAll))
-				levelOptions.add((SI) lvlAll);
-		}
-
-		if(level >= (provider.maxTreeSize-1)) {
-			//we should execute
-			List<TimeSeriesData>[] currentData = getDataForInput(input, upperDependencies);
-			List<TimeSeriesData> result= new ArrayList<>();
-			if(addContextData) {
-				int idx = 0;
-				for(List<TimeSeriesData> cd: currentData) {
-					MultiEvaluationInputGeneric multiGen = input.get(idx);
-					final Object inputDef;
-					if(multiGen instanceof AbstractMultiEvaluationInputGeneric) {
-						inputDef = ((AbstractMultiEvaluationInputGeneric)multiGen).getInputDefinition();
-					} else inputDef = null;
-					for(TimeSeriesData ts: cd) {
-						if(ts instanceof TimeSeriesDataImpl && (!(ts instanceof TimeSeriesDataExtendedImpl))) {
-							List<String> ids = new ArrayList<>();
-							for(SI dep: upperDependencies2) {
-								ids.add(dep.id());
-							}
-							result.add(new TimeSeriesDataExtendedImpl((TimeSeriesDataImpl)ts, ids, inputDef));
-						} else
-							result.add(ts);
-					}
-					idx++;
-				}
-			} else
-				for(List<TimeSeriesData> cd: currentData) result.addAll(cd);
-			return result;
-
-		} else {
-			List<TimeSeriesData> result = new ArrayList<>();
-			for(SelectionItem item: levelOptions) {
-				ArrayList<SelectionItem> newDependency = new ArrayList<>();
-				newDependency.add(item);
-				upperDependencies.add(newDependency);
-				upperDependencies2.add((SI) item);
-				/*if(addContextData) {
-					List<TimeSeriesData> base = executeAllOfLevelStatic(provider, level+1, upperDependencies2, upperDependencies,
-							linkingOptions, governingItemsSelected, input, addContextData);
-					for(TimeSeriesData ts: base) {
-						if(ts instanceof TimeSeriesDataImpl && (!(ts instanceof TimeSeriesDataExtendedImpl))) {
-							List<String> ids = new ArrayList<>();
-							for(SI dep: upperDependencies2) {
-								ids.add(dep.id());
-							}
-							MultiEvaluationInputGeneric multiGen = input.get(0);
-							DataProviderType types = multiGen.type();
-							MultiEvaluationItemSelector type = multiGen.itemSelector();
-							result.add(new TimeSeriesDataExtendedImpl((TimeSeriesDataImpl)ts, ids, type));
-						} else
-							result.add(ts);
-					}
-				} else*/
-				result.addAll(executeAllOfLevelStatic(provider, level+1, upperDependencies2, upperDependencies,
-					linkingOptions, governingItemsSelected, input, addContextData));
-				//if(status != StatusImpl.RUNNING) return;
-				upperDependencies.remove(upperDependencies.size()-1);
-				upperDependencies2.remove(upperDependencies2.size()-1);
-			}
-			return result;
-		}
-	}
-
 	
 	@SuppressWarnings("unchecked")
-	public static <SI extends SelectionItem> List<TimeSeriesData>[] getDataForInput(
+	public static <SI extends SelectionItem> TimeSeriesInputForSingleRequiredInputIdx[] getDataForInput(
 			List<MultiEvaluationInputGeneric> input,
 			List<Collection<SelectionItem>> upperDependencies) {
-		List<TimeSeriesData>[] currentData = new List[input.size()];
+		//List<TimeSeriesData>[] currentData = new List[input.size()];
+		TimeSeriesInputForSingleRequiredInputIdx[] currentData = new TimeSeriesInputForSingleRequiredInputIdx[input.size()];
 		for(int tsIdx = 0; tsIdx < input.size(); tsIdx++) {
 			//first we call start level also here
 			MultiEvaluationInputGeneric in = input.get(tsIdx);
@@ -360,16 +262,19 @@ public class MultiEvaluationUtils {
 			
 			//now we actually get the data for an evaluation
 			//EvaluationInputImpl evalInput = null;
-			List<TimeSeriesData> tsList = new ArrayList<>();;
+			currentData[tsIdx] = new TimeSeriesInputForSingleRequiredInputIdx();
+			List<TimeSeriesData> tsList = new ArrayList<>();
+			List<EvaluationInput> eiList = new ArrayList<>();
 			for(DataProvider<?> dp: in.dataProvider()) {
 				EvaluationInput evalInputLoc = dp.getData((List<SelectionItem>) levelOptionsTerminal);
 				tsList.addAll(evalInputLoc.getInputData());
+				eiList.add(evalInputLoc);
 			}
 			//EvaluationInput evalInput = in.dataProvider().getData((List<SelectionItem>) levelOptionsTerminal);
 			//List<TimeSeriesData> tsList = evalInput.getInputData();
-			currentData[tsIdx] = tsList; //new ArrayList<>();
+			currentData[tsIdx].tsList = tsList; //new ArrayList<>();
+			currentData[tsIdx].eiList = eiList;
 		} //for
 		return currentData;
 	}
-
- }
+}

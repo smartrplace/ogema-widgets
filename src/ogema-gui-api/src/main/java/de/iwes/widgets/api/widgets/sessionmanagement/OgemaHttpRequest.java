@@ -39,11 +39,14 @@ public class OgemaHttpRequest {
 	private final String sessionId; 
 	
 	public OgemaHttpRequest(HttpServletRequest req, boolean isPolling) {
+		this(req, isPolling, req.getParameter("locale"));
+	}
+	public OgemaHttpRequest(HttpServletRequest req, boolean isPolling, String localeString) {
 		this.req = req;
 		this.isPolling = isPolling;
 		final String pageInstanceId0 = req.getParameter("pageInstance");
 		this.pageInstanceId = pageInstanceId0 == null ? Integer.toString(lastPageInstanceId.incrementAndGet()) : pageInstanceId0;
-		this.localeString = req.getParameter("locale"); // TODO standard element?
+		this.localeString = localeString; //req.getParameter("locale"); // TODO standard element?
 		this.sessionId = getSessionId(req.getSession()) + "_" + pageInstanceId;
 	}
 	

@@ -53,17 +53,18 @@ import de.iwes.timeseries.eval.garo.api.base.GaRoMultiEvalDataProvider;
 import de.iwes.timeseries.eval.garo.api.base.GaRoMultiEvaluationInput;
 import de.iwes.timeseries.eval.garo.api.base.GaRoMultiResult;
 import de.iwes.timeseries.eval.garo.api.base.GaRoMultiResult.RoomData;
-import de.iwes.timeseries.eval.garo.api.base.GaRoSuperEvalResult;
 import de.iwes.timeseries.eval.garo.api.base.GaRoTimeSeriesId;
 import de.iwes.timeseries.eval.garo.multibase.GaRoSingleEvalProvider;
 import de.iwes.timeseries.eval.garo.multibase.GenericGaRoMultiEvaluation;
 import de.iwes.timeseries.eval.garo.multibase.GenericGaRoMultiProvider;
+import de.iwes.timeseries.eval.garo.util.MultiEvaluationUtilsGaRo;
 import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 import de.iwes.widgets.html.selectiontree.SelectionItem;
 
 public class GaRoEvalHelper {
 	public static GaRoDataType getDataType(String recId) {
 		if(recId.contains("chargeSensor")) return GaRoDataType.ChargeSensor;
+		if(recId.contains("internalVoltage")) return GaRoDataType.ChargeVoltage;
 		if(recId.contains("HUMIDITY")) return GaRoDataType.HumidityMeasurement;
 		if(recId.contains("SHUTTER_CONTACT")) return GaRoDataType.WindowOpen;
 		if(recId.contains("MOTION_DETECTOR")) return GaRoDataType.MotionDetection;
@@ -73,10 +74,40 @@ public class GaRoEvalHelper {
 		if(recId.contains("temperatureSensor/reading")) return GaRoDataType.TemperatureMeasurementThermostat;
 		if(recId.contains("TEMPERATURE/reading")) return GaRoDataType.TemperatureMeasurementRoomSensor;
 		if(recId.contains("valve/setting/stateFeedback")) return GaRoDataType.ValvePosition;
-		if(recId.contains("electricityConnectionBox/connection/powerSensor/reading")) return GaRoDataType.PowerMeter;
+		if(recId.contains("connection/powerSensor/reading")) return GaRoDataType.PowerMeter;
+		if(recId.contains("connection/energySensor/reading")) return GaRoDataType.PowerMeterEnergy;
+		if(recId.contains("connection/currentSensor/reading")) return GaRoDataType.PowerMeterCurrent;
+		if(recId.contains("connection/voltageSensor/reading")) return GaRoDataType.PowerMeterVoltage;
+		if(recId.contains("connection/frequencySensor/reading")) return GaRoDataType.PowerMeterFrequency;
+		if(recId.contains("connection/subPhaseConnections")
+				&&recId.contains("powerSensor/reading")) return GaRoDataType.PowerMeterSubphase;
+		if(recId.contains("connection/subPhaseConnections")
+				&&recId.contains("energySensor/reading")) return GaRoDataType.PowerMeterEnergySubphase;
+		if(recId.contains("connection/subPhaseConnections")
+				&&recId.contains("currentSensor/reading")) return GaRoDataType.PowerMeterCurrentSubphase;
+		if(recId.contains("connection/subPhaseConnections")
+				&&recId.contains("voltageSensor/reading")) return GaRoDataType.PowerMeterVoltageSubphase;
+		if(recId.contains("connection/subPhaseConnections")
+				&&recId.contains("reactiveAngleSensor/reading")) return GaRoDataType.PowerMeterReactiveAngleSubphase;
+		if(recId.contains("RexometerSerial/configs/gas_energy/value")) return GaRoDataType.GasMeter;
+		if(recId.contains("RexometerSerial/configs/gas_batteryVoltage/value")) return GaRoDataType.GasMeterBatteryVoltage;
 		if(recId.contains("semaLevel")) return GaRoDataType.CompetitionLevel;
 		if(recId.contains("competitionPosition")) return GaRoDataType.CompetitionPosition;
 		if(recId.contains("Points")) return GaRoDataType.CompetitionPoints;
+		
+		if(recId.contains("/powerSensor/reading")) return GaRoDataType.PowerMeterOutlet;
+		if(recId.contains("/currentSensor/reading")) return GaRoDataType.CurrentSensorOutlet;
+		if(recId.contains("/voltageSensor/reading")) return GaRoDataType.VoltageSensorOutlet;
+		if(recId.contains("/frequencySensor/reading")) return GaRoDataType.FrequencySensorOutlet;
+		if(recId.contains("/energySensor/reading")) return GaRoDataType.EnergyIntegralOutlet;
+		if(recId.contains("/stateFeedback")) return GaRoDataType.SwitchStateFeedback; //"onOffSwitch/stateFeedback"
+		if(recId.contains("/POWER_")) return GaRoDataType.Heatpower;
+		if(recId.contains("/ENERGY_")) return GaRoDataType.HeatEnergyIntegral;
+		if(recId.contains("/VOLUME_FLOW_")) return GaRoDataType.HeatFlow;
+		if(recId.contains("/VOLUME")) return GaRoDataType.HeatVolumeIntegral;
+		if(recId.contains("/FLOW_TEMPERATURE_")) return GaRoDataType.HeatSupplyTemperatur;
+		if(recId.contains("/RETURN_TEMPERATURE_")) return GaRoDataType.HeatReturnTemperatur;
+		
 		for(GaRoDataType type: GaRoDataType.standardTypes) {
     		if(type.label(null).equals(recId)) return type;
     	}
@@ -352,6 +383,9 @@ public class GaRoEvalHelper {
 		float sum = 0;
 		int countRoom = 0;
 	}
+	private static class AggDataString {
+		String elements = null;
+	}
 
     /** Extract averages over all rooms and gateways for all results in the roomEvals struct
      * of a GaRoMultiResult. Note that each GaRoMultiResult represents a single evaluation interval,
@@ -389,7 +423,39 @@ public class GaRoEvalHelper {
 		}
 		return result ;
 	}
-	public static Map<String, Float> getOverallKPIs(GaRoSuperEvalResult<?> superResult, String... ids) {
+	public static Map<String, String> getStringKPIs(GaRoMultiResult singleTimeStepResult, String subGw) {
+		Map<String, String> result = new HashMap<>();
+		Map<String, AggDataString> aggData = new HashMap<>();
+		for(RoomData rd: singleTimeStepResult.roomEvals) {
+			if((subGw != null)&&(!rd.gwId.equals(subGw))) continue;
+			if(rd.evalResults != null) for(Entry<String, String> resData: rd.evalResults.entrySet()) {
+				try {
+					if(!resData.getKey().startsWith("$")) continue;
+					//float val = Float.parseFloat(resData.getValue());
+					//if(Float.isNaN(val)) continue;
+					AggDataString ad = aggData.get(resData.getKey());
+					if(ad == null) {
+						ad = new AggDataString();
+						aggData.put(resData.getKey(), ad);
+					}
+					if(ad.elements == null)
+						ad.elements = resData.getValue();
+					else
+						ad.elements += ", "+resData.getValue();
+				} catch(NumberFormatException e) {
+					//do nothing
+				}
+			}
+		}
+		for(Entry<String, AggDataString> ad: aggData.entrySet()) {
+			//final float value;
+			//if(ad.getValue().countRoom == 0) value = Float.NaN;
+			//else value = ad.getValue().sum /  ad.getValue().countRoom;
+			if(ad.getValue().elements != null) result.put(ad.getKey(), ad.getValue().elements);
+		}
+		return result ;
+	}
+	/*public static Map<String, Float> getOverallKPIs(GaRoSuperEvalResult<?> superResult, String... ids) {
 		Map<String, AggData> aggData = new HashMap<>();
 		for(GaRoMultiResult singleTimeStepResult: superResult.intervalResults) {
 			for(RoomData rd: singleTimeStepResult.roomEvals) {
@@ -430,7 +496,7 @@ public class GaRoEvalHelper {
 			result.put(ad.getKey(), value);
 		}
 		return result;
-	}
+	}*/
 	
 	/** See {@link MultiEvaluationUtils#getFittingTSforEval(DataProvider, de.iwes.timeseries.eval.api.extended.util.AbstractMultiEvaluationProvider, List)}
 	 * @param dp DataProvider to use
@@ -445,6 +511,11 @@ public class GaRoEvalHelper {
 	public static <SI extends SelectionItem, P extends GaRoSingleEvalProvider> List<TimeSeriesData> getFittingTSforEval(DataProvider<?> dp,
 			P singleProvider,
 			List<String> gwIds) {
+		return getFittingTSforEval(dp, singleProvider, gwIds, null);
+	}
+	public static <SI extends SelectionItem, P extends GaRoSingleEvalProvider> List<TimeSeriesData> getFittingTSforEval(DataProvider<?> dp,
+			P singleProvider,
+			List<String> gwIds, List<String> roomIds) {
 		@SuppressWarnings("unchecked")
 		GaRoEvalProvider<?> garoEval = new GenericGaRoMultiProvider<P>(singleProvider, false) {
 			@Override
@@ -460,14 +531,21 @@ public class GaRoEvalHelper {
         int inputIdx = 0;
         int maxDependencyIdx =  garoEval.maxTreeIndex;
         List<DataProviderType> providerTypes = garoEval.inputDataTypes();
-	    for(GaRoDataTypeI dt: garoEval.getInputTypesFromRoom()) {
-			MultiEvaluationInputGeneric ts = new GaRoMultiEvaluationInput(
+	    GaRoMultiEvalDataProvider<?> gdp = null;
+	    if(dp instanceof GaRoMultiEvalDataProvider)
+	    	gdp = (GaRoMultiEvalDataProvider<?>)dp;
+        for(GaRoDataTypeI dt: garoEval.getInputTypesFromRoom()) {
+        	MultiEvaluationInputGeneric ts = null;
+        	if(gdp != null)
+        		ts = gdp.provideMultiEvaluationInput(providerTypes.get(maxDependencyIdx), dp, dt, gwIds, GaRoMultiEvalDataProvider.GW_LINKINGOPTION_ID);
+			if(ts == null)
+				ts = new GaRoMultiEvaluationInput(
 	        		providerTypes.get(maxDependencyIdx), dp, dt, gwIds, GaRoMultiEvalDataProvider.GW_LINKINGOPTION_ID); //isMulti?GaRoMultiEvalDataProvider.GW_LINKINGOPTION_ID:GaRoMultiEvalDataProvider.ROOM_LINKINGOPTION_ID);
 	     	arr[inputIdx] = ts;
 	     	inputIdx++;
 	    }
 	    List<MultiEvaluationInputGeneric> input = Arrays.<MultiEvaluationInputGeneric>asList(arr);
-	    List<TimeSeriesData> result = MultiEvaluationUtils.getFittingTSforEval(dp, garoEval, input);
+	    List<TimeSeriesData> result = MultiEvaluationUtilsGaRo.getFittingTSforEval(dp, garoEval, input);
 	    // The GaRo DataProvider returns room time series also for the overall room. We have to filter this out
 	    List<TimeSeriesData> toRemove = new ArrayList<>();
 	    //candidates are time TimeSeriesData elements of BUILDING_OVERALL_ROOM_ID for which no fitting
@@ -499,6 +577,10 @@ public class GaRoEvalHelper {
 	    	} else knownTS.add(rots);
 	    	if(roomId.equals(GaRoMultiEvalDataProvider.BUILDING_OVERALL_ROOM_ID)) {
 	    		toRemoveCandidate.put(roomId, ts);
+	    	}
+	    	if(roomIds != null) {
+	    		if(!roomIds.contains(roomId))
+	    			toRemove.add(ts);
 	    	}
 	    }
 	    result.removeAll(toRemove);

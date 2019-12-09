@@ -1,0 +1,31 @@
+# OGEMA standard permissions
+(org.osgi.framework.ServicePermission "org.ogema.core.application.Application" "register")
+(org.osgi.framework.ServicePermission "de.iwes.widgets.api.OgemaGuiService" "get")
+(org.osgi.framework.PackagePermission "org.ogema.tools.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.util.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.core.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.model.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.pattern.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.widgets.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.tools.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.util.*" "import")
+(org.osgi.framework.PackagePermission "org.slf4j" "import")
+
+#add here manually if required:
+# - (java.util.PropertyPermission "<property_name>" "read")
+(java.util.PropertyPermission "de.iee.ogema.batterymonitoring.enableall" "read")
+(org.ogema.accesscontrol.WebAccessPermission "name=org.ogema.widgets.ogema-js-bundle")
+
+
+#Automated Generation Below:
+# import permissions
+(org.osgi.framework.PackagePermission "org.ogema.drivers.homematic.xmlrpc.hl.types" "import")
+
+# export/custom type permissions
+(org.osgi.framework.PackagePermission "de.iee.monitoring.batterystatemonitoring.config" "exportonly")
+
+# resource permissions # not sufficient for rooms
+#(org.ogema.accesscontrol.ResourcePermission "type=org.ogema.drivers.homematic.xmlrpc.hl.types.HmMaintenance" "read")
+#(org.ogema.accesscontrol.ResourcePermission "type=org.ogema.model.devices.storage.ElectricityStorage" "read")
+(org.ogema.accesscontrol.ResourcePermission "path=*" "read")
+(org.ogema.accesscontrol.ResourcePermission "type=de.iee.monitoring.batterystatemonitoring.config.BatteryStateMonitoringConfig" "read,write,addsub,create,activity,delete")

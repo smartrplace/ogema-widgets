@@ -36,6 +36,7 @@ RedirectButton.prototype.update = function (data) {
 RedirectButton.prototype.processPOSTResponse = function (data) {
 //	var paramStr = '';
 //	var isInit = false;
+	if(data.constructor === Array) data = data[0];
 	if (!data.hasOwnProperty('url') || !data.url) return;
 	var openNewTab = data.newTab;
 	// url contains parameters; page parameters are set by widget loader on init

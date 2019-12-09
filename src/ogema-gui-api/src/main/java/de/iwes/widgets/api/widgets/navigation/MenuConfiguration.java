@@ -15,6 +15,8 @@
  */
 package de.iwes.widgets.api.widgets.navigation;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,14 +26,30 @@ import java.util.Set;
  *
  */
 public class MenuConfiguration {
+	public final static boolean HIDE_NAVI  = AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
+		
+		@Override
+		public Boolean run() {
+			return Boolean.getBoolean("org.ogema.widgets.hideNavi");
+		}
+		
+	});
+	public final static boolean HIDE_MESSAGES  = AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
+		
+		@Override
+		public Boolean run() {
+			return Boolean.getBoolean("org.ogema.widgets.hideMessages");
+		}
+		
+	});
 	
 	// default values
 	private boolean menuVisible = true;
-	private boolean navigationVisible = true;
+	private boolean navigationVisible = !HIDE_NAVI;
 	private boolean languageSelectionVisible = true;
 	private boolean showLogoutBtn = true;
-	private boolean showMessages = true;
-	private String iconPath = "/ogema/img/svg/ogema.svg";
+	private boolean showMessages = !HIDE_MESSAGES;
+	private String iconPath = "/ogema/icon";
 	private final Set<NavbarType> type = new HashSet<NavbarType>();
 	private NavigationMenu customNavigation = null;
 	

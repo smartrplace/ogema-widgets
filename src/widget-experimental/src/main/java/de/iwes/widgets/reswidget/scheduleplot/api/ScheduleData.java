@@ -26,6 +26,7 @@ import org.ogema.core.channelmanager.measurements.Quality;
 import org.ogema.core.channelmanager.measurements.SampledValue;
 import org.ogema.core.model.schedule.Schedule;
 import org.ogema.core.model.simple.SingleValueResource;
+import org.ogema.core.model.units.PercentageResource;
 import org.ogema.core.model.units.TemperatureResource;
 import org.ogema.core.timeseries.InterpolationMode;
 import org.ogema.core.timeseries.ReadOnlyTimeSeries;
@@ -283,6 +284,8 @@ public abstract class ScheduleData<D extends Plot2DDataSet> {
 			Class<?> type = schedule.getScheduleType();
 			if (type == TemperatureResource.class)
 				maxVal = maxVal - 273.15F;
+			else if(type == PercentageResource.class)
+				maxVal = 100f*maxVal;
 			maxValues.put(key, maxVal);
 			if ((overallMax < maxVal) && (!Float.isNaN(maxVal))) {
 				overallMax = maxVal;
@@ -290,6 +293,7 @@ public abstract class ScheduleData<D extends Plot2DDataSet> {
 		}
 		it = schedules.entrySet().iterator();
 		float offset;
+		float scale;
 		while (it.hasNext()) {
 			Map.Entry<String, SchedulePresentationData> entry = it.next();
 //				System.out.println("Sched:"+((Schedule)entry.getValue()).getName()+" overall:"+overallMax+" max:"+maxValues.get(entry.getKey()));
@@ -297,17 +301,23 @@ public abstract class ScheduleData<D extends Plot2DDataSet> {
 //				ReadOnlyTimeSeries schedule = handleTemperatureSchedules(entry.getValue(), entry.getValue().getScheduleType());
 			key = entry.getKey();
 			schedule = entry.getValue();
-			if (schedule.getScheduleType() == TemperatureResource.class)
+			if (schedule.getScheduleType() == TemperatureResource.class) {
 				offset = -273.15F;
-			else if (schedule.getScheduleType() == Float.class && schedule.getLabel(OgemaLocale.ENGLISH).toLowerCase().contains("temperature"))
+				scale = 1.0F;
+			} else if (schedule.getScheduleType() == Float.class && schedule.getLabel(OgemaLocale.ENGLISH).toLowerCase().contains("temperature")) {
 				offset = -273.15F;
-			else
+				scale = 1.0F;
+			} else if (schedule.getScheduleType() == PercentageResource.class) {
 				offset = 0;
-			float scale = 1;
+				scale = 100;
+			} else {
+				offset = 0;
+				scale = 1;
+			}
 			final String id;
 			final ScheduleSettings settings = getInidividualConfigInternal(key, req);
 			if (settings != null) {
-				scale = settings.scale;
+				scale *= settings.scale;
 				if (scale <= 0)
 					scale = 1;
 				offset += settings.offset;

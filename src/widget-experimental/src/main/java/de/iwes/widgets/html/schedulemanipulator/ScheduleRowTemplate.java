@@ -34,13 +34,17 @@ import org.ogema.core.channelmanager.measurements.SampledValue;
 import org.ogema.core.channelmanager.measurements.StringValue;
 import org.ogema.core.channelmanager.measurements.Value;
 import org.ogema.core.model.Resource;
+import org.ogema.core.model.array.StringArrayResource;
+import org.ogema.core.model.array.TimeArrayResource;
 import org.ogema.core.model.schedule.Schedule;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.FloatResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.core.model.units.TemperatureResource;
+import org.ogema.core.timeseries.ReadOnlyTimeSeries;
 import org.ogema.core.timeseries.TimeSeries;
+import org.ogema.tools.resource.util.ValueResourceUtils;
 import org.slf4j.LoggerFactory;
 
 import de.iwes.widgets.api.widgets.OgemaWidget;
@@ -62,6 +66,7 @@ import de.iwes.widgets.html.form.textfield.TextField;
 // FIXME changing the time leads to display error and BAD quality; date changing works -> ?
 // FIXME adding session dependent widgets to widget group?
 public class ScheduleRowTemplate extends RowTemplate<Long> {
+	public static final float COMMENT_ONLY_VALUE_TS = -99876;
 	
 //	private final static String NEW_LINE_ID = "___NEW_LINE___";
 	private final static String DATE_FORMAT_JS = "YYYY-MM-DD HH:mm:ss";
@@ -93,8 +98,26 @@ public class ScheduleRowTemplate extends RowTemplate<Long> {
 		Row row = new Row();
 		final String lineId = getLineId(timestamp);
 		final boolean isNewLine = (timestamp.longValue() == ScheduleManipulatorData.NEW_LINE_ID);
-		Label dpLabel = new Label(parent, lineId+ "_dpLabel","Timestamp: ",req);
-		row.addCell("dpLabel",dpLabel,1);
+		if(timestamp.longValue() == ScheduleManipulatorData.NEW_LINE_ID) {
+			Label dpLabel = new Label(parent, lineId+ "_dpLabel",
+					System.getProperty("org.ogema.app.timeseries.viewer.expert.gui.timestamplabel", "Timestamp"),req);
+			row.addCell("dp",dpLabel,2);
+			Label tfLabel = new Label(parent, lineId+ "_tfLabel",
+					System.getProperty("org.ogema.app.timeseries.viewer.expert.gui.valuelabel", "Value"),req);
+			row.addCell("tf",tfLabel,1);
+			if (showQuality) {
+				Label qualLabel = new Label(parent, lineId+ "_qualLabel",
+						System.getProperty("org.ogema.app.timeseries.viewer.expert.gui.qualitylabel", "Quality"),req);
+				row.addCell("qualDropdown",qualLabel,1);
+			}
+			if (hasComments(req)) {
+				Label commentHeaderLabel = new Label(parent, lineId+ "_commentHeaderLabel",
+						System.getProperty("org.ogema.app.timeseries.viewer.expert.gui.commentlabel", "Comment"), req);
+				row.addCell("commentLabel",commentHeaderLabel,1);
+			}
+			row.addCell("deleteSaveBtn", "--", 1);
+			return row;
+		}
 		final Datepicker dp = new Datepicker(parent, lineId + "_datepicker",req) {
 
 			private static final long serialVersionUID = 1L;
@@ -115,7 +138,7 @@ public class ScheduleRowTemplate extends RowTemplate<Long> {
 					String date = getDate(req);
 					if (date != null && !date.isEmpty()) // would be annoying to override the new value upon every GET
 						return;
-					time = System.currentTimeMillis();
+					time = (scheduleManipulator.appMan != null)?scheduleManipulator.appMan.getFrameworkTime():System.currentTimeMillis();
 				}
 	 			Date date = new Date(time);
 	 			SimpleDateFormat FORMAT = new SimpleDateFormat(DATE_FORMAT, Locale.ENGLISH);
@@ -138,8 +161,8 @@ public class ScheduleRowTemplate extends RowTemplate<Long> {
 		}
 */
 		row.addCell("dp",dp,2);
-		Label tfLabel = new Label(parent, lineId+ "_tfLabel","Value: ",req);
-		row.addCell("tfLabel",tfLabel,1);
+		//Label tfLabel = new Label(parent, lineId+ "_tfLabel","Value: ",req);
+		//row.addCell("tfLabel",tfLabel,1);
 		final TextField tf = new TextField(parent, lineId + "_tf",req) {
 
 			private static final long serialVersionUID = 1L;
@@ -158,6 +181,10 @@ public class ScheduleRowTemplate extends RowTemplate<Long> {
 				if (sv == null)
 					return;
 				Object value;
+				if(sv.getValue().getFloatValue() == COMMENT_ONLY_VALUE_TS) {
+					setValue("--", req);
+					return;
+				}
 				if (isTemperatureSchedule(req)) {
 					value = String.format(Locale.ENGLISH,"%.2f", sv.getValue().getFloatValue() - 273.15);
 				} 
@@ -174,8 +201,8 @@ public class ScheduleRowTemplate extends RowTemplate<Long> {
 			tf.triggerAction(scheduleManipulator, TriggeringAction.POST_REQUEST, SCHEDULE_CHANGED, req);
 		final Dropdown qualDropdown;
 		if (showQuality) {
-			Label qualLabel = new Label(parent, lineId+ "_qualLabel","Quality: ",req);
-			row.addCell("qualLabel",qualLabel,1);
+			//Label qualLabel = new Label(parent, lineId+ "_qualLabel","Quality: ",req);
+			//row.addCell("qualLabel",qualLabel,1);
 			
 			Set<DropdownOption> options = new LinkedHashSet<DropdownOption>();
 			options.add(new DropdownOption("GOOD","GOOD",true));
@@ -227,6 +254,17 @@ public class ScheduleRowTemplate extends RowTemplate<Long> {
 		}
 		else
 			qualDropdown = null;
+		
+		/****************
+		 * Experimental display of comments
+		 ***************/
+		final Label commentLabel;
+		if (hasComments(req)) {
+			commentLabel = new Label(parent, lineId+ "_commentLabel", getComment(timestamp, req),req);
+			row.addCell("commentLabel",commentLabel,1);
+		} else
+			commentLabel = null;
+		
 		
 		if (isNewLine) {
 			Button saveButton = new Button(parent, lineId + "_saveButton", req) {
@@ -297,9 +335,14 @@ public class ScheduleRowTemplate extends RowTemplate<Long> {
 					}
 					boolean deleted = schedule.deleteValues(timestamp, timestamp+1);
 					String msg;
-					if (deleted)
+					if (deleted) {
 						msg = "TimeSeries value for " +  new SimpleDateFormat(DATE_FORMAT, Locale.ENGLISH).format(new Date(timestamp)) + " has been deleted.";
-					else
+						CommentData comment = getCommentData(timestamp, req);
+						if(comment != null) {
+							ValueResourceUtils.removeElement(comment.comments, comment.idx);
+							ValueResourceUtils.removeElement(comment.commmentTimeStamps, comment.idx);
+						}
+					} else
 						msg = "TimeSeries value could not be deleted.";
 					showAlert(msg, deleted, req);
 				}
@@ -308,7 +351,7 @@ public class ScheduleRowTemplate extends RowTemplate<Long> {
 			
 			deleteButton.triggerAction(scheduleManipulator, TriggeringAction.POST_REQUEST, SCHEDULE_CHANGED, req);
 			
-			deleteButton.setText("Delete",req);
+			deleteButton.setText(System.getProperty("org.ogema.app.timeseries.viewer.expert.gui.deletebuttonlabel", "Delete"),req);
 			deleteButton.setStyle(ButtonData.BOOTSTRAP_RED,req);
 //			deleteButton.triggerAction(scheduleManipulator.getId(), TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST, req);
 			if (alert != null)
@@ -435,8 +478,63 @@ public class ScheduleRowTemplate extends RowTemplate<Long> {
 		return schedule.getValue(time);
 	}
 	
+	private boolean hasComments(OgemaHttpRequest req) {
+		TimeSeries schedule = scheduleManipulator.getSchedule(req);
+		if (schedule == null) return false;
+		if(!(schedule instanceof Schedule)) return false;
+		Schedule sched = (Schedule) schedule;
+		if(sched.getParent() == null) return false;
+		StringArrayResource comments = sched.getParent().getSubResource("comments", StringArrayResource.class);
+		if(!comments.isActive()) return false;
+		TimeArrayResource commmentTimeStamps = sched.getParent().getSubResource("commmentTimeStamps", TimeArrayResource.class);
+		if(!commmentTimeStamps.isActive()) return false;
+		return true;
+	}
+	private class CommentData {
+		StringArrayResource comments;
+		TimeArrayResource commmentTimeStamps;
+		int idx;
+	}
+	private CommentData getCommentData(long time, OgemaHttpRequest req) {
+		TimeSeries schedule = scheduleManipulator.getSchedule(req);
+		if (schedule == null) return null;
+		if(!(schedule instanceof Schedule)) return null;
+		Schedule sched = (Schedule) schedule;
+		if(sched.getParent() == null) return null;
+		CommentData result = new CommentData();
+		result.comments = sched.getParent().getSubResource("comments", StringArrayResource.class);
+		if(!result.comments.isActive()) return null;
+		result.commmentTimeStamps = sched.getParent().getSubResource("commmentTimeStamps", TimeArrayResource.class);
+		if(!result.commmentTimeStamps.isActive()) return null;
+		result.idx = 0;
+		boolean found = false;
+		for(long ts: result.commmentTimeStamps.getValues()) {
+			if(ts == time) {
+				found = true;
+				break;
+			}
+			result.idx++;
+		}
+		//int idx = Arrays.asList(commmentTimeStamps.getValues()).indexOf(time);
+		if(!found) {
+			if(time < 0) return result;
+			return null;
+		}
+		return result;
+	}
+	private String getComment(long time, OgemaHttpRequest req) {
+		CommentData comData = getCommentData(time, req);
+		if(comData == null) return null;
+		if(comData.comments.getValues().length <= comData.idx) return null;
+		return comData.comments.getValues()[comData.idx];
+	}
+	
 	private boolean isTemperatureSchedule(OgemaHttpRequest req) {
 		TimeSeries schedule = scheduleManipulator.getSchedule(req);
+		return isTemperatureSchedule(schedule);
+	}
+
+	public static boolean isTemperatureSchedule(ReadOnlyTimeSeries schedule) {
 		if (schedule == null || !(schedule instanceof Schedule)) return false;
 		Resource res = ((Schedule) schedule).getParent();
 		if (res == null) 
@@ -446,7 +544,7 @@ public class ScheduleRowTemplate extends RowTemplate<Long> {
 		else 
 			return false;
 	}
-
+	
 	private static Object getValue(Value value) {
 		if (value instanceof FloatValue || value instanceof DoubleValue)
 			return value.getFloatValue();

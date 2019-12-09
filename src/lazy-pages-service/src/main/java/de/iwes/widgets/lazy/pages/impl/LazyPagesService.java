@@ -170,7 +170,7 @@ public class LazyPagesService {
 		final Application app = new WidgetAppApplication(baseUrl, b, pages, apps, widgetService, pendingBundles);
 		final Application app1; 
 		if (System.getSecurityManager() == null) {
-			app1 = app; // we do not care about the protection domain of the app
+			app1 = AppFactory.wrapNoSecurity(b, app); // we do not care about the protection domain of the app, but wrap the app to get a useful logger name
 		} else {
 			final ServiceReference<LazyWidgetPage> ref = wrapper.getRef();
 			try {

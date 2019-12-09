@@ -17,14 +17,12 @@ package org.ogema.apps.message.reader.gui;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
 import org.ogema.apps.message.reader.dictionary.MessagesDictionary;
 
-import de.iwes.widgets.api.extended.WidgetPageBase;
-import de.iwes.widgets.api.extended.WidgetPageImpl;
 import de.iwes.widgets.api.messaging.Message;
 import de.iwes.widgets.api.messaging.listener.ReceivedMessage;
 import de.iwes.widgets.api.widgets.WidgetPage;
@@ -78,6 +76,8 @@ public class PageBuilder {
 				popup.setCurrentMessage(currentMessage, req);
 			}
 		};
+		// order entries by descending age -> newest first
+		dataTable.sortDefault(0, false);
 		page.append(dataTable);
 		page.append(popup);
 		dataTable.triggerAction(popup, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);

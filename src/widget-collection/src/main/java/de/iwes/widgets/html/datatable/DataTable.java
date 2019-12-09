@@ -15,6 +15,9 @@
  */
 package de.iwes.widgets.html.datatable;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import de.iwes.widgets.api.extended.OgemaWidgetBase;
@@ -33,6 +36,8 @@ public class DataTable extends OgemaWidgetBase<DataTableData>  {
 //	public static final TriggeringAction ROW_SELECTED = new TriggeringAction("row_selected");
 	
     private static final long serialVersionUID = 550713654103033621L;
+	private List<Map<Integer, Boolean>> defaultSortInfo = null;
+
     
     /************* constructor **********************/
 
@@ -66,11 +71,15 @@ public class DataTable extends OgemaWidgetBase<DataTableData>  {
 		return new DataTableData(this);
 	}
 	
-//	@Override
-//	protected void setDefaultValues(DataTableOptions opt) {
-//		super.setDefaultValues(opt);
-//	}
-    
+	@Override
+	protected void setDefaultValues(DataTableData opt) {
+		super.setDefaultValues(opt);
+		if (defaultSortInfo != null) {
+			defaultSortInfo.stream()
+				.forEach(map -> map.entrySet().stream().forEach(entry -> opt.sort(entry.getKey(), entry.getValue())));
+		}
+	}
+	
   	/******** public methods ***********/
 
     public void addRow(String rowId, Map<String,String> row, OgemaHttpRequest req) {
@@ -116,6 +125,28 @@ public class DataTable extends OgemaWidgetBase<DataTableData>  {
 
 	public String getSelectedRow(OgemaHttpRequest req) {
 		return getData(req).getSelectedRow();
+	}
+	
+	/**
+	 * Set ordering of columns
+	 * @param columnIdx
+	 * @param ascendingOrDescending
+	 * @param req
+	 */
+	public void sort(int columnIdx, boolean ascendingOrDescending, OgemaHttpRequest req) {
+		getData(req).sort(columnIdx, ascendingOrDescending);
+	}
+	
+	/**
+	 * Set default ordering of columns
+	 * @param columnIdx
+	 * @param ascendingOrDescending
+	 * @param req
+	 */
+	public void sortDefault(int columnIdx, boolean ascendingOrDescending) {
+		if (defaultSortInfo == null)
+			defaultSortInfo = new ArrayList<>(4);
+		defaultSortInfo.add(Collections.singletonMap(columnIdx, ascendingOrDescending));
 	}
 
 }

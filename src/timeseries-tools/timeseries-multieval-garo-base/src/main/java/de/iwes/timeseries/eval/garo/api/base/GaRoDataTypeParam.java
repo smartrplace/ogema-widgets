@@ -17,9 +17,11 @@ package de.iwes.timeseries.eval.garo.api.base;
 
 import java.util.List;
 
+import org.ogema.core.model.Resource;
 import org.ogema.tools.resource.util.ResourceUtils;
 
 import de.iwes.timeseries.eval.base.provider.utils.TimeSeriesDataImpl;
+import de.iwes.util.resource.ResourceHelper.DeviceInfo;
 
 /** Extended type that can provide additional parameter information for evaluations. The additional
  * information is no type information, but parameter information for specific evaluation calls
@@ -36,6 +38,12 @@ public class GaRoDataTypeParam extends GaRoDataType {
 	 * can be limited).
 	 */
 	public List<TimeSeriesDataImpl> inputInfo;
+	
+	/*public static class DeviceInformation {
+		String deviceId;
+		Class<? extends Resource> resourceType;
+	}*/
+	public List<DeviceInfo> deviceInfo;
 	
 	public GaRoDataTypeParam(GaRoDataType baseType, boolean isRequired) {
 		super(baseType.label(null), baseType.representingResourceType(), baseType.getLevel());

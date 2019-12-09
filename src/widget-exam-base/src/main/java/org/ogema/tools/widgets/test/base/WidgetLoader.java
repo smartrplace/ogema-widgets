@@ -40,6 +40,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -51,6 +52,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
+import org.ogema.accesscontrol.Constants;
 import org.ogema.tools.widgets.test.base.util.Utils;
 import org.ogema.tools.widgets.test.base.widgets.TestWidgetsFactory;
 
@@ -352,13 +354,13 @@ public class WidgetLoader {
 	private void login() throws ClientProtocolException, IOException {
 		HttpGet get = new HttpGet(pageBaseUrl + ".html");
 		HttpResponse resp = client.execute(get); // should return the login page 
-		setCookie(resp);
+		setCookie(resp, get);
 		HttpPost post = new HttpPost("http://localhost:" + port + "/ogema/login");
-		StringEntity body = new StringEntity("usr=master&pwd=master",ContentType.APPLICATION_FORM_URLENCODED);
+		StringEntity body = new StringEntity(Constants.OTUNAME + "=master&" + Constants.OTPNAME + "=master",ContentType.APPLICATION_FORM_URLENCODED);
 		post.setEntity(body);
 		addCookie(post);
 		resp = client.execute(post);
-		setCookie(resp);
+		setCookie(resp, post);
 		resp.getEntity().getContent().close(); // otherwise it hangs...
 //		boolean hd  = post.containsHeader("Cookie");
 //		System.out.println(" POST with header: " + hd + ", " + (hd ? post.getHeaders("Cookie")[0].getValue() : serialize(post.getAllHeaders())));
@@ -367,10 +369,13 @@ public class WidgetLoader {
 		
 	}
 	
-	private void setCookie(HttpResponse response) {
+	private void setCookie(HttpResponse response, HttpRequestBase request) {
 		Header[] cookies = response.getHeaders("Set-Cookie");
-		if (cookies.length < 1)  // FIXME this sometimes happens in MultiClientTest -> ? 
-			throw new RuntimeException("No session cookie received");
+		if (cookies.length < 1) { // FIXME this sometimes happens in MultiClientTest -> ?
+			final StatusLine sl = response.getStatusLine();
+			throw new AssertionError("No session cookie received: " + sl.getStatusCode() + ": " + sl.getReasonPhrase() + ". URI: " + request.getURI() 
+				+ ", method: " + request.getMethod());
+		}
 		cookie = cookies[0].getValue().split(";")[0].split("=")[1];
 		CharArrayBuffer buff = new CharArrayBuffer(20);
 		buff.append("Cookie:");

@@ -23,7 +23,7 @@ import org.ogema.core.timeseries.ReadOnlyTimeSeries;
 import de.iwes.widgets.reswidget.scheduleviewer.utils.DefaultSessionConfiguration;
 
 public interface ScheduleViewerConfigurationProvider {
-	public String VIEWER_URL_PATH = "/de/iwes/tools/schedule/viewer-basic-example";
+	public final static String VIEWER_URL_PATH = "/de/iwes/tools/schedule/viewer-basic-example";
 
 	/**The id of the configurationProvider must be provided as parameter
 	 * configProvider with URL
@@ -105,6 +105,11 @@ public interface ScheduleViewerConfigurationProvider {
 		 * be used depending on overwriteDefaultTimeSeries().
 		 */
 		List<ReadOnlyTimeSeries> timeSeriesSelected();
+		/** Timeseries that are offered, but only preselected if they are part of {@link #timeSeriesSelected()}.
+		 * Note that all elements of timeSeriesSelected will be offered even if they are
+		 * not listed here. If null is returned id is treated like an empty list.*/
+		//TODO: Add this later when release 2.2.0 is completely done
+		//List<ReadOnlyTimeSeries> timeSeriesOffered();
 
 		/** The programs given here must be part of the respective Collection&lt;TimeSeriesFilter&gt;
 		 * provided by #viewerConfiguration().setPrograms. These programs will be

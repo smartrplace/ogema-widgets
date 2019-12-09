@@ -33,6 +33,8 @@ public class ButtonData extends WidgetData {
 	public static final WidgetStyle<Button> BOOTSTRAP_LIGHT_BLUE = new WidgetStyle<Button>("ogemaButton",Arrays.asList("btn","btn-info"),0);
 	public static final WidgetStyle<Button> BOOTSTRAP_DEFAULT = new WidgetStyle<Button>("ogemaButton",Arrays.asList("btn","btn-default"),0);
 	public static final WidgetStyle<Button> BOOTSTRAP_ORANGE = new WidgetStyle<Button>("ogemaButton",Arrays.asList("btn","btn-warning"),0);
+	public static final WidgetStyle<Button> BOOTSTRAP_LIGHTGREY = new WidgetStyle<Button>("ogemaButton",Arrays.asList("btn","btn-light"),0);
+	public static final WidgetStyle<Button> BOOTSTRAP_DARKGREY = new WidgetStyle<Button>("ogemaButton",Arrays.asList("btn","btn-secondary"),0);
 	public static final WidgetStyle<Button> BOOTSTRAP_LARGE = new WidgetStyle<Button>("ogemaButton",Arrays.asList("btn","btn-lg"),0);
 	public static final WidgetStyle<Button> BOOTSTRAP_SMALL = new WidgetStyle<Button>("ogemaButton",Arrays.asList("btn","btn-sm"),0);
 	

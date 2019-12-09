@@ -44,7 +44,7 @@ public class TimeSeriesFixedStepOnlineBuilder {
 	public TimeSeriesFixedStepOnlineBuilder(long resultTimeStep, long startTime) {
 		this(resultTimeStep, startTime, AggregationMode.AVERAGING);
 	}
-	/** Construct Base Estimator object that can be fed with values via {@link #addValue(float)}
+	/** Construct base object
 	 * 
 	 * @param resultTimeStep time step of resulting fixed-step time series
 	 * @param startTime start time of first interval. Starting intervals without data

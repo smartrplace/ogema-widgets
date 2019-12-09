@@ -16,7 +16,7 @@ function DataTable(servletPath, widgetID) {
 
 DataTable.prototype.update = function (response) {
 	if (!response.hasOwnProperty("data") || response.data.length === 0 || response.data == this.data) return; // FIXME last condition not working
-	console.log("new data table: ",response); // FIXME
+	//console.log("new data table: ",response);
 	if (this.resultingObject) {
 		this.resultingObject.destroy(); // FIXME avoid resetting paging & ordering options
 	}

@@ -48,6 +48,7 @@ public class FlotConfiguration extends Plot2DConfiguration {
 	private AxisType axisType = null;
 	private boolean enableOverviewPlot = false;
 	private int overviewHeight = 200;
+	private boolean legendOutsidePlot = true;
 
 	public FlotConfiguration enableOverviewPlot(boolean enable) {
 		this.enableOverviewPlot  = enable;
@@ -65,6 +66,10 @@ public class FlotConfiguration extends Plot2DConfiguration {
 	public AxisType getXAxisType() {
 		return axisType;
 	}
+	
+	public boolean isLegendOutsidePlot() {
+		return legendOutsidePlot;
+	}
 
 	public FlotConfiguration setXAxisType(AxisType type) {
 		this.axisType = Objects.requireNonNull(type);
@@ -76,11 +81,16 @@ public class FlotConfiguration extends Plot2DConfiguration {
 		return this;
 	}
 
+	public void setLegendOutsidePlot(boolean legendOutsidePlot) {
+		this.legendOutsidePlot = legendOutsidePlot;
+	}
+	
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		JSONObject series = new JSONObject();
 		json.put("clickable", isClickable());
 		json.put("hoverable", isHoverable());
+		json.put("legendOutsidePlot", isLegendOutsidePlot());
 		PlotType type = getPlotType();
 		JSONObject lines = new JSONObject();
 		JSONObject points = new JSONObject();

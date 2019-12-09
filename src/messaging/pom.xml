@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.ogema.widgets</groupId>
         <artifactId>ogema-widgets</artifactId>
-        <version>2.2.0</version>
+        <version>2.2.1</version>
     </parent>
 
 	<groupId>org.ogema.messaging</groupId>
@@ -24,8 +24,11 @@
 		<module>messaging-test</module>
 		<module>pushover-connector</module>
 		<module>remote-message-connector</module>
+		<module>remote-message-publisher</module>
 		<module>remote-message-receiver</module>
-	 	<module>sms-connector</module> 
+		<module>remote-user-administration</module>
+	 	<module>sms-connector</module>
+	 	<module>telegram-bot-control</module>  
 		<module>telegram-connector</module> 
 		<module>xmpp-connector</module>
   </modules>
@@ -44,7 +47,7 @@
 			<dependency>
 	            <groupId>org.ogema.messaging</groupId>
 	            <artifactId>message-settings</artifactId>
-	            <version>2.2.0</version>
+	            <version>2.2.1</version>
         	</dependency>
 
 		</dependencies>

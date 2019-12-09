@@ -16,6 +16,8 @@
 package de.iwes.widgets.messaging.impl;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +36,7 @@ import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Service;
+import org.apache.felix.service.command.CommandProcessor;
 import org.ogema.core.application.AppID;
 import org.ogema.core.application.Application;
 import org.ogema.core.application.ApplicationManager;
@@ -78,7 +81,13 @@ public class MessagingServiceImpl implements MessagingService, Application {
 		this.appMan = appManager;
 		this.serviceReg = ctx.registerService(MessagingService.class, this, null);
 		this.reader = new MessageReaderImpl(ctx, appManager, messages);
-		this.readerReg = ctx.registerService(MessageReader.class, reader, null);
+		final Dictionary<String, Object> props = new Hashtable<>();
+		props.put(CommandProcessor.COMMAND_SCOPE, "msg");
+		props.put(CommandProcessor.COMMAND_FUNCTION, new String[] {
+				"getMessagingApps",
+				"getReceivers"
+		});
+		this.readerReg = ctx.registerService(MessageReader.class, reader, props);
 	}
 	
 	@Override
@@ -240,7 +249,7 @@ public class MessagingServiceImpl implements MessagingService, Application {
 			}
 			if (userNames.isEmpty())
 				continue;
-			logger.debug("Submitting message forwarding task for app {}, users {}", service.serviceId().getValue(), users);
+			logger.debug("Submitting message forwarding task for app {}, users {}", service.serviceId().getValue(), userNames);
 			exec.submit(new MessageThread(msg, userNames, listener));
 		}
 		if (allAppsConfig == null)
@@ -262,7 +271,11 @@ public class MessagingServiceImpl implements MessagingService, Application {
 		
 		@Override
 		public Void call() throws Exception {
-			listener.newMessageAvailable(msg,userNames);
+			try {
+				listener.newMessageAvailable(msg,userNames);
+			} catch (Exception e) {
+				MessagingServiceImpl.logger.error("Error forwarding message", e);
+			}
 			return null;
 		}
 		

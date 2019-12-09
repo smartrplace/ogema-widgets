@@ -31,6 +31,7 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.ReferencePolicyOption;
 import org.slf4j.Logger;
 
 import de.iwes.timeseries.eval.api.DataProvider;
@@ -71,7 +72,7 @@ public class ResourceDataProvider implements DataProvider<Resource>, Application
 	private volatile ResourceLeaf resourceLeaf;
 	private volatile BundleContext context;
 	
-	@Reference(cardinality=ReferenceCardinality.OPTIONAL, policy=ReferencePolicy.DYNAMIC)
+	@Reference(cardinality=ReferenceCardinality.OPTIONAL, policy=ReferencePolicy.DYNAMIC, policyOption=ReferencePolicyOption.GREEDY)
 	private volatile NameService nameService;
 	
 	@Reference

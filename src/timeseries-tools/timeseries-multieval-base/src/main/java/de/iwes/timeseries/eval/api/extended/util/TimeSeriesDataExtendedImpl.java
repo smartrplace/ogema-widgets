@@ -40,10 +40,26 @@ public class TimeSeriesDataExtendedImpl extends TimeSeriesDataImpl {
 		super(timeSeries, label, description, mode, offset, factor, timeOffset);
 	}
 	public TimeSeriesDataExtendedImpl(TimeSeriesDataImpl tsIn, List<String> ids2, Object inputDef) {
-		super(tsIn.getTimeSeries(), tsIn.label(null), tsIn.description(null), tsIn.interpolationMode(),
+		this(tsIn, tsIn.label(null), tsIn.description(null), ids2, inputDef);
+		/*super(tsIn.getTimeSeries(), tsIn.label(null), tsIn.description(null), tsIn.interpolationMode(),
 				tsIn.offset(), tsIn.factor(), tsIn.timeOffset());
 		this.ids = ids2;
-		this.type = inputDef;
+		this.type = inputDef;*/
+	}
+	public TimeSeriesDataExtendedImpl(TimeSeriesDataImpl tsIn, String label, String description) {
+		this(tsIn, label, description, null, null);
+	}
+	public TimeSeriesDataExtendedImpl(TimeSeriesDataImpl tsIn, String label, String description, List<String> ids2, Object inputDef) {
+		super(tsIn.getTimeSeries(), label, description, tsIn.interpolationMode(),
+				tsIn.offset(), tsIn.factor(), tsIn.timeOffset());
+		if(tsIn instanceof TimeSeriesDataExtendedImpl) {
+			TimeSeriesDataExtendedImpl tsExt = (TimeSeriesDataExtendedImpl)tsIn;
+			this.ids = tsExt.ids;
+			this.type = tsExt.type;
+		} else {
+			this.ids = ids2;
+			this.type = inputDef;
+		}
 	}
 
 	public void addProperty(String key, String value) {

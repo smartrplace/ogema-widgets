@@ -36,6 +36,11 @@ TextField.prototype.update = function (data) {
     if (data.hasOwnProperty("type")) {
     	tfelement.removeAttr("type").attr("type", data.type);
     }
+
+    if (data.hasOwnProperty("inputmode")) {
+    	tfelement.removeAttr("inputmode").attr("inputmode", data.inputmode);
+      console.log(tfelement);
+    }
     
     tfelement.removeAttr("min");
     if (data.hasOwnProperty("min")) {

@@ -52,8 +52,13 @@ public class HeaderData extends LabelData {
 
     @Override
     public JSONObject retrieveGETData(OgemaHttpRequest req) {
-    	JSONObject result = new JSONObject();	
-   		result.put("text", "<h" + type + ">" + getText() + "</h" + type  + ">");
+        JSONObject result = new JSONObject();	
+        readLock();
+        try {
+            result.put("text", "<h" + type + ">" + textEscaped + "</h" + type  + ">");
+        } finally {
+            readUnlock();
+        }
         return result;
     }
 

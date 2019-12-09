@@ -105,11 +105,19 @@ public class StringFormatHelper {
 	 * @return String representation in the format HH:MM
 	 */
 	public static String getFormattedTimeOfDay(long timeOfDay) {
+		return getFormattedTimeOfDay(timeOfDay, false);
+	}
+
+	public static String getFormattedTimeOfDay(long timeOfDay, boolean printSeconds) {
     	if(timeOfDay < 0) {
     		return "--";
     	}
     	long hours = timeOfDay / (60*60000);
     	long minutes = (timeOfDay  - hours*(60*60000))/(60000);
+    	if(printSeconds) {
+    		long seconds = (timeOfDay  - hours*(60*60000) - minutes*60000)/(1000);
+       		return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    	}
    		return String.format("%02d:%02d", hours, minutes);
 	}
 	

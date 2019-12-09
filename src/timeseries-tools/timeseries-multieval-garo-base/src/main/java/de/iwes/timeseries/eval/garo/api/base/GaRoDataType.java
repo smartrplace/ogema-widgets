@@ -23,9 +23,16 @@ import org.ogema.core.model.Resource;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.FloatResource;
 import org.ogema.core.model.simple.SingleValueResource;
+import org.ogema.core.model.units.AngleResource;
+import org.ogema.core.model.units.ElectricCurrentResource;
+import org.ogema.core.model.units.EnergyResource;
+import org.ogema.core.model.units.FlowResource;
+import org.ogema.core.model.units.FrequencyResource;
 import org.ogema.core.model.units.PercentageResource;
 import org.ogema.core.model.units.PowerResource;
 import org.ogema.core.model.units.TemperatureResource;
+import org.ogema.core.model.units.VoltageResource;
+import org.ogema.core.model.units.VolumeResource;
 import org.ogema.generictype.GenericAttribute;
 import org.ogema.generictype.GenericAttributeImpl;
 import org.ogema.tools.resource.util.ResourceUtils;
@@ -116,10 +123,60 @@ public class GaRoDataType implements GaRoDataTypeI {
 			BooleanResource.class);
 	public static final GaRoDataType ChargeSensor = new GaRoDataType("ChargeSensor",
 			BooleanResource.class);
+	public static final GaRoDataType ChargeVoltage = new GaRoDataType("ChargeVoltage",
+			VoltageResource.class);
+	public static final GaRoDataType PowerMeterOutlet = new GaRoDataType("PowerMeterOutlet",
+			PowerResource.class);
+	public static final GaRoDataType CurrentSensorOutlet = new GaRoDataType("CurrentSensorOutlet",
+			ElectricCurrentResource.class);
+	public static final GaRoDataType VoltageSensorOutlet = new GaRoDataType("VoltageSensorOutlet",
+			VoltageResource.class);
+	public static final GaRoDataType FrequencySensorOutlet = new GaRoDataType("FrequencySensorOutlet",
+			FrequencyResource.class);
+	public static final GaRoDataType EnergyIntegralOutlet = new GaRoDataType("EnergyIntegralOutlet",
+			EnergyResource.class);
+	public static final GaRoDataType SwitchStateFeedback = new GaRoDataType("SwitchStateFeedback",
+			BooleanResource.class);
+	public static final GaRoDataType Heatpower = new GaRoDataType("Heatpower",
+			PowerResource.class);
+	public static final GaRoDataType HeatEnergyIntegral = new GaRoDataType("HeatEnergyIntegral",
+			EnergyResource.class);
+	public static final GaRoDataType HeatFlow = new GaRoDataType("HeatFlow",
+			FlowResource.class);
+	public static final GaRoDataType HeatVolumeIntegral = new GaRoDataType("HeatVolumeIntegral",
+			VolumeResource.class);
+	public static final GaRoDataType HeatSupplyTemperatur = new GaRoDataType("HeatSupplyTemperatur",
+			TemperatureResource.class);
+	public static final GaRoDataType HeatReturnTemperatur = new GaRoDataType("HeatReturnTemperatur",
+			TemperatureResource.class);
+
+
 	
 	//The following options are per-gateway
 	public static final GaRoDataType PowerMeter = new GaRoDataType("PowerMeter",
 			PowerResource.class, Level.GATEWAY);
+	public static final GaRoDataType PowerMeterEnergy = new GaRoDataType("PowerMeterEnergy",
+			EnergyResource.class, Level.GATEWAY);
+	public static final GaRoDataType PowerMeterCurrent = new GaRoDataType("PowerMeterCurrent",
+			ElectricCurrentResource.class, Level.GATEWAY);
+	public static final GaRoDataType PowerMeterVoltage = new GaRoDataType("PowerMeterVoltage",
+			VoltageResource.class, Level.GATEWAY);
+	public static final GaRoDataType PowerMeterFrequency = new GaRoDataType("PowerMeterFrequency",
+			FrequencyResource.class, Level.GATEWAY);
+	public static final GaRoDataType PowerMeterSubphase = new GaRoDataType("PowerMeterSubphase",
+			PowerResource.class, Level.GATEWAY);
+	public static final GaRoDataType PowerMeterEnergySubphase = new GaRoDataType("PowerMeterEnergySubphase",
+			EnergyResource.class, Level.GATEWAY);
+	public static final GaRoDataType PowerMeterVoltageSubphase = new GaRoDataType("PowerMeterVoltageSubphase",
+			VoltageResource.class, Level.GATEWAY);
+	public static final GaRoDataType PowerMeterCurrentSubphase = new GaRoDataType("PowerMeterCurrentSubphase",
+			ElectricCurrentResource.class, Level.GATEWAY);
+	public static final GaRoDataType PowerMeterReactiveAngleSubphase = new GaRoDataType("PowerMeterReactiveAngleSubphase",
+			AngleResource.class, Level.GATEWAY);
+	public static final GaRoDataType GasMeter = new GaRoDataType("GasMeter",
+			PowerResource.class, Level.GATEWAY);
+	public static final GaRoDataType GasMeterBatteryVoltage = new GaRoDataType("GasMeterBatteryVoltage",
+			VoltageResource.class, Level.GATEWAY);
 	public static final GaRoDataType CompetitionLevel = new GaRoDataType("CompetitionLevel",
 			FloatResource.class, Level.GATEWAY);
 	public static final GaRoDataType CompetitionPosition = new GaRoDataType("CompetitionPosition",
@@ -157,13 +214,19 @@ public class GaRoDataType implements GaRoDataTypeI {
 	 */
 	public static final GaRoDataType PreEvaluated = new GaRoDataType("PreEvaluated",
 			SingleValueResource.class);
+	/** This type should be the only input type and indicates that the evaluation shall be
+	 * initiated once per gateway, but needs no further execution as the input data is taken
+	 * e.g. from a text log file.
+	 */
+	public static final GaRoDataType OncePerGateway = new GaRoDataType("OncePerGateway",
+			SingleValueResource.class);
 
 	public static GaRoDataType[] standardTypes = new GaRoDataType[] {
 			TemperatureMeasurementRoomSensor, TemperatureMeasurementThermostat,
 			TemperatureSetpoint, TemperatureSetpointFeedback, TemperatureSetpointSet, ValvePosition,
 			HumidityMeasurement, MotionDetection, WindowOpen, ChargeSensor,
 			PowerMeter, CompetitionLevel, CompetitionPosition, CompetitionPoints, OutsideTemperatureGw,
-			OutsideTemperatureOverall, Unknown, Any, LowLevel, PreEvaluated};
+			OutsideTemperatureOverall, Unknown, Any, LowLevel, PreEvaluated, OncePerGateway};
 
 	@Override
 	public TypeCardinality typeCardinality() {

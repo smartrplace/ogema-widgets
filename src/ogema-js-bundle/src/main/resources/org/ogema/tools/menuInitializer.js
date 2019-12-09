@@ -2,6 +2,10 @@
  * Must be loaded after widgetLoader
  */
 ogema.menuIdentifier = {}; // only indicates that the script has been loaded
+/*
+* FIX ME : Library ddslick calls onSelected on startup
+*/
+ogema.menuIdentifierFirstCallThrownAway = false;
 (function() {  // anonymous function hides variables
 	var messagesTitle = "Messages";
 	var setMenuLanguage = function() {
@@ -41,6 +45,10 @@ ogema.menuIdentifier = {}; // only indicates that the script has been loaded
 		    selectText: "Select language",
 		    imagePosition:"left",
 		    onSelected: function(selectedData){
+		        if(!ogema.menuIdentifierFirstCallThrownAway) {
+		        	ogema.menuIdentifierFirstCallThrownAway = true;
+		        	return;
+		        }
 		        console.log("selectedData: ",selectedData);
 		        if (ogema.locale) {
 		        	ogema.locale = selectedData.selectedData.text;

@@ -160,6 +160,7 @@ public class OGEMAResourceCopyHelper {
 			this.copyMode = copyMode;
 		}
 		public ApplicationManager appMan;
+		/** set this false if active-status of destination resources shall not be changed*/ 
 		public boolean copyActiveStatus;
 		/**if true all resources copied (sources) are deactivated. This is automatically
 		 * set true for copyMode == 1
@@ -299,10 +300,12 @@ public class OGEMAResourceCopyHelper {
 			}
 		}
 		if(source.isReference(false) || ((cp.copyMode==1)&&(ValueResource.class.isAssignableFrom(source.getResourceType())))) {
+			//TODO: References within the copied resource should point to the respective location
 			if(source.isDecorator()) {
-				destParent.addDecorator(source.getName(), source);
+				Resource locRes = source.getLocationResource();
+				destParent.addDecorator(source.getName(), locRes);
 			} else {
-				destParent.setOptionalElement(source.getName(), source);
+				destParent.setOptionalElement(source.getName(), source.getLocationResource());
 			}
 		} else {
 			Resource newDest;

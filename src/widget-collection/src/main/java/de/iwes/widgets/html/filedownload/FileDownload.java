@@ -33,10 +33,14 @@ import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
  *   	downloadButton.triggerAction(fileDownload1, TriggeringAction.POST_REQUEST, FileDownloadData.GET_AND_STARTDOWNLOAD);
  *   
  * @author pzuehlcke
- * @deprecated consider using {@link Download} instead, which is more generic; it supports not only downloads
+ * deprecated: consider using {@link Download} instead, which is more generic; it supports not only downloads
  * of files from the server, but also other content. 
+ * TODO: Please provide more information how to transform FileDownloads into Downloads
+ * before setting this deprecated, e.g. the setDeleteFileAfterDownload method
+ * Especially the tutorial in https://community.ogema-source.net/xwiki/bin/view/Main/The%20OGEMA%20Widgets%20framework/Widget%20example%20code%20and%20snippets/
+ * needs to be updated. There should be a dedicated file download example
  */
-@Deprecated
+//@Deprecated
 public class FileDownload extends OgemaWidgetBase<FileDownloadData> {
 
     private static final long serialVersionUID = 1L;

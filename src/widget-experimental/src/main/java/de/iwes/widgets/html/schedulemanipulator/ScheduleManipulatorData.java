@@ -30,6 +30,7 @@ public class ScheduleManipulatorData extends PageSnippetData {
 	private int nrValuesDisplayed = 10;
 	// choose MIN_VALUE, so it is displayed first
 	protected final static long NEW_LINE_ID = Long.MIN_VALUE;
+	protected final static long HEADER_LINE_ID = Long.MIN_VALUE;
 
 	/*
 	 ************************* constructors **********************

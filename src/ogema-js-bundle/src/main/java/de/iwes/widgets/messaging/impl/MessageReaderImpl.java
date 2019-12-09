@@ -24,6 +24,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
@@ -32,6 +34,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.felix.service.command.Descriptor;
+import org.apache.felix.service.command.Parameter;
 import org.json.JSONObject;
 import org.ogema.core.application.ApplicationManager;
 import org.ogema.core.application.Application;
@@ -462,6 +466,28 @@ class MessageReaderImpl extends HttpServlet implements MessageReader, Applicatio
 		return ids;
 	}
 
+	@Descriptor("Get the list of configured receivers per messaging transport channel")
+	public Map<String, List<String>> getReceivers(
+			@Descriptor("Specify the channel id to show only the users for this medium")
+			@Parameter(names= {"-c", "--channel"}, absentValue="")
+			String channel
+			) {
+		Stream<MessageListener> listeners = messages.listeners.values().stream();
+		if (!channel.isEmpty())
+			listeners = listeners.filter(l -> channel.equalsIgnoreCase(l.getId()));
+		return listeners
+			.collect(Collectors.toMap(MessageListener::getId, MessageListener::getKnownUsers));
+	}
+
+	@Descriptor("Get the ids of all apps registered as message senders")
+	public List<String> getMessagingApps() {
+		return messages.registeredMessageSenders.values().stream()
+				.map(MessagingApp::getMessagingId)
+				.collect(Collectors.toList());
+				
+	}
+	
+	
 	/**
 	 * pass priority level null to stop forwarding 
 	 */

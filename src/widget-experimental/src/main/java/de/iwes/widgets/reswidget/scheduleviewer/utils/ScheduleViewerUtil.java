@@ -215,6 +215,12 @@ public class ScheduleViewerUtil {
 				public String longName(ReadOnlyTimeSeries schedule) {
 					return getScheduleLongName(schedule, filter.label(null), ra);
 				}
+
+				@Override
+				public Class<?> type(ReadOnlyTimeSeries schedule) {
+					//we provide no definition here
+					return null;
+				}
 			};
 			result.add(filterExtended);
 		}
@@ -240,6 +246,7 @@ public class ScheduleViewerUtil {
 			} catch (SecurityException expected) {
 				return path;
 			}
+			if(sourceResource == null) return path;
 			return ResourceUtils.getHumanReadableShortName(sourceResource);
 		}
 		

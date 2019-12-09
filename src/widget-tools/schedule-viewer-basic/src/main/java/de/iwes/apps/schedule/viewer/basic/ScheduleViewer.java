@@ -138,10 +138,10 @@ public class ScheduleViewer implements LazyWidgetPage {
     					.setShowDownsamplingInterval(true)
     					.setShowUpdateInterval(true)
     					.setPlotLibrary(TimeSeriesPlotGeneric.class)
+    					.setShowIndividualConfigBtn(true)
+    					.setShowStandardIntervals(true)
     					.build();
 //    	        ScheduleViewerConfiguration config = new ScheduleViewerConfiguration(true, true, false, true, maipulatorConfig, true, null, null, programs, (List) filters, 24*60*60*1000L);
-    	        config.showIndividualConfigBtn = true;
-    	        config.showStandardIntervals = true;
 //    	        ResourceScheduleViewer<Schedule> widget = new ResourceScheduleViewer<>(page, "viewerWidget", appManager, config, null, Schedule.class);
     	        this.scheduleViewer = new ScheduleViewerBasic<ReadOnlyTimeSeries>(page, "viewerWidget", appManager, config, null) {
 

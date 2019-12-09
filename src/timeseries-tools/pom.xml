@@ -6,25 +6,38 @@
     <parent>
         <groupId>org.ogema.widgets</groupId>
         <artifactId>ogema-widgets</artifactId>
-        <version>2.2.0</version>
+        <version>2.2.1</version>
     </parent>
 
 	<groupId>org.ogema.eval</groupId>
     <artifactId>timeseries-tools</artifactId>
     <packaging>pom</packaging>
     <name>OGEMA timeseries tools</name>    
-    
+
     <!-- Sub-projects: OGEMA Applications (in alphabetical order) -->
     <modules>
     	<module>csv-source</module>
     	<module>eval-schedule-viewer</module>  	    	
+    	<!-- dependency to ogema-alliance repo, and outdated -->
+    	<!-- <module>server-resource-source</module> -->
+    	<module>server-timeseries-source</module>
     	<module>timeseries-api-extended</module>
 		<module>timeseries-aggregation</module>
 		<module>timeseries-analysis</module>
 		<module>timeseries-eval-base</module>
+		<module>timeseries-eval-tests</module>
+		<!--<module>timeseries-eval-testdata</module>-->
 		<module>timeseries-eval-viz</module>
+		<module>timeseries-energy-analysis</module>
 		<module>timeseries-multieval-base</module>
+		<!-- <module>timeseries-multieval-garo</module> -->
 		<module>timeseries-multieval-garo-base</module>
+		<module>timeseries-multieval-garo-jaxb</module>
+		<module>timeseries-multieval-garo-jaxb-fendodb</module>
+		<module>timeseries-energy-analysis-multi</module>
+		<module>timeseries-heating-analysis-multi</module>
+		<!-- fails on CI server due to missing dependency -->
+		<!-- <module>timeseries-teststarter</module> -->
 	</modules>
    
 	
@@ -33,12 +46,12 @@
 			<dependency>
 		        <groupId>org.ogema.eval</groupId>
 		        <artifactId>timeseries-api-extended</artifactId>
-		        <version>2.2.0</version>
+		        <version>2.2.1</version>
 			</dependency>
 			<dependency>
 		        <groupId>org.ogema.eval</groupId>
 		        <artifactId>timeseries-eval-base</artifactId>
-		        <version>2.2.0</version>
+		        <version>2.2.1</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

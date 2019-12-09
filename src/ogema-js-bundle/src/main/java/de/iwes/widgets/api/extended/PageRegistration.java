@@ -226,7 +226,7 @@ public class PageRegistration extends PageRegistrationI {
 		return set;
 	}
 	
-	// non-blocking once initialized
+	// non-blocking once initialized, get non-session-specific widgets
 	private List<ConfiguredWidget<?>> getWidgetsList() {
 		if (pageWidgets != null)
 			return pageWidgets;

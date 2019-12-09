@@ -51,7 +51,7 @@ public class GenericGaRoSingleEvaluationResResult<T extends Resource> extends Ge
 		T resultRes = provider.getResultResource(roomId, roomName, gwId);
 		
 		this.evalCoreMy = provider.initEval(input, requestedResults, configurations, listener, time, size,
-				nrInput, idxSumOfPrevious, startEnd, resultRes, roomId, roomName, gwId);
+				nrInput, getIdxSumOfPrevious(), startEnd, resultRes, roomId, roomName, gwId);
 		evalCoreMy.evalInstance = this;
 		values.setEvalContainer(evalCoreMy);		
 	}

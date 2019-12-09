@@ -32,7 +32,7 @@ public class BaseOnlineEstimator extends OnlineEstimator {
 	private float min = Float.NaN;
 	private float max = Float.NaN;
 	
-	/** Construct Base Estimator object that can be fed with values via {@link #addValue(float)}
+	/** Construct Base Estimator object that can be fed with values via {@link #addValue(float, long)}
 	 * 
 	 * @param calculateMinMax if true minimum and maximum values are searched
 	 * @param averageMode if NONE no average value is summed up, otherwise average is always calculated.

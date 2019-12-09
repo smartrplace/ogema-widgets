@@ -38,6 +38,7 @@ import de.iwes.widgets.html.form.dropdown.TemplateDropdown;
  * Note: Only predefined values (the so-called displayValues) are offered by the dropdown
  * and only these values can be selected. IntegerResources in the standard case are
  * expected to provide the index within the displayValues list (starting at index zero).
+ * This can be changed via {@link #setDefaultIntegerValuesToUse(List)}
  * 
  * @param <V>
  */
@@ -46,6 +47,7 @@ public class ValueResourceDropdown<V extends SingleValueResource> extends Templa
 	private static final long serialVersionUID = 1L;
 	private V defaultResource = null;
 	protected List<String> defaultDisplayedValues = null;
+	protected List<Integer> defaultValuesToSet = null;
 	public static List<String> naList = new ArrayList<>();
 	static {
 		naList.add("n/a");
@@ -103,11 +105,32 @@ public class ValueResourceDropdown<V extends SingleValueResource> extends Templa
 	public void setDisplayedValues(List<String> displayedValues, OgemaHttpRequest req) {
 		((ValueResourceDropdownData<V>)getData(req)).setDisplayedValues(displayedValues);
 	}
+	
+	/** Only relevant if the dropdown is typed for IntegerResource
+	 * In this case not the index of the selected displayed value is used when a
+	 * value is written, but the respective indexed value of defaultValuesToSet. So
+	 * the size of defaultValuesToSet must be the same as the size of displayedValues.
+	 * */
+	public void setDefaultIntegerValuesToUse(List<Integer> defaultValuesToSet) {
+		this.defaultValuesToSet = defaultValuesToSet;
+	}
 
 	/** override this if required*/
 	public String getSelection(V resource, Locale locale, List<String> displayedValues) {
 		if (resource instanceof IntegerResource)  {
 			int val = ((IntegerResource)resource).getValue();
+			if(defaultValuesToSet != null) {
+				boolean found = false;
+				for(int index=1; index<defaultValuesToSet.size(); index++) {
+					if(defaultValuesToSet.get(index) > val) {
+						val = index-1;
+						found = true;
+						break;
+					}
+				}
+				if(!found)
+					val = displayedValues.size()-1;
+			}
 			if(val <= 0) {
 				return displayedValues.get(0);
 			} else if(val >= displayedValues.size()) {
@@ -130,7 +153,10 @@ public class ValueResourceDropdown<V extends SingleValueResource> extends Templa
 		if (resource instanceof IntegerResource)  {
 			for(String s: displayedValues) {
 				if(s.equals(value)) {
-					((IntegerResource) resource).setValue(i);					
+					if(defaultValuesToSet != null)
+						((IntegerResource) resource).setValue(defaultValuesToSet.get(i));					
+					else
+						((IntegerResource) resource).setValue(i);					
 				}
 				i++;
 			}

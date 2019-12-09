@@ -17,9 +17,13 @@ package de.iee.sema.remote.message.receiver.gui;
 
 import java.io.FilePermission;
 import java.io.IOException;
+import java.security.AccessController;
 import java.security.Permission;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
@@ -78,6 +82,42 @@ public class MessageReceiverPage implements LazyWidgetPage {
 	
 	private static final String CHECK_MSG_PERM = "msgPerm";
 	private static final String CHECK_FILE_PERM = "filePerm";
+	private static final String PROPERTY_ADDITIONAL_RESOURCES_CLIENT_SPECIFIC = "org.ogema.messaging.remotereceiver.ReourcePermissionPathsClientSpecific";
+	private static final String PROPERTY_ADDITIONAL_RESOURCES_GLOBAL = "org.ogema.messaging.remotereceiver.ReourcePermissionPathsGlobal";
+	private static final Collection<String> ADDITIONAL_RESOURCES_CLIENT_SPECIFIC;
+	private static final Collection<String> ADDITIONAL_RESOURCES_GLOBAL;
+	
+	static {
+		final String addProp = AccessController.doPrivileged
+				((PrivilegedAction<String>) () -> System.getProperty(PROPERTY_ADDITIONAL_RESOURCES_CLIENT_SPECIFIC));
+		if (addProp == null) {
+			ADDITIONAL_RESOURCES_CLIENT_SPECIFIC = Collections.emptyList();
+		} else {
+			ADDITIONAL_RESOURCES_CLIENT_SPECIFIC = Arrays.stream(addProp.split(","))
+				.map(String::trim)
+				.map(str -> {
+					if (str.endsWith("/"))
+						str = str.substring(0, str.length()-1);
+					return str;
+				})
+				.collect(Collectors.toList());
+		}
+		final String addPropGlobal = AccessController.doPrivileged
+				((PrivilegedAction<String>) () -> System.getProperty(PROPERTY_ADDITIONAL_RESOURCES_GLOBAL));
+		if (addPropGlobal == null) {
+			ADDITIONAL_RESOURCES_GLOBAL = Collections.emptyList();
+		} else {
+			ADDITIONAL_RESOURCES_GLOBAL = Arrays.stream(addPropGlobal.split(","))
+				.map(String::trim)
+				.map(str -> {
+					if (str.endsWith("/"))
+						str = str.substring(0, str.length()-1);
+					return str;
+				})
+				.collect(Collectors.toList());
+		}
+		
+	}
 
 	@Reference
 	private ConditionalPermissionAdmin cpa;
@@ -174,6 +214,14 @@ public class MessageReceiverPage implements LazyWidgetPage {
 	
 					final ResourcePermission perm = new ResourcePermission("path=" + cd.getPath() + "/*", joiner.toString());
 					perms.add(perm);
+					
+					ADDITIONAL_RESOURCES_CLIENT_SPECIFIC.stream()
+						.map(path -> new ResourcePermission("path=" + path + "/" + name + "/*", joiner.toString()))
+						.forEach(perms::add);
+					ADDITIONAL_RESOURCES_GLOBAL.stream()
+						.map(path -> new ResourcePermission("path=" + path, ResourcePermission.READ))
+						.forEach(perms::add);
+					
 				}
 				if (addFilePerm) {
 					try {

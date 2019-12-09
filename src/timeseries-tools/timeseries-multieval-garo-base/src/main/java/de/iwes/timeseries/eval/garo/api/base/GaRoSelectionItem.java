@@ -32,12 +32,6 @@ public abstract class GaRoSelectionItem extends HierarchySelectionItemGeneric {
 		super(level, id);
 	}
 
-	//public R resource;
-	//private final ApplicationManager appMan;
-
-	//only relevant for level GW_LEVEL
-	//private String gwId;
-	
 	//only relevant for level GW_ROOM
 	protected List<String> devicePath;
 	
@@ -68,16 +62,27 @@ public abstract class GaRoSelectionItem extends HierarchySelectionItemGeneric {
 		}
 	}
 	
-	//TODO: Not used yet
+	//TODO: Not used yet by standard GaRo evaluation
 	public GaRoDataType getTypeForTerminalOption() {
 		return GaRoEvalHelper.getDataType(id());
 	}
 	
+	/** Usually device paths are just the timeseriesIds for a room. In some cases intermediate
+	 * deviceIds may be returned indicating timeseriesIds beginnings
+	 * 
+	 * @param roomSelItem selection item on room level, may also support gateway-level, but this is not
+	 * 		required
+	 * @return list of evice / timeseries ids inside the room
+	 */
 	protected abstract List<String> getDevicePaths(GaRoSelectionItem roomSelItem);
 
-	//TODO: This shall replace getResource and make typing superflucious
+	/** Return type of room (supported on a ROOM_LEVEL, TS_LEVEL item)*/
 	public abstract Integer getRoomType();
+	
+	/** Return human readable room name (supported on a ROOM_LEVEL, TS_LEVEL item)*/
 	public abstract String getRoomName();
+	
+	/** Return a unique path for the item data source*/
 	public abstract String getPath();
 
 }

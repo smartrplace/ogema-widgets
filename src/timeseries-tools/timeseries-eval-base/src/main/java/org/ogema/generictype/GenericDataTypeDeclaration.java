@@ -49,12 +49,4 @@ public interface GenericDataTypeDeclaration extends LabelledItem {
 		TIME_SERIES
 	}
 	TypeCardinality typeCardinality();
-	
-	/** In most cases this should be a {@link PhysicalElement}. The field can be
-	 * null if no device type or other higher OGEMA resource type shall be specified*/
-	//Class<? extends Resource> deviceType(); 
-	/** This may be null. The representingResourceType can be generated automatically
-	 * in many cases if this is given
-	 */
-	//Class<? extends PhysicalElement> sensorActorType();
 }

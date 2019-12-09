@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import org.ogema.core.channelmanager.measurements.SampledValue;
 import org.ogema.core.timeseries.InterpolationMode;
 import org.ogema.recordeddata.DataRecorder;
 import org.ogema.recordeddata.RecordedDataStorage;
@@ -61,15 +59,15 @@ public class GaRoSelectionItemJAXB extends GaRoSelectionItem {
 		if(level == 0) {
 			if(gwData == null) try {
 				gwData = gatewayParser.getGateway(gwId);
+				/*Optional<DataRecorder> myLogData = gwData.getLogdata();
 				//FIXME, just for testing
-				Optional<DataRecorder> myLogData = gwData.getLogdata();
 				List<String> myRecIds = myLogData.get().getAllRecordedDataStorageIDs();
 				if(!myRecIds.isEmpty()) {
 					RecordedDataStorage sched = myLogData.get().getRecordedDataStorage(myRecIds.get(0));
 					SampledValue val = sched.getNextValue(Long.MIN_VALUE);
 					System.out.println("First value in log series "+myRecIds.get(0)+" : +"
 						+ ((val!=null)?val.getTimestamp():"null"));
-				}
+				}*/
 			} catch (UncheckedIOException | IOException e) {
 				throw new IllegalStateException(e);
 			}
@@ -100,6 +98,10 @@ public class GaRoSelectionItemJAXB extends GaRoSelectionItem {
 			return getGwSelectionItem().logData;
 		}
 	}
+
+	/** Note that we will sort out time series that do not belong to the respective room
+	 * in  {@link GaRoMultiEvalDataProviderJAXB#getOptions(int, GaRoSelectionItemJAXB)}
+	 * ( CASE TS_LEVEL )*/
 	public List<String> getLogDataIds() {
 		if(level == 0) {
 			if(recIds == null) try {

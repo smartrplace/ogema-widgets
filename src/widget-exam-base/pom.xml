@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.ogema.widgets</groupId>
         <artifactId>ogema-widgets</artifactId>
-        <version>2.2.0</version>
+        <version>2.2.1</version>
     </parent>
 
     <artifactId>widget-exam-base</artifactId>
@@ -58,7 +58,7 @@
         <dependency>
             <groupId>org.ogema.ref-impl</groupId>
             <artifactId>ogema-exam-base2</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1</version>
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>

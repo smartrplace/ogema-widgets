@@ -78,13 +78,22 @@ public class LogHelper {
 		return deviceId;
     }
 	
-	/** Get resource of device to be used as primary device to which subResource shall be attached
+	/** Get resource of device to be used as primary device for the input resource
 	 * for user interaction etc.
-	 * 
-	 * @param subResource
-	 * @return
+	 * @param subResource resource for which the primary device resource shall be returned
+	 * @param locationRelevant if true only device resources will be returned with an active subresource
+	 * 		location e.g. indicating the room where the device is placed. It is not considered if the
+	 * 		subResource has an element of org.ogema.drivers.homematic.xmlrpc.hl.types.HmMaintenance in
+	 * 		its parent path. Default is true.
+	 * @param useHighest if true the highest PhysicalElement above the input subResource is returned, otherwise
+	 * 		the lowest fitting. Default is true.
+	 * @return device resource or null if no suitable resource was found
 	 */
 	public static PhysicalElement getDeviceResource(Resource subResource, boolean locationRelevant) {
+		return getDeviceResource(subResource, locationRelevant, true);
+	}
+	public static PhysicalElement getDeviceResource(Resource subResource, boolean locationRelevant, boolean
+			useHighest) {
 		Resource hmCheck = ResourceHelper.getFirstParentOfType(subResource, "org.ogema.drivers.homematic.xmlrpc.hl.types.HmMaintenance");
 		if(hmCheck != null) {
 			Resource parent = hmCheck.getParent();
@@ -96,15 +105,21 @@ public class LogHelper {
 		}
 		PhysicalElement device = ResourceHelper.getFirstParentOfType(subResource, PhysicalElement.class);
 		if(device == null) return null;
-		PhysicalElement highestWithLocation = (locationRelevant && device.location().isActive())?device:null;
+		PhysicalElement highestWithLocation = ((!locationRelevant) || device.location().isActive())?device:null;
+		Resource parent = device.getParent();
 		while(true) {
-			Resource parent = device.getParent();
+			if((!useHighest) && (highestWithLocation != null)) return highestWithLocation;
 			if(parent != null && parent instanceof PhysicalElement) {
 				device = (PhysicalElement) parent;
-				if(locationRelevant && device.location().isActive()) highestWithLocation = device;
-			}
-			else {
-				if(locationRelevant) return highestWithLocation;
+				if((!locationRelevant) || device.location().isActive()) highestWithLocation = device;
+				parent = device.getParent();
+			} else {
+				if(parent != null) {
+					parent = ResourceHelper.getFirstParentOfType(parent, PhysicalElement.class);
+					if(parent == null) return highestWithLocation;
+					else continue;
+				}
+				if(highestWithLocation != null) return highestWithLocation;
 				return device;
 			}
 		}

@@ -478,7 +478,10 @@ public class ResAdminController {
 		final boolean overwrite = config.overwriteExistingBackup().getValue();
 		if(!overwrite) {
 			File configDir = new File(destDirStr);
-			destDir = new File(configDir.getAbsolutePath() + "/" + strDate);
+			if(destDirStr.endsWith("generalBackup"))
+				destDir = new File(configDir.getAbsolutePath() + strDate);
+			else
+				destDir = new File(configDir.getAbsolutePath() + "/" + strDate);
 		} else {
 			destDir = new File(destDirStr);
 		}

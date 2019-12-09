@@ -24,6 +24,10 @@
  */
 package de.iwes.widgets.messaging.event.converter;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -99,7 +103,11 @@ public class EventConverter implements EventHandler, Application {
 	}
 	
 	private static class EventMessage implements Message {
-	
+		
+		// see homematic-xmlrpc-hl: org.ogema.drivers.homematic.xmlrpc.hl.events.OgemaEventContants
+		private static final String timestamp = "timestamp_ogema";
+		private static final String localizedTitle = "title_l10n";
+		private static final String localizedMessage = "message_l10n"; 
 		private final Event event;
 		
 		EventMessage(Event event) {
@@ -114,6 +122,13 @@ public class EventConverter implements EventHandler, Application {
 
 		@Override
 		public String message(OgemaLocale arg0) {
+			String msg0 = readLocalizableProperty(event, localizedMessage, arg0.getLocale());
+			if (msg0 != null) {
+				if (event.containsProperty(timestamp)) {
+					msg0 = msg0 + "\r\n Timestamp: " + ZonedDateTime.ofInstant(Instant.ofEpochMilli((Long) event.getProperty(timestamp)), ZoneId.systemDefault()); 
+				}
+				return msg0;
+			}
 			return Objects.toString(event.getProperty(EventConstants.MESSAGE));
 		}
 
@@ -124,6 +139,9 @@ public class EventConverter implements EventHandler, Application {
 
 		@Override
 		public String title(OgemaLocale arg0) {
+			final String title0 = readLocalizableProperty(event, localizedTitle, arg0.getLocale());
+			if (title0 != null)
+				return title0;
 			final String topic = event.getTopic();
 			final Object title = event.getProperty("title");
 			if (title instanceof String)
@@ -134,6 +152,16 @@ public class EventConverter implements EventHandler, Application {
 		@Override
 		public String toString() {
 			return "EventMessage[" + title(OgemaLocale.ENGLISH) + "]";
+		}
+		
+		private static String readLocalizableProperty(final Event event, final String propertyKey, final Locale locale) {
+			if (event.containsProperty(propertyKey)) {
+				final Object prop = event.getProperty(propertyKey);
+				try {
+					return prop.getClass().getMethod("getMessage", Locale.class, Event.class).invoke(prop, locale, event).toString();
+				} catch (Exception ok) {}
+			}
+			return null;
 		}
 		
 	}

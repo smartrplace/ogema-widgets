@@ -29,9 +29,11 @@ import org.ogema.core.model.array.StringArrayResource;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.FloatResource;
 import org.ogema.core.model.simple.IntegerResource;
+import org.ogema.core.model.simple.SingleValueResource;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.core.model.units.TemperatureResource;
+import org.ogema.core.recordeddata.RecordedData;
 
 public class ValueResourceHelper {
 	/** create resource if it does not yet exist. If the resource is newly created write
@@ -223,5 +225,22 @@ public class ValueResourceHelper {
 		}
 		fres.setValues(values);
 		return false;
+	}
+	
+	/** Get Recorded data from SingleValueResource
+	 * 
+	 * @param valueResource
+	 * @return null if type of resource does not support getHistoricalData
+	 */
+	public static RecordedData getRecordedData(SingleValueResource valueResource) {
+		if(valueResource instanceof FloatResource)
+			return ((FloatResource)valueResource).getHistoricalData();
+		if(valueResource instanceof IntegerResource)
+			return ((IntegerResource)valueResource).getHistoricalData();
+		if(valueResource instanceof TimeResource)
+			return ((TimeResource)valueResource).getHistoricalData();
+		if(valueResource instanceof BooleanResource)
+			return ((BooleanResource)valueResource).getHistoricalData();
+		return null;
 	}
 }

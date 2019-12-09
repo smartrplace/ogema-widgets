@@ -21,13 +21,20 @@ package de.iwes.widgets.html.plot.api;
  */
 public class PlotType {
 
-	public static final PlotType LINE = new PlotType("line","Line");
-	public static final PlotType LINE_WITH_POINTS = new PlotType("linePoints", "Line with points");
-	public static final PlotType BAR = new PlotType("bar", "Bar");
-	public static final PlotType POINTS = new PlotType("points", "Points");
-	public static final PlotType STEPS = new PlotType("steps", "Steps");
-	public static final PlotType LINE_STACKED = new PlotType("lineStacked", "Stacked lines");
-	public static final PlotType BAR_STACKED = new PlotType("barStacked", "Stacked bars");
+	public static final PlotType LINE = new PlotType("line",
+			System.getProperty("de.iwes.widgets.html.plot.api.line","Line"));
+	public static final PlotType LINE_WITH_POINTS = new PlotType("linePoints",
+			System.getProperty("de.iwes.widgets.html.plot.api.linePoints","Line with points"));
+	public static final PlotType BAR = new PlotType("bar",
+			System.getProperty("de.iwes.widgets.html.plot.api.bar","Bar"));
+	public static final PlotType POINTS = new PlotType("points",
+			System.getProperty("de.iwes.widgets.html.plot.api.points", "Points"));
+	public static final PlotType STEPS = new PlotType("steps",
+			System.getProperty("de.iwes.widgets.html.plot.api.steps","Steps"));
+	public static final PlotType LINE_STACKED = new PlotType("lineStacked",
+			System.getProperty("de.iwes.widgets.html.plot.api.lineStacked","Stacked lines"));
+	public static final PlotType BAR_STACKED = new PlotType("barStacked",
+			System.getProperty("de.iwes.widgets.html.plot.api.barStacked","Stacked bars"));
 
 	private final String id;
 	private final String description;

@@ -18,10 +18,13 @@ package de.iwes.timeseries.eval.garo.api.base;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.iwes.timeseries.eval.api.DataProvider;
+import de.iwes.timeseries.eval.api.DataProviderType;
 import de.iwes.timeseries.eval.api.extended.util.HierarchyMultiEvalDataProviderGeneric;
 import de.iwes.timeseries.eval.garo.resource.GaRoMultiEvalDataProviderResource;
 import de.iwes.widgets.html.selectiontree.SelectionItem;
 
+/** Extend and implement this abstract class for a DataProvider for the GaRo system*/
 public abstract class GaRoMultiEvalDataProvider<T extends GaRoSelectionItem> extends HierarchyMultiEvalDataProviderGeneric<T> {
 	public static final String BUILDING_OVERALL_ROOM_ID = "##Building";
 	public static final String LOCAL_GATEWAY_ID = "myGateway";
@@ -40,7 +43,7 @@ public abstract class GaRoMultiEvalDataProvider<T extends GaRoSelectionItem> ext
 	}
 
 	@Override
-	protected abstract List<SelectionItem> getOptions(int level, T superItem);
+	public abstract List<SelectionItem> getOptions(int level, T superItem);
 	
 	/** @return If true the provider is able to provide information from multiple gateways, otherwise the
 	 * provider is limited to a single gateway, usually the gateway on which it operates (e.g. from
@@ -49,7 +52,22 @@ public abstract class GaRoMultiEvalDataProvider<T extends GaRoSelectionItem> ext
 	public abstract boolean providesMultipleGateways();
 	
 	//TODO: With this new method the signature of method getSelectionItemsForGws may be changed
+	/** Get all gateway IDs supported by the provider*/
 	public abstract List<String> getGatewayIds();
+	
+	/** Get device information for a time series*/
+	//public abstract DeviceInfo getDeviceInformation();
+
+	@Override
+	/** Provide time series together with device information here*/
+	public abstract EvaluationInputImplGaRo getData(List<SelectionItem> items);
+	/** Override this to provide a special input that usually overrides
+	 * {@link GaRoMultiEvaluationInput#useDataProviderItemTerminal(GaRoSelectionItem)}
+	 */
+	public GaRoMultiEvaluationInput provideMultiEvaluationInput(DataProviderType type, DataProvider<?> dataProvider,
+			GaRoDataTypeI terminalDataType, List<String> topLevelIdsToEvaluate, String topLevelOptionId) {
+		return null;
+	}
 	
 	public List<GaRoSelectionItem> getSelectionItemsForGws(List<String> gwIds) {
 		List<GaRoSelectionItem> result = new ArrayList<>();

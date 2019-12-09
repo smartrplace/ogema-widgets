@@ -267,17 +267,20 @@ public class EvaluationUtils {
 			Collection<ConfigurationInstance> configurations, ResultListener intermediateListener) {
 		EvaluationInstance instance = evalProvider.newEvaluation(allItems, requestedResults, configurations);
 		if(intermediateListener != null) instance.addIntermediateResultListener(intermediateListener);
-		MultiTimeSeriesIterator iterator = 
-				EvaluationUtils.getMultiTimeSeriesIterator(allItems, requestedResults, configurations, instance, evalProvider.requestedUpdateInterval());
-		while (!instance.isDone() && iterator.hasNext()) {
-			try {
-				instance.step(iterator.next());
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-				break; // finished already
-			} catch (Exception e) {
-				e.printStackTrace();
-				break;
+		
+		if(!allItems.isEmpty()) {
+			MultiTimeSeriesIterator iterator = 
+					EvaluationUtils.getMultiTimeSeriesIterator(allItems, requestedResults, configurations, instance, evalProvider.requestedUpdateInterval());
+			while (!instance.isDone() && iterator.hasNext()) {
+				try {
+					instance.step(iterator.next());
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+					break; // finished already
+				} catch (Exception e) {
+					e.printStackTrace();
+					break;
+				}
 			}
 		}
 		instance.finish();

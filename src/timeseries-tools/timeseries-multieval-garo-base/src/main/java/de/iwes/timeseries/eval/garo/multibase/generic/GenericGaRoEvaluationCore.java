@@ -19,11 +19,15 @@ import org.ogema.core.channelmanager.measurements.SampledValue;
 import org.ogema.tools.timeseries.iterator.api.SampledValueDataPoint;
 
 import de.iwes.timeseries.eval.api.extended.util.SpecificEvalBaseImpl;
+import de.iwes.timeseries.eval.garo.api.base.GaRoDataTypeI;
+import de.iwes.timeseries.eval.garo.api.base.GaRoDataTypeParam;
+import de.iwes.timeseries.eval.garo.multibase.GaRoSingleEvalProvider;
 
 public abstract class GenericGaRoEvaluationCore {
 	public GenericGaRoSingleEvaluation evalInstance;
 	public long gapTime;
-    /** Process new value
+ 	
+	/** Process new value
      * 
      * @param idxOfRequestedInput index of requested input
      * @param idxOfEvaluationInput index of time series within the requested input
@@ -48,5 +52,71 @@ public abstract class GenericGaRoEvaluationCore {
     public long getNextFixedTimeStamp(long currentTime) {
 		return -1;
 	}
-
+    
+	//copied from SpecificEvalBaseImpl
+    protected int getRequiredInputIdx(int totalIdx) {
+    	int[] idxSumOfPrevious = evalInstance.getIdxSumOfPrevious();
+        for(int i=0; i<idxSumOfPrevious.length; i++) {
+        	if(totalIdx < idxSumOfPrevious[i+1]) {
+        		return i;
+        	}
+        }
+        throw new IllegalStateException("TotalIdx out of range!");
+    }
+    protected int getEvaluationInputIdx(int totalIdx) {
+    	int[] idxSumOfPrevious = evalInstance.getIdxSumOfPrevious();
+        for(int i=0; i<idxSumOfPrevious.length; i++) {
+        	if(totalIdx < idxSumOfPrevious[i+1]) {
+        		return (totalIdx - idxSumOfPrevious[i]);
+        	}
+        }
+        throw new IllegalStateException("TotalIdx out of range!");
+    }
+    
+    public String getTimeSeriesId(int totalIdx, GaRoSingleEvalProvider evalProvider) {
+		int idxOfRequestedInput = getRequiredInputIdx(totalIdx);
+		int idxOfEvaluationInput = getEvaluationInputIdx(totalIdx);
+		GaRoDataTypeI[] typeList = evalProvider.getGaRoInputTypes();
+		if(typeList[idxOfRequestedInput] instanceof GaRoDataTypeParam) {
+			GaRoDataTypeParam type = (GaRoDataTypeParam) typeList[idxOfRequestedInput];
+			String ts = type.inputInfo.get(idxOfEvaluationInput).id();
+			return ts;
+		}
+		return null;
+    }
+    /** If a short id is available it is typically returned by this method*/
+    public String getDeviceName(int totalIdx, GaRoSingleEvalProvider evalProvider) {
+		int idxOfRequestedInput = getRequiredInputIdx(totalIdx);
+		int idxOfEvaluationInput = getEvaluationInputIdx(totalIdx);
+		GaRoDataTypeI[] typeList = evalProvider.getGaRoInputTypes();
+		if(typeList[idxOfRequestedInput] instanceof GaRoDataTypeParam) {
+			GaRoDataTypeParam type = (GaRoDataTypeParam) typeList[idxOfRequestedInput];
+			//String ts = type.inputInfo.get(idxOfEvaluationInput).id();
+			String ts = type.deviceInfo.get(idxOfEvaluationInput).getDeviceName();
+			return ts;
+		}
+		return null;
+    }
+    public String getDeviceResourceLocation(int totalIdx, GaRoSingleEvalProvider evalProvider) {
+		int idxOfRequestedInput = getRequiredInputIdx(totalIdx);
+		int idxOfEvaluationInput = getEvaluationInputIdx(totalIdx);
+		GaRoDataTypeI[] typeList = evalProvider.getGaRoInputTypes();
+		if(typeList[idxOfRequestedInput] instanceof GaRoDataTypeParam) {
+			GaRoDataTypeParam type = (GaRoDataTypeParam) typeList[idxOfRequestedInput];
+			//String ts = type.inputInfo.get(idxOfEvaluationInput).id();
+			String ts = type.deviceInfo.get(idxOfEvaluationInput).getDeviceResourceLocation();
+			return ts;
+		}
+		return null;
+    }
+    public GaRoDataTypeParam getTimeSeriesType(int totalIdx, GaRoSingleEvalProvider evalProvider) {
+		int idxOfRequestedInput = getRequiredInputIdx(totalIdx);
+		//int idxOfEvaluationInput = getEvaluationInputIdx(totalIdx);
+		GaRoDataTypeI[] typeList = evalProvider.getGaRoInputTypes();
+		if(typeList[idxOfRequestedInput] instanceof GaRoDataTypeParam) {
+			GaRoDataTypeParam type = (GaRoDataTypeParam) typeList[idxOfRequestedInput];
+			return type;
+		}
+		return null;
+    }
 }

@@ -15,6 +15,7 @@
  */
 package de.iwes.timeseries.eval.garo.multibase.generic;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -56,12 +57,16 @@ public class GenericGaRoSingleEvalValueContainer extends SpecificEvalValueContai
     
     public synchronized Map<ResultType, EvaluationResult> getCurrentResults() {
     	final Map<ResultType, EvaluationResult> results = new LinkedHashMap<>();
-     	List<TimeSeriesData> inputData = input.get(0).getInputData();
+    	List<TimeSeriesData> inputData;
+    	if(input == null || input.isEmpty())
+    		inputData = new ArrayList<>();
+    	else
+    		inputData = input.get(0).getInputData();
     	evalContainer.gapTime = gapTime;
      	for (GenericGaRoResultType rt : requestedResultsGaRo) {
     		final SingleEvaluationResult singleRes;
     		if (rt == GenericGaRoSingleEvalProvider.GAP_TIME) {
-        		singleRes = new SingleValueResultImpl<Long>(rt, gapTime, input.get(0).getInputData());
+        		singleRes = new SingleValueResultImpl<Long>(rt, gapTime, inputData);
     		} else
     			singleRes = rt.getEvalResult(evalContainer, rt, inputData);
      		if(singleRes == null)

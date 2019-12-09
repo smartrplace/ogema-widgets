@@ -37,7 +37,7 @@ public abstract class PerformFixedStepOperation {
 	public PerformFixedStepOperation(long fixedTimeStep, long startTime) {
 		this(fixedTimeStep, startTime, AggregationMode.AVERAGING);
 	}
-	/** Construct Base Estimator object that can be fed with values via {@link #addValue(float)}
+	/** Construct Base Estimator object that can be fed with values via {@link #addValue(float, long, long)}
 	 * 
 	 * @param fixedTimeStep time step with which {@link #performOperation(float, long)} shall be called.
 	 * @param startTime start time of first interval. performOperation will be called from this time on

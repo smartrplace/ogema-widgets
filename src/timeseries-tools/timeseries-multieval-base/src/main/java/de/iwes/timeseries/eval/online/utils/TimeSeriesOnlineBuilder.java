@@ -28,10 +28,8 @@ import org.ogema.tools.timeseries.implementations.FloatTreeTimeSeries;
 public class TimeSeriesOnlineBuilder {
 	private final List<SampledValue> collected = new ArrayList<>();
 	
-	/** Construct Base Estimator object that can be fed with values via {@link #addValue(float)}
+	/** Construct base object that can be fed with values via {@link #addValue(float, long)}
 	 * 
-	 * @param calculateMinMax if true minimum and maximum values are searched
-	 * @param averageMode if NONE no average value is summed up, otherwise average is always calculated.
 	 */
 	public TimeSeriesOnlineBuilder() {
 	}

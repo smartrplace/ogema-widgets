@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.ogema.widgets</groupId>
         <artifactId>ogema-widgets</artifactId>
-        <version>2.2.0</version>
+        <version>2.2.1</version>
     </parent>
 
 	<groupId>org.ogema.model</groupId>
@@ -13,26 +13,6 @@
     <name>Selected model extensions</name>
 	<description>Selected model extensions provided by Fraunhofer</description>
     <packaging>bundle</packaging>
-
-	<repositories>
-		<repository>
-			<releases />
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>ogema-releases</id>
-			<name>ogema-releases</name>
-			<url>https://www.ogema-source.net/artifactory/libs-release</url>
-		</repository>
-	</repositories>
-	<distributionManagement>
-		<repository>
-			<id>ogema-releases</id>
-			<name>Internal Releases</name>
-			<url>https://www.ogema-source.net/artifactory/libs-release-local</url>
-		</repository>
-	</distributionManagement>
-
 
     <build>
         <plugins>

@@ -45,12 +45,7 @@ public class ScheduleViewerConfiguration {
 	private final boolean loadSchedulesOnInit;
 	@SuppressWarnings("rawtypes")
 	private final Class<? extends TimeSeriesPlot> plotType;
-	// FIXME final
-	/**
-	 * @deprecated Non-final fields will be removed in a future version of this
-	 */
-	@Deprecated
-	public boolean showIndividualConfigBtn;
+	public final boolean showIndividualConfigBtn;
 	public final Long bufferWindow;
 	
 	// FIXME final
@@ -139,6 +134,7 @@ public class ScheduleViewerConfiguration {
 		this.loadSchedulesOnInit = false;
 		this.startTime = startTime;
 		this.endTime = endTime;
+		this.showIndividualConfigBtn = true;
 		if (bufferWindow != null && bufferWindow < 0)
 			throw new IllegalArgumentException();
 		this.bufferWindow = bufferWindow;
@@ -191,7 +187,7 @@ public class ScheduleViewerConfiguration {
 		this.plotType = SchedulePlotFlot.class;
 	}
 	
-	ScheduleViewerConfiguration(boolean showManipulator, boolean showCsvDownload, boolean useNameService, boolean showOptionsSwitch, 
+	protected ScheduleViewerConfiguration(boolean showManipulator, boolean showCsvDownload, boolean useNameService, boolean showOptionsSwitch, 
 			ScheduleManipulatorConfiguration manipulatorConfiguration, boolean showNrPointsPreview, Long startTime, Long endTime, 
 			List<Map<String,TimeSeriesFilter>> programs, List<Map<String,ConditionalTimeSeriesFilter<?>>> filters, Long bufferWindow,
 			boolean showIndividualConfigPopup, boolean showIntervals, boolean showPlotTypeSelector, boolean downsamplingItv, boolean showUpdateInterval,

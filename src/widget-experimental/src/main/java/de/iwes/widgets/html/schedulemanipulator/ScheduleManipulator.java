@@ -24,6 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.ogema.core.application.ApplicationManager;
 import org.ogema.core.channelmanager.measurements.SampledValue;
 import org.ogema.core.channelmanager.measurements.Value;
 import org.ogema.core.timeseries.InterpolationMode;
@@ -77,6 +78,7 @@ public class ScheduleManipulator extends PageSnippet {
 	
 	private boolean defaultAllowPointAddition = true;
 	
+	public final ApplicationManager appMan;
 	/*
 	 ************************** constructors ***********************/
     
@@ -87,12 +89,21 @@ public class ScheduleManipulator extends PageSnippet {
         this(page, id, null);
 	}
     
+    public ScheduleManipulator(WidgetPage<?> page, String id, ScheduleManipulatorConfiguration config,
+    		ApplicationManager appMan) {
+        this(page, id, false, config, appMan);
+	}
     public ScheduleManipulator(WidgetPage<?> page, String id, ScheduleManipulatorConfiguration config) {
         this(page, id, false, config);
 	}
     
     public ScheduleManipulator(WidgetPage<?> page, String id, boolean globalWidget, ScheduleManipulatorConfiguration config) {
+    	this(page, id, globalWidget, config, null);
+    }
+    public ScheduleManipulator(WidgetPage<?> page, String id, boolean globalWidget, ScheduleManipulatorConfiguration config,
+    		ApplicationManager appMan) {
         super(page, id, true); // this itself is always a global widget
+        this.appMan = appMan;
         if (config == null)
         	config = new ScheduleManipulatorConfiguration();
         this.showQuality = config.isShowQuality();
@@ -105,6 +116,7 @@ public class ScheduleManipulator extends PageSnippet {
 				if (schedule == null)
 					return Collections.emptyList();
 				final List<Long> values = new ArrayList<>();
+				values.add(ScheduleManipulatorData.HEADER_LINE_ID);
 				if (isAllowPointAddition(req)) {
 					values.add(ScheduleManipulatorData.NEW_LINE_ID);
 				}
@@ -142,7 +154,8 @@ public class ScheduleManipulator extends PageSnippet {
         table.setRowTemplate(rowTemplate);
         table.addDefaultStyle(DynamicTableData.CELL_ALIGNMENT_RIGHT);
 
-        this.nrItemsLabel = new Label(page, id + "__XX__nrItemsLabel", "Number of data points");
+        this.nrItemsLabel = new Label(page, id + "__XX__nrItemsLabel",
+        		System.getProperty("org.ogema.app.timeseries.viewer.expert.gui.selectendtimelabel", "Number of data points"));
         this.nrItemsDropdown = new TemplateDropdown<Integer>(page, id + "__XX__nrItemsDropdown");
         List<Integer> opts = Arrays.asList(1,5,10,15,25,40,50);
         nrItemsDropdown.setDefaultItems(opts);

@@ -64,8 +64,8 @@ public abstract class EvaluationBaseImpl implements OnlineEvaluation {
 			Collection<ConfigurationInstance> configurations, EvaluationListener listener, long time) {
 		Objects.requireNonNull(input);
 		Objects.requireNonNull(requestedResults);
-		if (input.isEmpty())
-			throw new IllegalArgumentException("Input list must not be empty");
+		//if (input.isEmpty())
+		//	throw new IllegalArgumentException("Input list must not be empty");
 		this.time = time;
 		this.requestedResults = Collections.unmodifiableList(requestedResults);
 		listeners.add(listener);

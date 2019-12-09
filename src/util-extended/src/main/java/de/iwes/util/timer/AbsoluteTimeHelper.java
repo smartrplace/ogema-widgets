@@ -130,7 +130,9 @@ public class AbsoluteTimeHelper {
 	 */
 	public static int getMinimalInterval(StatisticalAggregation statAggregation) {
 		int type = -1;
-		if(statAggregation.tenSecondValue().exists()) {
+		if(statAggregation.secondValue().exists()) {
+			type = 102;
+		} else if(statAggregation.tenSecondValue().exists()) {
 			type = 1020;
 		} else if(statAggregation.halfMinuteValue().exists()) {
 			type = 1000;

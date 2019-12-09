@@ -26,8 +26,8 @@ import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 public class TimeSeriesDataImpl implements TimeSeriesDataOffline {
 	
 	private final ReadOnlyTimeSeries timeSeries;
-	private final String label;
-	private final String description;
+	private String label;
+	private String description;
 	private final InterpolationMode mode;
 	private final float offset;
 	private final float factor;
@@ -49,6 +49,16 @@ public class TimeSeriesDataImpl implements TimeSeriesDataOffline {
 		this.timeOffset= timeOffset;
 	}
 
+	public TimeSeriesDataImpl(TimeSeriesDataImpl base, String label, String description) {
+		this.timeSeries = base.timeSeries;
+		this.label = label;
+		this.description = description;
+		this.mode =  base.mode != null ?  base.mode : timeSeries.getInterpolationMode();
+		this.offset =  base.offset;
+		this.factor =  base.factor;
+		this.timeOffset=  base.timeOffset;		
+	}
+	
 	@Override
 	public ReadOnlyTimeSeries getTimeSeries() {
 		return timeSeries;
@@ -93,7 +103,5 @@ public class TimeSeriesDataImpl implements TimeSeriesDataOffline {
 	public String toString() {
 		return "TimeSeriesDataImpl[" + label + "]";
 	}
-
-	
 	
 }

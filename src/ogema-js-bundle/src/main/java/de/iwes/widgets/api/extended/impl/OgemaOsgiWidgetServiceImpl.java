@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -289,6 +288,17 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
     	if (maxNrSessions > 0) this.maxNrSessions.put(((WidgetPageBase<?>) page).getServletBase(), maxNrSessions);
     }
     
+    private String getPreferredLanguage(HttpServletRequest req) {
+    	String locl = req.getHeader("Accept-Language");
+    	if (locl == null)
+    		locl = "en";
+    	if (locl.contains(",")) {
+    		int idx = locl.indexOf(",");
+    		locl = locl.substring(0, idx);
+    	}
+    	return locl;
+    }
+     
     /**
      * Is called from the widget.js so the client can load the widget html/js/css data 
      * @param req
@@ -309,6 +319,13 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
     	String groupId = req.getParameter("groupId");
     	String getGroup = req.getParameter("getGroup");
 		OgemaHttpRequest ogReq = new OgemaHttpRequest(req, false);
+		if(ogReq.getLocaleString() == null) {
+	    	String locl = getPreferredLanguage(req);
+	    	Locale inLocale = Locale.forLanguageTag(locl);   // set initial locale to Browser locale
+	    	if (inLocale == null) inLocale = Locale.ENGLISH; 
+ 			String inLocaleString = inLocale.getLanguage();
+			ogReq = new OgemaHttpRequest(req, false, inLocaleString );
+		}
 		JSONObject result = new JSONObject();
 		// FIXME
 		if (logger.isTraceEnabled() && printmessages != null) {
@@ -355,9 +372,11 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
             if (expiryTimes.containsKey(boundPagePath)) {
             	sessionManagement.setExpiryTime(sessionId, expiryTimes.get(boundPagePath));
             }
-           for (ConfiguredWidget<?> confWidget: page.getWidgets(sessionId)) {
+        	page.initialize();
+            for (ConfiguredWidget<?> confWidget: page.getWidgets(sessionId)) {
             	try {
             		OgemaWidgetBase<?> widget = confWidget.getWidget();
+            		//only used rarely by apps
             		if (widget.isPostponeLoading())
             			continue;
             		if (widget instanceof InitWidget) 
@@ -374,14 +393,16 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
             resp.setStatus(200);
             
         } else if (configParameters != null) {
-        	String locl = req.getHeader("Accept-Language");
-        	if (locl == null) locl = "en";
+        	/*String locl = req.getHeader("Accept-Language");
+        	if (locl == null)
+        		locl = "en";
         	if (locl.contains(",")) {
         		int idx = locl.indexOf(",");
         		locl = locl.substring(0, idx);
-        	}
+        	}*/
+        	String locl = getPreferredLanguage(req);
         	Locale inLocale = Locale.forLanguageTag(locl);   // set initial locale to Browser locale
-        	if (inLocale == null) inLocale = Locale.ENGLISH; 
+        	if (inLocale == null) inLocale = Locale.ENGLISH;
         	// System.out.println("  In Locale for config request " + inLocale.getLanguage() + ", locl = " + locl);
         	
         	JSONObject obj = new JSONObject();
@@ -403,6 +424,7 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
             resp.setStatus(200);
         }
         else if (groupId != null) {
+        	//return full widget information
         	if (ogReq.getPageInstanceId().isEmpty()) {
         		LoggerFactory.getLogger(JsBundleApp.class).warn("Received a group request before pageInstanceId was set. Ignoring this.");
         		String reply = "{\"reply\":\"pageInstanceId not yet set\"}";
@@ -435,7 +457,7 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
         	while (it.hasNext()) {
         		OgemaWidgetBase<?> widget = it.next();
         		widget.appendWidgetInformation(ogReq,result); // executes onGET and appends widget info to ogReg
-       	}
+        	}
         	resp.setContentType("application/json");
             resp.getWriter().write(result.toString());
             resp.setStatus(200);
@@ -465,11 +487,13 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
             resp.setStatus(200);
         }
         else {
+        	//initial request containing boundPagePath parameter (potentially more)
             String sessionId = ogReq.getSessionId();
             final WidgetJsonConfig jsonConf = new WidgetJsonConfig();
             PageRegistration pr = getPageRegistration(boundPagePath);
             //look up the corresponding widgets bound under the given path
             if( pr != null){
+            	//FIXME: Should not be necessary here anymore as it is done in the initialWidgetInformationRequest
             	pr.initialize();
                 for(ConfiguredWidget<?> w : pr.getWidgets(sessionId)){
                     final String className = w.getWidget().getWidgetClass().getSimpleName();

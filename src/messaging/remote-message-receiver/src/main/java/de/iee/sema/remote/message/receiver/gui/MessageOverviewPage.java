@@ -16,6 +16,7 @@
 package de.iee.sema.remote.message.receiver.gui;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,17 +24,25 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.ogema.core.application.ApplicationManager;
+import org.ogema.core.model.Resource;
+import org.ogema.core.model.ResourceList;
 import org.osgi.service.component.annotations.Component;
 
+import de.iee.sema.remote.message.receiver.model.ClientData;
 import de.iee.sema.remote.message.receiver.model.RemoteMessage;
 import de.iwes.widgets.api.extended.WidgetData;
+import de.iwes.widgets.api.extended.html.bricks.PageSnippet;
+import de.iwes.widgets.api.messaging.MessagePriority;
 import de.iwes.widgets.api.widgets.LazyWidgetPage;
 import de.iwes.widgets.api.widgets.WidgetPage;
 import de.iwes.widgets.api.widgets.dynamics.TriggeredAction;
 import de.iwes.widgets.api.widgets.dynamics.TriggeringAction;
 import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
+import de.iwes.widgets.html.calendar.datepicker.Datepicker;
 import de.iwes.widgets.html.datatable.DataTable;
 import de.iwes.widgets.html.form.label.Header;
+import de.iwes.widgets.html.multiselect.TemplateMultiselect;
+import de.iwes.widgets.multiselect.extended.MultiSelectExtended;
 
 @Component(
 		service=LazyWidgetPage.class,
@@ -44,6 +53,7 @@ import de.iwes.widgets.html.form.label.Header;
 				LazyWidgetPage.MENU_ENTRY + "=Message Overview"
 		}
 )
+// FIXME retrieve messages in GET method, do not store globally
 public class MessageOverviewPage implements LazyWidgetPage {
 	
 	static final String TIMESTAMP = "timestamp";
@@ -60,22 +70,33 @@ public class MessageOverviewPage implements LazyWidgetPage {
 	static final String PRIO_HEADLINE = "Priority";
 	
 	private ApplicationManager appMan;
-	private DataTable table;
-	private RemoteMessagePopup popup;
 	private HashMap<Long, RemoteMessage> messages = new HashMap<Long, RemoteMessage>();
+	private HashMap<Long, RemoteMessage> filteredMessages = new HashMap<Long, RemoteMessage>();
+	private ArrayList<String> allGws = new ArrayList<>();
+	
+	private long startTime;
+	private long endTime;
 	
 	@Override
 	public void init(final ApplicationManager appMan, final WidgetPage<?> page) {
 		
 		this.appMan = appMan;
 		
+		getAllRemoteMessages();
+		getStartEndTimestamps();
+		
+		// Get all GWs for MultiSelect
+		ResourceList<ClientData> clientDatas = appMan.getResourceAccess().getResource("clientData");
+		if(clientDatas != null)
+			clientDatas.getAllElements().forEach(element -> allGws.add(element.userName().getValue()));
+		
 		final Header header = new Header(page, "header", "Remote Receiver App - Messages");
 		header.addDefaultStyle(WidgetData.TEXT_ALIGNMENT_CENTERED);
 		
-		this.popup = new RemoteMessagePopup(page, "msgPopup");
+		final RemoteMessagePopup popup = new RemoteMessagePopup(page, "msgPopup");
 		popup.initialize();
 		
-		this.table = new MessageTable(page, "messagesTable") {
+		final DataTable table = new MessageTable(page, "messagesTable") {
 
 			private static final long serialVersionUID = 1L;
 
@@ -91,10 +112,56 @@ public class MessageOverviewPage implements LazyWidgetPage {
 		};
 		table.triggerAction(popup, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		
+		//gateway multi-selection
+		final TemplateMultiselect<String> gwMultiSelect = new TemplateMultiselect<String>(page, "gwMultiSelect") {
+
+			private static final long serialVersionUID = 1L;
+					
+			@Override
+			public void onGET(OgemaHttpRequest req) {
+				allGws.forEach(gw -> this.addItem(gw, req));
+			}
+		};
+		gwMultiSelect.setDefaultWidth("100%");
+		
+		gwMultiSelect.selectDefaultItems(/*Select all*/null);
+		
+		final MultiSelectExtended<String> gwSelection = 
+				new MultiSelectExtended<String>(page, "gwSelection", gwMultiSelect, true, "", true, false);
+		
+		// For filtering the messages
+		final Datepicker startDatePicker = new Datepicker(page, "startDatePicker");
+		startDatePicker.triggerAction(table, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		
+		final Datepicker endDatePicker = new Datepicker(page, "endDatePicker");
+		endDatePicker.triggerAction(table, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		
 		// build page
-		page.append(header).linebreak().append(table).linebreak().append(popup);
+		//final PageSnippet filterSnippet = new PageSnippet(page, "filterSnippet");
+		//filterSnippet.append(startDatePicker).append(endDatePicker, null);
+		
+		page.append(header).linebreak().append(gwSelection).append(startDatePicker).append(endDatePicker).append(table).linebreak().append(popup);
 	}
 	
+	private void getStartEndTimestamps() {
+		startTime = messages.keySet().stream().min(Long::compare).get();
+		endTime = messages.keySet().stream().max(Long::compare).get();
+	}
+
+	private void getAllRemoteMessages() {
+		
+		for(RemoteMessage remoteMessage : appMan.getResourceAccess().getResources(RemoteMessage.class)) {
+			messages.put(remoteMessage.timestamp().getValue(), remoteMessage);
+		}
+		
+	}
+	
+	private HashMap<Long, RemoteMessage> filterMessages() {
+		
+		
+		return filteredMessages;
+	}
+
 	class MessageTable extends DataTable {
 
 		private static final long serialVersionUID = 1L;
@@ -106,10 +173,13 @@ public class MessageOverviewPage implements LazyWidgetPage {
 		@Override
 		public void onGET(OgemaHttpRequest req) {
 			clear(req);
+//			
+//			for(RemoteMessage remoteMessage : appMan.getResourceAccess().getResources(RemoteMessage.class)) {
+//				messages.put(remoteMessage.timestamp().getValue(), remoteMessage);
+//			}
+//			
+			//private HashMap<Long, RemoteMessage> filteredMessages = filterMessages(messages);
 			
-			for(RemoteMessage remoteMessage : appMan.getResourceAccess().getResources(RemoteMessage.class)) {
-				messages.put(remoteMessage.timestamp().getValue(), remoteMessage);
-			}
 			Map<String, Map<String, String>> rows = getMessagesMap(messages);
 			addRows(rows, req);
 			Map<String, String> columns = getColumnTitles();
@@ -118,6 +188,7 @@ public class MessageOverviewPage implements LazyWidgetPage {
 
 	}
 	
+	// Returns a map: Key: Timestamp of the messages, Value: Map with message Information
 	private Map<String, Map<String, String>> getMessagesMap(Map<Long, RemoteMessage> originalMessages) {
 		Map<String, Map<String, String>> result = new LinkedHashMap<String, Map<String, String>>();
 		if(originalMessages == null)
@@ -128,9 +199,14 @@ public class MessageOverviewPage implements LazyWidgetPage {
 			Map.Entry<Long, RemoteMessage> entry = it.next();
 			long time = entry.getKey();
 			RemoteMessage msg = entry.getValue();
+			
+			// For the resource structure in sema fieldtest, the parent of the parent from the RemoteMessage
+			// contains information about the gateway
+			Resource parentParent = msg.getParent() != null ? msg.getParent().getParent() : null;
+			String gw = parentParent != null ? parentParent.getName() : "Unknown";
 			Map<String, String> columns = new LinkedHashMap<String, String>();
 			columns.put(TIMESTAMP, getTimeString(time));
-			columns.put(SENDER_GW, msg.getParent().getParent().getName());
+			columns.put(SENDER_GW, gw);
 			columns.put(SENDER_APP, msg.sender().getValue());
 			columns.put(SUBJECT, msg.subject().getValue());
 			columns.put(PRIO, String.valueOf(msg.priority().getValue()));

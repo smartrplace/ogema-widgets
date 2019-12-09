@@ -42,46 +42,46 @@ public class ScheduleViewerConfigurationBuilder {
 		return new ScheduleViewerConfigurationBuilder();
 	}
 
-	private ScheduleViewerConfigurationBuilder() {
+	protected ScheduleViewerConfigurationBuilder() {
 	}
 
-	private boolean downsamplingInterval = false;
-	private boolean showPlotTypeSelector = false;
-	private boolean showManipulator = false;
-	private boolean showCsvDownload = true;
-	private boolean useNameService = true;
-	private boolean showOptionsSwitch = true;
-	private boolean showNrPointsPreview = true;
-	private boolean showIndividualConfigBtn = false;
-	private boolean showUpdateInterval = false;
-	private boolean loadSchedulesOnInit = true;
+	protected boolean downsamplingInterval = false;
+	protected boolean showPlotTypeSelector = false;
+	protected boolean showManipulator = false;
+	protected boolean showCsvDownload = true;
+	protected boolean useNameService = true;
+	protected boolean showOptionsSwitch = true;
+	protected boolean showNrPointsPreview = true;
+	protected boolean showIndividualConfigBtn = false;
+	protected boolean showUpdateInterval = false;
+	protected boolean loadSchedulesOnInit = true;
 	@SuppressWarnings("rawtypes")
-	private Class<? extends TimeSeriesPlot> plotType = SchedulePlotFlot.class;
-	private Long bufferWindow = 24 * 60 * 60 * 1000L;
+	protected Class<? extends TimeSeriesPlot> plotType = SchedulePlotFlot.class;
+	protected Long bufferWindow = 24 * 60 * 60 * 1000L;
 
-	private boolean showStandardIntervals = false;
+	protected boolean showStandardIntervals = false;
 	/**
 	 * start time before now if null, the start time will be determined from the
 	 * selected schedules May be null.
 	 */
-	private Long startTime = null;
+	protected Long startTime = null;
 	/**
 	 * end time after now if null, the end time will be determined from the selected
 	 * schedules May be null
 	 */
-	private Long endTime = null;
+	protected Long endTime = null;
 
-	private ScheduleManipulatorConfiguration manipulatorConfiguration;
+	protected ScheduleManipulatorConfiguration manipulatorConfiguration;
 	/**
 	 * Each list entry is an unmodifiable map of programs the user can select. May
 	 * be null.
 	 */
-	private List<Map<String, TimeSeriesFilter>> programs;
+	protected List<Map<String, TimeSeriesFilter>> programs;
 	/**
 	 * Each list entry is an unmodifiable map of programs the user can select. May
 	 * be null.
 	 */
-	private List<Map<String, ConditionalTimeSeriesFilter<?>>> filters;
+	protected List<Map<String, ConditionalTimeSeriesFilter<?>>> filters;
 
 	/**
 	 * Create the configuration
@@ -191,6 +191,8 @@ public class ScheduleViewerConfigurationBuilder {
 	 * To improve performance for larger views you can increase the internal buffer
 	 * time here. TODO CN: Add more documentation on this option. Default value: 1
 	 * day
+	 * TODO: Note that this option is currently not supported by the ScheduleViewerExpert. It
+	 *     always uses the default buffer window
 	 * 
 	 * @param bufferWindow
 	 * @return

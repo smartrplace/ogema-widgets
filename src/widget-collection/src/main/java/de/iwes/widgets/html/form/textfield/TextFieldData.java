@@ -33,6 +33,7 @@ public class TextFieldData extends WidgetData {
 //	private String valueEscaped = "";
 	private String placeholder = "";
 	private String type = null;
+	private String inputmode = null;
 	
 	
 	/*********** Constructor **********/
@@ -48,6 +49,9 @@ public class TextFieldData extends WidgetData {
 		JSONObject result = new JSONObject();
         if (type != null) {
         	result.put("type", type);
+        }
+        if (inputmode != null) {
+        	result.put("inputmode", inputmode);
         }
         if (value !=null && !value.isEmpty()) {
         	result.put("value", value);
@@ -100,6 +104,12 @@ public class TextFieldData extends WidgetData {
 	}
 	public void setType(String type) {
 		this.type = type;
+	}
+	public String getInputmode() {
+		return inputmode;
+	}
+	public void setInputmode(String mode) {
+		this.inputmode = mode;
 	}
 
 

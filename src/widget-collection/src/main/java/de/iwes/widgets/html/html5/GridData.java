@@ -188,9 +188,24 @@ public class GridData extends WidgetData {
 	void deleteItem(int row, int col) {
 		writeLock();
 		try {
-			final Content o = items.get(row).get(col);
+			final Content o = items.get(row).remove(col);
 			if (o.getContentType() == ContentType.OGEMA_WIDGET)
 				((OgemaWidgetBase<?>) o.getContent()).destroyWidget();
+		} finally {
+			writeUnlock();
+		}
+	}
+	
+	void clear() {
+		writeLock();
+		try {
+			items.stream()
+				.flatMap(List::stream)
+				.filter(c -> c.getContentType() == ContentType.OGEMA_WIDGET)
+				.map(Content::getContent)
+				.map(c -> (OgemaWidget) c)
+				.forEach(OgemaWidget::destroyWidget);
+			this.items.clear();
 		} finally {
 			writeUnlock();
 		}

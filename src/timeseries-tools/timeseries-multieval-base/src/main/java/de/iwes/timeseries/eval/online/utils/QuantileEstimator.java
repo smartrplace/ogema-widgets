@@ -44,10 +44,10 @@ public class QuantileEstimator {
 	}
 	protected final List<InputData> collected;
 	
-	/** Construct Quantile Estimator object that can be fed with values via {@link #addValue(float)}
+	/** Construct Quantile Estimator object that can be fed with values via {@link #addValue(float, long)}
 	 * 
 	 * @param maxDataToHold maximum number of data points to store before data reduction takes place. The
-	 * 		number of elements usually should be at least 10/<short_interval>, where short interval is the
+	 * 		number of elements usually should be at least 10/short_interval, where short interval is the
 	 * 		the shorter part you get when you cut the data range normed to 1.0 by the quantile, so the short_interval
 	 * 		is 0.1 for a quantileRequired of 0.1 as well as of 0.9. whereas it is 0.5 for a quantileRequired of 0.5.
 	 * @param quantileRequired the quantile value to be determined. For quantileRequired = 0.5 the median

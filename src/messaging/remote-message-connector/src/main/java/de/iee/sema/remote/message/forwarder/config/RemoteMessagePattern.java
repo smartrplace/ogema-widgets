@@ -29,6 +29,10 @@ public class RemoteMessagePattern extends ResourcePattern<ReceiverConfiguration>
 	public final StringResource userName = model.userName();
 	public final StringResource restAddress = model.remoteMessageRestUrl();
 	public final StringResource restUser = model.remoteMessageUser();
+	/**
+	 * @deprecated not used any more
+	 */
+	@Deprecated
 	public final StringResource restPassword = model.remoteMessagePassword();
 
 }

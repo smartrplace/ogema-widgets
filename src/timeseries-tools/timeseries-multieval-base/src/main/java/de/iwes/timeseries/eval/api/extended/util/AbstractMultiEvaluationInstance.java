@@ -30,12 +30,12 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import de.iwes.timeseries.eval.api.Status;
 import de.iwes.timeseries.eval.api.Status.EvaluationStatus;
-import de.iwes.timeseries.eval.api.TimeSeriesData;
 import de.iwes.timeseries.eval.api.configuration.ConfigurationInstance;
 import de.iwes.timeseries.eval.api.extended.MultiEvaluationInputGeneric;
 import de.iwes.timeseries.eval.api.extended.MultiEvaluationInstance;
 import de.iwes.timeseries.eval.api.extended.MultiEvaluationItemSelector;
 import de.iwes.timeseries.eval.api.extended.MultiResult;
+import de.iwes.timeseries.eval.api.extended.util.MultiEvaluationUtils.TimeSeriesInputForSingleRequiredInputIdx;
 import de.iwes.timeseries.eval.api.helper.AlignedIntervalUtil;
 import de.iwes.timeseries.eval.api.helper.EvalHelperExtended;
 import de.iwes.timeseries.eval.base.provider.utils.EvaluationUtils;
@@ -50,7 +50,19 @@ import de.iwes.widgets.html.selectiontree.SelectionItem;
  * first maximum tree input, the method is not called for the other inputs.
  */
 public abstract class AbstractMultiEvaluationInstance<T extends MultiResult, S extends SelectionItem> implements MultiEvaluationInstance<T> {
-    protected final static AtomicLong idcounter = new AtomicLong(0); // TODO initialize from existing stored eval resources
+    /*public static final SelectionItem EXECUTE_NOW_ITEM = new SelectionItem() {
+		@Override
+		public String id() {
+			return "EXECUTE_NOW_ITEM";
+		}
+
+		@Override
+		public String label(OgemaLocale locale) {
+			return "EXECUTE_NOW_ITEM";
+		}
+    };*/
+	
+	protected final static AtomicLong idcounter = new AtomicLong(0); // TODO initialize from existing stored eval resources
     protected final String id;
     
 	protected final List<MultiEvaluationInputGeneric> input;
@@ -93,14 +105,14 @@ public abstract class AbstractMultiEvaluationInstance<T extends MultiResult, S e
 	 * it is called with all combinations provided by the DataProvider that fit the required input definition
 	 * 
 	 * @param keys SelectionItems for the hierarchy levels that were used to determine the timeSeries
-	 * @param timeSeries index of array: input requested; index of list: timeseries found for the index,
+	 * @param currentData index of array: input requested; index of list: timeseries found for the index,
 	 * 		e.g. several temperature sensor time series for a gateway-room found
 	 * @return StatusImpl.RUNNING to continue
 	 * 		* StatusImpl.RESTART_REQUESTED to restart the evaluation loop entirely
 	 *      * StatusImpl.SKIP_EVALLEVEL to stop evaluation of the dependency level
 	 *      * otherwise evaluation is stopped.
 	 */
-	public abstract void evaluateDataSet(List<S> keys, List<TimeSeriesData>[] timeSeries, T result);
+	public abstract void evaluateDataSet(List<S> keys, TimeSeriesInputForSingleRequiredInputIdx[] currentData, T result);
 	/** Notify evaluation on items available for a new dependency level and allow to perform operations
 	 *  required for the new level. Note that the status may be set directly via the member variable.
 	 * 
@@ -229,47 +241,15 @@ public abstract class AbstractMultiEvaluationInstance<T extends MultiResult, S e
 			return;
 		};
 		if(status != StatusImpl.RUNNING || levelOptions == null) return;
-		if(level >= (provider.maxTreeSize-1)) {
+		if(levelOptions.size() == 1 && levelOptions.get(0) == null) {
+			//execution based on type OncePerGateway
+			evaluateDataSet(null, null, result);
+		}
+		else if(level >= (provider.maxTreeSize-1)) {
 			//we should execute
 			if(status != StatusImpl.RUNNING) return;
-			List<TimeSeriesData>[] currentData = MultiEvaluationUtils.getDataForInput(input, upperDependencies);
+			TimeSeriesInputForSingleRequiredInputIdx[] currentData = MultiEvaluationUtils.getDataForInput(input, upperDependencies);
 			if(currentData == null) return;
-			/*List<TimeSeriesData>[] currentData = new List[input.size()];
-			for(int tsIdx = 0; tsIdx < input.size(); tsIdx++) {
-				//first we call start level also here
-				MultiEvaluationInputGeneric in = input.get(tsIdx);
-				List<SelectionItem> levelOptionsTerminalAll = new ArrayList<>();
-				for(DataProvider<?> dp: in.dataProvider()) {
-					levelOptionsTerminalAll.addAll(dp.getTerminalOption().getOptions(upperDependencies));
-				}
-				//List<SelectionItem> levelOptionsTerminalAll = in.dataProvider().getTerminalOption().getOptions(upperDependencies);
-				List<S> levelOptionsTerminal = new ArrayList<>();
-				for(SelectionItem lvlAll: levelOptionsTerminalAll) {
-					for(DataProvider<?> dp: in.dataProvider()) {
-						if(in.itemSelector().useDataProviderItem(dp.getTerminalOption(), lvlAll))
-						//if(in.itemSelector().useDataProviderItem(in.dataProvider().getTerminalOption(), lvlAll))
-							levelOptionsTerminal.add((S) lvlAll);
-					}
-				}
-				//try {
-				//	levelOptionsTerminal = startInputLevel(levelOptionsTerminal, upperDependencies2, level+1, result);
-				//} catch(Exception e) {
-				//	e.printStackTrace();
-				//	throw e;
-				//}
-				if(status != StatusImpl.RUNNING || levelOptionsTerminal == null) return;
-				
-				//now we actually perform the evaluation
-				//EvaluationInputImpl evalInput = null;
-				List<TimeSeriesData> tsList = new ArrayList<>();;
-				for(DataProvider<?> dp: in.dataProvider()) {
-					EvaluationInput evalInputLoc = dp.getData((List<SelectionItem>) levelOptionsTerminal);
-					tsList.addAll(evalInputLoc.getInputData());
-				}
-				//EvaluationInput evalInput = in.dataProvider().getData((List<SelectionItem>) levelOptionsTerminal);
-				//List<TimeSeriesData> tsList = evalInput.getInputData();
-				currentData[tsIdx] = tsList; //new ArrayList<>();
-			} //for*/
 
 			try {
 				evaluateDataSet(upperDependencies2, currentData, result);

@@ -22,10 +22,7 @@ public class LinearRegressionOnlineEstimator extends BaseOnlineEstimator {
 	private double sumAvY = 0;
 	//private double sumSquareY = 0;
 	
-	/** Construct Base Estimator object that can be fed with values via {@link #addValue(float)}
-	 * 
-	 * @param calculateMinMax if true minimum and maximum values are searched
-	 * @param averageMode if NONE no average value is summed up, otherwise average is always calculated.
+	/** Construct Base Estimator object that can be fed with values via {@link #addValue(float, float, long)}
 	 */
 	public LinearRegressionOnlineEstimator() {
 		super(false, AverageMode.STD_DEVIATION);
@@ -63,7 +60,6 @@ public class LinearRegressionOnlineEstimator extends BaseOnlineEstimator {
 	}
 	
 	/**Report new value.
-	 * @param value
 	 * @param duration If the evaluation shall weight all values equally (duration of the value
 	 * not considered, just hand over 1 every time, otherwise the duration of the value
 	 */

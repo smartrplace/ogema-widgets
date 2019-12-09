@@ -32,7 +32,11 @@ PlotFlot.prototype.update = function( resp ) {
     		tickLength: 5,
             mode: resp.options.xtype
         };
-	options.selection = { mode: "x" }
+	options.selection = { mode: "x" };
+	if (options.legendOutsidePlot) {
+		var cont = $(this.element).find("#legendContainer");
+		options.legend = { container: cont };
+	}
 
 /*   var options = {
         xaxis: {

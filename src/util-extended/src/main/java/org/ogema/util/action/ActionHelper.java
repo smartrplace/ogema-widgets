@@ -98,6 +98,13 @@ public class ActionHelper {
 				done.clear();
 				try {Thread.sleep(1000);} catch (InterruptedException e) {e.printStackTrace();}
 			}
+		}		
+	}
+	public static void performActionBlocking(Action ac, long maxDuration) {
+		ac.stateControl().setValue(true);
+		long maxEnd = System.currentTimeMillis()+maxDuration;
+		while((ac.stateControl().getValue())&&(System.currentTimeMillis() < maxEnd)) {
+			try {Thread.sleep(1000);} catch (InterruptedException e) {e.printStackTrace();}
 		}
 	}
 }

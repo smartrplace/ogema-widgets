@@ -86,7 +86,7 @@ public class EMailService implements Application, MessageListener {
 			try {
 				final EmailReceiverPattern rec = getReceiver(receiver, receivers);
 				if (rec == null) {
-					logger.warn("User '" + receiver + "' not found");
+					logger.error("User '" + receiver + "' not found");
 					continue;
 				}
 
@@ -110,7 +110,7 @@ public class EMailService implements Application, MessageListener {
 						} catch (MessagingException e) {
 							throw new RuntimeException(e);
 						}
-						logger.error("Email sent from {} to {} via {}", ms.getAppName(), rec.emailAddress.getValue(),
+						logger.info("Email sent from {} to {} via {}", ms.getAppName(), rec.emailAddress.getValue(),
 								encoding);
 						return null;
 					}

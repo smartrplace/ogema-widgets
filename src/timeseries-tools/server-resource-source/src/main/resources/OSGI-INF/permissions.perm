@@ -1,0 +1,27 @@
+(org.osgi.framework.ServicePermission "org.ogema.core.application.Application" "register")
+(org.osgi.framework.ServicePermission "de.iwes.timeseries.eval.api.DataProvider" "register")
+(org.osgi.framework.ServicePermission "de.iwes.widgets.resource.timeseries.OnlineTimeSeriesCache" "get")
+
+(org.osgi.framework.PackagePermission "org.ogema.core.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.model.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.pattern.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.tools.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.widgets.*" "import")
+(org.osgi.framework.PackagePermission "org.slf4j" "import")
+(org.osgi.framework.PackagePermission "org.osgi.framework" "import")
+
+(org.osgi.framework.PackagePermission "javax.servlet" "import")
+(org.osgi.framework.PackagePermission "javax.servlet.*" "import")
+(org.osgi.framework.PackagePermission "org.apache.felix.scr.annotations" "import")
+
+#(org.osgi.framework.PackagePermission "de.iwes.timeseries.correlation.provider" "exportonly")
+
+# import permissions
+(org.osgi.framework.PackagePermission "de.iwes.timeseries.eval.api.configuration"  "import")
+(org.osgi.framework.PackagePermission "de.iwes.timeseries.eval.api"  "import")
+(org.osgi.framework.PackagePermission "de.iwes.timeseries.eval.base.provider.utils"  "import")
+(org.osgi.framework.PackagePermission "de.iwes.timeseries.eval.base.provider"  "import")
+
+# export/custom type permissions
+
+# resource permissions

@@ -10,10 +10,13 @@ import java.util.Optional;
 import org.ogema.serialization.jaxb.Resource;
 import org.smartrplace.analysis.backup.parser.api.GatewayBackupAnalysis;
 
+import de.iwes.timeseries.eval.api.TimeSeriesData;
+import de.iwes.timeseries.eval.garo.api.base.EvaluationInputImplGaRo;
 import de.iwes.timeseries.eval.garo.api.base.GaRoDataType;
 import de.iwes.timeseries.eval.garo.api.base.GaRoDataTypeI.Level;
 import de.iwes.timeseries.eval.garo.api.base.GaRoMultiEvalDataProvider;
 import de.iwes.timeseries.eval.garo.api.helper.base.GaRoEvalHelper;
+import de.iwes.util.resource.ResourceHelper.DeviceInfo;
 import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 import de.iwes.widgets.html.selectiontree.SelectionItem;
 
@@ -48,7 +51,7 @@ public class GaRoMultiEvalDataProviderJAXB extends GaRoMultiEvalDataProvider<GaR
 
 	@Override
 	public String description(OgemaLocale locale) {
-		return "Multi-Gateway GaRo Dataprovider JAXB (for sema-Server)";
+		return "Multi-Gateway GaRo Dataprovider JAXB (base)";
 	}
 
 	@Override
@@ -128,5 +131,40 @@ public class GaRoMultiEvalDataProviderJAXB extends GaRoMultiEvalDataProvider<GaR
 	@Override
 	public List<String> getGatewayIds() {
 		return gatewayParser.getGatewayIds();
+	}
+	
+	@Override
+	public EvaluationInputImplGaRo getData(List<SelectionItem> items) {
+		List<TimeSeriesData> tsList = new ArrayList<>();
+		List<DeviceInfo> devList = new ArrayList<>();
+		for(SelectionItem item: items) {
+			tsList.add(terminalOption.getElement(item));
+			//if(item instanceof GaRoSelectionItemJAXB) {
+			//	GaRoSelectionItemJAXB jitem = (GaRoSelectionItemJAXB)item;
+				String tsId = terminalOption.getElement(item).id();
+				DeviceInfo dev = new DeviceInfo();
+				dev.setDeviceResourceLocation(getDevicePath(tsId));
+				dev.setDeviceName(getDeviceShortId(dev.getDeviceResourceLocation()));
+				devList.add(dev);				
+			//} else devList.add(null);
+		}
+		return new EvaluationInputImplGaRo(tsList, devList);
+	}
+	
+	public static String getDevicePath(String tsId) {
+		String[] subs = tsId.split("/");
+		if(subs.length > 3) return subs[2];
+		else return tsId; //throw new IllegalStateException("Not a valid tsId for Homematic:"+tsId);
+	}
+	
+	public static String getDeviceShortId(String deviceLongId) {
+		int len = deviceLongId.length();
+		if(len < 4) return deviceLongId;
+		String toTest;
+		if(deviceLongId.charAt(len-2) == '_') {
+			if(len < 6) return deviceLongId;
+			toTest =deviceLongId.substring(len-6, len-2);
+		} else toTest = deviceLongId.substring(len-4);
+		return toTest;
 	}
 }

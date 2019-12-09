@@ -117,6 +117,10 @@ public class SimpleGrid extends AbstractGrid {
 		return getData(req).deleteItem(item);
 	}
 	
+	public void clear(OgemaHttpRequest req) {
+		getData(req).clear();
+	}
+	
 	@Override
 	public void setDefaultGridStye(GridStyle style) {
 		super.setDefaultGridStye(style);

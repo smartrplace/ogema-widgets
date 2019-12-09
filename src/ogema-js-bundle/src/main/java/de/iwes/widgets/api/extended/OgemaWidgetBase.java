@@ -44,7 +44,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 import de.iwes.widgets.api.extended.HtmlLibrary.LibType;
-import de.iwes.widgets.api.extended.impl.HistoricHttpRequest;
 import de.iwes.widgets.api.extended.impl.SessionExpiredException;
 import de.iwes.widgets.api.extended.impl.WidgetSessionManagement;
 import de.iwes.widgets.api.services.IconService;
@@ -282,7 +281,7 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
     	if (!opt.initialized) { // try to avoid synchronization overhead 
 	    	synchronized (opt) {
 	    		if (!opt.initialized) {	// need to recheck within synchronized block
-	        		opt.initialRequest = new HistoricHttpRequest(req);
+	        		opt.initialRequest = req; //new HistoricHttpRequest(req);
 	        		setDefaultValues(opt);
 	        		opt.initialized = true;
 //	        		opt.widget = this;
@@ -966,18 +965,26 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
     	// TODO group dependency 
     	triggerAction(widget, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
     	//triggerAction(widget, TriggeringAction.GET_REQUEST, TriggeredAction.GET_REQUEST);
+    	registerInternalDependency(widget);
+    }
+
+    protected void registerInternalDependency(OgemaWidgetBase<?> widget) {
         getDependencies().add(widget);
         widget.getParents().put(id,(OgemaWidgetBase) this);
         governingWidget = true;
     }
-
+    
     @Deprecated
     @Override
     public void registerDependentWidget(OgemaWidget other, OgemaHttpRequest req) {
     	OgemaWidgetBase<?> widget = (OgemaWidgetBase<?>) other;
         getData(req).triggerAction(widget, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+        registerInternalDependency(widget, req);
+    }
+    
+    protected void registerInternalDependency(OgemaWidgetBase<?> widget, OgemaHttpRequest req) {
         getData(req).getsessionDependencies().add(widget);
-        governingWidget = true;
+        governingWidget = true;    	
     }
     
     @Deprecated

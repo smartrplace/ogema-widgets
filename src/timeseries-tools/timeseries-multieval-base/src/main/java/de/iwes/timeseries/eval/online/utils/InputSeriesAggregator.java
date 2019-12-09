@@ -46,7 +46,7 @@ public class InputSeriesAggregator {
     protected final AggregationMode aggregationMode;
     protected final long endTime;
     protected final float[] currentValues;
-    private final long[] lastNextTimeStamps;
+    protected final long[] lastNextTimeStamps;
     //protected long previousDuration = -1;
 	
     public InputSeriesAggregator(int nrInput, int idxSumOfPrevious, long endTime) {
@@ -72,14 +72,23 @@ public class InputSeriesAggregator {
 		this(nrInput[inputIdx], idxSumOfPrevious[inputIdx], endTime, interpolationMode, aggregationMode);
 	}
 
-    /**Usually not usable*/
+    /**Usually not usable
+     * @param sv deprecated
+     * @param dataPoint deprecated
+     * @param ignoreMissingPoints deprecated
+     * @return deprecated
+     */
     @Deprecated
     public float getCurrentValue(SampledValue sv, SampledValueDataPoint dataPoint, boolean ignoreMissingPoints) {
     	if(nrInput == 1) return sv.getValue().getFloatValue();
     	return getCurrentValue(dataPoint, ignoreMissingPoints);
     }
     
-    /**Use this to get value for secondary time series*/
+    /**Use this to get value for secondary time series
+     * @param dataPoint deprecated
+     * @param ignoreMissingPoints deprecated
+     * @return deprecated
+     */
     @Deprecated
     public float getCurrentValue(SampledValueDataPoint dataPoint, boolean ignoreMissingPoints) {
     	float sum = initValue();

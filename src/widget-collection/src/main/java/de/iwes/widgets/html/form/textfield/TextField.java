@@ -28,6 +28,7 @@ public class TextField extends OgemaWidgetBase<TextFieldData>  {
     private String defaultValue = "";
     private String defaultPlaceholder = "Fill me";
     private String defaultType = "text";  
+    private String defaultInputmode = null;
     
     /*********** Constructor **********/
 
@@ -87,6 +88,7 @@ public class TextField extends OgemaWidgetBase<TextFieldData>  {
     	opt.setValue(defaultValue);
     	opt.setPlaceholder(defaultPlaceholder);
     	opt.setType(defaultType);
+    	opt.setInputmode(defaultInputmode);
     	super.setDefaultValues(opt);
     }
     
@@ -136,6 +138,10 @@ public class TextField extends OgemaWidgetBase<TextFieldData>  {
 		this.defaultType = defaultType;
 	}
 	
+	public void setDefaultInputmode(String defaultMode) {
+		this.defaultInputmode = defaultMode;
+	}
+	
     public void setPlaceholder(String placeholder,OgemaHttpRequest req) {
     	getData(req).setPlaceholder(placeholder);
     }
@@ -151,6 +157,10 @@ public class TextField extends OgemaWidgetBase<TextFieldData>  {
     public void setType(String type,OgemaHttpRequest req) {
     	getData(req).setType(type);
     }
+	
+	public void setInputmode(String mode, OgemaHttpRequest req) {
+		getData(req).setInputmode(mode);
+	}
   
 	public void setValue(String value,OgemaHttpRequest req) {
 		getData(req).setValue(value);

@@ -60,7 +60,7 @@ public class GenericRoomSensorPattern extends ResourcePattern<SensorDevice> {
 	 */
 	@Existence(required = CreateMode.OPTIONAL)
 	@Access(mode = AccessMode.READ_ONLY)
-	public final TemperatureResource temperature = sensors.getSubResource("temperatureSensor", TemperatureSensor.class).reading();
+	public final TemperatureResource temperature = sensors.getSubResource("TEMPERATURE", TemperatureSensor.class).reading();
 
 	/** 
 	 * Device humidity reading<br>
@@ -68,7 +68,7 @@ public class GenericRoomSensorPattern extends ResourcePattern<SensorDevice> {
 	 */
 	@Existence(required = CreateMode.OPTIONAL)
 	@Access(mode = AccessMode.READ_ONLY)
-	public final FloatResource humidity = sensors.getSubResource("humiditySensor", HumiditySensor.class).reading();
+	public final FloatResource humidity = sensors.getSubResource("HUMIDITY", HumiditySensor.class).reading();
 	
 	/** 
 	 * TODO check units in ZWave driver

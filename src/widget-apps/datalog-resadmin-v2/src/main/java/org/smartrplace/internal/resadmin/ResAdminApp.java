@@ -27,6 +27,7 @@ package org.smartrplace.internal.resadmin;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
 import org.ogema.core.application.Application;
@@ -63,6 +64,7 @@ public class ResAdminApp implements BundleActivator, Application {
     private volatile CountDownLatch startLatch;
     private volatile ServiceRegistration<Application> sreg;
     private volatile ServiceTracker<OgemaGuiService, OgemaGuiService> tracker;
+    private volatile Thread initThread;
 
 	private WidgetApp widgetApp;
 
@@ -113,7 +115,7 @@ public class ResAdminApp implements BundleActivator, Application {
 		setUncleanMarker(ctx);
 		if (this.guiService == null) {
 			try {
-				if (!guiServiceLatch.await(15, TimeUnit.SECONDS)) {
+				if (!guiServiceLatch.await(2, TimeUnit.SECONDS)) {
 					// the framework will continue to start normally in this case, also this app will start eventually, 
 					// when the OgemaGuiService becomes available; the only downside is that this app does not block the startup
 					// of other apps. This happens if the start level of this app is not higher than the one of the OgemaGuiService.
@@ -122,7 +124,6 @@ public class ResAdminApp implements BundleActivator, Application {
 				} 
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
-				stop(ctx);
 				return;
 			}
 		}
@@ -130,14 +131,15 @@ public class ResAdminApp implements BundleActivator, Application {
 	}
 	
 	private void startAppInNewThread() {
-		new Thread(new Runnable() { 
+		this.initThread = new Thread(new Runnable() { 
 			
 			@Override
 			public void run() {
 				registerApp(ctx);
 				
 			}
-		}, "ResAdminApp-App-wait").start();
+		}, "ResAdminApp-App-wait");
+		initThread.start();
 	}
 	
 	private static boolean isClean(final BundleContext ctx) {
@@ -168,8 +170,6 @@ public class ResAdminApp implements BundleActivator, Application {
 				 LoggerFactory.getLogger(ResAdminApp.class).error("ResAdmin app failed to start within 5 minutes");
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-			stop(ctx);
-			return;
 		} 
 	}
 	
@@ -181,15 +181,26 @@ public class ResAdminApp implements BundleActivator, Application {
 		this.sreg = null;
 		this.tracker = null;
 		this.guiService = null;
-		if (sreg != null) {
-			try {
-				sreg.unregister();
-			} catch (Exception ignore) {}
+		final Thread initThread = this.initThread;
+		this.initThread = null;
+		if (sreg != null || tracker != null) {
+			ForkJoinPool.commonPool().submit(() -> {
+				if (sreg != null) {
+					try {
+						sreg.unregister();
+					} catch (Exception ignore) {}
+				}
+				if (tracker != null) {
+					try {
+						tracker.close();
+					} catch (Exception ignore) {}
+				}
+			});
 		}
-		if (tracker != null) {
+		if (initThread != null && initThread.isAlive()) {
 			try {
-				tracker.close();
-			} catch (Exception ignore) {}
+				initThread.interrupt();
+			} catch (SecurityException e) {}
 		}
 	}
 

@@ -88,9 +88,9 @@ public class GenericGaRoSingleEvaluation extends SpecificEvalBaseImpl<GenericGaR
 			GenericGaRoSingleEvalProvider provider) {
 		if(evalCore == null) {
 			this.evalCore = provider.initEval(input, requestedResults, configurations, listener, time, size,
-					nrInput, idxSumOfPrevious, startEnd);
+					nrInput, getIdxSumOfPrevious(), startEnd);
 			evalCore.evalInstance = this;
-			values.setEvalContainer(evalCore);
+			//values.setEvalContainer(evalCore);
 		}
 		if(values != null) values.setEvalContainer(evalCore);
 	}

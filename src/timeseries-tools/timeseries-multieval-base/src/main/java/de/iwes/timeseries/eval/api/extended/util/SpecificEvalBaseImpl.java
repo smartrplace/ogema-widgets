@@ -41,7 +41,7 @@ public abstract class SpecificEvalBaseImpl<T extends SpecificEvalValueContainer>
     protected final static AtomicLong idcounter = new AtomicLong(0); // TODO initialize from existing stored eval resources
     protected final String id;
     protected final int[] nrInput;
-    protected final int[] idxSumOfPrevious;
+    private final int[] idxSumOfPrevious;
     protected final boolean[] isOptional;
     protected final long[] startEnd;
     
@@ -125,9 +125,17 @@ public abstract class SpecificEvalBaseImpl<T extends SpecificEvalValueContainer>
     public SpecificEvalBaseImpl(List<EvaluationInput> input, List<ResultType> requestedResults,
 			Collection<ConfigurationInstance> configurations, EvaluationListener listener, long time,
 			String evalId, int requestedInputNum, boolean[] isOptional) {
-		super(input, requestedResults, configurations, listener, time);
+    	super(input, requestedResults, configurations, listener, time);
 	    this.id = evalId + "_" + idcounter.incrementAndGet();
-        if (input.size() != requestedInputNum)
+	    startEnd = EvaluationUtils.getStartAndEndTime(configurations, input, false);
+	    if(input.isEmpty()) {
+	    	values = initValueContainer(input);
+	    	nrInput = new int[0];
+	    	this.isOptional = new boolean[0];
+	    	idxSumOfPrevious = new int[0];
+	    	return;
+	    }
+	    if (input.size() != requestedInputNum)
         	throw new IllegalArgumentException("Expecting exactly "+requestedInputNum+" types of input time series, got " + input.size());
         nrInput = new int[requestedInputNum];
         idxSumOfPrevious = new int[requestedInputNum+1];
@@ -138,11 +146,10 @@ public abstract class SpecificEvalBaseImpl<T extends SpecificEvalValueContainer>
         int sum = 0;
         for(int i=0; i<requestedInputNum; i++) {
         	this.nrInput[i] = input.get(i).getInputData().size();
-        	this.idxSumOfPrevious[i] = sum;
+        	this.getIdxSumOfPrevious()[i] = sum;
         	sum += nrInput[i];
         }
-        this.idxSumOfPrevious[requestedInputNum] = sum;
-        startEnd = EvaluationUtils.getStartAndEndTime(configurations, input, false);
+        this.getIdxSumOfPrevious()[requestedInputNum] = sum;
         values = initValueContainer(input);
         
         finishConstructor();
@@ -159,12 +166,12 @@ public abstract class SpecificEvalBaseImpl<T extends SpecificEvalValueContainer>
     }
     
     protected int getTotalInputIdx(int idxOfRequestedInput, int idxOfEvaluationInput) {
-    	return idxSumOfPrevious[idxOfRequestedInput] + idxOfEvaluationInput;
+    	return getIdxSumOfPrevious()[idxOfRequestedInput] + idxOfEvaluationInput;
     }
     
     private int getRequiredInputIdx(int totalIdx) {
         for(int i=0; i<nrInput.length; i++) {
-        	if(totalIdx < idxSumOfPrevious[i+1]) {
+        	if(totalIdx < getIdxSumOfPrevious()[i+1]) {
         		return i;
         	}
         }
@@ -321,12 +328,12 @@ public abstract class SpecificEvalBaseImpl<T extends SpecificEvalValueContainer>
         	}        	
         } else {
         	idxReqInp= getRequiredInputIdx(idx);
-        	idxOfEvaluationInput = idx - idxSumOfPrevious[idxReqInp];
+        	idxOfEvaluationInput = idx - getIdxSumOfPrevious()[idxReqInp];
         	if((!values.allInitDone) && (!values.valueInitDone[idxReqInp])) {
             	values.valueInitDone[idxReqInp] = true;
             	if((values.gapStart < 0) && ((t -startEnd[0]) > 0)) {  //maximumGapTimeAccepted(idxReqInp) )) {
 	            	if(!values.isInGap[idx]) {
-	            		gapNotification(idxReqInp, idx - idxSumOfPrevious[idxReqInp], idx, t,
+	            		gapNotification(idxReqInp, idx - getIdxSumOfPrevious()[idxReqInp], idx, t,
 	    	            		sv, dataPoint, -1);	
 	            	}
 	            	//setValuesIsInGap(idx, false, idxReqInp); //values.isInGap[allIdxForInitCheck] = true;
@@ -354,7 +361,7 @@ public abstract class SpecificEvalBaseImpl<T extends SpecificEvalValueContainer>
         
         if (!quality) {
         	if(!values.isInGap[idx]) {
-        		gapNotification(idxReqInp, idx - idxSumOfPrevious[idxReqInp], idx, t,
+        		gapNotification(idxReqInp, idx - getIdxSumOfPrevious()[idxReqInp], idx, t,
 	            		sv, dataPoint, -1);	
         	}
         	setValuesIsInGap(idx, true, idxReqInp); //values.isInGap[idx] = true;
@@ -387,7 +394,7 @@ System.out.println("t:"+t+"  gapStart: "+values.gapStart);
 	            //newGap = true;
 	            //condition should be identical with if(!isInGapOfOtherInput)
 	            if(values.isInGapByInputType[idxReqInp] && values.gapStart < 0) {
-	    			gapNotification(idxReqInp, idx - idxSumOfPrevious[idxReqInp], idx, t+maximumGapTimeAccepted(idxReqInp),
+	    			gapNotification(idxReqInp, idx - getIdxSumOfPrevious()[idxReqInp], idx, t+maximumGapTimeAccepted(idxReqInp),
 	    					sv, dataPoint, duration-maximumGapTimeAccepted(idxReqInp));
 		            if(duration > maximumGapTimeAccepted(idxReqInp))
 		            	duration = maximumGapTimeAccepted(idxReqInp);
@@ -424,7 +431,7 @@ System.out.println("t:"+t+"  gapStart: "+values.gapStart);
         values.isInGap[baseIdx] = state;
         int i = getTotalInputIdx(requiredInputIdx, 0);
         int end;
-        if(requiredInputIdx == idxSumOfPrevious.length-1) end = size;
+        if(requiredInputIdx == getIdxSumOfPrevious().length-1) end = size;
         else end = getTotalInputIdx(requiredInputIdx+1, 0);
         boolean allOfTypeInGap = true;
         for(;i<end; i++) {
@@ -444,4 +451,8 @@ System.out.println("t:"+t+"  gapStart: "+values.gapStart);
         }
     	return super.finishInternal();
     }
+    
+	public int[] getIdxSumOfPrevious() {
+		return idxSumOfPrevious;
+	}
 }

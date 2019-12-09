@@ -19,8 +19,14 @@ public class Constants {
 	
 	public final static String BOT_USER_NAME_PROPERTY = "org.ogema.messaging.telegram.username";
 	public final static String BOT_KEY_PROPERTY = "org.ogema.messaging.telegram.key";
+	public final static String BOT_PRIVATE_PROPERTY = "org.ogema.messaging.telegram.privatebot";
 	
 	public final static String BOT_USER_NAME = System.getProperty(BOT_USER_NAME_PROPERTY);
 	public final static String BOT_KEY = System.getProperty(BOT_KEY_PROPERTY);
+	/**
+	 * If the bot is tagged non-public, the list of chats will be generated from the API,
+	 * else users will have to be added manually
+	 */
+	public final static boolean BOT_PRIVATE = Boolean.getBoolean(BOT_PRIVATE_PROPERTY);
 	
 }

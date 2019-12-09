@@ -4,7 +4,7 @@
     <parent>
     <artifactId>timeseries-tools</artifactId>
     <groupId>org.ogema.eval</groupId>
-    <version>2.2.0</version>
+    <version>2.2.1</version>
   </parent>
     
     <artifactId>csv-source</artifactId>
@@ -50,7 +50,7 @@
 		<dependency>
             <groupId>org.ogema.tools</groupId>
             <artifactId>timeseries-import</artifactId>
-			<version>2.2.0</version>
+			<version>2.2.1</version>
         </dependency>
     </dependencies>
 

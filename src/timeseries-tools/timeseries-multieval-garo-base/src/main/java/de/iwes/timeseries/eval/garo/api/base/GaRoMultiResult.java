@@ -30,6 +30,7 @@ import de.iwes.timeseries.eval.api.extended.MultiEvaluationInputGeneric;
 import de.iwes.timeseries.eval.api.extended.util.AbstractMultiResult;
 import de.iwes.timeseries.eval.api.helper.EfficientTimeSeriesArray;
 import de.iwes.timeseries.eval.garo.api.helper.base.SpecialGaRoEvalResult;
+import de.iwes.util.resource.ResourceHelper.DeviceInfo;
 
 /** Result for the evaluations of all rooms and gateways in the multi-evaluation for a single evaluation interval*/
 public class GaRoMultiResult extends AbstractMultiResult {
@@ -93,7 +94,7 @@ public class GaRoMultiResult extends AbstractMultiResult {
 		super(inputData, start, end, configurations);
 	}
 	
-	//Helpers, not for export
+	//Helpers, not for export.
 	protected String gwId;
 	/** Get gwId that is currently processed*/
 	public String gwId() {
@@ -106,7 +107,7 @@ public class GaRoMultiResult extends AbstractMultiResult {
 	public RoomData roomData() {
 		return roomData;
 	}
-
+	
 	@Override
 	public String getSummary() {
 		return "GaRoWinResult: start:"+TimeUtils.getDateAndTimeString(startTime)+
