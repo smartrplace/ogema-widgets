@@ -31,7 +31,7 @@
 		<maven-source-plugin.version>3.0.0</maven-source-plugin.version>
 		<maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
 		<osgi.version>5.0.0</osgi.version>
-		<jackson.version>2.7.4</jackson.version>
+		<jackson.version>2.10.1</jackson.version>
 		<slf4j.version>1.7.21</slf4j.version>
 	</properties>
 
