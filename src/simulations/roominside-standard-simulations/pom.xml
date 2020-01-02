@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   	<modelVersion>4.0.0</modelVersion>
+    <parent>
+       <artifactId>ogema-simulations</artifactId>
+       <groupId>org.ogema.apps</groupId>
+   	   <version>2.2.2-SNAPSHOT</version>
+    </parent>
+    
+    <artifactId>roominside-standard-simulations</artifactId>
+    <groupId>org.ogema.sim</groupId>
+    <name>OGEMA Tools: Roominside standard components</name>
+
+    <description>OGEMA Tools: Roominside standard components for room simulation service connector</description>
+    
+    <packaging>bundle</packaging>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-scr-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.scr.annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.core</groupId>
+            <artifactId>api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.core</groupId>
+            <artifactId>models</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.apps</groupId>
+            <artifactId>simulation-service</artifactId>
+         </dependency>
+        <dependency>
+            <groupId>org.ogema.sim</groupId>
+            <artifactId>roomsimulation-service</artifactId>
+         </dependency>
+        <dependency>
+            <groupId>org.ogema.tools</groupId>
+            <artifactId>standard-patterns</artifactId>
+            <version>2.2.2-SNAPSHOT</version>
+         </dependency>
+       <dependency>
+            <groupId>org.ogema.model</groupId>
+            <artifactId>fhg-proposed</artifactId>
+            <version>2.1.1</version>
+         </dependency>
+   </dependencies>
+</project>

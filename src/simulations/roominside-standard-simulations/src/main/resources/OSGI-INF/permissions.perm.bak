@@ -1,0 +1,32 @@
+(org.osgi.framework.ServicePermission "org.ogema.core.application.Application" "register")
+(org.osgi.framework.ServicePermission "org.ogema.tools.simulation.service.api.SimulationService" "get")
+(org.osgi.framework.ServicePermission "org.ogema.apps.roomsim.service.api.RoomSimulationService" "get")
+(org.osgi.framework.PackagePermission "org.ogema.core.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.model.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.pattern.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.tools.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.util.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.widgets.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.tools.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.util.*" "import")
+(org.osgi.framework.PackagePermission "org.slf4j" "import")
+
+# Simulation
+(org.osgi.framework.PackagePermission "org.ogema.apps.roomsim.service.api" "import")
+(org.osgi.framework.PackagePermission "org.ogema.apps.roomsim.service.api.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.sim.roomsimservice" "import")
+(org.osgi.framework.PackagePermission "de.iwes.sim.roomsimservice.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.sim.tools" "import")
+
+(org.osgi.framework.PackagePermission "org.json" "import")
+
+# TODO less generous resource permissions
+(org.ogema.accesscontrol.ResourcePermission "type=*" "read,write,addsub,create,activity,delete")
+#(java.lang.RuntimePermission "accessDeclaredMembers")
+
+# custom type
+(org.osgi.framework.PackagePermission "de.iwes.sim.roominside.*" "exportonly")
+
+# FIXME necessary for advanced access, should be avoidable
+#(org.osgi.framework.PackagePermission "java.lang.reflect" "import")   
+#(org.osgi.framework.PackagePermission "java.lang.reflect.*" "import")
