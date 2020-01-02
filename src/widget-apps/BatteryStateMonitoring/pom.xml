@@ -4,13 +4,13 @@
     <parent>
        <artifactId>widget-apps</artifactId>
        <groupId>org.ogema.widgets</groupId>
-       <version>2.2.1</version>
+       <version>2.2.2-SNAPSHOT</version>
     </parent>
     
     <artifactId>batterystatemonitoring</artifactId>
     <groupId>de.iee.ogema</groupId>
     <name>BatteryStateMonitoring</name>
-    <version>2.1.1</version>
+    <version>2.1.2-SNAPSHOT</version>
     <description>Battery state Monitor</description>
     
     <packaging>bundle</packaging>

@@ -6,14 +6,14 @@
     <parent>
         <groupId>org.ogema.widgets</groupId>
         <artifactId>ogema-widgets</artifactId>
-        <version>2.2.1</version>
+        <version>2.2.2-SNAPSHOT</version>
     </parent>
 
  	<groupId>org.ogema.apps</groupId>
     <artifactId>ogema-simulations</artifactId>
     <packaging>pom</packaging>
     <name>OGEMA Tools :: Simulations</name>
-    <version>2.2.1</version>
+    <version>2.2.2-SNAPSHOT</version>
 	
     <!-- Sub-projects: OGEMA Applications (in alphabetical order) -->
     <modules>
@@ -37,17 +37,17 @@
 			<dependency>
 	            <groupId>org.ogema.apps</groupId>
 	            <artifactId>simulation-service</artifactId>
-	            <version>2.2.1</version>
+	            <version>2.2.2-SNAPSHOT</version>
         	</dependency>
         	<dependency>
 	            <groupId>org.ogema.apps</groupId>
 	            <artifactId>simulation-gui</artifactId>
-	            <version>2.2.1</version>
+	            <version>2.2.2-SNAPSHOT</version>
         	</dependency>
         	<dependency>
 	            <groupId>org.ogema.sim</groupId>
 	            <artifactId>roomsimulation-service</artifactId>
-	            <version>2.2.1</version>
+	            <version>2.2.2-SNAPSHOT</version>
         	</dependency>
 		</dependencies>
 	</dependencyManagement>
