@@ -1,0 +1,70 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.ogema.widgets</groupId>
+        <artifactId>ogema-widgets</artifactId>
+        <version>2.2.2-SNAPSHOT</version>
+    </parent>
+
+	<groupId>org.ogema.model</groupId>
+    <artifactId>widget-models-experimental</artifactId>
+    <name>Experimental OGEMA model extensions</name>
+	<description>Experimental OGEMA model extensions</description>
+    <packaging>bundle</packaging>
+
+	<repositories>
+		<repository>
+			<releases />
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>ogema-releases</id>
+			<name>ogema-releases</name>
+			<url>https://www.ogema-source.net/artifactory/libs-release</url>
+		</repository>
+	</repositories>
+	<distributionManagement>
+		<repository>
+			<id>ogema-releases</id>
+			<name>Internal Releases</name>
+			<url>https://www.ogema-source.net/artifactory/libs-release-local</url>
+		</repository>
+	</distributionManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.scr.annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.core</groupId>
+            <artifactId>api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.core</groupId>
+            <artifactId>models</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ogema.model</groupId>
+            <artifactId>widget-models-proposed</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- <dependency>
+            <groupId>org.ogema.model</groupId>
+            <artifactId>fhg-proposed</artifactId>
+            <version>${project.version}</version>
+        </dependency> -->
+    </dependencies>
+
+
+</project>
