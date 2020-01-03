@@ -1,0 +1,38 @@
+# Note: The utility bundles contains callback methods (e.g. in AbsoluteTimer class) that may require various permissions. So
+# the bundle currently needs AllPermissions => no permissions file defined
+
+(org.osgi.framework.PackagePermission "org.ogema.core.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.model.*" "import")
+(org.osgi.framework.PackagePermission "org.ogema.tools" "import")
+(org.osgi.framework.PackagePermission "org.ogema.tools.*" "import")
+#(org.osgi.framework.PackagePermission "org.osgi.service.http" "import")
+#(org.osgi.framework.PackagePermission "org.osgi.service.http.*" "import")
+(org.osgi.framework.PackagePermission "javax.servlet" "import")
+(org.osgi.framework.PackagePermission "javax.servlet.*" "import")
+(org.osgi.framework.PackagePermission "org.json" "import")
+(org.osgi.framework.PackagePermission "org.joda.time" "import")
+(org.osgi.framework.PackagePermission "org.apache.commons.fileupload" "import")
+(org.osgi.framework.PackagePermission "org.apache.commons.fileupload.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.widgets.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.tools.*" "import")
+(org.osgi.framework.PackagePermission "de.iwes.util.*" "import")
+(java.util.PropertyPermission "org.ogema.sim.simulationdelay" "read")
+
+(org.osgi.framework.PackagePermission "de.iwes.tools.*" "exportonly")
+(org.osgi.framework.PackagePermission "de.iwes.util.*" "exportonly")
+(org.osgi.framework.PackagePermission "org.ogema.util.action" "exportonly")
+(org.osgi.framework.PackagePermission "de.iwes.pattern.management.backup" "exportonly")
+
+
+(org.osgi.framework.PackagePermission "com.fasterxml.jackson.*" "import")
+(org.osgi.framework.PackagePermission "org.slf4j" "import")
+(org.osgi.framework.PackagePermission "org.slf4j.*" "import")
+# required for Jackson
+#(java.lang.RuntimePermission "accessDeclaredMembers")
+#(java.lang.reflect.ReflectPermission "suppressAccessChecks")
+#(java.io.FilePermission "<<ALL FILES>>" "read,write")
+
+#TODO: Is there a better way to do it?
+(org.ogema.accesscontrol.ResourcePermission "type=*" "read,write,addsub,create,activity,delete")
+
+#Automated Generation Below:
