@@ -10,7 +10,6 @@
     <artifactId>batterystatemonitoring</artifactId>
     <groupId>de.iee.ogema</groupId>
     <name>BatteryStateMonitoring</name>
-    <version>2.1.2-SNAPSHOT</version>
     <description>Battery state Monitor</description>
     
     <packaging>bundle</packaging>
