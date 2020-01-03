@@ -17,7 +17,10 @@
 	
     <!-- Sub-projects: OGEMA Applications (in alphabetical order) -->
     <modules>
-    	<module>electrical-simple-simulations</module>    
+    
+    	<module>electrical-simple-simulations</module>
+    	<module>roominside-standard-simulations</module>
+    	<module>roominside-user-simulations</module>
 		<module>roomsimulation-service</module>
 		<module>simulation-gui</module>
 		<module>simulation-service</module> 

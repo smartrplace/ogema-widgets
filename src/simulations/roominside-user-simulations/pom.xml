@@ -4,7 +4,7 @@
     <parent>
        <artifactId>ogema-simulations</artifactId>
        <groupId>org.ogema.apps</groupId>
-   	   <version>2.2.1-SNAPSHOT</version>
+       <version>2.2.1</version>
     </parent>
     
     <artifactId>roominside-user-simulations</artifactId>
