@@ -150,6 +150,11 @@ public class ValueResourceDropdown<V extends SingleValueResource> extends Templa
 		//}
 		// may throw different kinds of exceptions
 		int i = 0;
+		boolean isNew = false;
+		if(!resource.exists()) {
+			resource.create();
+			isNew = true;
+		}
 		if (resource instanceof IntegerResource)  {
 			for(String s: displayedValues) {
 				if(s.equals(value)) {
@@ -162,6 +167,8 @@ public class ValueResourceDropdown<V extends SingleValueResource> extends Templa
 			}
 		}
 		else
-			ValueResourceUtils.setValue(resource, value);		
+			ValueResourceUtils.setValue(resource, value);
+		if(isNew)
+			resource.activate(false);
 	}
 }
