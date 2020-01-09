@@ -29,7 +29,7 @@ import de.iwes.widgets.html.selectiontree.SelectionItem;
 public class RoomTypeOption extends LinkingOption {
 	
 	private final static List<SelectionItem> items;
-	private final static int[] roomTypeKeys = { 0,1,2,3,4,5,10,20,100,101,200,210 };
+	public final static int[] roomTypeKeys = { 0,1,2,3,4,5,6,7,8,10,20,100,101,200,210 };
 	
 	static {
 		final List<SelectionItem> list = new ArrayList<>();
@@ -104,6 +104,12 @@ public class RoomTypeOption extends LinkingOption {
 			return "bath room";
 		case 5:
 			return "toilet";
+		case 6:
+			return "hall or corridor";
+		case 7:
+			return "staircase area";
+		case 8:
+			return "store room";
 		case 10:
 			return "bed room";
 		case 20:
@@ -171,6 +177,21 @@ public class RoomTypeOption extends LinkingOption {
 				return "Toilette";
 			if (locale == OgemaLocale.FRENCH)
 				return "toilette";
+		case 6:
+			if (locale == OgemaLocale.GERMAN)
+				return "Gang/Flur";
+			if (locale == OgemaLocale.FRENCH)
+				return "corridor";
+		case 7:
+			if (locale == OgemaLocale.GERMAN)
+				return "Treppenhaus";
+			if (locale == OgemaLocale.FRENCH)
+				return "cage d'escalier";
+		case 8:
+			if (locale == OgemaLocale.GERMAN)
+				return "Lagerraum";
+			if (locale == OgemaLocale.FRENCH)
+				return "depot";
 		case 10:
 			if (locale == OgemaLocale.GERMAN)
 				return "Schlafzimmer";

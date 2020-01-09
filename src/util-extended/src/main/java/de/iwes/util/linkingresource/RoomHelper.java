@@ -214,6 +214,12 @@ public class RoomHelper {
 			return "bath room";
 		case 5:
 			return "toilet";
+		case 6:
+			return "hall or corridor";
+		case 7:
+			return "staircase area";
+		case 8:
+			return "store room";
 		case 10:
 			return "bed room";
 		case 20:
@@ -281,6 +287,21 @@ public class RoomHelper {
 				return "Toilette";
 			if (locale == OgemaLocale.FRENCH)
 				return "toilette";
+		case 6:
+			if (locale == OgemaLocale.GERMAN)
+				return "Gang/Flur";
+			if (locale == OgemaLocale.FRENCH)
+				return "corridor";
+		case 7:
+			if (locale == OgemaLocale.GERMAN)
+				return "Treppenhaus";
+			if (locale == OgemaLocale.FRENCH)
+				return "cage d'escalier";
+		case 8:
+			if (locale == OgemaLocale.GERMAN)
+				return "Lagerraum";
+			if (locale == OgemaLocale.FRENCH)
+				return "depot";
 		case 10:
 			if (locale == OgemaLocale.GERMAN)
 				return "Schlafzimmer";
@@ -326,6 +347,6 @@ public class RoomHelper {
 	 * @see Room#type()
 	 */
 	public static int[] getRoomTypeKeys() {
-		return new int[]{ 0,1,2,3,4,5,10,20,100,101,200,210 };
+		return new int[]{ 0,1,2,3,4,5,6,7,8,10,20,100,101,200,210 };
 	}
 }
