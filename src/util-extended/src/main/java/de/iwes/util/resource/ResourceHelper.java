@@ -229,6 +229,7 @@ public class ResourceHelper {
 	 * allows to specify a subPath over several sub resources. This resource preserves
 	 * path information of the parent
 	 * @param subPath path using separator '/'
+	 * @param type type requested. If null then an existing resource of any type is returned, but no virtual resource
 	 * @return resource of requested type (also virtual resource) or null if the path specified
 	 * 		does not exist on the intermediate elements 
 	 */
@@ -266,6 +267,45 @@ public class ResourceHelper {
 		return result;
 	}
 
+	/** Checks whether the resource has a parent, grant-parent etc. of the type
+	 * given and returns it. This method does not require that the resource type is available in the Java
+	 * classpath of the calling application as the name is just given as String.
+	 * Below the parent a resource with the given subpath is searched.
+	 * @param r resource for which location hierarchy shall be checked
+	 * @param simpleOrFullTypeClassName name of the resource type, which must be a class extending
+	 * 		resource. The first type in the hierarchy either mathing as simple or as full class
+	 * 		name is accepted.
+	 * @param subPath path using separator '/'
+	 * @param type type requested. If null then an existing resource of any type is returned, but no virtual resource
+	 * @return resource found or null if no such resource was found. A virtual resource may be returned if possible, but this
+	 * 		is not guaranteed for non-existing resources
+	 */
+	public static <T extends Resource> T getSubResourceOfParent(Resource r, String simpleOrFullTypeClassName, String subPath, Class<T> type) {
+		Resource parent = getFirstParentOfType(r, simpleOrFullTypeClassName);
+		if(parent == null) return null;
+		return getSubResource(parent, subPath, type);
+	}
+	/** See {@link #getSubResourceOfParent(Resource, String, String, Class)}, but we do not search for a parent of the given type, but for a
+	 * sibbling below the direct parent here.
+	 * 
+	 * @param r
+	 * @param simpleOrFullTypeClassName
+	 * @param subPath
+	 * @param type resource type of the sibbling requested
+	 * @return
+	 */
+	public static <T extends Resource> T getSubResourceOfSibbling(Resource r, String simpleOrFullTypeClassName, String subPath, Class<T> type) {
+		Resource parent = r.getParent();
+		if(parent == null) return null;
+		for(Resource sib: parent.getSubResources(false)) {
+			if(sib.getResourceType().getSimpleName().equals(simpleOrFullTypeClassName) ||
+					sib.getResourceType().getName().equals(simpleOrFullTypeClassName)) {
+				return getSubResource(sib, subPath, type);
+			}
+		}
+		return null;
+	}
+	
 	public static boolean haveSameParentOfType(Resource resource1, Resource resource2, Class<? extends Resource> resType) {
 		
 		ApplicationManager appManPriv = UtilExtendedApp.getApplicationManager();
