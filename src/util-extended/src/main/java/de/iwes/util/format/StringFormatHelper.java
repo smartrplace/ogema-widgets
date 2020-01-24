@@ -26,6 +26,7 @@ package de.iwes.util.format;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -184,6 +185,22 @@ public class StringFormatHelper {
 		for(String s: list) {
 			if(result == null) result = s;
 			else result += ", "+s;
+		}
+		return result;
+	}
+	
+	public static List<String> getListFromString(String serialized) {
+		List<String> result = new ArrayList<String>();
+		if(serialized == null) return result;
+		int idx = 0;
+		while(idx >= 0) {
+			int newIdx = serialized.indexOf(',', idx);
+			if(newIdx < 0) {
+				idx = -1;
+				continue;
+			}
+			result.add(serialized.substring(idx, newIdx).trim());
+			idx = newIdx;
 		}
 		return result;
 	}
