@@ -32,5 +32,7 @@ public interface PushoverConfiguration extends Configuration {
 	 * @return
 	 */
 	ResourceList<StringResource> applicationTokens();
+        
+        ResourceList<EmergencyMessage> emergencyMessages();
 
 }

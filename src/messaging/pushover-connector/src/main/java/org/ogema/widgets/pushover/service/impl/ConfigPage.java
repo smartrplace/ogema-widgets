@@ -174,7 +174,7 @@ public class ConfigPage {
 		int row = 0;
 		StaticTable tab = new StaticTable(3, 3, new int[]{2,2,2})
 				.setContent(row, 0, "New receiver (pushover application token)").setContent(row, 1, newReceiverField).setContent(row++, 2, newReceiverTrigger)
-				.setContent(row, 0, "New sender (pushover user token)").setContent(row, 1, newSenderField).setContent(row++, 2, newSenderTrigger)
+				.setContent(row, 0, "New sender (pushover user / group key)").setContent(row, 1, newSenderField).setContent(row++, 2, newSenderTrigger)
 				.setContent(row, 0, "Senders").setContent(row++, 1, senderSelector);
 		page.append(tab).linebreak();
 		row = 0;
@@ -184,7 +184,7 @@ public class ConfigPage {
 		page.append(existingTables);
 	}
 	
-	private final void setDependencies() {
+	private void setDependencies() {
 		newReceiverTrigger.triggerAction(newReceiverField, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		newReceiverTrigger.triggerAction(receivers, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		newSenderTrigger.triggerAction(newSenderField, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
@@ -194,7 +194,7 @@ public class ConfigPage {
 		newSenderTrigger.triggerAction(senders, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 	}
 	
-	private final static boolean isStringContained(final ResourceList<StringResource> list, final String string) {
+	private static boolean isStringContained(final ResourceList<StringResource> list, final String string) {
 		for (StringResource r : list.getAllElements()) {
 			if (string.equals(r.getValue()))
 				return true;
@@ -202,7 +202,7 @@ public class ConfigPage {
 		return false;
 	}
 	
-	private final static StringResource addEntry(final ResourceList<StringResource> list, final String string) {
+	private static StringResource addEntry(final ResourceList<StringResource> list, final String string) {
 		final StringResource newR = list.add();
 		newR.setValue(string);
 		return newR;
@@ -227,7 +227,7 @@ public class ConfigPage {
 	
 	private static class PushoverConfigRowTemplate extends RowTemplate<StringResource> {
 		
-		final static Map<String,Object> header;
+		final static Map<String,Object> HEADER;
 		private final WidgetPage<?> page;
 		private final DynamicTable<?> table;
 		
@@ -237,9 +237,9 @@ public class ConfigPage {
 		}
 		
 		static {
-			header = new LinkedHashMap<>();
-			header.put("id", "Id");
-			header.put("delete", "Delete");
+			HEADER = new LinkedHashMap<>();
+			HEADER.put("id", "Id");
+			HEADER.put("delete", "Delete");
 		}
 
 		@Override
@@ -259,12 +259,14 @@ public class ConfigPage {
 
 		@Override
 		public Map<String, Object> getHeader() {
-			return header;
+			return HEADER;
 		}
 		
 	}
 	
 	private static class PushoverConfigTable extends DynamicTable<StringResource> {
+
+                private static final long serialVersionUID = 1L;
 
 		private final ResourceList<StringResource> configurations;
 		private final Semaphore sema = new Semaphore(1);
