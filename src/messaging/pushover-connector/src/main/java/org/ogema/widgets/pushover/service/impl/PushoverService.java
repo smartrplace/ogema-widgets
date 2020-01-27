@@ -27,7 +27,6 @@ package org.ogema.widgets.pushover.service.impl;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.AccessController;
-import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,21 +52,43 @@ import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 
 import de.iwes.widgets.api.OgemaGuiService;
+import de.iwes.widgets.api.messaging.MessagePriority;
 import de.iwes.widgets.api.messaging.listener.MessageListener;
 import de.iwes.widgets.api.messaging.listener.ReceivedMessage;
 import de.iwes.widgets.api.widgets.WidgetApp;
 import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import net.jodah.failsafe.Failsafe;
+import net.jodah.failsafe.RetryPolicy;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.fluent.Response;
+import org.json.JSONObject;
+import org.ogema.widgets.pushover.model.EmergencyMessage;
 
 @Component(specVersion = "1.2")
 @Service(Application.class)
 public class PushoverService implements Application, MessageListener {
 
-	private final static String TARGET_URI = "https://api.pushover.net/1/messages.json";
+        /** retry interval in seconds, minimum 30 */
+	private final static int PRIO2_RETRY_S = 30;
+        /** expire time (time to retry) in seconds, maximum of 3 hours */
+        private final static int PRIO2_EXPIRE_S = 3 * 60 * 60;
+    
+        private final static String TARGET_URI = "https://api.pushover.net/1/messages.json";
 	private volatile BundleContext ctx;
 	private volatile ServiceRegistration<MessageListener> sreg;
 	private volatile PushoverConfiguration config;
 	private volatile Logger logger;
 	private WidgetApp wapp;
+        private ScheduledExecutorService ses;
 	
 	@Reference
 	private OgemaGuiService widgetService;
@@ -84,13 +105,15 @@ public class PushoverService implements Application, MessageListener {
 	
 	@Override
 	public void start(ApplicationManager appManager) {
-		this.sreg = ctx.registerService(MessageListener.class, this, null);
 		this.config = appManager.getResourceManagement().createResource("pushoverConfiguration", PushoverConfiguration.class);
 		config.userTokens().create();
 		config.applicationTokens().create();
 		this.logger = appManager.getLogger();
 		this.wapp = widgetService.createWidgetApp("/de/iwes/messaging/pushover/config", appManager);
 		new ConfigPage(wapp.createStartPage(), config);
+                ses = Executors.newSingleThreadScheduledExecutor();
+                ses.scheduleWithFixedDelay(this::updateEmergencyMessageInfo, 0, 30, TimeUnit.SECONDS);
+                this.sreg = ctx.registerService(MessageListener.class, this, null);
 	}
 
 	@Override
@@ -125,18 +148,11 @@ public class PushoverService implements Application, MessageListener {
 			logger.info("No recipient found; original list: " + recipients);
 			return;
 		}
-		final List<StringResource> senders = config.userTokens().getAllElements();
-		String sender = null;
-		for (StringResource s: senders) {
-			if (s.isActive()) {
-				String str = s.getValue().trim();
-				if (!str.isEmpty()) {
-					sender = str;
-					break;
-				}
-			}
-		}
-		if (sender == null) {
+                List<String> users = config.userTokens().getAllElements().stream()
+                        .filter(StringResource::isActive)
+                        .filter(sr -> !sr.getValue().trim().isEmpty())
+                        .map(StringResource::getValue).collect(Collectors.toList());
+		if (users.isEmpty()) {
 			logger.warn("No sender found, could not forward message");
 			return;
 		}
@@ -147,10 +163,48 @@ public class PushoverService implements Application, MessageListener {
 			logger.error("Unexpected exception:",e);
 			return;
 		}
-		final List<NameValuePair> bodyEntries = new ArrayList<>();
-		bodyEntries.add(new BasicNameValuePair("token", receivers.iterator().next()));
-		bodyEntries.add(new BasicNameValuePair("user", sender));
+                String apiToken = receivers.iterator().next();
+                
+                users.forEach(sender -> sendPushoverMessage(uri, message, apiToken, sender));
+	}
+        
+        private void sendPushoverMessage(URI uri, ReceivedMessage message, String apiToken, String user) {
+                final int poPrio;
+                switch (message.getOriginalMessage().priority()) {
+                        case HIGH : poPrio = 2; break;
+                        case MEDIUM : poPrio = 1; break;
+                        case LOW : poPrio = 0; break;
+                        default : poPrio = 0;
+                }
+                final Request request = Request.Post(uri).body(buildRequestBody(message, apiToken, user, poPrio));
+                RetryPolicy<HttpResponse> rp = new RetryPolicy<HttpResponse>()
+                        .handle(IOException.class)
+                        .withDelay(Duration.ofSeconds(30))
+                        .withMaxAttempts(10)
+                        .onFailedAttempt(e -> {
+                            logger.warn("sending of PushOver message failed on attempt {}", e.getAttemptCount(),  e.getLastFailure());
+                        })
+                        .onRetriesExceeded(e -> {
+                            logger.error("sending of pushover message failed {} times, giving up", e.getAttemptCount());
+                        });
+                Failsafe.with(rp).getAsync(() -> {
+                    return AccessController.doPrivileged((PrivilegedExceptionAction<HttpResponse>) () -> request.execute().returnResponse());
+                }).thenAccept(resp -> {
+                    handleResponse(resp, message, apiToken, poPrio);
+                });
+        }
+        
+        private HttpEntity buildRequestBody(ReceivedMessage message, String apiToken, String user, int poPrio) {
+                final List<NameValuePair> bodyEntries = new ArrayList<>();
+		bodyEntries.add(new BasicNameValuePair("token", apiToken));
+		bodyEntries.add(new BasicNameValuePair("user", user));
 		bodyEntries.add(new BasicNameValuePair("message", message.getOriginalMessage().message(OgemaLocale.ENGLISH)));
+                MessagePriority prio = message.getOriginalMessage().priority();
+                bodyEntries.add(new BasicNameValuePair("priority", Integer.toString(poPrio)));
+                if (poPrio == 2) {
+                    bodyEntries.add(new BasicNameValuePair("expire", Integer.toString(PRIO2_EXPIRE_S)));
+                    bodyEntries.add(new BasicNameValuePair("retry", Integer.toString(PRIO2_RETRY_S)));
+                }
 		String title = message.getOriginalMessage().title(OgemaLocale.ENGLISH);
 		if (title != null) {
 			title= title.trim();
@@ -158,27 +212,84 @@ public class PushoverService implements Application, MessageListener {
 				bodyEntries.add(new BasicNameValuePair("title", title));
 			}
 		}
-		final HttpResponse response;
-		try {
-			response = AccessController.doPrivileged(new PrivilegedExceptionAction<HttpResponse>() {
-
-				@Override
-				public HttpResponse run() throws Exception {
-					return Request.Post(uri).body(new UrlEncodedFormEntity(bodyEntries, "UTF-8")).execute().returnResponse();
-				}
-			});
-		} catch (PrivilegedActionException | RuntimeException e) {
-			final Exception cause = e instanceof RuntimeException ? e : (Exception) e.getCause();
-			logger.warn("Error sending message",cause);
-			return;
-		}
-		final StatusLine status = response.getStatusLine();
+                return new UrlEncodedFormEntity(bodyEntries, StandardCharsets.UTF_8);
+        }
+        
+        private void handleResponse(HttpResponse response, ReceivedMessage message, String apiToken, int poPrio) {
+                final StatusLine status = response.getStatusLine();
 		final int code = status.getStatusCode();
-		if (code >= 400)
-			logger.warn("Message sending failed. Response: {}", status);
-		else
-			logger.debug("Message sent successfully. Response: {}", code);
-	}
+		if (code >= 400) {
+                        try {
+                                String body = readResponseBody(response);
+                                logger.warn("Message sending failed. Response: {}, {}", status, body);
+                        } catch (IOException ex) {
+                                logger.warn("Message sending failed. Response: {}", status);
+                        }		
+                } else {
+                        if (poPrio == 2) {
+                            try {
+                                String json = readResponseBody(response);
+                                JSONObject o = new JSONObject(json);
+                                String receipt = o.getString("receipt");
+                                storeEmergencyMessage(receipt, message, apiToken);
+                                logger.debug("Emergency message sent. Receipt={}", receipt);
+                            } catch (IOException ex) {
+                                logger.error("Message sent successfully but could not parse reponse.", ex);
+                            }
+                        } else {
+                                logger.debug("Message sent successfully. Response: {}", code);
+                        }
+                }
+        }
+        
+        private void storeEmergencyMessage(String receipt, ReceivedMessage msg, String apiToken) {
+            config.emergencyMessages().getSubResource("_" + receipt, EmergencyMessage.class).storeMessage(receipt, msg, apiToken);
+        }
+        
+        private String readResponseBody(HttpResponse response) throws IOException {
+                StringBuilder sb = new StringBuilder();
+                try (InputStreamReader isr = new InputStreamReader(response.getEntity().getContent());
+                        BufferedReader br = new BufferedReader(isr)) {
+                                String line;
+                                while ((line = br.readLine()) != null) {
+                                        sb.append(line).append("\n");
+                                }
+                }
+                return sb.toString();
+        }
+        
+        private void updateEmergencyMessageInfo() {
+                logger.debug("updating receipt info for emergency messages, total messages: {}", config.emergencyMessages().getAllElements().size());
+                // receipt info does not change after first ack (except expired flag)
+                config.emergencyMessages().getAllElements().stream()
+                        .filter(m -> !m.receiptExpired())
+                        .filter(m -> !m.receiptInfo().isAcknowledged()).forEach(this::updateEmergencyMessageInfo);
+        }
+        
+        private void updateEmergencyMessageInfo(EmergencyMessage m) {
+                String receipt = m.receipt().getValue();
+                logger.debug("updating receipt info for {}, sent at {}", receipt, m.sendTime().getValue());
+                String receiptUri = String.format("https://api.pushover.net/1/receipts/%s.json?token=%s", receipt, m.appToken().getValue());
+                Request poReceipt = Request.Get(receiptUri);
+                try {
+                        Response resp = poReceipt.execute();
+                        HttpResponse hr = resp.returnResponse();
+                        JSONObject receiptInfo = new JSONObject(readResponseBody(hr));
+                        if (receiptInfo.getInt("status") == 1) {
+                                m.receiptInfo().store(receiptInfo);
+                        } else {
+                                logger.warn("receipt info request for {} failed: {}", receipt, receiptInfo.toMap());
+                        }
+                } catch (IOException | RuntimeException ex) {
+                        logger.warn("could not update receipt info for {}", receipt, ex);
+                }
+            try {
+                // pushover: do not query more than once in 5s
+                Thread.sleep(8000);
+            } catch (InterruptedException ex) {
+                // okay
+            }
+        }
 
 	@Override
 	public List<String> getKnownUsers() {
