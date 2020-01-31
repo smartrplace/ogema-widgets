@@ -62,6 +62,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -77,10 +78,16 @@ import org.ogema.widgets.pushover.model.EmergencyMessage;
 @Service(Application.class)
 public class PushoverService implements Application, MessageListener {
 
-        /** retry interval in seconds, minimum 30 */
+        /** pushover emergency message retry interval in seconds, minimum 30 */
 	private final static int PRIO2_RETRY_S = 30;
-        /** expire time (time to retry) in seconds, maximum of 3 hours */
+        /** pushover emergency message expire time (time to retry) in seconds, maximum of 3 hours */
         private final static int PRIO2_EXPIRE_S = 3 * 60 * 60;
+        /** number of retries in case of connection problems with pushover server */
+        private final static int HTTP_RETRIES = 10;
+        /** delay (seconds) for repeated attempts to connect to pushover server */
+        private final static int HTTP_DELAY_S = 30;
+        /** delay (seconds) for repeated attempts if pushover server return an internal error (5xx) */
+        private final static int HTTP_5XX_DELAY_S = 30;
     
         private final static String TARGET_URI = "https://api.pushover.net/1/messages.json";
 	private volatile BundleContext ctx;
@@ -179,8 +186,8 @@ public class PushoverService implements Application, MessageListener {
                 final Request request = Request.Post(uri).body(buildRequestBody(message, apiToken, user, poPrio));
                 RetryPolicy<HttpResponse> rp = new RetryPolicy<HttpResponse>()
                         .handle(IOException.class)
-                        .withDelay(Duration.ofSeconds(30))
-                        .withMaxAttempts(10)
+                        .withDelay(Duration.ofSeconds(HTTP_DELAY_S))
+                        .withMaxAttempts(HTTP_RETRIES)
                         .onFailedAttempt(e -> {
                             logger.warn("sending of PushOver message failed on attempt {}", e.getAttemptCount(),  e.getLastFailure());
                         })
@@ -190,7 +197,7 @@ public class PushoverService implements Application, MessageListener {
                 Failsafe.with(rp).getAsync(() -> {
                     return AccessController.doPrivileged((PrivilegedExceptionAction<HttpResponse>) () -> request.execute().returnResponse());
                 }).thenAccept(resp -> {
-                    handleResponse(resp, message, apiToken, poPrio);
+                    handleResponse(resp, uri, message, apiToken, user, poPrio);
                 });
         }
         
@@ -215,15 +222,19 @@ public class PushoverService implements Application, MessageListener {
                 return new UrlEncodedFormEntity(bodyEntries, StandardCharsets.UTF_8);
         }
         
-        private void handleResponse(HttpResponse response, ReceivedMessage message, String apiToken, int poPrio) {
+        private void handleResponse(HttpResponse response, URI uri, ReceivedMessage message, String apiToken, String user, int poPrio) {
                 final StatusLine status = response.getStatusLine();
 		final int code = status.getStatusCode();
-		if (code >= 400) {
+                if (code >= 500) {
+                        logger.warn("Pushover server problem ({}), retry message shortly", code);
+                        CompletableFuture.delayedExecutor(HTTP_5XX_DELAY_S, TimeUnit.SECONDS).execute(
+                                () -> sendPushoverMessage(uri, message, apiToken, user));
+                } else if (code >= 400) {
                         try {
                                 String body = readResponseBody(response);
-                                logger.warn("Message sending failed. Response: {}, {}", status, body);
+                                logger.error("Message rejected by server, check code! Will not try again. Response: {}, {}", status, body);
                         } catch (IOException ex) {
-                                logger.warn("Message sending failed. Response: {}", status);
+                                logger.error("Message rejected by server, check code! Will not try again. Unable to read response, status code is: {}", status, ex);
                         }		
                 } else {
                         if (poPrio == 2) {
