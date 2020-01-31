@@ -17,13 +17,13 @@
     <name>Room Link app</name>
     <description>A configuration application, that allows to create and delete rooms, and to assign devices to a room via drag and drop.</description>
 
-    <repositories>
+    <!-- <repositories>
     	<repository>
 		    <id>ogema-release</id>
 		    <name>ogema-release</name>
 		    <url>https://www.ogema-source.net/artifactory/libs-release</url>
    		</repository>
-    </repositories>
+    </repositories> -->
 
     <build>
         <plugins>
@@ -70,7 +70,7 @@
         <dependency>
             <groupId>org.ogema.apps</groupId>
             <artifactId>device-configurator</artifactId>
-            <version>2.1.0</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.ogema.tools</groupId>
@@ -94,7 +94,7 @@
             <artifactId>homematic-xmlrpc-hl</artifactId>
             <scope>compile</scope>
             <optional>true</optional>
-            <version>2.1.0</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

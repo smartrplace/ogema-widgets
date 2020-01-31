@@ -14,7 +14,7 @@
 	<description>Experimental OGEMA model extensions</description>
     <packaging>bundle</packaging>
 
-	<repositories>
+	<!-- <repositories>
 		<repository>
 			<releases />
 			<snapshots>
@@ -31,7 +31,7 @@
 			<name>Internal Releases</name>
 			<url>https://www.ogema-source.net/artifactory/libs-release-local</url>
 		</repository>
-	</distributionManagement>
+	</distributionManagement>-->
 
     <dependencies>
         <dependency>
@@ -59,12 +59,7 @@
             <artifactId>widget-models-proposed</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- <dependency>
-            <groupId>org.ogema.model</groupId>
-            <artifactId>fhg-proposed</artifactId>
-            <version>${project.version}</version>
-        </dependency> -->
-    </dependencies>
+     </dependencies>
 
 
 </project>

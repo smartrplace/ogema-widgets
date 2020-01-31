@@ -15,7 +15,7 @@
 	<description>OGEMA model extensions provided by Fraunhofer</description>
     <packaging>bundle</packaging>
 
-	<repositories>
+	<!-- <repositories>
 		<repository>
 			<releases />
 			<snapshots>
@@ -32,7 +32,7 @@
 			<name>Internal Releases</name>
 			<url>https://www.ogema-source.net/artifactory/libs-release-local</url>
 		</repository>
-	</distributionManagement>
+	</distributionManagement> -->
 
 
     <build>
