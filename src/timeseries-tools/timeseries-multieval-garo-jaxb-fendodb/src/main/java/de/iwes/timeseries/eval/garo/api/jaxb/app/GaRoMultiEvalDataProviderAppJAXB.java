@@ -4,6 +4,7 @@ import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.ReferenceCardinality;
+import org.apache.felix.scr.annotations.ReferencePolicyOption;
 import org.apache.felix.scr.annotations.Service;
 import org.ogema.core.application.Application;
 import org.ogema.core.application.ApplicationManager;
@@ -25,7 +26,8 @@ public class GaRoMultiEvalDataProviderAppJAXB implements Application {
 	@Reference
 	GatewayBackupAnalysis gatewayParser;
 
-    @Reference(cardinality=ReferenceCardinality.OPTIONAL_UNARY)
+   // @Reference(cardinality=ReferenceCardinality.OPTIONAL_UNARY, policyOption=ReferencePolicyOption.GREEDY)
+    @Reference
     private DataRecorder dataRecorder;
 	
 	private ApplicationManager appMan;
