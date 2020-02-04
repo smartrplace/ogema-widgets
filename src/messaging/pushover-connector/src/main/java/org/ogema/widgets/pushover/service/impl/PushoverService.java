@@ -227,8 +227,7 @@ public class PushoverService implements Application, MessageListener {
 		final int code = status.getStatusCode();
                 if (code >= 500) {
                         logger.warn("Pushover server problem ({}), retry message shortly", code);
-                        CompletableFuture.delayedExecutor(HTTP_5XX_DELAY_S, TimeUnit.SECONDS).execute(
-                                () -> sendPushoverMessage(uri, message, apiToken, user));
+                        ses.schedule(() -> sendPushoverMessage(uri, message, apiToken, user), HTTP_5XX_DELAY_S, TimeUnit.SECONDS);
                 } else if (code >= 400) {
                         try {
                                 String body = readResponseBody(response);
