@@ -52,7 +52,6 @@ import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 
 import de.iwes.widgets.api.OgemaGuiService;
-import de.iwes.widgets.api.messaging.Message;
 import de.iwes.widgets.api.messaging.MessagePriority;
 import de.iwes.widgets.api.messaging.listener.MessageListener;
 import de.iwes.widgets.api.messaging.listener.ReceivedMessage;
