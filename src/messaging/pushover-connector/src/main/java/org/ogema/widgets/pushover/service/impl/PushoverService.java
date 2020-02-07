@@ -52,9 +52,11 @@ import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 
 import de.iwes.widgets.api.OgemaGuiService;
+import de.iwes.widgets.api.messaging.Message;
 import de.iwes.widgets.api.messaging.MessagePriority;
 import de.iwes.widgets.api.messaging.listener.MessageListener;
 import de.iwes.widgets.api.messaging.listener.ReceivedMessage;
+import de.iwes.widgets.api.services.MessagingService;
 import de.iwes.widgets.api.widgets.WidgetApp;
 import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 import java.io.BufferedReader;
@@ -62,7 +64,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -96,9 +97,13 @@ public class PushoverService implements Application, MessageListener {
 	private volatile Logger logger;
 	private WidgetApp wapp;
         private ScheduledExecutorService ses;
+        private PushoverConfirmationMessaging confMsg;
 	
 	@Reference
 	private OgemaGuiService widgetService;
+        
+        @Reference
+        private MessagingService messaging;
 	
 	@Activate
 	protected void start(BundleContext ctx) {
@@ -121,6 +126,8 @@ public class PushoverService implements Application, MessageListener {
                 ses = Executors.newSingleThreadScheduledExecutor();
                 ses.scheduleWithFixedDelay(this::updateEmergencyMessageInfo, 0, 30, TimeUnit.SECONDS);
                 this.sreg = ctx.registerService(MessageListener.class, this, null);
+                confMsg = new PushoverConfirmationMessaging(appManager, messaging);
+                confMsg.start();
 	}
 
 	@Override
@@ -134,6 +141,9 @@ public class PushoverService implements Application, MessageListener {
 		this.sreg = null;
 		this.config = null;
 		this.logger = null;
+                if (confMsg != null) {
+                    confMsg.stop();
+                }
 	}
 	
 	@Override
@@ -286,7 +296,11 @@ public class PushoverService implements Application, MessageListener {
                         HttpResponse hr = resp.returnResponse();
                         JSONObject receiptInfo = new JSONObject(readResponseBody(hr));
                         if (receiptInfo.getInt("status") == 1) {
+                                boolean wasAcknowledged = m.receiptInfo().isAcknowledged();
                                 m.receiptInfo().store(receiptInfo);
+                                if (!wasAcknowledged && m.receiptInfo().isAcknowledged()) {
+                                    confMsg.messageConfirmed(m);
+                                }
                         } else {
                                 logger.warn("receipt info request for {} failed: {}", receipt, receiptInfo.toMap());
                         }
