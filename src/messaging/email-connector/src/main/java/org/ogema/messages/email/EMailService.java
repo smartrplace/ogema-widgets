@@ -59,6 +59,8 @@ public class EMailService implements Application, MessageListener {
 	public boolean sendMail(final ReceivedMessage ms, EmailSenderPattern sender, List<String> recipients,
 			Properties properties, String encoding) throws RuntimeException {
 
+		if(Boolean.getBoolean("org.ogema.messages.email.testwithoutconnection"))
+			return true;
 		boolean allMessagesSent = true;
 
 		final String email = sender.email.getValue();

@@ -64,6 +64,9 @@ public class SMSService implements Application, MessageListener {
 	private boolean sendSMSviaMail(final ReceivedMessage ms, SmsSenderPattern sender, List<String> recipients,
 			Properties properties, String encoding) throws RuntimeException {
 
+		if(Boolean.getBoolean("org.ogema.messages.sms.testwithoutconnection"))
+			return true;
+
 		boolean allMessagesSent = true;
 
 		final String email = sender.email.getValue();

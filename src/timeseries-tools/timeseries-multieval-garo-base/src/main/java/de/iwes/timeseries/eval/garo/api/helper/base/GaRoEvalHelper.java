@@ -73,6 +73,7 @@ public class GaRoEvalHelper {
 		if(recId.contains("temperatureSensor/settings/setpoint")) return GaRoDataType.TemperatureSetpointSet;
 		if(recId.contains("temperatureSensor/reading")) return GaRoDataType.TemperatureMeasurementThermostat;
 		if(recId.contains("TEMPERATURE/reading")) return GaRoDataType.TemperatureMeasurementRoomSensor;
+		if(recId.contains("EXTERNAL_TEMPERATURE_0_0")) return GaRoDataType.TemperatureMeasurementRoomSensor;
 		if(recId.contains("valve/setting/stateFeedback")) return GaRoDataType.ValvePosition;
 		if(recId.contains("connection/powerSensor/reading")) return GaRoDataType.PowerMeter;
 		if(recId.contains("connection/energySensor/reading")) return GaRoDataType.PowerMeterEnergy;
@@ -113,6 +114,7 @@ public class GaRoEvalHelper {
 		if(recId.contains("/Redox_1/sensor/reading")) return GaRoDataType.WaterRedoxValue;
 		if(recId.contains("/Sauerstoff_1/sensor/reading")) return GaRoDataType.WaterOxygenConcentrationValue;
 		if(recId.contains("/Temperatur_1/sensor/reading")) return GaRoDataType.WaterTemperatureValue;
+		if(recId.contains("/USER_DEFINED_0_0")) return GaRoDataType.CO2Concentration;
 		
 		for(GaRoDataType type: GaRoDataType.standardTypes) {
     		if(type.label(null).equals(recId)) return type;
