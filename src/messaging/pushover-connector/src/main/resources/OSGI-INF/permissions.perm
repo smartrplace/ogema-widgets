@@ -1,6 +1,7 @@
 (org.osgi.framework.ServicePermission "org.ogema.core.application.Application" "register")
 (org.osgi.framework.ServicePermission "de.iwes.widgets.api.messaging.listener.MessageListener" "register")
 (org.osgi.framework.ServicePermission "de.iwes.widgets.api.OgemaGuiService" "get")
+(org.osgi.framework.ServicePermission "de.iwes.widgets.api.services.MessagingService" "get")
 (org.osgi.framework.PackagePermission "org.ogema.core.*" "import")
 (org.osgi.framework.PackagePermission "org.ogema.model.*" "import")
 (org.osgi.framework.PackagePermission "org.ogema.pattern.*" "import")
@@ -8,11 +9,14 @@
 (org.osgi.framework.PackagePermission "de.iwes.widgets.*" "import")
 (org.osgi.framework.PackagePermission "de.iwes.tools.*" "import")
 (org.osgi.framework.PackagePermission "de.iwes.util.*" "import")
+(org.osgi.framework.PackagePermission "net.jodah.failsafe" "import")
+(org.osgi.framework.PackagePermission "net.jodah.failsafe.*" "import")
 (org.osgi.framework.PackagePermission "org.slf4j" "import")
 (org.osgi.framework.PackagePermission "org.osgi.framework" "import")
 (org.osgi.framework.PackagePermission "org.apache.felix.scr.annotations" "import")
 (org.osgi.framework.PackagePermission "org.apache.http" "import")
 (org.osgi.framework.PackagePermission "org.apache.http.*" "import")
+(org.osgi.framework.PackagePermission "org.json" "import")
 
 # permissions for Apache Http fluent client
 (java.util.PropertyPermission "https.protocols" "read")
