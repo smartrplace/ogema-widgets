@@ -177,6 +177,8 @@ public class PushoverService implements Application, MessageListener {
         
         private void sendPushoverMessage(URI uri, ReceivedMessage message, String apiToken, String user) {
                 final int poPrio;
+                if(Boolean.getBoolean("org.ogema.widgets.pushover.service.testwithoutconnection"))
+                	return;
                 switch (message.getOriginalMessage().priority()) {
                         case HIGH : poPrio = 2; break;
                         case MEDIUM : poPrio = 1; break;
