@@ -161,6 +161,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 			TemperatureResource.class);
 	public static final GaRoDataType CO2Concentration = new GaRoDataType("CO2Concentration",
 			FloatResource.class);
+	public static final GaRoDataType InternetConnection = new GaRoDataType("InternetConnection",
+			BooleanResource.class);
 
 
 	

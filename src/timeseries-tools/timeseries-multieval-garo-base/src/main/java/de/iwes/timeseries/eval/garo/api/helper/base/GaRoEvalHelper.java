@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -31,6 +32,7 @@ import java.util.Set;
 
 import org.ogema.core.model.simple.SingleValueResource;
 import org.ogema.core.timeseries.ReadOnlyTimeSeries;
+import org.ogema.widgets.configuration.service.OGEMAConfigurations;
 
 import de.iwes.timeseries.eval.api.DataProvider;
 import de.iwes.timeseries.eval.api.DataProviderType;
@@ -62,7 +64,32 @@ import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 import de.iwes.widgets.html.selectiontree.SelectionItem;
 
 public class GaRoEvalHelper {
+	public static final Map<GaRoDataType, List<String>> recIdSnippets = new LinkedHashMap<>();
+	static {
+		recIdSnippets.put(GaRoDataType.InternetConnection, Arrays.asList(new String[] {"NetworkState/mainNetworkOk"}));
+	}
+	/** <time series name> -> recIdSnippets
+	 * standard user plot configurations*/
+	public static final Map<String, List<Map<GaRoDataType, List<String>>>> userPlotOptions = new LinkedHashMap<>();
+	static {
+		List<Map<GaRoDataType, List<String>>> helpList = new ArrayList<>();
+		helpList.add(recIdSnippets);
+		userPlotOptions.put("defaultInternetConnectionState", helpList);
+	}
+	
+	
+	@SuppressWarnings("unchecked")
 	public static GaRoDataType getDataType(String recId) {
+		Object recSnippetsTouse = OGEMAConfigurations.getObject(GaRoDataType.class.getName(), "%recSnippets");
+		if(recSnippetsTouse != null && recSnippetsTouse instanceof Map) {
+			for(Entry<GaRoDataType, List<String>> e: ((Map<GaRoDataType, List<String>>)recSnippetsTouse).entrySet()) {
+				for(String snpippet: e.getValue()) {
+					if(recId.contains(snpippet))
+						return e.getKey();
+				}
+			}
+		}
+
 		if(recId.contains("chargeSensor")) return GaRoDataType.ChargeSensor;
 		if(recId.contains("internalVoltage")) return GaRoDataType.ChargeVoltage;
 		if(recId.contains("HUMIDITY")) return GaRoDataType.HumidityMeasurement;
@@ -110,11 +137,12 @@ public class GaRoEvalHelper {
 		if(recId.contains("/RETURN_TEMPERATURE_")) return GaRoDataType.HeatReturnTemperatur;
 		
 		if(recId.contains("/pH_Wert_1/sensor/reading")) return GaRoDataType.WaterPHValue;
-		if(recId.contains("/Leitwert_S__1/sensor/reading")) return GaRoDataType.WaterConductivityValue;
+		//if(recId.contains("/Leitwert_S__1/sensor/reading")) return GaRoDataType.WaterConductivityValue;
 		if(recId.contains("/Redox_1/sensor/reading")) return GaRoDataType.WaterRedoxValue;
 		if(recId.contains("/Sauerstoff_1/sensor/reading")) return GaRoDataType.WaterOxygenConcentrationValue;
 		if(recId.contains("/Temperatur_1/sensor/reading")) return GaRoDataType.WaterTemperatureValue;
 		if(recId.contains("/USER_DEFINED_0_0")) return GaRoDataType.CO2Concentration;
+		//if(recId.contains("NetworkState/mainNetworkOk")) return GaRoDataType.InternetConnection;
 		
 		for(GaRoDataType type: GaRoDataType.standardTypes) {
     		if(type.label(null).equals(recId)) return type;
