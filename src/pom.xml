@@ -56,6 +56,7 @@
 	 	<module>widget-exam-base</module>
 		<module>widget-experimental</module>
 		<module>widget-extended</module>
+		<module>widget-models-experimental</module>
 		<module>widget-models-proposed</module>
 	    <module>widget-tools</module>
 	    <module>utils-experimental</module>
