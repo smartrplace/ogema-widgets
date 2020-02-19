@@ -2,10 +2,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-    <!--
-    <artifactId>apps-master</artifactId>
-    <groupId>org.ogema.apps</groupId>
-    -->
     <artifactId>widget-apps</artifactId>
     <groupId>org.ogema.widgets</groupId>
     <version>2.2.2-SNAPSHOT</version>
@@ -15,15 +11,10 @@
     <groupId>org.ogema.apps</groupId>
     <packaging>bundle</packaging>
     <name>Room Link app</name>
-    <description>A configuration application, that allows to create and delete rooms, and to assign devices to a room via drag and drop.</description>
-
-    <!-- <repositories>
-    	<repository>
-		    <id>ogema-release</id>
-		    <name>ogema-release</name>
-		    <url>https://www.ogema-source.net/artifactory/libs-release</url>
-   		</repository>
-    </repositories> -->
+    <description>
+        A configuration application, that allows to create and delete rooms,
+        and to assign devices to a room via drag and drop.
+    </description>
 
     <build>
         <plugins>
@@ -70,7 +61,7 @@
         <dependency>
             <groupId>org.ogema.apps</groupId>
             <artifactId>device-configurator</artifactId>
-            <version>${project.version}</version>
+            <version>2.2.1</version>
         </dependency>
         <dependency>
             <groupId>org.ogema.tools</groupId>
@@ -94,7 +85,7 @@
             <artifactId>homematic-xmlrpc-hl</artifactId>
             <scope>compile</scope>
             <optional>true</optional>
-            <version>${project.version}</version>
+            <version>2.2.1</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

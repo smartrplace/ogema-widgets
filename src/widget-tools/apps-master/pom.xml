@@ -23,6 +23,23 @@
 		<developerConnection>scm:git:git://github.com/smartrplace/ogema-widgets.git</developerConnection>
 		<url>https://github.com/smartrplace/ogema-widgets</url>
 	</scm>
+    
+    <distributionManagement>
+        <repository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>sp-central</id>
+            <name>Smartrplace Repository</name>
+            <url>https://repository.smartrplace.de/artifactory/libs-release</url>
+            <layout>default</layout>
+        </repository>
+        <snapshotRepository>
+            <uniqueVersion>true</uniqueVersion>
+            <id>sp-snapshots</id>
+            <name>Smartrplace Snapshots</name>
+            <url>https://repository.smartrplace.de/artifactory/libs-snapshot</url>
+            <layout>default</layout>
+        </snapshotRepository>
+    </distributionManagement>
 	
 	<developers>
 		<developer>
@@ -68,17 +85,6 @@
 		<org.json.version.max>20180814</org.json.version.max>
 	</properties>
    
-   	<distributionManagement>
-		<snapshotRepository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</snapshotRepository>
-		<repository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-	</distributionManagement>
-
 	<dependencyManagement>
 		<dependencies>
 		
