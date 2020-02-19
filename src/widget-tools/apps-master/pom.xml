@@ -24,6 +24,25 @@
 		<url>https://github.com/smartrplace/ogema-widgets</url>
 	</scm>
     
+    <repositories>
+        <repository>
+            <id>sp-central</id>
+            <name>sp-central</name>
+            <url>https://repository.smartrplace.de/artifactory/libs-release</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>sp-snapshot</id>
+            <name>sp-snapshots</name>
+            <url>https://repository.smartrplace.de/artifactory/libs-snapshot</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <distributionManagement>
         <repository>
             <uniqueVersion>false</uniqueVersion>
