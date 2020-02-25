@@ -50,9 +50,9 @@ public class GaRoTypeStringConfigProvider implements OGEMAConfigurationProvider 
 		if(property.equals("%recSnippets")) {
 			return GaRoEvalHelper.recIdSnippets;
 		}
-		if(property.equals("%plotOptions")) {
-			return GaRoEvalHelper.userPlotOptions;
-		}
+		//if(property.equals("%plotOptions")) {
+		//	return GaRoEvalHelper.userPlotOptions;
+		//}
 		return GaRoEvalHelper.getDataType(property);
 	}
 

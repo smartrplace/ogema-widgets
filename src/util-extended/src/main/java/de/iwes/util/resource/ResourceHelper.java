@@ -396,7 +396,8 @@ public class ResourceHelper {
 				result.deviceType = (Class<? extends PhysicalElement>) device.getResourceType();
 				result.deviceLocation = device.location();
 				result.deviceResourceLocation = device.getLocation();
-				return result;			}
+				return result;
+			}
 		});		
 	}
 	

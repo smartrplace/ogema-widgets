@@ -104,7 +104,11 @@ public class LogHelper {
 			return devices.get(0);
 		}
 		PhysicalElement device = ResourceHelper.getFirstParentOfType(subResource, PhysicalElement.class);
-		if(device == null) return null;
+		if(device == null) {
+			if(subResource instanceof PhysicalElement)
+				return (PhysicalElement) subResource;
+			return null;
+		}
 		PhysicalElement highestWithLocation = ((!locationRelevant) || device.location().isActive())?device:null;
 		Resource parent = device.getParent();
 		while(true) {

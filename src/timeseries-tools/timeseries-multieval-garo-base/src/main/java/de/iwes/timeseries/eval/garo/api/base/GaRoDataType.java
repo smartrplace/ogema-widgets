@@ -163,6 +163,10 @@ public class GaRoDataType implements GaRoDataTypeI {
 			FloatResource.class);
 	public static final GaRoDataType InternetConnection = new GaRoDataType("InternetConnection",
 			BooleanResource.class);
+	public static final GaRoDataType RSSIDevice = new GaRoDataType("RSSIDevice",
+			FloatResource.class);
+	public static final GaRoDataType RSSIPeer = new GaRoDataType("RSSIPeer",
+			FloatResource.class);
 
 
 	

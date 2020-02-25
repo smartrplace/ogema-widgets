@@ -64,44 +64,105 @@ import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 import de.iwes.widgets.html.selectiontree.SelectionItem;
 
 public class GaRoEvalHelper {
-	public static final Map<GaRoDataType, List<String>> recIdSnippets = new LinkedHashMap<>();
+	public static class RecIdVal {
+		public GaRoDataType type;
+		public List<String> snippets;
+		public Map<OgemaLocale, String> label;
+		
+		public RecIdVal(GaRoDataType type, String[] snippets, Map<OgemaLocale, String> label) {
+			this.type = type;
+			this.snippets = Arrays.asList(snippets);
+			this.label = label;
+		}		
+		public RecIdVal(GaRoDataType type, List<String> snippets, Map<OgemaLocale, String> label) {
+			this.type = type;
+			this.snippets = snippets;
+			this.label = label;
+		}		
+	}
+	/** <time series name> -> type/snippet info
+	 */
+	public static final Map<String, RecIdVal> recIdSnippets = new LinkedHashMap<>();
 	static {
-		recIdSnippets.put(GaRoDataType.InternetConnection, Arrays.asList(new String[] {"NetworkState/mainNetworkOk"}));
+		addRecId(GaRoDataType.ChargeSensor, new String[] {"chargeSensor", "internalVoltage"}, recIdSnippets,
+				"");
+		addRecId(GaRoDataType.HumidityMeasurement, new String[] {"HUMIDITY"}, recIdSnippets,
+				"Humidity", "Luftfeuchtigkeit");
+		addRecId(GaRoDataType.WindowOpen, new String[] {"SHUTTER_CONTACT"}, recIdSnippets,
+				"Window Open Status", "Fensteröffnung");
+		addRecId(GaRoDataType.TemperatureSetpointFeedback, new String[] {"temperatureSensor/deviceFeedback/setpoint"}, recIdSnippets,
+				"Temperature Setpoint Thermostat", "Temperatursollwert real");
+		addRecId(GaRoDataType.TemperatureSetpointSet, new String[] {"temperatureSensor/settings/setpoint"}, recIdSnippets,
+				"Temperature Setpoint Requested", "Temperatursollwert angefordert");
+		addRecId(GaRoDataType.TemperatureMeasurementThermostat, new String[] {"temperatureSensor/reading"}, recIdSnippets,
+				"Temperature measured at thermostat", "Temperaturmesswert Thermostat");
+		addRecId(GaRoDataType.TemperatureMeasurementRoomSensor, new String[] {"TEMPERATURE/reading", "EXTERNAL_TEMPERATURE_0_0"}, recIdSnippets,
+				"Room Sensor Temperature", "Raumsensor Temperatur");
+		addRecId(GaRoDataType.ValvePosition, new String[] {"valve/setting/stateFeedback"}, recIdSnippets,
+				"Valve Position", "Ventilstellung");
+		addRecId(GaRoDataType.InternetConnection, new String[] {"NetworkState/mainNetworkOk"}, recIdSnippets,
+				"Main Internet connection status", "DSL Status");
+		addRecId(GaRoDataType.RSSIDevice, new String[] {"/rssiDevice"}, recIdSnippets,
+				"RSSI Device");
+		addRecId(GaRoDataType.RSSIPeer, new String[] {"/rssiPeer"}, recIdSnippets,
+				"RSSI Peer");
+	}
+	public static void addRecId(GaRoDataType type, String[] snippets, Map<String, RecIdVal> recIdSnippets) {
+		Map<OgemaLocale, String> label = new HashMap<OgemaLocale, String>();
+		label.put(OgemaLocale.ENGLISH, type.label(null));
+		addRecId(type.label(null), type, snippets, recIdSnippets, label);		
+	}
+	public static void addRecId(GaRoDataType type, String[] snippets, Map<String, RecIdVal> recIdSnippets,
+			String labelEnglish) {
+		Map<OgemaLocale, String> label = new HashMap<OgemaLocale, String>();
+		label.put(OgemaLocale.ENGLISH, labelEnglish);
+		addRecId(type.label(null), type, snippets, recIdSnippets, label);
+	}
+	public static void addRecId(GaRoDataType type, String[] snippets, Map<String, RecIdVal> recIdSnippets,
+			String labelEnglish, String labelGerman) {
+		Map<OgemaLocale, String> label = new HashMap<OgemaLocale, String>();
+		label.put(OgemaLocale.ENGLISH, labelEnglish);
+		label.put(OgemaLocale.GERMAN, labelGerman);
+		addRecId(type.label(null), type, snippets, recIdSnippets, label);
+	}
+	public static void addRecId(String id, GaRoDataType type, String[] snippets, Map<String, RecIdVal> recIdSnippets,
+			Map<OgemaLocale, String> label) {
+		recIdSnippets.put(id, new RecIdVal(type, snippets, label));		
 	}
 	/** <time series name> -> recIdSnippets
 	 * standard user plot configurations*/
-	public static final Map<String, List<Map<GaRoDataType, List<String>>>> userPlotOptions = new LinkedHashMap<>();
-	static {
-		List<Map<GaRoDataType, List<String>>> helpList = new ArrayList<>();
-		helpList.add(recIdSnippets);
-		userPlotOptions.put("defaultInternetConnectionState", helpList);
-	}
+	//public static final Map<String, List<Map<GaRoDataType, List<String>>>> userPlotOptions = new LinkedHashMap<>();
+	//static {
+	//	List<Map<GaRoDataType, List<String>>> helpList = new ArrayList<>();
+	//	helpList.add(recIdSnippets);
+	//	userPlotOptions.put("defaultInternetConnectionState", helpList);
+	//}
 	
 	
 	@SuppressWarnings("unchecked")
 	public static GaRoDataType getDataType(String recId) {
 		Object recSnippetsTouse = OGEMAConfigurations.getObject(GaRoDataType.class.getName(), "%recSnippets");
 		if(recSnippetsTouse != null && recSnippetsTouse instanceof Map) {
-			for(Entry<GaRoDataType, List<String>> e: ((Map<GaRoDataType, List<String>>)recSnippetsTouse).entrySet()) {
-				for(String snpippet: e.getValue()) {
+			for(Entry<String, RecIdVal> e: ((Map<String, RecIdVal>)recSnippetsTouse).entrySet()) {
+				for(String snpippet: e.getValue().snippets) {
 					if(recId.contains(snpippet))
-						return e.getKey();
+						return e.getValue().type;
 				}
 			}
 		}
 
-		if(recId.contains("chargeSensor")) return GaRoDataType.ChargeSensor;
-		if(recId.contains("internalVoltage")) return GaRoDataType.ChargeVoltage;
-		if(recId.contains("HUMIDITY")) return GaRoDataType.HumidityMeasurement;
-		if(recId.contains("SHUTTER_CONTACT")) return GaRoDataType.WindowOpen;
+		//if(recId.contains("chargeSensor")) return GaRoDataType.ChargeSensor;
+		//if(recId.contains("internalVoltage")) return GaRoDataType.ChargeVoltage;
+		//if(recId.contains("HUMIDITY")) return GaRoDataType.HumidityMeasurement;
+		//if(recId.contains("SHUTTER_CONTACT")) return GaRoDataType.WindowOpen;
 		if(recId.contains("MOTION_DETECTOR")) return GaRoDataType.MotionDetection;
 		//type TemperatureSetpoint is not recognized anymore
-		if(recId.contains("temperatureSensor/deviceFeedback/setpoint")) return GaRoDataType.TemperatureSetpointFeedback;
-		if(recId.contains("temperatureSensor/settings/setpoint")) return GaRoDataType.TemperatureSetpointSet;
-		if(recId.contains("temperatureSensor/reading")) return GaRoDataType.TemperatureMeasurementThermostat;
-		if(recId.contains("TEMPERATURE/reading")) return GaRoDataType.TemperatureMeasurementRoomSensor;
-		if(recId.contains("EXTERNAL_TEMPERATURE_0_0")) return GaRoDataType.TemperatureMeasurementRoomSensor;
-		if(recId.contains("valve/setting/stateFeedback")) return GaRoDataType.ValvePosition;
+		//if(recId.contains("temperatureSensor/deviceFeedback/setpoint")) return GaRoDataType.TemperatureSetpointFeedback;
+		//if(recId.contains("temperatureSensor/settings/setpoint")) return GaRoDataType.TemperatureSetpointSet;
+		//if(recId.contains("temperatureSensor/reading")) return GaRoDataType.TemperatureMeasurementThermostat;
+		//if(recId.contains("TEMPERATURE/reading")) return GaRoDataType.TemperatureMeasurementRoomSensor;
+		//if(recId.contains("EXTERNAL_TEMPERATURE_0_0")) return GaRoDataType.TemperatureMeasurementRoomSensor;
+		//if(recId.contains("valve/setting/stateFeedback")) return GaRoDataType.ValvePosition;
 		if(recId.contains("connection/powerSensor/reading")) return GaRoDataType.PowerMeter;
 		if(recId.contains("connection/energySensor/reading")) return GaRoDataType.PowerMeterEnergy;
 		if(recId.contains("connection/currentSensor/reading")) return GaRoDataType.PowerMeterCurrent;
