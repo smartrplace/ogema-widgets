@@ -27,6 +27,7 @@ package de.iwes.util.format;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -179,7 +180,7 @@ public class StringFormatHelper {
 		return String.format("%.0f %%", value*100);
 	}
 
-	public static String getListToPrint(List<String> list) {
+	public static String getListToPrint(Collection<String> list) {
 		if(list == null) return "";
 		String result = null;
 		for(String s: list) {

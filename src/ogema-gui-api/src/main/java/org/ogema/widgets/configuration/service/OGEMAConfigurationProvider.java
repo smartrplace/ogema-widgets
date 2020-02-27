@@ -6,6 +6,10 @@ import java.util.List;
 import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
 
+/** Implement and publish this service to provide configurations that can be accessed easily by all
+ * OGEMA apps that have a dependency to ogema-gui-api. The properties and configurations can be 
+ * accessed via static methods of {@link OGEMAConfigurations}.
+ */
 public interface OGEMAConfigurationProvider {
 	/** Class name for which configurations are provided
 	 * @return null for gobal properties, otherwise the full class name of the class using the property*/

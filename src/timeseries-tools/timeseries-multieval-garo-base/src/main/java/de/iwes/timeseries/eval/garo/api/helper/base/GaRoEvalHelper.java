@@ -31,6 +31,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.ogema.core.model.simple.SingleValueResource;
+import org.ogema.core.recordeddata.RecordedData;
 import org.ogema.core.timeseries.ReadOnlyTimeSeries;
 import org.ogema.widgets.configuration.service.OGEMAConfigurations;
 
@@ -649,6 +650,7 @@ public class GaRoEvalHelper {
 	    //room has been found
 	    Map<String, TimeSeriesData> toRemoveCandidate = new HashMap<>();
 	    Set<ReadOnlyTimeSeries> knownTS = new HashSet<>();
+	    Set<String> knowTSPath = new HashSet<>();
 	    for(TimeSeriesData ts: result) {
 			if(!(ts instanceof TimeSeriesDataOffline)) throw new IllegalStateException("getStartAndEndTime only works on TimeSeriesData input!");
 			TimeSeriesDataOffline tsd = (TimeSeriesDataOffline) ts;
@@ -663,7 +665,11 @@ public class GaRoEvalHelper {
 				}
 				roomId = tse.getIds().get(1);
     		} else continue;
-	    	if(knownTS.contains(rots)) {
+	    	String path = null;
+	    	if(rots instanceof RecordedData) {
+	    		path = ((RecordedData)rots).getPath();
+	    	}
+	    	if(knownTS.contains(rots) || (path != null && knowTSPath.contains(path))) {
 				if(roomId.equals(GaRoMultiEvalDataProvider.BUILDING_OVERALL_ROOM_ID)) {
 					toRemove.add(ts);
 					continue;
@@ -671,7 +677,10 @@ public class GaRoEvalHelper {
 					TimeSeriesData tsCand = toRemoveCandidate.get(roomId);
 					if(tsCand != null) toRemove.add(tsCand);
 				}
-	    	} else knownTS.add(rots);
+	    	} else {
+	    		knownTS.add(rots);
+	    		if(path != null) knowTSPath.add(path);
+	    	}
 	    	if(roomId.equals(GaRoMultiEvalDataProvider.BUILDING_OVERALL_ROOM_ID)) {
 	    		toRemoveCandidate.put(roomId, ts);
 	    	}
