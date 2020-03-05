@@ -40,6 +40,7 @@ import de.iwes.widgets.html.form.button.Button;
 import de.iwes.widgets.html.form.dropdown.Dropdown;
 import de.iwes.widgets.html.form.label.Label;
 import de.iwes.widgets.html.form.textfield.TextField;
+import org.ops4j.pax.exam.options.CompositeOption;
 
 public abstract class WidgetsTestBase extends LatestVersionsTestBase {
 
@@ -61,6 +62,7 @@ public abstract class WidgetsTestBase extends LatestVersionsTestBase {
 
 	@Override
 	public Option[] frameworkBundles() {
+        
 		Option[] opt = super.frameworkBundles();
 		Option[] options = new Option[opt.length + 1];
 		for (int i =0;i<opt.length;i++) {
