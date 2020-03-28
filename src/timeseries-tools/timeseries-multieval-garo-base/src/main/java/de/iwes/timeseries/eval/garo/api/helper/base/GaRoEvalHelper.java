@@ -199,7 +199,7 @@ public class GaRoEvalHelper {
 		if(recId.contains("/RETURN_TEMPERATURE_")) return GaRoDataType.HeatReturnTemperatur;
 		
 		if(recId.contains("/pH_Wert_1/sensor/reading")) return GaRoDataType.WaterPHValue;
-		//if(recId.contains("/Leitwert_S__1/sensor/reading")) return GaRoDataType.WaterConductivityValue;
+		if(recId.contains("/Leitwert_S__1/sensor/reading")) return GaRoDataType.WaterConductivityValue;
 		if(recId.contains("/Redox_1/sensor/reading")) return GaRoDataType.WaterRedoxValue;
 		if(recId.contains("/Sauerstoff_1/sensor/reading")) return GaRoDataType.WaterOxygenConcentrationValue;
 		if(recId.contains("/Temperatur_1/sensor/reading")) return GaRoDataType.WaterTemperatureValue;
