@@ -86,7 +86,7 @@ public class GaRoEvalHelper {
 	public static final Map<String, RecIdVal> recIdSnippets = new LinkedHashMap<>();
 	static {
 		addRecId(GaRoDataType.ChargeSensor, new String[] {"chargeSensor", "internalVoltage"}, recIdSnippets,
-				"");
+				"Battery", "Batteriestand");
 		addRecId(GaRoDataType.HumidityMeasurement, new String[] {"HUMIDITY"}, recIdSnippets,
 				"Humidity", "Luftfeuchtigkeit");
 		addRecId(GaRoDataType.WindowOpen, new String[] {"SHUTTER_CONTACT"}, recIdSnippets,

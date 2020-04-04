@@ -18,6 +18,7 @@ package de.iwes.timeseries.eval.garo.api.base;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.ogema.core.model.Resource;
 import org.ogema.core.model.simple.BooleanResource;
@@ -35,7 +36,6 @@ import org.ogema.core.model.units.VoltageResource;
 import org.ogema.core.model.units.VolumeResource;
 import org.ogema.generictype.GenericAttribute;
 import org.ogema.generictype.GenericAttributeImpl;
-import org.ogema.tools.resource.util.ResourceUtils;
 
 import de.iwes.timeseries.eval.garo.api.helper.base.GaRoEvalHelper;
 import de.iwes.timeseries.eval.garo.multibase.GaRoSingleEvalProviderPreEvalRequesting;
@@ -67,7 +67,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 
 	@Override
 	public String id() {
-		return ResourceUtils.getValidResourceName(getClass().getName());
+		//return ResourceUtils.getValidResourceName(getClass().getName());
+		return label;
 	}
 
 	@Override
@@ -88,6 +89,19 @@ public class GaRoDataType implements GaRoDataTypeI {
 	public Level getLevel() {
 		return level;
 	};
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null || (!(obj instanceof GaRoDataTypeI)))
+			return false;
+		GaRoDataTypeI objc = (GaRoDataTypeI) obj;
+		return id().equals(objc.id());
+	}
+	@Override
+	public int hashCode() {
+		   int prime = 31;
+		   return prime + Objects.hashCode(this.id());    
+	}
 	
 	//The following options are per-room
 	public static final GaRoDataType TemperatureMeasurementRoomSensor = new GaRoDataType("TemperatureMeasurementRoomSensor",

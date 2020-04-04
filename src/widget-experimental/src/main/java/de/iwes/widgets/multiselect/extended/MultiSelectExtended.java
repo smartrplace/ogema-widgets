@@ -42,6 +42,7 @@ public class MultiSelectExtended<T> extends PageSnippet {
 	public Button deselectAllButton;
 	
 	private boolean buttonsOnTop = false;
+	protected boolean addMultiSelectAutomatically() {return true;}
 	private boolean useGlyphicons = false;
 	private String CHECK_ALL = "++";
 	private String UNCECK_ALL = "--";
@@ -53,7 +54,7 @@ public class MultiSelectExtended<T> extends PageSnippet {
 	}
 	
 	public MultiSelectExtended(WidgetPage<?> page, String id, TemplateMultiselect<T> multiSelect, boolean useGlyphicons, String buttonStyle, boolean buttonsOnTop) {
-		this(page, id, multiSelect, useGlyphicons, buttonStyle, false, false);
+		this(page, id, multiSelect, useGlyphicons, buttonStyle, buttonsOnTop, false);
 	}
 	
 
@@ -191,10 +192,13 @@ public class MultiSelectExtended<T> extends PageSnippet {
 			StaticTable topTable = new StaticTable(1, 2);
 			topTable.setContent(0, 0, selectAllButton).setContent(0, 1, deselectAllButton);
 			append(topTable, req);
-			append(multiSelect, req);
+			if(addMultiSelectAutomatically())
+				append(multiSelect, req);
 		} else {
 			StaticTable totalTable = new StaticTable(1, 2, new int[] {10, 2});
-			totalTable.setContent(0, 0, multiSelect).setContent(0, 1, selectAllButton).setContent(0, 1, deselectAllButton);
+			if(addMultiSelectAutomatically())
+				totalTable.setContent(0, 0, multiSelect);
+			totalTable.setContent(0, 1, selectAllButton).setContent(0, 1, deselectAllButton);
 			//StaticTable buttonTable = new StaticTable(1,1);
 			//buttonTable.setContent(0, 0, selectAllButton).setContent(0, 0, deselectAllButton);
 			//Flexbox totalTable = getFlexBox(page, multiSelect, buttonTable, id+"totalTable");
