@@ -20,7 +20,9 @@ import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -49,6 +51,13 @@ public class EMailService implements Application, MessageListener {
 
 	private volatile ResourcePatternAccess patternAccess;
 	private volatile OgemaLogger logger;
+	/** Server URL -> Authentication Method Type supported 
+	 *  0 = first try STARTTLS, then try SSL (also used if no entry is found)
+	 *  1 = only STARTTLS
+	 *  2 = only SSL
+	 */
+
+	private Map<String, Integer> authMethods = new HashMap<>();
 
 	@Override
 	public void start(ApplicationManager am) {
@@ -57,7 +66,7 @@ public class EMailService implements Application, MessageListener {
 	}
 
 	public boolean sendMail(final ReceivedMessage ms, EmailSenderPattern sender, List<String> recipients,
-			Properties properties, String encoding) throws RuntimeException {
+			Properties properties, String encoding, boolean isTrial) throws RuntimeException {
 
 		if(Boolean.getBoolean("org.ogema.messages.email.testwithoutconnection"))
 			return true;
@@ -119,8 +128,12 @@ public class EMailService implements Application, MessageListener {
 				});
 
 			} catch (Exception e) {
-				logger.error("MessagingExpection caught while sending a new email from user " + sender.email.getValue()
-						+ " to user " + receiver, e);
+				if(isTrial)
+					logger.info("MessagingExpection caught while sending a new email from user " + sender.email.getValue()
+					+ " to user " + receiver + "Error"+e.getMessage());
+				else
+					logger.error("MessagingExpection caught while sending a new email from user " + sender.email.getValue()
+							+ " to user " + receiver, e);
 				allMessagesSent = false;
 			}
 		}
@@ -177,26 +190,42 @@ public class EMailService implements Application, MessageListener {
 		// This method tries to send the message via tls (default). If this does not work for some reason,
 		// it will try sending over SSL (with the same port and same host).
 
-		Properties properties = new Properties();
-		properties.put("mail.smtp.starttls.enable", "true");
-		properties.put("mail.smtp.starttls.required", "true");
-		properties.put("mail.smtp.host", url);
-		properties.put("mail.smtp.auth", "true");
-		properties.put("mail.smtp.port", port);
-		properties.put("mail.smtp.debug", "true");
+		/** We do not store the authentication method persistently, but search for an accepted
+		 * method after each restart of the bundle
+		 */
+		Integer authMethod = authMethods.get(url);
+		boolean allMessagesSent = false;
+		if(authMethod == null || authMethod == 0 || authMethod == 1) {
+			Properties properties = new Properties();
+			properties.put("mail.smtp.starttls.enable", "true");
+			properties.put("mail.smtp.starttls.required", "true");
+			properties.put("mail.smtp.host", url);
+			properties.put("mail.smtp.auth", "true");
+			properties.put("mail.smtp.port", port);
+			properties.put("mail.smtp.debug", "true");
+	
+			allMessagesSent = sendMail(message, sender, recipients, properties, "STARTTLS", authMethod == null);
+			if(allMessagesSent)
+				authMethods.put(url, 1);
+			else if(authMethod == null || authMethod == 0)
+				logger.error("Sending message via STARTTLS failed, trying to send it via SSL now, using the same host and port");
+			else
+				logger.error("Sending message via STARTTLS failed!!");
+		}
+		if ((!allMessagesSent) && (authMethod == null || authMethod == 0 || authMethod == 2)) {
 
-		boolean allMessagesSent = sendMail(message, sender, recipients, properties, "STARTTLS");
-		if (!allMessagesSent) {
-			logger.error("Sending message via STARTTLS failed, trying to send it via SSL now, using the same host and port");
-
-			properties = new Properties();
+			Properties properties = new Properties();
 			properties.put("mail.smtp.ssl.enable", "true");
 			properties.put("mail.smtp.host", url);
 			properties.put("mail.smtp.auth", "true");
 			properties.put("mail.smtp.port", port);
 			properties.put("mail.smtp.debug", "true");
 
-			sendMail(message, sender, recipients, properties, "SSL");
+			allMessagesSent = sendMail(message, sender, recipients, properties, "SSL", false);
+			if(allMessagesSent)
+				authMethods.put(url, 2);
+			else
+				logger.error("Sending message via SSL failed!!");
 		}
 
 	}

@@ -66,7 +66,11 @@ public class OGEMAConfigurations {
 	}
 	
 	public static Object getObject(String className, String property, Object context) {
-		//TODO
+		for(OGEMAConfigurationProvider prov: relevantProviders(className)) {
+			Object result = prov.getObject(property, null, null, context);
+			if(result != null)
+				return result;
+		}
 		return null;
 	}
 
