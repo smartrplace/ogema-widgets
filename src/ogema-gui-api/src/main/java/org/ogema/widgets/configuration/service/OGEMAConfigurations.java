@@ -1,5 +1,6 @@
 package org.ogema.widgets.configuration.service;
 
+import java.util.Collections;
 import java.util.List;
 
 import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
@@ -47,12 +48,11 @@ public class OGEMAConfigurations {
 	}
 
 	public static Object getObject(String className, String property) {
-		for(OGEMAConfigurationProvider prov: relevantProviders(className)) {
-			Object result = prov.getObject(property, null, null, null);
-			if(result != null)
-				return result;
-		}
-		return null;
+		return getObject(className, property, (Object)null);
+	}
+	
+	public static <T> T getObject(String className, String property, Class<T> expectedType) {
+		return getObject(className, property, null, expectedType);
 	}
 	
 	public static Object getObject(String className, String property, OgemaLocale locale) {
@@ -74,17 +74,28 @@ public class OGEMAConfigurations {
 		return null;
 	}
 
-	public static Object getObject(String className, String property, OgemaLocale locale, Object context) {
+	@SuppressWarnings("unchecked")
+	public static <T> T getObject(String className, String property, Object context, Class<T> expectedType) {
+		Object objRaw = getObject(className, property, context);
+		if(expectedType.isAssignableFrom(objRaw.getClass()))
+			return (T) objRaw;
+		else
+			return null;
+	}
+
+	public static <T> T getObject(String className, String property, OgemaLocale locale, Object context, Class<T> expectedType) {
 		//TODO
 		return null;
 	}
 
-	public static Object getObject(String className, String property, OgemaHttpRequest req, Object context) {
+	public static <T> T getObject(String className, String property, OgemaHttpRequest req, Object context, Class<T> expectedType) {
 		//TODO
 		return null;
 	}
 
 	protected static List<OGEMAConfigurationProvider> relevantProviders(String className) {
-		return ConfigurationCollector.instance.providers.get(className);
+		List<OGEMAConfigurationProvider> provs = ConfigurationCollector.instance.providers.get(className);
+		if(provs != null) return provs;
+		return Collections.emptyList();
 	}
 }
