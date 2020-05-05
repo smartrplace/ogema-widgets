@@ -27,19 +27,23 @@ import org.ogema.core.application.ApplicationManager;
 @Component(specVersion = "1.2", immediate = true)
 @Service(Application.class)
 public class ConfigurationCollector implements Application {
-	static ConfigurationCollector instance = null;
+	//private static ConfigurationCollector instance = null;
 	
 	/** List of all services registered, sub-services are not listed here*/
-	public List<OGEMAConfigurationProvider> services = new ArrayList<OGEMAConfigurationProvider>();
+	private List<OGEMAConfigurationProvider> services = new ArrayList<OGEMAConfigurationProvider>();
 	
 	/** className -> relevantProviders. Sub-providers are listed separately here*/
-	public Map<String, List<OGEMAConfigurationProvider>> providers = new HashMap<>();
+	Map<String, List<OGEMAConfigurationProvider>> providers = new HashMap<>();
 	
 	public ConfigurationCollector() {
-		if(instance == null)
-			instance = this;
+		if(OGEMAConfigurations.ccInstance == null)
+			OGEMAConfigurations.ccInstance = this;
 	}
 
+	//static ConfigurationCollector getInstance() {
+	//	return instance;
+	//}
+	
 	@Override
 	public void start(ApplicationManager appManager) {
 		// TODO Auto-generated method stub

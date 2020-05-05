@@ -7,6 +7,11 @@ import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
 
 public class OGEMAConfigurations {
+	static ConfigurationCollector ccInstance = null;
+	
+	//Not instanceable
+	private OGEMAConfigurations() {};
+	
 	/** Find property
 	 * 
 	 * @param className null for global properties
@@ -94,7 +99,7 @@ public class OGEMAConfigurations {
 	}
 
 	protected static List<OGEMAConfigurationProvider> relevantProviders(String className) {
-		List<OGEMAConfigurationProvider> provs = ConfigurationCollector.instance.providers.get(className);
+		List<OGEMAConfigurationProvider> provs = ccInstance.providers.get(className);
 		if(provs != null) return provs;
 		return Collections.emptyList();
 	}
