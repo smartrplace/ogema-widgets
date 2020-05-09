@@ -48,7 +48,7 @@ public abstract class AppCollection<A extends DisplayableApp> {
 	private final WidgetPage<?> page;
 	
 	public AppCollection(ApplicationManager am, WidgetApp app) {
-		this(am, app, "index.html", true);
+		this(am, app, "index.html", true, false);
 	}
 	
 	/**
@@ -59,6 +59,10 @@ public abstract class AppCollection<A extends DisplayableApp> {
 	 * @param setAsStartPage
 	 */
 	public AppCollection(ApplicationManager am, WidgetApp app, String pageUrl, boolean setAsStartPage) {
+		this(am, app, pageUrl, setAsStartPage, true);
+	}
+	public AppCollection(ApplicationManager am, WidgetApp app, String pageUrl, boolean setAsStartPage,
+			boolean languageSelectionVisible) {
 		this.am = am;
 		this.logger = am.getLogger();
 		logger.info("App collection view available: {}",getClass().getName());
@@ -70,6 +74,7 @@ public abstract class AppCollection<A extends DisplayableApp> {
 		}
 		this.wapp = app;
 		this.page = wapp.createWidgetPage(pageUrl, setAsStartPage);
+		page.getMenuConfiguration().setLanguageSelectionVisible(languageSelectionVisible);
 		new MainPage<A>(page, this);
 	}
 	

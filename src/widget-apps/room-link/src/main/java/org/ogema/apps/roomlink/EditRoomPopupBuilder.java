@@ -60,9 +60,9 @@ import de.iwes.widgets.html.popup.Popup;
 
 public class EditRoomPopupBuilder {
 	
-	static final String emptyValue = DropdownData.EMPTY_OPT_ID;
+	public static final String emptyValue = DropdownData.EMPTY_OPT_ID;
 	
-	static Dropdown addWidgets(final WidgetPage<RoomLinkDictionary> page, Popup editRoomPopup, final Alert alert, DragDropAssign dragNdrop, final ApplicationManager am) {
+	public static Dropdown addWidgets(final WidgetPage<RoomLinkDictionary> page, Popup editRoomPopup, final Alert alert, DragDropAssign dragNdrop, final ApplicationManager am) {
 		PageSnippet editSnippet  = new PageSnippet(page, "editSnippet", true);
 		StaticTable tab = new StaticTable(5, 2, new int[]{5,7});
 //		tab.setContent(0, 0, text).setContent(0, 1, nameField).setContent(0, 2, confirmBtn);
@@ -360,12 +360,14 @@ public class EditRoomPopupBuilder {
 		deleteButton.setDefaultStyles(deleteStyles);
 		editRoomButton.addDefaultStyle(ButtonData.BOOTSTRAP_BLUE);
 		
-		deleteButton.triggerAction(dragNdrop, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		if(dragNdrop != null)
+			deleteButton.triggerAction(dragNdrop, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		deleteButton.triggerAction(editRoomPopup, TriggeringAction.POST_REQUEST, TriggeredAction.HIDE_WIDGET);
 		deleteButton.triggerAction(alert, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		roomSelector.triggerAction(deleteButton, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		
-		editRoomButton.triggerAction(dragNdrop, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		if(dragNdrop != null)
+			editRoomButton.triggerAction(dragNdrop, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		editRoomButton.triggerAction(editRoomPopup, TriggeringAction.POST_REQUEST, TriggeredAction.HIDE_WIDGET);
 		PageSnippet footer = new PageSnippet(page, "editRoomFooter", true);
 		StaticTable footerTable = new StaticTable(1, 3);

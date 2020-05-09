@@ -55,7 +55,7 @@ import de.iwes.widgets.template.DisplayTemplate;
 
 public class NewRoomPopupBuilder {
 	
-	static Button addWidgets(final WidgetPage<RoomLinkDictionary> page, Popup newRoomPopup, final Alert alert, final ApplicationManager am) {
+	public static Button addWidgets(final WidgetPage<RoomLinkDictionary> page, Popup newRoomPopup, final Alert alert, final ApplicationManager am) {
 		PageSnippet bodySnippet  = new PageSnippet(page, "bodySnippet", true);
 		StaticTable tab = new StaticTable(3, 2, new int[]{5,7});
 //		tab.setContent(0, 0, text).setContent(0, 1, nameField).setContent(0, 2, confirmBtn);

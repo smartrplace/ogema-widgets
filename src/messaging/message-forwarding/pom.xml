@@ -8,8 +8,8 @@
     </parent>
     
     <artifactId>message-forwarding</artifactId>
-    <name>Message forwarding</name>
-    <description>Configure the forwarding of OGEMA messages via different messaging services, such as Email, SMS, XMPP, etc.</description>
+    <name>Message Forwarding</name>
+    <description>Configure the forwarding of messages via different services, such as Email, SMS, XMPP, etc.</description>
     <packaging>bundle</packaging>
    
     <properties>

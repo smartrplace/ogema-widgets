@@ -9,7 +9,7 @@
     
     <artifactId>batterystatemonitoring</artifactId>
     <groupId>de.iee.ogema</groupId>
-    <name>BatteryStateMonitoring</name>
+    <name>Battery State Monitoring</name>
     <description>Battery state Monitor</description>
     
     <packaging>bundle</packaging>
