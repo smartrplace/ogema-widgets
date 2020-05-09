@@ -279,8 +279,10 @@ public class RoomsimulationServiceSimulation extends SimulationBase<RoomSimConfi
 			
 		});
 		if((s!=null)&&Boolean.parseBoolean(s)) {
+			addDevicesForRoom(result);
+			
 			/** Here we have to wait until room-simulation is really up*/
-			long delay = Long.getLong("org.ogema.sim.simulationdelay", 5000l);
+			/*long delay = Long.getLong("org.ogema.sim.simulationdelay", 5000l);
 			if(delay < 5000l) delay = 5000l;
 			new CountDownDelayedExecutionTimer(appManager, delay) {
 				
@@ -295,7 +297,7 @@ public class RoomsimulationServiceSimulation extends SimulationBase<RoomSimConfi
 					SubAutoConfigUtil.configureHMDeviceSimulation(result,simulationServiceAdmin, appManager,
 							DoorWindowSensor.class, "Window-Door Sensor simulation _Room Simulation_", null);
 				}
-			};
+			};*/
 			
 			/*long simDelay = Long.getLong("org.ogema.sim.simulationdelay", 5000);
 			new CountDownDelayedExecutionTimer(appManager, simDelay) {
@@ -313,5 +315,25 @@ public class RoomsimulationServiceSimulation extends SimulationBase<RoomSimConfi
 			};*/
 		}
 		return result;
+	}
+	
+	public void addDevicesForRoom(final Room room) {
+		long delay = Long.getLong("org.ogema.sim.simulationdelay", 5000l);
+		if(delay < 5000l) delay = 5000l;
+		new CountDownDelayedExecutionTimer(appManager, delay) {
+			
+			@Override
+			public void delayedExecution() {
+				//SubAutoConfigUtil.configureHMThermostat(result, simulationServiceAdmin, appManager);
+				SubAutoConfigUtil.configureHMDeviceSimulation(room,simulationServiceAdmin, appManager,
+						Thermostat.class, "Thermostat simulation _Room Simulation_", null);
+				SubAutoConfigUtil.configureHMDeviceSimulation(room,simulationServiceAdmin, appManager,
+						SensorDevice.class, "HM TH-Sensor simulation _Room Simulation_",
+						TemperatureSensor.class);
+				SubAutoConfigUtil.configureHMDeviceSimulation(room,simulationServiceAdmin, appManager,
+						DoorWindowSensor.class, "Window-Door Sensor simulation _Room Simulation_", null);
+			}
+		};
+		
 	}
 }

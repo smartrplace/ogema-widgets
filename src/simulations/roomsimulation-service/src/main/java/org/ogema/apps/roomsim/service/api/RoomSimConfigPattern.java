@@ -24,6 +24,7 @@
  */
 package org.ogema.apps.roomsim.service.api;
 
+import org.ogema.apps.roomsim.service.api.util.RoomSimConfigPatternI;
 import org.ogema.core.model.Resource;
 import org.ogema.core.model.simple.FloatResource;
 import org.ogema.core.model.simple.IntegerResource;
@@ -31,7 +32,8 @@ import org.ogema.core.model.units.TemperatureResource;
 import org.ogema.model.locations.Room;
 import org.ogema.tools.simulation.service.apiplus.SimulationPattern;
 
-public class RoomSimConfigPattern extends SimulationPattern<RoomSimConfig> {
+public class RoomSimConfigPattern extends SimulationPattern<RoomSimConfig>
+		implements RoomSimConfigPatternI {
 
 	public Room target = model.target();
 
@@ -45,4 +47,17 @@ public class RoomSimConfigPattern extends SimulationPattern<RoomSimConfig> {
 	public FloatResource simulatedHumidity = model.simulatedHumidity();
 	@Existence(required=CreateMode.OPTIONAL)
 	public IntegerResource personInRoomNonPersistent = model.personInRoomNonPersistent();
+
+	@Override
+	public TemperatureResource simulatedTemperature() {
+		return simulatedTemperature;
+	}
+	@Override
+	public FloatResource simulatedHumidity() {
+		return simulatedHumidity;
+	}
+	@Override
+	public IntegerResource personInRoomNonPersistent() {
+		return personInRoomNonPersistent;
+	}
 }

@@ -27,6 +27,7 @@ package org.ogema.apps.roomsim.service.api;
 import java.util.List;
 import java.util.Set;
 
+import org.ogema.apps.roomsim.service.api.util.SingleRoomSimulationBase;
 import org.ogema.core.model.simple.FloatResource;
 import org.ogema.core.model.units.BrightnessResource;
 import org.ogema.core.model.units.ConcentrationResource;
@@ -40,16 +41,19 @@ import org.ogema.tools.simulation.service.api.model.SimulationConfiguration;
  * @author dnestle
  *
  */
-public interface SingleRoomSimulation {
+public interface SingleRoomSimulation extends SingleRoomSimulationBase {
 	/**Get reference to the relevant resource*/
+	@Override
 	Room getRoom();
 	
 	/**Get configuration resource for the room simulation*/
 	RoomSimConfig getConfigResource();
 	
 	/**Get all room-inside-simulations connected to this SingleRoomSimulation*/
+	@Override
 	List<RoomInsideSimulation<?>> getConnectedSimulations();
 	
+	@Override
 	SimulationConfiguration getConfigurationById(String simulationConfiguration);
 	
 	/** Unregister component. Note that registration of components is done via {@link RoomSimulationService}
@@ -58,63 +62,4 @@ public interface SingleRoomSimulation {
 	 * @return true if the component was found as registered
 	 */
 	boolean unregisterInsideRoomComponent(RoomInsideSimulation<?> component);
-	
-	/**Get (average) room temperature*/
-	TemperatureResource getTemperature();
-	/** 0..1*/
-	FloatResource getRelativeHumidity();
-	/** g H2O total in the room*/
-	float getAbsoluteHumidity();
-	void addThermalEnergy(float joule);
-	/** add vapor to the room as absolute amount in g H2O*/
-	void addHumidity(float gH2O);
-	ConcentrationResource getCO2();
-	void addCO2(float mgCO2);
-	/** average lumen*/
-	BrightnessResource getLight();
-	/** add luminous flux provided by a light source to the room*/
-	void addLight(float lumen);
-	boolean isPersonMoving();
-	void addPersonMoving();
-	/** m3*/
-	float getVolume();
-
-	/** Add person to the room. Note that this information will not be stored persistently by the
-	 * room simulation service
-	 * @param personNum number of people to be added
-	 */
-	void addUnknownPerson(int personNum);
-
-	/** Remove person from the room. Note that this information will not be stored persistently by the
-	 * room simulation service
-	 * @param personNum number of people to be removed
-	 * @return The total number of people cannot be lower than
-	 * the list of known users in the room afterwards. If true the number of people to be removed could
-	 * be performed, if the number of unknown people in the room has to be limited to zero false will be returned
-	 */
-	boolean removeUnknownPerson(int personNum);
-
-	/** Add person to the room. Note that this information will not be stored persistently by the
-	 * @param user to be added. If the user is already in the room the action will have no effect
-	 * @return true if the user was not in the room before
-	 */
-	boolean addPerson(NaturalPerson user);
-
-	/** Remove person from the room. Note that this information will not be stored persistently by the
-	 * @param user to be removed. If the user is not in the room the method will have no effect
-	 * @return true if the user was in the room before
-	 */
-	boolean removePerson(NaturalPerson user);
-
-	/** Get total number of people in the room
-	 * 
-	 * @return including known and unknown people
-	 */
-	int getTotalRoomOccupancy();
-	
-	/** Get known users in the room
-	 * @return list of known users in the room 
-	 */
-	
-	Set<NaturalPerson> getKnownUsersInRoom();
 }

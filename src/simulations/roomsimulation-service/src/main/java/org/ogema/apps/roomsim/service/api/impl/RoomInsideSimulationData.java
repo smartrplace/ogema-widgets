@@ -25,13 +25,14 @@
 package org.ogema.apps.roomsim.service.api.impl;
 
 import org.ogema.apps.roomsim.service.api.RoomInsideSimulation;
+import org.ogema.apps.roomsim.service.api.util.RoomInsideSimulationBase;
 
 /** An instance per external simulation component per room needs to be held*/
 public class RoomInsideSimulationData {
-	public RoomInsideSimulationData(RoomInsideSimulation<?> insideSim) {
+	public RoomInsideSimulationData(RoomInsideSimulationBase insideSim) {
 		this.pattern = insideSim;
 	}
-	public RoomInsideSimulation<?> pattern;
+	public RoomInsideSimulationBase pattern;
 	public long stepTimeMissed = 0;
 
 	//synchronize init, start, step, stop // -> maybe use a lock instead?

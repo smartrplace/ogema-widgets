@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.iwes.sim.roomsimservice.RoomsimulationServiceApp;
+import de.iwes.sim.roomsimservice.device.RoomsimulationServiceSimulation;
 
 public class SubAutoConfigUtil {
 	
@@ -51,7 +52,11 @@ public class SubAutoConfigUtil {
 					break;
 				}
 			}
-			if(found) continue;
+			if(found) {
+				if(roomSimProvider instanceof RoomsimulationServiceSimulation)
+					((RoomsimulationServiceSimulation)roomSimProvider).addDevicesForRoom(room);
+				continue;
+			}
 			roomSimProvider.createSimulatedObject(room.getLocation());
 			logger.debug("CreateSimulatedObject(Room): "+room.getLocation());
 		}
@@ -114,6 +119,10 @@ public class SubAutoConfigUtil {
 				if((subClassRequired != null)&&th.getSubResources(subClassRequired, true).isEmpty()) {
 					continue;
 				}
+				SimulationConfigurationModel mySimConfig = getSimConfigResource(th, appMan.getResourceAccess(),
+						SimulationConfigurationModel.class);
+				if(mySimConfig != null)
+					continue;
 				Resource res = simProvider.createSimulatedObject(th.getLocation());
 				logger.debug("CreateSimulatedObject: "+th.getLocation());
 				if (res != null) {

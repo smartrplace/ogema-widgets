@@ -22,22 +22,18 @@
  *
  * All Rights reserved
  */
-package org.ogema.apps.roomsim.service.api;
+package org.ogema.apps.roomsim.service.api.util;
 
-import org.ogema.apps.roomsim.service.api.util.RoomInsideSimulationBase;
 import org.ogema.core.model.Resource;
-import org.ogema.tools.simulation.service.api.SimulationProvider;
+import org.ogema.core.model.simple.FloatResource;
+import org.ogema.core.model.simple.IntegerResource;
+import org.ogema.core.model.units.TemperatureResource;
+import org.ogema.model.locations.Room;
 import org.ogema.tools.simulation.service.apiplus.SimulationPattern;
 
-public interface RoomInsideSimulation<T extends Resource> extends RoomInsideSimulationBase {
-	/** for provider-less simulations may be null*/
-	public SimulationProvider<T> getProvider();
-	
-	/**Notification from framework that room service simulation is available. This is
-	 * required as the simulation may not have started when the initial connection
-	 * is made*/
-	public boolean simulationAvailable(SingleRoomSimulation singleRoomSimulation);
+public interface RoomSimConfigPatternI {
 
-	public SimulationPattern<?> getSimulationPattern();
-	//public List<SimulationConfiguration> getConfigurations();
+	public TemperatureResource simulatedTemperature();
+	public FloatResource simulatedHumidity();
+	public IntegerResource personInRoomNonPersistent();
 }
