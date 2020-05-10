@@ -90,7 +90,7 @@
 		<ogema.api.version>2.2.2-SNAPSHOT</ogema.api.version>
 		<models.proposed.version>2.1.2</models.proposed.version>
 		<ogema.widgets.version>2.2.2-SNAPSHOT</ogema.widgets.version>
-		<ogema.simulation.version>2.2.1-SNAPSHOT</ogema.simulation.version>
+		<ogema.simulation.version>2.2.2-SNAPSHOT</ogema.simulation.version>
 		<jackson.version>2.7.4</jackson.version>
 		<slf4j.version>1.7.2</slf4j.version>
 		<!-- max versions exclusive -->
