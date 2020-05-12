@@ -25,15 +25,9 @@
 package org.ogema.apps.roomsim.service.api;
 
 import java.util.List;
-import java.util.Set;
 
-import org.ogema.apps.roomsim.service.api.util.SingleRoomSimulationBase;
-import org.ogema.core.model.simple.FloatResource;
-import org.ogema.core.model.units.BrightnessResource;
-import org.ogema.core.model.units.ConcentrationResource;
-import org.ogema.core.model.units.TemperatureResource;
 import org.ogema.model.locations.Room;
-import org.ogema.model.user.NaturalPerson;
+import org.ogema.simulation.shared.api.SingleRoomSimulationBase;
 import org.ogema.tools.simulation.service.api.model.SimulationConfiguration;
 
 /** Interface for a room simulation acting as a base for dependent simulations of devices that are inside

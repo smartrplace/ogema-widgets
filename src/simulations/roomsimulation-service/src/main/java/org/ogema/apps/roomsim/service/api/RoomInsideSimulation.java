@@ -24,8 +24,8 @@
  */
 package org.ogema.apps.roomsim.service.api;
 
-import org.ogema.apps.roomsim.service.api.util.RoomInsideSimulationBase;
 import org.ogema.core.model.Resource;
+import org.ogema.simulation.shared.api.RoomInsideSimulationBase;
 import org.ogema.tools.simulation.service.api.SimulationProvider;
 import org.ogema.tools.simulation.service.apiplus.SimulationPattern;
 

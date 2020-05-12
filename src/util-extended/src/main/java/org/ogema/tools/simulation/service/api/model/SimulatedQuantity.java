@@ -13,18 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Copyright 2009 - 2016
- *
- * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
- *
- * Fraunhofer IWES
- *
- * All Rights reserved
- */
-package org.ogema.apps.roomsim.service.api.util;
+package org.ogema.tools.simulation.service.api.model;
 
-public interface RoomInsideSimulationBase {
-	default public void step(long stepSize) {};
-	public void close();
+import org.ogema.core.model.simple.SingleValueResource;
+
+/**
+ * A quantity simulated by a {@link SimulationProvider}. 
+ * @author cnoelle
+ *
+ */
+public interface SimulatedQuantity extends AnnotatedData {
+
+	/**
+	 * Typically, this should be a reference to the simulated value resource.
+	 */
+	SingleValueResource value();
+
 }

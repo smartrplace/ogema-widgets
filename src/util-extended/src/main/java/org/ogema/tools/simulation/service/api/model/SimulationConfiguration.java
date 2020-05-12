@@ -17,7 +17,6 @@ package org.ogema.tools.simulation.service.api.model;
 
 import java.util.Map;
 
-import org.ogema.tools.simulation.service.api.SimulationProvider;
 
 /**
  * Stores configuration values for a {@link SimulationProvider}.<br>

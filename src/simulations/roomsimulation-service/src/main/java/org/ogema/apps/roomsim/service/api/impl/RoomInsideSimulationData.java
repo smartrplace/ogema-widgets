@@ -25,7 +25,7 @@
 package org.ogema.apps.roomsim.service.api.impl;
 
 import org.ogema.apps.roomsim.service.api.RoomInsideSimulation;
-import org.ogema.apps.roomsim.service.api.util.RoomInsideSimulationBase;
+import org.ogema.simulation.shared.api.RoomInsideSimulationBase;
 
 /** An instance per external simulation component per room needs to be held*/
 public class RoomInsideSimulationData {

@@ -22,7 +22,7 @@
  *
  * All Rights reserved
  */
-package org.ogema.apps.roomsim.service.api.util;
+package org.ogema.simulation.shared.api;
 
 import java.util.List;
 import java.util.Set;

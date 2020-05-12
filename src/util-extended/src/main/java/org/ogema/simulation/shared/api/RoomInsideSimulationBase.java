@@ -13,21 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ogema.tools.simulation.service.api.model;
-
-import org.ogema.core.model.simple.SingleValueResource;
-import org.ogema.tools.simulation.service.api.SimulationProvider;
-
 /**
- * A quantity simulated by a {@link SimulationProvider}. 
- * @author cnoelle
+ * Copyright 2009 - 2016
  *
+ * Fraunhofer-Gesellschaft zur Förderung der angewandten Wissenschaften e.V.
+ *
+ * Fraunhofer IWES
+ *
+ * All Rights reserved
  */
-public interface SimulatedQuantity extends AnnotatedData {
+package org.ogema.simulation.shared.api;
 
-	/**
-	 * Typically, this should be a reference to the simulated value resource.
-	 */
-	SingleValueResource value();
-
+public interface RoomInsideSimulationBase {
+	default public void step(long stepSize) {};
+	public void close();
 }

@@ -40,6 +40,8 @@ import org.ogema.core.model.units.BrightnessResource;
 import org.ogema.core.model.units.ConcentrationResource;
 import org.ogema.core.model.units.TemperatureResource;
 import org.ogema.model.user.NaturalPerson;
+import org.ogema.simulation.shared.api.RoomInsideSimulationBase;
+import org.ogema.simulation.shared.api.SingleRoomSimulationBase;
 import org.ogema.tools.simulation.service.api.model.SimulationConfiguration;
 
 import de.iwes.sim.roomsimservice.logic.HumdityCalculator;
