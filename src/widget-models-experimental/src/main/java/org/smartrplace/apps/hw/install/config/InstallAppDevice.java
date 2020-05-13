@@ -18,10 +18,14 @@ public interface InstallAppDevice extends Data {
 	/** Any additional free text comment from installation*/
 	public StringResource installationComment();
 	
-	/** 0: nothing done / unknown<br>
-	 *  1: device installed physically<br>
-	 * 10: Physical installation done including all on-site tests<br>
-	 * 20: All configuration finished, device is in full operation<br>
+	/** 0: "Unknown": nothing done / unknown<br>
+	 *  1: "SerialNumberRecorded": Teach-in process finished by operation, serial number was copied to the installation spreadsheet<br>
+	 *  3: "PackedForShipping": Confirmation that device was packed into parcel for customer<br>
+	 *  5: "Shipping": Parcel handed over to delivery service or to installation partner bringing the hardware to the customer<br>
+	 *  7: "AtCustomerSite": Delivery confirmed by delivery service, installation partner or customer<br>
+	 * 10: "Installed": device installed physically<br>
+	 * 20: "InstallationTested": Physical installation done including all on-site tests<br>
+	 * 30: "Operational": All configuration finished, device is in full operation<br>
 	 * -10: Error in physical installation and/or testing (more details in comment)<br>
 	 * -20: Error in configuration, device cannot be used/requires action for real usage
 	 * 		(more details in comment)<br>
