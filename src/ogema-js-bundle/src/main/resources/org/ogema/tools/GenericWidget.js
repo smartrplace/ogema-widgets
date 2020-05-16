@@ -457,7 +457,7 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
 	* @param triggeredBy an optional string... the widget that triggered the request 
 	*/
     this.sendPOST = function (deferred, excludedTriggers, excludedGroupTriggers, triggeredBy) {
-        // console.log("sendPOST for " + widgetID);
+        //console.log("sendPOST for " + widgetID);
         if (requestPending && waitForPendingRequest) {
 //        	console.log("Too many requests... ");
         	return;
@@ -506,6 +506,7 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
         var strData = JSON.stringify(prePostData);
         if (typeof ogema.pageInstance === "undefined" || ogema.pageInstance === "") {
         	requestPending=false;
+            console.log("page instance undefined!");
         	return;
         }
         var servletPath = gw.servletPath + ogema.getParameters();
@@ -519,6 +520,7 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
         })
         .done(function (text, textStatus) {
         	var data;
+            //console.log("Finished post for widget " + widgetID);
         	if (typeof text === "object") {
         		data = text;
         	}
@@ -534,12 +536,14 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
         		try {	// currently only works for WidgetPageSimple
         			ogema.widgets.rootWidget.showExpiredMessage();
         		} catch (e) {}
+                //console.log("Is expired!");
         		return;
         	}
         
  //       	if (text.length === 0) text = "{}";
                 // TODO unified treatment of governing and non-governing widgets    
                 if (gw.governingWidget) {
+                    //console.log("Is governing widget");
                     try {
                     	gw.processPOSTResponse(data.onPOSTReply);  
                     } catch (e) {
@@ -549,6 +553,7 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
                         if (ogema.widgets.hasOwnProperty(triggerWidget)) {      	  
                             try {
                                 var widget2 = ogema.widgets[triggerWidget];         //note: widgets is a global variable defined in loadWidgets.js script
+//                              console.log("Dep.widget:",triggerWidget," Value", data[widget2.widgetID][0]);
                                 widget2['handleWidgetGET'].call(widget2, data[widget2.widgetID][0], false);
                             } catch (e) {
                             	console.error("Error triggering subwidget",triggerWidget,e);

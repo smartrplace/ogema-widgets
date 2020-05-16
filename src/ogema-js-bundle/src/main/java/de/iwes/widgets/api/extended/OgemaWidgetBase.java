@@ -957,9 +957,7 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
      *
      * @param other
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
-    @Deprecated
     public void registerDependentWidget(OgemaWidget other) {
     	OgemaWidgetBase<?> widget = (OgemaWidgetBase<?>) other;
     	// TODO group dependency 
@@ -974,7 +972,6 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
         governingWidget = true;
     }
     
-    @Deprecated
     @Override
     public void registerDependentWidget(OgemaWidget other, OgemaHttpRequest req) {
     	OgemaWidgetBase<?> widget = (OgemaWidgetBase<?>) other;
