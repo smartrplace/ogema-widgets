@@ -36,4 +36,10 @@ public interface HardwareInstallConfig extends Data {
 	 * many cases.
 	 */
 	StringResource room();
+
+	/**
+	 * Currently selected filter for device installation.
+	 * See {@room} and {@link InstallationStatusFilterDropdown}.
+	 */
+	StringResource installationStatusFilter();
 }
