@@ -181,6 +181,10 @@ public class GaRoDataType implements GaRoDataTypeI {
 			FloatResource.class);
 	public static final GaRoDataType RSSIPeer = new GaRoDataType("RSSIPeer",
 			FloatResource.class);
+	public static final GaRoDataType FoodAmount = new GaRoDataType("FoodAmount",
+			FloatResource.class);
+	public static final GaRoDataType FreshWater = new GaRoDataType("FreshWater",
+			FloatResource.class);
 
 
 	
@@ -259,6 +263,43 @@ public class GaRoDataType implements GaRoDataTypeI {
 			HumidityMeasurement, MotionDetection, WindowOpen, ChargeSensor,
 			PowerMeter, CompetitionLevel, CompetitionPosition, CompetitionPoints, OutsideTemperatureGw,
 			OutsideTemperatureOverall, Unknown, Any, LowLevel, PreEvaluated, OncePerGateway};
+	
+	public static GaRoDataType[] standardEvalTypes = new GaRoDataType[] {
+			TemperatureMeasurementRoomSensor, TemperatureMeasurementThermostat,
+			TemperatureSetpoint, TemperatureSetpointFeedback, TemperatureSetpointSet, ValvePosition,
+			HumidityMeasurement, MotionDetection, WindowOpen, ChargeSensor,
+			PowerMeter, PowerMeterSubphase, PowerMeterOutlet,
+			PowerMeterEnergy, PowerMeterEnergySubphase,
+			Heatpower, HeatEnergyIntegral, HeatFlow, HeatVolumeIntegral, HeatSupplyTemperatur, HeatReturnTemperatur,
+			SwitchStateFeedback, WaterPHValue, WaterConductivityValue, WaterRedoxValue, WaterOxygenConcentrationValue,
+			WaterTemperatureValue,
+			CO2Concentration, InternetConnection, RSSIDevice, RSSIPeer,
+			ChargeVoltage};
+	
+	
+    public static final GaRoDataTypeParam powerSubPhaseType = new GaRoDataTypeParam(GaRoDataType.PowerMeterSubphase, false);
+    public static final GaRoDataTypeParam powerOutletType = new GaRoDataTypeParam(GaRoDataType.PowerMeterOutlet, false);
+    public static final GaRoDataTypeParam heatPowerType = new GaRoDataTypeParam(GaRoDataType.Heatpower, false);
+    public static final GaRoDataTypeParam heatEnergyType = new GaRoDataTypeParam(GaRoDataType.HeatEnergyIntegral, false);
+    public static final GaRoDataTypeParam heatFlowType = new GaRoDataTypeParam(GaRoDataType.HeatFlow, false);
+    public static final GaRoDataTypeParam heatVolumeType = new GaRoDataTypeParam(GaRoDataType.HeatVolumeIntegral, false);
+    public static final GaRoDataTypeParam heatSupplyTempType = new GaRoDataTypeParam(GaRoDataType.HeatSupplyTemperatur, false);
+    public static final GaRoDataTypeParam heatReturnTempType = new GaRoDataTypeParam(GaRoDataType.HeatReturnTemperatur, false);
+    public static final GaRoDataTypeParam stateFBType = new GaRoDataTypeParam(GaRoDataType.SwitchStateFeedback, false);
+    public static final GaRoDataTypeParam energyType = new GaRoDataTypeParam(GaRoDataType.PowerMeterEnergy, false);
+    public static final GaRoDataTypeParam energySubPhaseType = new GaRoDataTypeParam(GaRoDataType.PowerMeterEnergySubphase, false);
+    public static final GaRoDataTypeParam phValueType = new GaRoDataTypeParam(GaRoDataType.WaterPHValue, false);
+    public static final GaRoDataTypeParam conductivityValueType = new GaRoDataTypeParam(GaRoDataType.WaterConductivityValue, false);
+    public static final GaRoDataTypeParam redoxValueType = new GaRoDataTypeParam(GaRoDataType.WaterRedoxValue, false);
+    public static final GaRoDataTypeParam oxygenValueType = new GaRoDataTypeParam(GaRoDataType.WaterOxygenConcentrationValue, false);
+    public static final GaRoDataTypeParam waterTempValueType = new GaRoDataTypeParam(GaRoDataType.WaterTemperatureValue, false);
+    public static final GaRoDataTypeParam co2concentrationType = new GaRoDataTypeParam(GaRoDataType.CO2Concentration, false);
+    public static final GaRoDataTypeParam internetType = new GaRoDataTypeParam(GaRoDataType.InternetConnection, false);
+    public static final GaRoDataTypeParam rssiDeviceType = new GaRoDataTypeParam(GaRoDataType.RSSIDevice, false);
+    public static final GaRoDataTypeParam rssiPeerType = new GaRoDataTypeParam(GaRoDataType.RSSIPeer, false);
+
+	
+	
 
 	@Override
 	public TypeCardinality typeCardinality() {

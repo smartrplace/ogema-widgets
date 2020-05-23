@@ -65,9 +65,16 @@ import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 import de.iwes.widgets.html.selectiontree.SelectionItem;
 
 public class GaRoEvalHelper {
+	public static interface TypeChecker {
+		boolean selectTimeSeries(String id);
+	}
 	public static class RecIdVal {
 		public GaRoDataType type;
 		public List<String> snippets;
+		/** A type may specify snippets and/or a type checker. The type checker shall return true
+		 * on selectTimeSeries if the String matches the type}
+		 */
+		public TypeChecker typeChecker;
 		public Map<OgemaLocale, String> label;
 		
 		public RecIdVal(GaRoDataType type, String[] snippets, Map<OgemaLocale, String> label) {
@@ -78,6 +85,12 @@ public class GaRoEvalHelper {
 		public RecIdVal(GaRoDataType type, List<String> snippets, Map<OgemaLocale, String> label) {
 			this.type = type;
 			this.snippets = snippets;
+			this.label = label;
+		}		
+		public RecIdVal(GaRoDataType type, TypeChecker typeChecker, Map<OgemaLocale, String> label) {
+			this.type = type;
+			this.snippets = null;
+			this.typeChecker = typeChecker;
 			this.label = label;
 		}		
 	}
@@ -145,7 +158,11 @@ public class GaRoEvalHelper {
 		Object recSnippetsTouse = OGEMAConfigurations.getObject(GaRoDataType.class.getName(), "%recSnippets");
 		if(recSnippetsTouse != null && recSnippetsTouse instanceof Map) {
 			for(Entry<String, RecIdVal> e: ((Map<String, RecIdVal>)recSnippetsTouse).entrySet()) {
-				for(String snpippet: e.getValue().snippets) {
+				if(e.getValue().typeChecker != null) {
+					if(e.getValue().typeChecker.selectTimeSeries(recId))
+						return e.getValue().type;					
+				}
+				if(e.getValue().snippets != null) for(String snpippet: e.getValue().snippets) {
 					if(recId.contains(snpippet))
 						return e.getValue().type;
 				}
