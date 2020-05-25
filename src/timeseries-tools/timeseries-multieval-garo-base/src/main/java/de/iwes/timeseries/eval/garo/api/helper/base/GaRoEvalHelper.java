@@ -120,6 +120,8 @@ public class GaRoEvalHelper {
 				"RSSI Device");
 		addRecId(GaRoDataType.RSSIPeer, new String[] {"/rssiPeer"}, recIdSnippets,
 				"RSSI Peer");
+		addRecId(GaRoDataType.FreshWaterFlow, new String[] {"/VOLUME_FLOW_FRESHWATER"}, recIdSnippets,
+				"Fresh Waster Flow");
 	}
 	public static void addRecId(GaRoDataType type, String[] snippets, Map<String, RecIdVal> recIdSnippets) {
 		Map<OgemaLocale, String> label = new HashMap<OgemaLocale, String>();
@@ -216,7 +218,7 @@ public class GaRoEvalHelper {
 		if(recId.contains("/RETURN_TEMPERATURE_")) return GaRoDataType.HeatReturnTemperatur;
 		
 		if(recId.contains("/pH_Wert_1/sensor/reading")) return GaRoDataType.WaterPHValue;
-		if(recId.contains("/Leitwert_S__1/sensor/reading")) return GaRoDataType.WaterConductivityValue;
+		//if(recId.contains("/Leitwert_S__1/sensor/reading")) return GaRoDataType.WaterConductivityValue;
 		if(recId.contains("/Redox_1/sensor/reading")) return GaRoDataType.WaterRedoxValue;
 		if(recId.contains("/Sauerstoff_1/sensor/reading")) return GaRoDataType.WaterOxygenConcentrationValue;
 		if(recId.contains("/Temperatur_1/sensor/reading")) return GaRoDataType.WaterTemperatureValue;

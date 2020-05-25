@@ -76,7 +76,7 @@ public class ConfigurationCollector implements Application {
 
 			@Override
 			public int compare(OGEMAConfigurationProvider o1, OGEMAConfigurationProvider o2) {
-				return Integer.compare(o2.priority(), o1.priority());
+				return Integer.compare(o1.priority(), o2.priority());
 			}
 		});
     	if(provider.additionalProviders() != null) for(OGEMAConfigurationProvider p: provider.additionalProviders()) {
