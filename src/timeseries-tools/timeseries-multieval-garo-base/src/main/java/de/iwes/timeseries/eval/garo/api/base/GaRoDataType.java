@@ -282,6 +282,7 @@ public class GaRoDataType implements GaRoDataTypeI {
 			Heatpower, HeatEnergyIntegral, HeatFlow, HeatVolumeIntegral, HeatSupplyTemperatur, HeatReturnTemperatur,
 			SwitchStateFeedback, WaterPHValue, WaterConductivityValue, WaterRedoxValue, WaterOxygenConcentrationValue,
 			WaterTemperatureValue,
+			FreshWaterFlow, FreshWaterVolume,
 			CO2Concentration, InternetConnection, RSSIDevice, RSSIPeer,
 			ChargeVoltage};
 	

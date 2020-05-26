@@ -195,15 +195,22 @@ public class StringFormatHelper {
 	}
 	
 	public static <T> String getListToPrint(Collection<T> list, StringProvider<T> strProv) {
+		return getListToPrint(list, strProv, null);
+	}
+	
+	public static <T> String getListToPrint(Collection<T> list, StringProvider<T> strProv, Integer maxEl) {
 		if(list == null) return "";
 		String result = null;
+		int count = 0;
 		for(T s: list) {
 			if(result == null) result = strProv.label(s);
 			else result += ", "+strProv.label(s);
+			if(maxEl != null && (count >= maxEl))
+				break;
 		}
 		return result;
 	}
-	
+
 	public static List<String> getListFromString(String serialized) {
 		List<String> result = new ArrayList<String>();
 		if(serialized == null) return result;
