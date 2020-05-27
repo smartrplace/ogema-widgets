@@ -207,6 +207,7 @@ public class StringFormatHelper {
 			else result += ", "+strProv.label(s);
 			if(maxEl != null && (count >= maxEl))
 				break;
+			count++;
 		}
 		return result;
 	}
