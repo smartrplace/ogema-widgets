@@ -646,6 +646,7 @@ public class ResAdminController {
 	
 	@SuppressWarnings("unchecked")
 	private void writeIfNotYetWrittenResource(Resource res, File parentDir, RefData data, boolean checkPrefix) {
+		try {
 		Resource locRefRes = res.getLocationResource();
 		if(data.refResources.contains(locRefRes)) return;
 		String plusPrefix = "";
@@ -683,6 +684,12 @@ public class ResAdminController {
 		}
 		data.prefix++;
 		data.refResources.add(locRefRes);
+		} catch(OutOfMemoryError e) {
+			String message = "OutOfMemory In Resource:"+res.getLocation();
+			System.out.println(message);
+			log.error(message);
+			throw e;
+		}
 	}
 	
 	/**
