@@ -39,4 +39,10 @@ public interface InstallAppDevice extends Data {
 	 * 1: Please check device (more details in comment)
 	 */
 	//public IntegerResource supportStatus();
+
+	/**
+	 * Device ID unique to local installation.
+	 * Consists of device type prefix and a local serial number, starting with 1.
+	 */
+	public StringResource deviceId();
 }
