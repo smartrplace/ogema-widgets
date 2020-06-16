@@ -122,6 +122,10 @@ public class GaRoEvalHelper {
 				"RSSI Peer");
 		addRecId(GaRoDataType.FreshWaterFlow, new String[] {"/VOLUME_FLOW_FRESHWATER"}, recIdSnippets,
 				"Fresh Waster Flow");
+		addLabel(GaRoDataType.PowerMeterEnergySubphase, "Phase Energy", "Energie pro Phase");
+		addLabel(GaRoDataType.PowerMeterSubphase, "Phase Power", "Phasenleistung");
+		addLabel(GaRoDataType.PowerMeterOutlet, "Plug Power", "Stecker Leistung");
+		addLabel(GaRoDataType.EnergyIntegralOutlet, "Plug Energy", "Stecker Energie");
 	}
 	public static void addRecId(GaRoDataType type, String[] snippets, Map<String, RecIdVal> recIdSnippets) {
 		Map<OgemaLocale, String> label = new HashMap<OgemaLocale, String>();
@@ -140,6 +144,12 @@ public class GaRoEvalHelper {
 		label.put(OgemaLocale.ENGLISH, labelEnglish);
 		label.put(OgemaLocale.GERMAN, labelGerman);
 		addRecId(type.label(null), type, snippets, recIdSnippets, label);
+	}
+	public static void addLabel(GaRoDataType type, String labelEnglish, String labelGerman) {
+		Map<OgemaLocale, String> label = new HashMap<OgemaLocale, String>();
+		label.put(OgemaLocale.ENGLISH, labelEnglish);
+		label.put(OgemaLocale.GERMAN, labelGerman);
+		addRecId(type.label(null), type, new String[] {}, recIdSnippets, label);
 	}
 	public static void addRecId(String id, GaRoDataType type, String[] snippets, Map<String, RecIdVal> recIdSnippets,
 			Map<OgemaLocale, String> label) {
@@ -210,6 +220,7 @@ public class GaRoEvalHelper {
 		if(recId.contains("/frequencySensor/reading")) return GaRoDataType.FrequencySensorOutlet;
 		if(recId.contains("/energySensor/reading")) return GaRoDataType.EnergyIntegralOutlet;
 		if(recId.contains("/stateFeedback")) return GaRoDataType.SwitchStateFeedback; //"onOffSwitch/stateFeedback"
+		if(recId.contains("/stateControl")) return GaRoDataType.SwitchStateControl; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/POWER_")) return GaRoDataType.Heatpower;
 		if(recId.contains("/ENERGY_")) return GaRoDataType.HeatEnergyIntegral;
 		if(recId.contains("/VOLUME_FLOW_")) return GaRoDataType.HeatFlow;

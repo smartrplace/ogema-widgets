@@ -151,6 +151,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 			EnergyResource.class);
 	public static final GaRoDataType SwitchStateFeedback = new GaRoDataType("SwitchStateFeedback",
 			BooleanResource.class);
+	public static final GaRoDataType SwitchStateControl = new GaRoDataType("SwitchStateControl",
+			BooleanResource.class);
 	public static final GaRoDataType Heatpower = new GaRoDataType("Heatpower",
 			PowerResource.class);
 	public static final GaRoDataType HeatEnergyIntegral = new GaRoDataType("HeatEnergyIntegral",
