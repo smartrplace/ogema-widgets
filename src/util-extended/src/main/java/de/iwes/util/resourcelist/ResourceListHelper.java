@@ -24,9 +24,14 @@
  */
 package de.iwes.util.resourcelist;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ogema.core.model.Resource;
 import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.simple.StringResource;
+
+import de.iwes.util.resource.ResourceHelper;
 
 public class ResourceListHelper {
 	
@@ -84,5 +89,36 @@ public class ResourceListHelper {
 		}
 		return name;
 	}
+	
+	public static <T extends Resource> List<T> getAllElementsLocation(ResourceList<T> resList) {
+		List<T> result = new ArrayList<>();
+		for(T r: resList.getAllElements()) {
+			result.add(r.getLocationResource());
+		}
+		return result ;
+	}
 
+	public static <T extends Resource> T addReferenceUnique(ResourceList<T> resList, T object) {
+		if(ResourceHelper.containsLocation(resList.getAllElements(), object))
+			return null;
+		boolean isNew = false;
+		if(!resList.exists()) {
+			isNew = true;
+			resList.create();
+		}
+		T result = resList.add(object);
+		if(isNew)
+			resList.activate(true);
+		return result;
+	}
+	
+	public static <T extends Resource> boolean removeReferenceOrObject(ResourceList<T> resList, T object) {
+		for(T res: resList.getAllElements()) {
+			if(res.equalsLocation(object)) {
+				res.delete();
+				return true;
+			}
+		}
+		return false;
+	}
 }
