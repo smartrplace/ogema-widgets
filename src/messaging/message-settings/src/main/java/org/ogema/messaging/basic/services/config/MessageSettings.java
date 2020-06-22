@@ -69,14 +69,20 @@ public class MessageSettings implements Application {
 		resAcc.addResourceDemand(XmppConfiguration.class, senderPageBuilder.getXmppListener());
 		resAcc.addResourceDemand(ReceiverConfiguration.class, receiverPageBuilder);
 
-		NavigationMenu nm = new NavigationMenu(" Select page");
-		nm.addEntry("Edit senders", senderPage);
-		nm.addEntry("Edit receivers", receiverPage);
-
-		MenuConfiguration mc = receiverPage.getMenuConfiguration();
-		mc.setCustomNavigation(nm);
-		mc = senderPage.getMenuConfiguration();
-		mc.setCustomNavigation(nm);
+		if(!Boolean.getBoolean("org.ogema.messaging.basic.services.config.fixconfigenglish")) {
+			NavigationMenu nm = new NavigationMenu(" Select page");
+			nm.addEntry("Edit senders", senderPage);
+			nm.addEntry("Edit receivers", receiverPage);
+	
+			MenuConfiguration mc = receiverPage.getMenuConfiguration();
+			mc.setCustomNavigation(nm);
+			mc = senderPage.getMenuConfiguration();
+			mc.setCustomNavigation(nm);
+		} else {
+			MenuConfiguration mc = receiverPage.getMenuConfiguration();
+			mc.setLanguageSelectionVisible(false);
+			mc.setNavigationVisible(false); 					
+		}
 	}
 
 	@Override

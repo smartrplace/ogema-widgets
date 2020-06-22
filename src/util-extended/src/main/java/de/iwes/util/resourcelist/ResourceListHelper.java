@@ -90,6 +90,20 @@ public class ResourceListHelper {
 		return name;
 	}
 	
+	public static <T extends Resource> T getOrCreateNamedElement(String elementName, ResourceList<T> list) {
+		for(T el: list.getAllElements()) {
+			StringResource name = el.getSubResource("name", StringResource.class);
+			if(name.exists() && name.getValue().equals(elementName))
+				return el;
+		}
+		T result = list.add();
+		StringResource name = result.getSubResource("name", StringResource.class);
+		name.create();
+		name.setValue(elementName);
+		result.activate(true);
+		return result;
+	}
+
 	public static <T extends Resource> List<T> getAllElementsLocation(ResourceList<T> resList) {
 		List<T> result = new ArrayList<>();
 		for(T r: resList.getAllElements()) {
