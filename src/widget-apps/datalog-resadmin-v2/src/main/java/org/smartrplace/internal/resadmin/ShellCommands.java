@@ -182,12 +182,12 @@ public class ShellCommands {
 		}
 	}
 
-	private void writeFile(Path target, Resource res, int depth, boolean references, boolean schedules) throws FileNotFoundException {
+	private void writeFile(Path target, Resource res, int depth, boolean references, boolean schedules) throws IOException {
 		try (final PrintWriter out = new PrintWriter(target.toFile())) {
 			if (ResAdminController.isJsonFile(target))
-				out.print(controller.appMan.getSerializationManager(depth, references, schedules).toJson(res));
+				controller.appMan.getSerializationManager(depth, references, schedules).writeJson(out, res);
 			else
-				out.print(controller.appMan.getSerializationManager(depth, references, schedules).toXml(res));
+				controller.appMan.getSerializationManager(depth, references, schedules).writeXml(out, res);
 		}
 	}
 	

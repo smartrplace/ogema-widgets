@@ -865,9 +865,9 @@ public class ResAdminController {
 		File ownFile = new File(parentDir, namePrefix+"_"+res.getName()+JSON_EXTENSION1);
 		//System.out.println("File:"+ namePrefix+"_"+res.getName()+JSON_EXTENSION);
 		try (PrintWriter out = new PrintWriter(ownFile, "UTF-8")) {
-			out.print(appMan.getSerializationManager(20, false, true).toJson(res));
-		} catch (FileNotFoundException | UnsupportedEncodingException e) {
-			e.printStackTrace();
+			appMan.getSerializationManager(20, false, true).writeJson(out, res);
+		} catch (IOException e) {
+			log.error("serialization failed for resource {}", res.getPath(), e);
 		}
 	}
 	
@@ -876,9 +876,9 @@ public class ResAdminController {
 		File ownFile = new File(parentDir, namePrefix+"_"+res.getName()+XML_EXTENSION1);
 		//System.out.println("File:"+ namePrefix+"_"+res.getName()+XML_EXTENSION);
 		try (PrintWriter out = new PrintWriter(ownFile, "UTF-8")) {
-			out.print(appMan.getSerializationManager(20, false, true).toXml(res));
-		} catch (FileNotFoundException | UnsupportedEncodingException e) {
-			e.printStackTrace();
+            appMan.getSerializationManager(20, false, true).writeXml(out, res);
+		} catch (IOException e) {
+            log.error("serialization failed for resource {}", res.getPath(), e);
 		}
 	}
 	
