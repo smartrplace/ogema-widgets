@@ -98,6 +98,17 @@ public class GaRoEvalHelper {
 	 */
 	public static final Map<String, RecIdVal> recIdSnippets = new LinkedHashMap<>();
 	static {
+		addRecId(GaRoDataType.OutsideTemperaturePerForcecast, new String[] {"OpenWeatherMapData/temperatureSensor"}, recIdSnippets,
+				"Outside temperature(FC)", "Außentemperature(vorhergesagt)");
+		addRecId(GaRoDataType.OutsideHumidityPerForcecast, new String[] {"OpenWeatherMapData/humiditySensor"}, recIdSnippets,
+				"Outside temperature(FC)", "Außentemperature(vorhergesagt)");
+		addRecId(GaRoDataType.SolarIrradiationPerForcecast, new String[] {"OpenWeatherMapData/solarIrradiationSensor"}, recIdSnippets,
+				"Outside temperature(FC)", "Außentemperature(vorhergesagt)");
+		addRecId(GaRoDataType.WindSpeedPerForcecast, new String[] {"OpenWeatherMapData/windSensor/speed"}, recIdSnippets,
+				"Outside temperature(FC)", "Außentemperature(vorhergesagt)");
+		addRecId(GaRoDataType.WindDirectionPerForcecast, new String[] {"OpenWeatherMapData/windSensor/direction"}, recIdSnippets,
+				"Outside temperature(FC)", "Außentemperature(vorhergesagt)");
+		
 		addRecId(GaRoDataType.ChargeSensor, new String[] {"chargeSensor", "internalVoltage"}, recIdSnippets,
 				"Battery", "Batteriestand");
 		addRecId(GaRoDataType.HumidityMeasurement, new String[] {"HUMIDITY"}, recIdSnippets,

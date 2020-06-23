@@ -27,6 +27,7 @@ package de.iwes.util.resource;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.ogema.core.application.ApplicationManager;
@@ -411,5 +412,13 @@ public class ResourceHelper {
 				return sampleResource;
 			}
 		});
+	}
+	
+	public static <T extends Resource> boolean containsLocation(Collection<T> resList, T object) {
+		for(T res: resList) {
+			if(res.equalsLocation(object))
+				return true;
+		}
+		return false;
 	}
 }

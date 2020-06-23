@@ -781,7 +781,7 @@ GenericWidget.prototype.setStyles = function (styles) {
 	         var elementsArray = styleEl.get();
 	         for (var i=0;i<elementsArray.length;i++) {
 	         	var mmm = elementsArray[i];
-	         	var clList = mmm.classList; // copy array?
+	         	var clList = Array.from(mmm.classList);
 	         	for (var j=0;j<clList.length;j++) {
 	         		// TODO remove nonId classes
 	         		var nnn = clList[j];

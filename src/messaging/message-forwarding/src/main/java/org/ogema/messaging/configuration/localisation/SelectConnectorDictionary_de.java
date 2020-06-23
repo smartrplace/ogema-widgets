@@ -26,11 +26,17 @@ public class SelectConnectorDictionary_de implements SelectConnectorDictionary {
 
 	@Override
 	public String header() {
+		if(Boolean.getBoolean("org.ogema.messaging.basic.services.config.fixconfigenglish"))
+			return "Message forwarding configuration";
 		return "Konfiguration der Nachrichtenübertragung";
 	}
 
 	@Override
 	public String description() {
+		if(Boolean.getBoolean("org.ogema.messaging.basic.services.config.fixconfigenglish"))
+			return "When priority 'LOW' is chosen for a certain service on an app all messages "
+			+ "of this app will be sent via the service; when 'HIGH' is chosen only messages "
+			+ "with highest priority are sent etc."	;
 		return "Auf dieser Seite kannst Du einstellen welche Nachrichten von welchen OGEMA-Apps an "
 				+ "welche Empfänger weitergeleitet werden, z.B. per Email, SMS oder XMPP. Weitere "
 				+ "Nachrichtentypen können über entsprechende Apps nachinstalliert werden. "

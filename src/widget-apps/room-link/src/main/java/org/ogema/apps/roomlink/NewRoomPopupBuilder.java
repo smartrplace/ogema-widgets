@@ -207,6 +207,8 @@ public class NewRoomPopupBuilder {
 
 		@Override
 		public String getLabel(Integer object, OgemaLocale locale) {
+			if(Boolean.getBoolean("org.ogema.messaging.basic.services.config.fixconfigenglish"))
+				locale = OgemaLocale.ENGLISH;
 			return RoomHelper.getRoomTypeString(object, locale);
 		}
 	};

@@ -19,8 +19,10 @@ import org.ogema.core.application.ApplicationManager;
 import org.ogema.core.model.ResourceList;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
 import de.iwes.widgets.api.widgets.LazyWidgetPage;
 import de.iwes.widgets.api.widgets.WidgetPage;
+import de.iwes.widgets.api.widgets.navigation.MenuConfiguration;
 import de.iwes.widgets.messaging.MessageReader;
 import de.iwes.widgets.messaging.model.MessagingApp;
 
@@ -45,6 +47,12 @@ public class SelectConnector implements LazyWidgetPage {
 		final ResourceList<MessagingApp> appList = appMan.getResourceManagement().createResource("messagingApps", ResourceList.class);
 		appList.setElementType(MessagingApp.class);
 		new PageInit((WidgetPage) page, appMan, appList, reader);
+
+		if(Boolean.getBoolean("org.ogema.messaging.basic.services.config.fixconfigenglish")) {
+			MenuConfiguration mc = page.getMenuConfiguration();
+			mc.setLanguageSelectionVisible(false);
+			mc.setNavigationVisible(false); 					
+		}
 	}
 	
 }

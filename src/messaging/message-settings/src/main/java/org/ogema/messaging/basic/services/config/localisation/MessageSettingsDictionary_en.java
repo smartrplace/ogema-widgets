@@ -36,6 +36,9 @@ public class MessageSettingsDictionary_en implements MessageSettingsDictionary {
 
 	@Override
 	public String descriptionReceivers() {
+		if(Boolean.getBoolean("org.ogema.messaging.basic.services.config.fixconfigenglish"))
+			return "For the configuration which applications send mesages to which receiver "+
+				"see <a href=\"" + SELECT_CONNECTOR_LINK + "\"><b>here</b></a>.\n";
 		return "This page allows you to configure receivers for messages sent by OGEMA apps, for the " 
 				+ "three basic messenger services Email, SMS and XMPP. Creating a receiver does yet not imply "
 				+ "that any messages will be forwarded to the respective address, rather there is another "

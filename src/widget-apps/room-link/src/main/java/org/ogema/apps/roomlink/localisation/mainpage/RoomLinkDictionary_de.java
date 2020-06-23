@@ -21,7 +21,8 @@ public class RoomLinkDictionary_de extends RoomLinkDictionary {
 
 	@Override
 	public OgemaLocale getLocale() {
-		return OgemaLocale.GERMAN;
+		//FIXME
+		return OgemaLocale.CHINESE;
 	}
 
 	@Override
