@@ -50,13 +50,20 @@ import de.iwes.sim.roomsimservice.logic.TemperatureCalculator;
 /**An instance per room has to be held. Note: The simulation is only offered for rooms that are configured
  * by a RoomSimConfig*/
 public abstract class SingleRoomSimulationBaseImpl implements SingleRoomSimulationBase {
+	final boolean performDataLogging;
 	
 	public SingleRoomSimulationBaseImpl(Resource roomOrEnclosingResource,
 			RoomSimConfigPatternI configPattern, OgemaLogger logger) {
+		this(roomOrEnclosingResource, configPattern, logger, true);
+	}
+	public SingleRoomSimulationBaseImpl(Resource roomOrEnclosingResource,
+			RoomSimConfigPatternI configPattern, OgemaLogger logger,
+			boolean performDataLogging) {
 		//this.roomPattern = roomPattern;
 		this.roomOrEnclosingResource = roomOrEnclosingResource;
 		this.configPattern = configPattern;
 		this.logger = logger;
+		this.performDataLogging = performDataLogging;
 		
 		calc = new HumdityCalculator(configPattern.simulatedHumidity().getValue(),
 				configPattern.simulatedTemperature().getKelvin());
@@ -109,10 +116,11 @@ public abstract class SingleRoomSimulationBaseImpl implements SingleRoomSimulati
 	}
 
 	private float getNewTemperatureValue(long currentTime, long lastUpdateTime) {
-		AbsoluteSchedule logDataTemp = configPattern.simulatedTemperature().historicalData();
-		logDataTemp.create().activate(false);
-//		List<SampledValue> tempValues = logDataTemp.getValues(currentTime - GlobalConfigurations.RADIATOR_HYSTERESIS);
-
+		//if(performDataLogging) {
+		//	AbsoluteSchedule logDataTemp = configPattern.simulatedTemperature().historicalData();
+		//	logDataTemp.create().activate(false);
+//		// List<SampledValue> tempValues = logDataTemp.getValues(currentTime - GlobalConfigurations.RADIATOR_HYSTERESIS);
+		//}
 		float roomSize = 40; // m^3 // TODO parameter // 3*5*2.6m^3 
 		float wallSize = 8; // m^2 // TODO parameter
 		float outsideTemperature = 10; // TODO parameter
@@ -120,7 +128,11 @@ public abstract class SingleRoomSimulationBaseImpl implements SingleRoomSimulati
 		float newValue = TemperatureCalculator.getInstance().getNewValue(roomSize, wallSize, configPattern.simulatedTemperature().getCelsius(), outsideTemperature ,
 				currentTime, lastUpdateTime, null);
 		
-		logDataTemp.addValue(currentTime, new FloatValue(configPattern.simulatedTemperature().getValue()));
+		if(performDataLogging) {
+			AbsoluteSchedule logDataTemp = configPattern.simulatedTemperature().historicalData();
+			logDataTemp.create().activate(false);
+			logDataTemp.addValue(currentTime, new FloatValue(configPattern.simulatedTemperature().getValue()));
+		}
 		return newValue;
 	}
 	

@@ -23,7 +23,7 @@ import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
 public class Alert extends OgemaWidgetBase<AlertData> {
 
 	private static final long serialVersionUID = 1L;
-	private final String defaultText;
+	private String defaultText;
 	private boolean defaultTextAsHtml;
 	private boolean defaultAllowDismiss = false;
 	
@@ -71,6 +71,11 @@ public class Alert extends OgemaWidgetBase<AlertData> {
 		this.defaultTextAsHtml = html;
 	}
 
+    public void setDefaultText(String text) {
+    	this.defaultText = text;
+    }
+
+    	
     public void setText(String text,OgemaHttpRequest req) {
     	getData(req).setText(text);
     }

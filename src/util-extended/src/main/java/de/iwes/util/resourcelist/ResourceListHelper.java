@@ -90,6 +90,16 @@ public class ResourceListHelper {
 		return name;
 	}
 	
+	public static <T extends Resource> boolean hasNamedElement(String elementName, ResourceList<T> list) {
+		for(T el: list.getAllElements()) {
+			StringResource name = el.getSubResource("name", StringResource.class);
+			if(name.exists() && name.getValue().equals(elementName))
+				return true;
+		}
+		return false;
+	}
+	
+	
 	public static <T extends Resource> T getOrCreateNamedElement(String elementName, ResourceList<T> list) {
 		for(T el: list.getAllElements()) {
 			StringResource name = el.getSubResource("name", StringResource.class);
