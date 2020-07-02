@@ -181,7 +181,7 @@ public class StringFormatHelper {
 	}
 
 	public static String getListToPrint(Collection<String> list) {
-		if(list == null) return "";
+		if(list == null || list.isEmpty()) return "";
 		String result = null;
 		for(String s: list) {
 			if(result == null) result = s;
