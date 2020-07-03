@@ -1,6 +1,7 @@
 package org.smartrplace.external.accessadmin.config;
 
 import org.ogema.core.model.ResourceList;
+import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.model.locations.BuildingPropertyUnit;
 import org.ogema.model.prototypes.Configuration;
 
@@ -19,4 +20,5 @@ public interface AccessAdminConfig extends Configuration {
 	
 	AccessConfigBase userStatusPermission();
 	AccessConfigBase userStatusPermissionWorkingCopy();
+	BooleanResource userStatusPermissionChanged();
 }
