@@ -299,7 +299,7 @@ ogema.menuIdentifierFirstCallThrownAway = false;
 	        url: "/ogema/widget/apps?action=logout&user=" + otusr + "&pw=" + otpwd,
 	        dataType: "html"
 	    }).then(function(response) {
-	    	window.location.href = "/roomcontrol/index.html";
+			window.location.href = response;
 	    });
 	}
 })();
