@@ -42,6 +42,7 @@ import org.ogema.core.model.units.TemperatureResource;
 import org.ogema.model.user.NaturalPerson;
 import org.ogema.simulation.shared.api.RoomInsideSimulationBase;
 import org.ogema.simulation.shared.api.SingleRoomSimulationBase;
+import org.ogema.tools.resource.util.ResourceUtils;
 import org.ogema.tools.simulation.service.api.model.SimulationConfiguration;
 
 import de.iwes.sim.roomsimservice.logic.HumdityCalculator;
@@ -51,6 +52,7 @@ import de.iwes.sim.roomsimservice.logic.TemperatureCalculator;
  * by a RoomSimConfig*/
 public abstract class SingleRoomSimulationBaseImpl implements SingleRoomSimulationBase {
 	final boolean performDataLogging;
+	final TemperatureCalculator tempCalculator;
 	
 	public SingleRoomSimulationBaseImpl(Resource roomOrEnclosingResource,
 			RoomSimConfigPatternI configPattern, OgemaLogger logger) {
@@ -64,6 +66,7 @@ public abstract class SingleRoomSimulationBaseImpl implements SingleRoomSimulati
 		this.configPattern = configPattern;
 		this.logger = logger;
 		this.performDataLogging = performDataLogging;
+		tempCalculator = new TemperatureCalculator();
 		
 		calc = new HumdityCalculator(configPattern.simulatedHumidity().getValue(),
 				configPattern.simulatedTemperature().getKelvin());
@@ -125,7 +128,10 @@ public abstract class SingleRoomSimulationBaseImpl implements SingleRoomSimulati
 		float wallSize = 8; // m^2 // TODO parameter
 		float outsideTemperature = 10; // TODO parameter
 		
-		float newValue = TemperatureCalculator.getInstance().getNewValue(roomSize, wallSize, configPattern.simulatedTemperature().getCelsius(), outsideTemperature ,
+if(ResourceUtils.getHumanReadableShortName(roomOrEnclosingResource).startsWith("Besprechungsraum")) {
+	roomSize = 39;
+}
+		float newValue = tempCalculator.getNewValue(roomSize, wallSize, configPattern.simulatedTemperature().getCelsius(), outsideTemperature ,
 				currentTime, lastUpdateTime, null);
 		
 		if(performDataLogging) {
@@ -190,7 +196,7 @@ public abstract class SingleRoomSimulationBaseImpl implements SingleRoomSimulati
 	public void addThermalEnergy(float joule) {
 		if(Float.isNaN(joule)) return;
 		if(Float.isInfinite(joule)) return;
-		TemperatureCalculator.getInstance().addEnergy(joule);
+		tempCalculator.addEnergy(joule);
 	}
 
 	@Override

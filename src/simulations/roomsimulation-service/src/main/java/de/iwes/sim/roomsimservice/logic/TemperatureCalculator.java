@@ -35,21 +35,21 @@ import org.slf4j.LoggerFactory;
 
 public class TemperatureCalculator {
 
-	private static TemperatureCalculator instance = null;
+	//private static TemperatureCalculator instance = null;
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	/** Energy added by various sources in the last step*/
 	private float energyToAdd = 0;
 	
-	private TemperatureCalculator() {
-	}
+	//private TemperatureCalculator() {
+	//}
 	
-	public static TemperatureCalculator getInstance() {
-		if (instance == null) {
-			instance = new TemperatureCalculator();
-		}
-		return instance;
-	}
+	//public static TemperatureCalculator getInstance() {
+	//	if (instance == null) {
+	//		instance = new TemperatureCalculator();
+	//	}
+	//	return instance;
+	//}
 	
 	/**
 	 * calculate new temperature value, depending on recent radiator heat flow, outside temperature, room size, ...
@@ -92,7 +92,9 @@ public class TemperatureCalculator {
 		float theta  = 1000; // theta in J/K/m^3  // approximately valid at 20°C
 		float kelvinAdded =  energySum / theta / roomSize ;
 		float newValue = currentTemperature + kelvinAdded;
-		
+if(roomSize == 39) {
+	System.out.println("Energy Added:"+energyAdded+"  Loss:"+energyLoss+"  kelvinAdded:"+kelvinAdded);
+}
 		if (kelvinAdded < 0 && newValue < outsideTemperature) {	// should not happen, but could be the case if updateInterval is chosen to big
 			newValue = outsideTemperature;   
 		}
