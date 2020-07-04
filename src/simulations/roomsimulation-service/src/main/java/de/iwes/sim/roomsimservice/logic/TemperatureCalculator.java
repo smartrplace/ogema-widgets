@@ -96,10 +96,11 @@ public class TemperatureCalculator {
 		if (kelvinAdded < 0 && newValue < outsideTemperature) {	// should not happen, but could be the case if updateInterval is chosen to big
 			newValue = outsideTemperature;   
 		}
-		if(newValue < 280.15f)
-			newValue = 280.15f;
-		else if(newValue > 313.15f)
-			newValue = 313.15f;
+		if(newValue < 7f)
+			newValue = 7f;
+		else if(newValue > 40f) {
+			newValue = 40f;
+		}
 		//logger.debug("  Calculated new temperature value. time diff "  + (currentTime - lastUpdateTime)/1000 + "s, current temp : " + currentTemperature + ", outsideTemp: " + outsideTemperature + 
 		//		", radiator energy input: " + energyAdded + ", energy loss: " + energyLoss + ", Kelvins added: " + kelvinAdded );
 		return newValue; 
