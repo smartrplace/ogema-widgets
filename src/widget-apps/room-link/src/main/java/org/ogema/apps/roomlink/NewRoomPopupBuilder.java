@@ -55,7 +55,8 @@ import de.iwes.widgets.template.DisplayTemplate;
 
 public class NewRoomPopupBuilder {
 	
-	public static Button addWidgets(final WidgetPage<RoomLinkDictionary> page, Popup newRoomPopup, final Alert alert, final ApplicationManager am) {
+	public static Button addWidgets(final WidgetPage<RoomLinkDictionary> page, Popup newRoomPopup, final Alert alert, final ApplicationManager am,
+			boolean addType) {
 		PageSnippet bodySnippet  = new PageSnippet(page, "bodySnippet", true);
 		StaticTable tab = new StaticTable(3, 2, new int[]{5,7});
 //		tab.setContent(0, 0, text).setContent(0, 1, nameField).setContent(0, 2, confirmBtn);
@@ -79,7 +80,15 @@ public class NewRoomPopupBuilder {
 			}
 		};
 		tab.setContent(0, 1, newRoomName);
-		
+				
+		if(addType) {
+			return finishAddWidgetsWithType(page, newRoomPopup, alert, am, newRoomName, newRoomNameLabel, tab, bodySnippet);
+		} else {
+			return finishAddWidgetsWithoutType(page, newRoomPopup, alert, am, newRoomName, newRoomNameLabel, tab, bodySnippet);
+		}
+	}
+	public static Button finishAddWidgetsWithType(final WidgetPage<RoomLinkDictionary> page, Popup newRoomPopup, final Alert alert, final ApplicationManager am,
+			final TextField newRoomName, Label newRoomNameLabel, StaticTable tab, PageSnippet bodySnippet) {
 		Label newRoomTypeLabel = new Label(page, "newRoomTypeLabel", "Type") {
 
 			private static final long serialVersionUID = 1L;
@@ -90,7 +99,7 @@ public class NewRoomPopupBuilder {
 			}
 			
 		};
-		
+
 		int[] ks = RoomHelper.getRoomTypeKeys();
 		final List<Integer> keys = new ArrayList<>();
 		for (int k: ks)
@@ -193,6 +202,55 @@ public class NewRoomPopupBuilder {
 			}
 		};
 		createRoomButton.triggerAction(createRoomGroup, TriggeringAction.PRE_POST_REQUEST, TriggeredAction.POST_REQUEST);
+		createRoomButton.triggerAction(alert, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		newRoomPopup.setFooter(createRoomButton, null);
+		return createRoomButton;
+	}
+	
+	public static Button finishAddWidgetsWithoutType(final WidgetPage<RoomLinkDictionary> page, Popup newRoomPopup, final Alert alert, final ApplicationManager am,
+			final TextField newRoomName, Label newRoomNameLabel, StaticTable tab, PageSnippet bodySnippet) {
+		newRoomPopup.setBody(bodySnippet, null);		
+		Button createRoomButton = new Button(page, "createRoomButton") {
+			
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onGET(OgemaHttpRequest req) {
+				setText(page.getDictionary(req.getLocaleString()).createRoomButton(), req);
+			}
+			
+			@Override
+			public void onPrePOST(String data, OgemaHttpRequest req) {
+				//newRoomFile.removeListener(listener, req);
+			}
+			
+			@Override
+			public void onPOSTComplete(String data, OgemaHttpRequest req) {
+				String name = newRoomName.getValue(req);
+				RoomLinkDictionary dict = page.getDictionary(req.getLocaleString());
+				alert.setWidgetVisibility(true, req);
+				alert.autoDismiss(6000, req);
+				if (name == null || name.isEmpty()) {
+					alert.setText(dict.alertEnterName(), req);
+					alert.setStyle(AlertData.BOOTSTRAP_DANGER, req);
+					return;
+				}
+				if (RoomLinkUtils.isNameInUse(name, am.getResourceAccess())) {
+					alert.setText(dict.roomNameInUse(name), req);
+					alert.setStyle(AlertData.BOOTSTRAP_DANGER, req);
+					return;
+				}
+				Room room = createRoom(name, 0, am);
+				//newRoomFile.registerListener(listener, room, req); // -> as soon as file upload is complete, the file subresource will be set
+				
+				alert.setText(dict.newRoomCreated(name), req);
+				alert.setStyle(AlertData.BOOTSTRAP_SUCCESS, req);
+				try {
+					Thread.sleep(1000);	// hope that FileUpload will be complete by then, so new image is shown immediately
+				} catch (InterruptedException e) {}
+			}
+		};
+		//createRoomButton.triggerAction(createRoomGroup, TriggeringAction.PRE_POST_REQUEST, TriggeredAction.POST_REQUEST);
 		createRoomButton.triggerAction(alert, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		newRoomPopup.setFooter(createRoomButton, null);
 		return createRoomButton;
