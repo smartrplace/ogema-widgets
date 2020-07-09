@@ -128,9 +128,6 @@ public abstract class SingleRoomSimulationBaseImpl implements SingleRoomSimulati
 		float wallSize = 8; // m^2 // TODO parameter
 		float outsideTemperature = 10; // TODO parameter
 		
-if(ResourceUtils.getHumanReadableShortName(roomOrEnclosingResource).startsWith("Besprechungsraum")) {
-	roomSize = 39;
-}
 		float newValue = tempCalculator.getNewValue(roomSize, wallSize, configPattern.simulatedTemperature().getCelsius(), outsideTemperature ,
 				currentTime, lastUpdateTime, null);
 		

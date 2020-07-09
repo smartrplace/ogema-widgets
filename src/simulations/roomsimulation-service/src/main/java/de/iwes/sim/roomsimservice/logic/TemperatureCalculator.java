@@ -92,9 +92,6 @@ public class TemperatureCalculator {
 		float theta  = 1000; // theta in J/K/m^3  // approximately valid at 20°C
 		float kelvinAdded =  energySum / theta / roomSize ;
 		float newValue = currentTemperature + kelvinAdded;
-if(roomSize == 39) {
-	System.out.println("Energy Added:"+energyAdded+"  Loss:"+energyLoss+"  kelvinAdded:"+kelvinAdded);
-}
 		if (kelvinAdded < 0 && newValue < outsideTemperature) {	// should not happen, but could be the case if updateInterval is chosen to big
 			newValue = outsideTemperature;   
 		}

@@ -140,6 +140,11 @@ public class StringFormatHelper {
 		DateFormat formatter = new SimpleDateFormat("dd.MM.YYYY HH:mm:ss:SSS");
 		return formatter.format(millisUTCSinceEpoc);
 	}
+	public static String getTimeDateInLocalTimeZone(long millisUTCSinceEpoc) {
+		//Date date = new Date(millisUTCSinceEpoc-100);
+		DateFormat formatter = new SimpleDateFormat("dd.MM.YYYY HH:mm:ss");
+		return formatter.format(millisUTCSinceEpoc);
+	}
 	/**Get string date representation for an absolute time value.
 	 * See {@link TimeUtils} for more flexible methods
 	 * to get absolute time values as Strings.
