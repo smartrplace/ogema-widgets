@@ -46,7 +46,7 @@ import de.iwes.widgets.messaging.model.MessagingService;
 import de.iwes.widgets.messaging.model.UserConfig;
 import de.iwes.widgets.template.PageSnippetTemplate;
 
-class PageInit {
+public class PageInit {
 
 	private final WidgetPage<?> page;
 	private final Header header;
