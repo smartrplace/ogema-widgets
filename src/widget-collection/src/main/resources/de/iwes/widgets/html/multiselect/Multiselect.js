@@ -49,7 +49,7 @@ Multiselect.prototype.update = function (data) {
 //    	chosenObj = this.dropdownOptions.chosen({width:"100%;"}); -> 100% means it will expand indefinitely in horizontal direction
     	chosenObj = this.dropdownOptions.chosen();
     	var el  = this.dropdown.find(".chosen-container");
-    	if (el.width() === 0) { // happens if element is originally hidden
+    	if (el.width() < 20) { // happens if element is originally hidden
     		el.width(200); // TODO would be better to adjust width to surrounding element; not so easy...
     	}
     }
