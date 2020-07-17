@@ -19,6 +19,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -27,6 +28,7 @@ import java.util.function.Consumer;
 import java.util.Objects;
 
 import org.ogema.core.application.AppID;
+import org.ogema.core.application.Application;
 import org.ogema.core.application.ApplicationManager;
 import org.ogema.core.logging.OgemaLogger;
 import org.ogema.core.security.WebAccessManager;
@@ -404,6 +406,30 @@ public class WidgetAppImpl implements WidgetApp {
 		});
 	}
 
+	@Override
+	public boolean addStylesheet(String stylesheetName, Class<? extends Application> app) {
+		
+		if (app != null && app.getResource("/" + stylesheetName) == null) {
+			log.warn("Stylesheet {} not found.", stylesheetName);
+			return false;
+		}
+		
+		String stylesheetUrl = this.appUrl().replaceAll("/$", "") + "/" + stylesheetName;
+		wam.registerWebResource(stylesheetUrl, stylesheetName);
+		HtmlLibrary style = new HtmlLibrary(HtmlLibrary.LibType.CSS, stylesheetName, stylesheetUrl);
+		Collection<WidgetPage<?>> pages = this.getPages().values();
+		for (WidgetPage<?> p : pages) {
+			if (p instanceof ServletBasedWidgetPage<?>) {
+				ServletBasedWidgetPage<?> pb = (ServletBasedWidgetPage<?>) p;
+				pb.registerLibrary(style);
+			} else {
+				String tag = "<link rel=\"stylesheet\" href=\""+ stylesheetUrl + "\">";
+				p.append(tag);
+			}
+		}
+		
+		return true;
+	}
 
 /*	public WidgetPage<?> createPage() {
 		return createPage("index.html");
