@@ -17,6 +17,7 @@ package org.smartrplace.apps.hw.install.config;
 
 import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.simple.BooleanResource;
+import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.model.prototypes.Data;
 
@@ -29,6 +30,17 @@ public interface HardwareInstallConfig extends Data {
 	
 	/** If true then listeners are active. If false then listeners are not active for performance reasons*/
 	BooleanResource isInstallationActive();
+	
+	/** 0: do not activate logging automatically
+	 *  1: activate logging for all datapoints of new devices
+	 *  2: activate all logging configured for all devices found on each startup: Means that for existing devices
+	 *  	logging is checked for all datapoints and that datapoints that have been added for existing devices via
+	 *  	software updates are also activated. 
+	 * @return
+	 */
+	IntegerResource autoLoggingActivation();
+	/** If true for all data logged also data transfer is activated*/
+	BooleanResource autoTransferActivation();
 	
 	/** Indication of the room selected that shall be displayed or special String indicating that
 	 * devices from all rooms shall be displayed. See {@link RoomSelectorDropdown} for details. Note that
