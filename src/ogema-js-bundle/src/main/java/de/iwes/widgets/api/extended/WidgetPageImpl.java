@@ -193,7 +193,7 @@ public class WidgetPageImpl<S extends LocaleDictionary> extends WidgetPageBase<S
 	
 	@Override
 	public void registerLibrary(HtmlLibrary lib) {
-		if (lib.getType() == LibType.CSS) return; // FIXME CSS not yet supported... how to avoid loading it twice?
+		// if (lib.getType() == LibType.CSS) return; // FIXME CSS not yet supported... how to avoid loading it twice?
 		if (DEBUG || !PRELOADED_WIDGET_SCRIPTS.containsKey(lib.getIdentifier()))
 			externalLibs.add(lib);
 	}

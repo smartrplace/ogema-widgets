@@ -18,6 +18,8 @@ package de.iwes.widgets.api.widgets;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import org.ogema.core.application.Application;
+
 import de.iwes.widgets.api.widgets.localisation.LocaleDictionary;
 
 /**
@@ -101,6 +103,17 @@ public interface WidgetApp {
 	 */
 	public <D extends LocaleDictionary> void createLazyPage(String relativUrl, Consumer<WidgetPage<D>> callback, @SuppressWarnings("rawtypes") Class<? extends WidgetPage> pageType, boolean asStartPage);
 
+	/**
+	 * Add a CSS stylesheet to all pages of the WidgetApp.
+	 * @param stylesheetName
+	 * 		File name of the stylesheet within the `resources` directory.
+	 * @param app
+	 * 		May be null, in which case no check for the file's existence is run,
+	 * 		resulting in 404s if the `styleSheet` file doesn't exist.
+	 * @return
+	 * 		True iff the stylesheet was successfully applied.
+	 */
+	public default boolean addStylesheet(String stylesheetName, Class<? extends Application> app) { return false; }
 	
 	/**
 	 * Get the pages registered for this widget app. 
