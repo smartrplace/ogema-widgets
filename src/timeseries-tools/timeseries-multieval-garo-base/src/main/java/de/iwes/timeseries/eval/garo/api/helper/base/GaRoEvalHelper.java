@@ -109,8 +109,10 @@ public class GaRoEvalHelper {
 		addRecId(GaRoDataType.WindDirectionPerForcecast, new String[] {"OpenWeatherMapData/windSensor/direction"}, recIdSnippets,
 				"Outside temperature(FC)", "Außentemperature(vorhergesagt)");
 		
-		addRecId(GaRoDataType.ChargeSensor, new String[] {"chargeSensor", "internalVoltage"}, recIdSnippets,
-				"Battery", "Batteriestand");
+		addRecId(GaRoDataType.ChargeVoltage, new String[] {"chargeSensor", "internalVoltage"}, recIdSnippets,
+				"Battery Voltage", "Batteriespannung");
+		addRecId(GaRoDataType.ChargeSensor, new String[] {"batteryLow"}, recIdSnippets,
+				"Battery Status", "Batterie Status");
 		addRecId(GaRoDataType.HumidityMeasurement, new String[] {"HUMIDITY"}, recIdSnippets,
 				"Humidity", "Luftfeuchtigkeit");
 		addRecId(GaRoDataType.WindowOpen, new String[] {"SHUTTER_CONTACT"}, recIdSnippets,
@@ -225,7 +227,8 @@ public class GaRoEvalHelper {
 		if(recId.contains("competitionPosition")) return GaRoDataType.CompetitionPosition;
 		if(recId.contains("Points")) return GaRoDataType.CompetitionPoints;
 		
-		if(recId.contains("/powerSensor/reading")) return GaRoDataType.PowerMeterOutlet;
+		if(recId.contains("/powerSensor/reading")) return GaRoDataType.ReactivePowerMeterOutlet;
+		if(recId.contains("/reactivePowerSensor/reading")) return GaRoDataType.PowerMeterOutlet;
 		if(recId.contains("/currentSensor/reading")) return GaRoDataType.CurrentSensorOutlet;
 		if(recId.contains("/voltageSensor/reading")) return GaRoDataType.VoltageSensorOutlet;
 		if(recId.contains("/frequencySensor/reading")) return GaRoDataType.FrequencySensorOutlet;
@@ -246,11 +249,12 @@ public class GaRoEvalHelper {
 		if(recId.contains("/Temperatur_1/sensor/reading")) return GaRoDataType.WaterTemperatureValue;
 		if(recId.contains("/USER_DEFINED_0_0")) return GaRoDataType.CO2Concentration;
 		//if(recId.contains("NetworkState/mainNetworkOk")) return GaRoDataType.InternetConnection;
+		if(recId.contains("/communicationStatus/communicationDisturbed")) return GaRoDataType.CommunicationDisturbed;
 		
 		for(GaRoDataType type: GaRoDataType.standardTypes) {
     		if(type.label(null).equals(recId)) return type;
     	}
-		
+		if(recId.contains("$$")) return GaRoDataType.Internal;
 		return GaRoDataType.Unknown;
 	}
 	

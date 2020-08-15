@@ -141,6 +141,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 			VoltageResource.class);
 	public static final GaRoDataType PowerMeterOutlet = new GaRoDataType("PowerMeterOutlet",
 			PowerResource.class);
+	public static final GaRoDataType ReactivePowerMeterOutlet = new GaRoDataType("ReactivePowerMeterOutlet",
+			PowerResource.class);
 	public static final GaRoDataType CurrentSensorOutlet = new GaRoDataType("CurrentSensorOutlet",
 			ElectricCurrentResource.class);
 	public static final GaRoDataType VoltageSensorOutlet = new GaRoDataType("VoltageSensorOutlet",
@@ -183,6 +185,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 			FloatResource.class);
 	public static final GaRoDataType RSSIPeer = new GaRoDataType("RSSIPeer",
 			FloatResource.class);
+	public static final GaRoDataType CommunicationDisturbed = new GaRoDataType("CommunicationDisturbed",
+			BooleanResource.class);
 	/** Food amount added at a certain time*/
 	public static final GaRoDataType FoodAmount = new GaRoDataType("FoodAmount",
 			FloatResource.class);
@@ -284,6 +288,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 	};
 	
 	//The following options are not linked to a specific GaRo level
+	public static final GaRoDataType Internal = new GaRoDataType("Internal",
+			SingleValueResource.class);
 	public static final GaRoDataType Unknown = new GaRoDataType("Unknown",
 			SingleValueResource.class);
 	public static final GaRoDataType Any = new GaRoDataType("Any",
@@ -306,14 +312,14 @@ public class GaRoDataType implements GaRoDataTypeI {
 	public static GaRoDataType[] standardTypes = new GaRoDataType[] {
 			TemperatureMeasurementRoomSensor, TemperatureMeasurementThermostat,
 			TemperatureSetpoint, TemperatureSetpointFeedback, TemperatureSetpointSet, ValvePosition,
-			HumidityMeasurement, MotionDetection, WindowOpen, ChargeSensor,
+			HumidityMeasurement, MotionDetection, WindowOpen, ChargeSensor, ChargeVoltage,
 			PowerMeter, CompetitionLevel, CompetitionPosition, CompetitionPoints, OutsideTemperatureGw,
 			OutsideTemperatureOverall, Unknown, Any, LowLevel, PreEvaluated, OncePerGateway};
 	
 	public static GaRoDataType[] standardEvalTypes = new GaRoDataType[] {
 			TemperatureMeasurementRoomSensor, TemperatureMeasurementThermostat,
 			TemperatureSetpoint, TemperatureSetpointFeedback, TemperatureSetpointSet, ValvePosition,
-			HumidityMeasurement, MotionDetection, WindowOpen, ChargeSensor,
+			HumidityMeasurement, MotionDetection, WindowOpen, ChargeSensor, ChargeVoltage,
 			PowerMeter, PowerMeterSubphase, PowerMeterOutlet,
 			PowerMeterEnergy, PowerMeterEnergySubphase,
 			Heatpower, HeatEnergyIntegral, HeatFlow, HeatVolumeIntegral, HeatSupplyTemperatur, HeatReturnTemperatur,
