@@ -6,6 +6,24 @@ ogema.menuIdentifier = {}; // only indicates that the script has been loaded
 * FIX ME : Library ddslick calls onSelected on startup
 */
 ogema.menuIdentifierFirstCallThrownAway = false;
+
+// keep a list of active ajax requests so we can abort them on logout.
+var xhrPool = [];
+$(document).ajaxSend(function (e, jqXHR, options) {
+    xhrPool.push(jqXHR);
+});
+$(document).ajaxComplete(function (e, jqXHR, options) {
+    xhrPool = $.grep(xhrPool, function (x) {
+        return x !== jqXHR;
+    });
+    // console.log("open ajax requests " + xhrPool.length);
+});
+var abortAjax = function () {
+    $.each(xhrPool, function (idx, jqXHR) {
+        jqXHR.abort();
+    });
+};
+
 (function() {  // anonymous function hides variables
 	var messagesTitle = "Messages";
 	var setMenuLanguage = function() {
@@ -293,13 +311,12 @@ ogema.menuIdentifierFirstCallThrownAway = false;
 		}
 	}
 	ogema.logout = function() {
-		// FIXME can this be replaced by window.location.href = "/ogema/widgets/apps?action=logout" ?
-		$.ajax({
-	        type: "GET",
-	        url: "/ogema/widget/apps?action=logout&user=" + otusr + "&pw=" + otpwd,
-	        dataType: "html"
-	    }).then(function(response) {
-			window.location.href = response;
-	    });
-	}
+        $.get("/ogema/widget/apps?action=logout&user=" + otusr + "&pw=" + otpwd, 
+          "",
+          function(data){ 
+              abortAjax();
+              window.location.assign(data);
+          },
+          "text");
+	};
 })();
