@@ -1,7 +1,9 @@
 package org.smartrplace.apps.hw.install.config;
 
+import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
+import org.ogema.model.extended.alarming.AlarmConfiguration;
 import org.ogema.model.prototypes.Data;
 import org.ogema.model.prototypes.PhysicalElement;
 
@@ -45,4 +47,7 @@ public interface InstallAppDevice extends Data {
 	 * Consists of device type prefix and a local serial number, starting with 1.
 	 */
 	public StringResource deviceId();
+	
+	/** Alarms for the device*/
+	public ResourceList<AlarmConfiguration> alarms();
 }

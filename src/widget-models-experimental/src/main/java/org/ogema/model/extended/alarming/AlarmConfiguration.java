@@ -4,8 +4,8 @@ import org.ogema.core.model.array.StringArrayResource;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.FloatResource;
 import org.ogema.core.model.simple.IntegerResource;
+import org.ogema.core.model.simple.SingleValueResource;
 import org.ogema.model.prototypes.Data;
-import org.ogema.model.sensors.Sensor;
 
 public interface AlarmConfiguration extends Data {
 
@@ -13,7 +13,8 @@ public interface AlarmConfiguration extends Data {
 	 * for input from drivers not providing as sensors like JMBUS
 	 * @return
 	 */
-	Sensor supervisedSensor();
+	//Sensor supervisedSensor();
+	SingleValueResource sensorVal();
 
 	/** TODO: Implement this
 	 * @return
