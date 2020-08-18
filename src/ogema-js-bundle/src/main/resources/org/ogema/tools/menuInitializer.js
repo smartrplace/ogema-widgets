@@ -9,8 +9,12 @@ ogema.menuIdentifierFirstCallThrownAway = false;
 
 // keep a list of active ajax requests so we can abort them on logout.
 var xhrPool = [];
+var loggedOut = false;
 $(document).ajaxSend(function (e, jqXHR, options) {
     xhrPool.push(jqXHR);
+    if (loggedOut) {
+        jqXHR.abort();
+    }
 });
 $(document).ajaxComplete(function (e, jqXHR, options) {
     xhrPool = $.grep(xhrPool, function (x) {
@@ -311,12 +315,24 @@ var abortAjax = function () {
 		}
 	}
 	ogema.logout = function() {
-        $.get("/ogema/widget/apps?action=logout&user=" + otusr + "&pw=" + otpwd, 
-          "",
-          function(data){ 
+        var onLogoutSuccess = function(data){ 
+              loggedOut = true;
               abortAjax();
               window.location.assign(data);
-          },
+          };
+        
+        /*
+        $.get("/ogema/widget/apps?action=logout&user=" + otusr + "&pw=" + otpwd, 
+          "",
+          onLogoutSuccess,
           "text");
+         */
+        $.ajax({
+            url: "/ogema/widget/apps?action=logout&user=" + otusr + "&pw=" + otpwd,
+            data: "",
+            success: onLogoutSuccess,
+            dataType: "text",
+            async: false
+        });        
 	};
 })();
