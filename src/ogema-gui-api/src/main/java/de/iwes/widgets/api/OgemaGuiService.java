@@ -20,6 +20,7 @@ import org.ogema.core.application.ApplicationManager;
 import de.iwes.widgets.api.services.IconService;
 import de.iwes.widgets.api.services.MessagingService;
 import de.iwes.widgets.api.services.NameService;
+import de.iwes.widgets.api.services.UserLocaleService;
 import de.iwes.widgets.api.widgets.WidgetApp;
 
 /**
@@ -77,4 +78,9 @@ public interface OgemaGuiService {
 	 */
 	public MessagingService getMessagingService();
 	
+	/**
+	 * Per-user locale settings.
+	 */
+	public UserLocaleService getUserLocaleService();
+
 }
