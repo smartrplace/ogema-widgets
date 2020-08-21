@@ -12,6 +12,7 @@ var xhrPool = [];
 var loggedOut = false;
 $(document).ajaxSend(function (e, jqXHR, options) {
     xhrPool.push(jqXHR);
+    //console.log("new ajax: " + options.url);
     if (loggedOut) {
         jqXHR.abort();
     }
@@ -23,6 +24,7 @@ $(document).ajaxComplete(function (e, jqXHR, options) {
     // console.log("open ajax requests " + xhrPool.length);
 });
 var abortAjax = function () {
+    console.log("logout, aborting ajax requests: " + xhrPool.length);
     $.each(xhrPool, function (idx, jqXHR) {
         jqXHR.abort();
     });
@@ -240,7 +242,7 @@ var abortAjax = function () {
 			 	el2.classList.add("inactive");
 			 	disableMessageDisplay(messageText);
 			 }
-		}
+		};
 		var pollInterval = 3000;
 		var pollForMessage = function() {
 			var interval = pollInterval; // this way interval is final, whereas pollInterval is not
@@ -306,27 +308,23 @@ var abortAjax = function () {
 		pollForMessage();
 		ogema.stopMessagePolling = function() {
 			pollInterval = 0;
-		}
+		};
 		ogema.startMessagePolling = function(interval) {
 			var wasActive = pollInterval && pollInterval > 0;
 			pollInterval = interval;
-			if (!wasActive)
+			if (!wasActive) {
 				pollForMessage();
-		}
+            }
+		};
 	}
 	ogema.logout = function() {
         var onLogoutSuccess = function(data){ 
               loggedOut = true;
+              ogema.stopMessagePolling();
               abortAjax();
               window.location.assign(data);
-          };
-        
-        /*
-        $.get("/ogema/widget/apps?action=logout&user=" + otusr + "&pw=" + otpwd, 
-          "",
-          onLogoutSuccess,
-          "text");
-         */
+        };
+        // logout should happen synchronously, otherwise abortAjax() does not catch all requests(?)  
         $.ajax({
             url: "/ogema/widget/apps?action=logout&user=" + otusr + "&pw=" + otpwd,
             data: "",

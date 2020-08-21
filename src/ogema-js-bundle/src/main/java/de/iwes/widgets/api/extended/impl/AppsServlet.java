@@ -110,6 +110,7 @@ public class AppsServlet extends HttpServlet {
 		case "logout":
 			req.getSession().invalidate();
 			String redirect = System.getProperty("org.ogema.widgets.logout.redirect", "/ogema/index.html");
+            resp.setContentType("text/plain");
 			resp.getWriter().append(redirect);
 			resp.setStatus(HttpServletResponse.SC_OK);
 			break;
