@@ -54,4 +54,6 @@ public interface HardwareInstallConfig extends Data {
 	 * See {@room} and {@link InstallationStatusFilterDropdown}.
 	 */
 	StringResource installationStatusFilter();
+	
+	StringResource initDoneStatus();
 }
