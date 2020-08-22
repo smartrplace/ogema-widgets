@@ -129,10 +129,14 @@ public class GaRoEvalHelper {
 				"Valve Position", "Ventilstellung");
 		addRecId(GaRoDataType.InternetConnection, new String[] {"NetworkState/mainNetworkOk"}, recIdSnippets,
 				"Main Internet connection status", "DSL Status");
-		addRecId(GaRoDataType.RSSIDevice, new String[] {"/rssiDevice"}, recIdSnippets,
+		addRecId(GaRoDataType.RSSIDevice, new String[] {"/rssiDevice", "/communicationStatus/RSSI"}, recIdSnippets,
 				"RSSI Device");
 		addRecId(GaRoDataType.RSSIPeer, new String[] {"/rssiPeer"}, recIdSnippets,
 				"RSSI Peer");
+		addRecId(GaRoDataType.RSSISignal, new String[] {"/communicationStatus/Signal"}, recIdSnippets,
+				"RSSI Signal");
+		addRecId(GaRoDataType.CommunicationQuality, new String[] {"/communicationStatus/quality"}, recIdSnippets,
+				"RSSI Signal");
 		addRecId(GaRoDataType.FreshWaterFlow, new String[] {"/VOLUME_FLOW_FRESHWATER"}, recIdSnippets,
 				"Fresh Waster Flow");
 		addLabel(GaRoDataType.PowerMeterEnergySubphase, "Phase Energy", "Energie pro Phase");

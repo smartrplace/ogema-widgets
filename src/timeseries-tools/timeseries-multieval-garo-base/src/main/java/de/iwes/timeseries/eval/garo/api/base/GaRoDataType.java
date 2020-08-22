@@ -185,6 +185,10 @@ public class GaRoDataType implements GaRoDataTypeI {
 			FloatResource.class);
 	public static final GaRoDataType RSSIPeer = new GaRoDataType("RSSIPeer",
 			FloatResource.class);
+	public static final GaRoDataType RSSISignal = new GaRoDataType("RSSISignal",
+			FloatResource.class);
+	public static final GaRoDataType CommunicationQuality = new GaRoDataType("CommunicationQuality",
+			FloatResource.class);
 	public static final GaRoDataType CommunicationDisturbed = new GaRoDataType("CommunicationDisturbed",
 			BooleanResource.class);
 	/** Food amount added at a certain time*/

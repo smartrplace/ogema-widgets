@@ -55,5 +55,15 @@ public interface HardwareInstallConfig extends Data {
 	 */
 	StringResource installationStatusFilter();
 	
+	/** If a template exists for a device type it shall be applied to new devices automatically
+	 * if this is true
+	 */
+	BooleanResource autoConfigureNewDevicesBasedOnTemplate();
+	
 	StringResource initDoneStatus();
+
+	/** If true the relation of devices to DeviceHandlerProviders is not determined via the PatternsFound, but
+	 * via the ResourceTypes. This may lead to showing devices in more than one DeviceHandlerProvider
+	 */
+	BooleanResource includeInactiveDevices();
 }
