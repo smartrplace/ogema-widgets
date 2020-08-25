@@ -421,4 +421,136 @@ public class ResourceHelper {
 		}
 		return false;
 	}
+	
+	/** Find resource that has the same relative path towards parentDestination as childTemplate has to parentTemplate and
+	 * which has the same resource type as childTemplate<br>
+	 * TODO: In the future the method should not only use the resource path element names, but rather resource
+	 * types as the resource names may be different when stepping up from the parent resources.
+	 * @return null if no such resource exists*/
+	/*@SuppressWarnings("unchecked")
+	public static <T extends Resource> T getRelativeResourceV1(Resource parentTemplate, T childTemplate, Resource parentDestination,
+			ResourceAccess resAcc) {
+		//int parentLevelsToStebUp = 0;
+		String parentPath = parentTemplate.getLocation();
+		String childPath =  childTemplate.getLocation();
+		String destPath = parentDestination.getLocation();
+		if(!childPath.startsWith(parentPath)) {
+			Resource parentTemplateUp = parentTemplate.getParent();
+			Resource parentDestUp = parentDestination.getParent();
+			if(parentTemplateUp == null || parentDestUp == null)
+				return null;
+			if(childPath.startsWith(parentTemplateUp.getLocation())) {
+				String parentToParentUp = parentPath.substring(parentTemplateUp.getLocation().length()+1);
+				String relPath = childPath.substring(parentTemplateUp.getLocation().length())+"/"+parentToParentUp;
+				Class<? extends Resource> parentType = parentTemplate.getResourceType();
+				Resource destRelRes = parentDestUp.getSubResource(parentToParentUp);
+				if(destRelRes != null && parentType.isAssignableFrom(destRelRes.getResourceType())) {
+					return (T) getRelativeResource(relPath, parentDestination.getLocation(),
+							 childTemplate.getResourceType(), resAcc);
+				}
+				List<? extends Resource> sameTypeResources = parentDestUp.getSubResources(parentType, false);
+				if(sameTypeResources.isEmpty())
+					return null;
+				return (T) getRelativeResource(relPath, sameTypeResources.get(0).getLocation(),
+						 childTemplate.getResourceType(), resAcc);
+			}
+			// TODO: recursive operation
+		}
+		*/
+		/*String parentEls[] = null;
+		String destEls[] = null;
+		while(!childPath.startsWith(parentPath)) {
+			if(parentEls == null) {
+				parentEls = parentPath.split("/");
+				destEls = destPath.split("/");
+				//if(parentEls.length != destEls.length)
+				//	return null;
+			}
+			parentLevelsToStebUp++;
+			if(parentLevelsToStebUp >= parentEls.length)
+				return null;
+			if(destEls.length < parentLevelsToStebUp)
+				return null;
+			parentPath = parentPath.substring(0, parentPath.length()-parentEls[parentEls.length-parentLevelsToStebUp].length()-1);
+			destPath = destPath.substring(0, destPath.length()-destEls[destEls.length-parentLevelsToStebUp].length()-1);
+		}*/
+		/*String relPath = childPath.substring(parentPath.length());
+		return (T) getRelativeResource(relPath, destPath, childTemplate.getResourceType(), resAcc);
+	}*/
+	
+	/** Find resource that has the same relative resource structure path towards parentDestination as childTemplate has to parentTemplate and
+	 * which has the same resource type as childTemplate. For the choice of each element the definition of
+	 * {@link #getSubResourceBest(Resource, String, Class)} is used<br>
+	 * types as the resource names may be different when stepping up from the parent resources.
+	 * @return null if no such resource exists*/
+	public static <T extends Resource> T getRelativeResource(Resource parentTemplate, T childTemplate, Resource parentDestination,
+			ResourceAccess resAcc) {
+		String parentPath = parentTemplate.getLocation();
+		String childPath = childTemplate.getLocation();
+		if(childPath.startsWith(parentPath)) {
+			List<String> orgNames = new ArrayList<>();
+			List<Class<? extends Resource>> resourceTypes = new ArrayList<>();
+			Resource pathResource = childTemplate.getLocationResource();
+			while(!pathResource.equalsLocation(parentTemplate)) {
+				orgNames.add(0, pathResource.getName());
+				resourceTypes.add(0, pathResource.getResourceType());
+				pathResource = pathResource.getParent();
+				if(pathResource == null)
+					throw new IllegalStateException("Path resource does not meet parent:"+parentTemplate.getLocation()+" Child:"+childTemplate);
+			}
+			return getSubResourceBest(parentDestination, orgNames, resourceTypes);
+		}
+		while(!childPath.startsWith(parentPath)) {
+			parentTemplate = parentTemplate.getLocationResource().getParent();
+			parentDestination = parentDestination.getLocationResource().getParent();
+			if(parentTemplate == null || parentDestination == null)
+				return null;
+			parentPath = parentTemplate.getLocation();
+		}
+		return getRelativeResource(parentTemplate, childTemplate, parentDestination, resAcc);
+	}
+
+	/** Get sub resource of a certain type. The sub resource shall either be defined by the model
+	 * or exist as a decorator. No virtual decorator shall be created
+	 * @param <T>
+	 * @param parent
+	 * @param preferredName if a suitable sub resource with the preferred name exists or is defined in
+	 * 		the model, it shall be used, otherwise any other sub resource of the type requested shall be
+	 * 		returned
+	 * @param resourceType
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T extends Resource> T getSubResourceBest(Resource parent, String preferredName,
+			Class<T> resourceType) {
+		Resource destRelRes = parent.getSubResource(preferredName);
+		if(destRelRes != null && resourceType.isAssignableFrom(destRelRes.getResourceType())) {
+			return (T) destRelRes;
+		}
+		List<? extends Resource> sameTypeResources = parent.getSubResources(resourceType, false);
+		if(sameTypeResources.isEmpty())
+			return null;
+		return (T) sameTypeResources.get(0);	
+	}
+	
+	/** Get sub resource below parent with a path from parent to the result where each element type
+	 * is defined by one element of resourceTypes. The choice of the sub resource of each step going
+	 * down from parent to the result is done according to {@link #getSubResourceBest(Resource, String, Class)}
+	 * @param <T>
+	 * @param parent
+	 * @param preferredNames the size of preferredNames and resourceTypes must be equal
+	 * @param resourceTypes
+	 * @return a resource of the type of resourceTypes.get(resourceTypes.size()-1) or null
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T extends Resource> T getSubResourceBest(Resource parent, List<String> preferredNames,
+			List<Class<? extends Resource>> resourceTypes) {
+		Resource result = parent;
+		for(int i=0; i<preferredNames.size(); i++) {
+			result = getSubResourceBest(result, preferredNames.get(i), resourceTypes.get(i));
+			if(result == null)
+				return null;
+		}
+		return (T) result;
+	}
 }
