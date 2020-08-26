@@ -31,7 +31,6 @@ import de.iwes.widgets.api.extended.WidgetAppImpl;
 import de.iwes.widgets.api.services.IconService;
 import de.iwes.widgets.api.services.MessagingService;
 import de.iwes.widgets.api.services.NameService;
-import de.iwes.widgets.api.services.UserLocaleService;
 import de.iwes.widgets.api.widgets.WidgetApp;
 
 @Component(specVersion = "1.2")
@@ -40,7 +39,6 @@ public class WidgetServiceImpl implements OgemaGuiService {
 	
 	private final List<NameService> nameServices = new ArrayList<NameService>();
 	private final List<IconService> iconServices = new ArrayList<IconService>();
-	private final UserLocaleService userLocaleService = new UserLocaleService();
 	
 	@Reference
 	public WidgetAdminService widgetServiceInternal;
@@ -119,11 +117,6 @@ public class WidgetServiceImpl implements OgemaGuiService {
 		synchronized (iconServices) {
 			iconServices.remove(ns);
 		}  
-	}
-
-	@Override
-	public UserLocaleService getUserLocaleService() {
-		return userLocaleService;
 	}
 	
 	
