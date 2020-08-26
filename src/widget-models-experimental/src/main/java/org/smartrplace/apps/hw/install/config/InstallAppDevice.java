@@ -12,6 +12,9 @@ public interface InstallAppDevice extends Data {
 	/** Reference to the device, usually provided by driver*/
 	public PhysicalElement device();
 	
+	/** The resource contains the devHandlerId*/
+	public StringResource devHandlerInfo();
+	
 	/** Description of the installation location. If the device is alread placed in correct room then
 	 * the room should be represented by the resource <device>/location/room . Otherwise the description
 	 * may contain room information to be used for setting up the room and moving the device later on. 
