@@ -70,7 +70,7 @@ public class JsBundleApp implements Application {
         wam.registerWebResource("/org/ogema/localisation/service", "/org/ogema/localisation/service");
         wam.registerWebResource("/ogema/widget/apps", new AppsServlet(am, permMan));
         wam.registerStartUrl(null);
-        widgetService = new OgemaOsgiWidgetServiceImpl(permMan.getAccessManager());
+        widgetService = new OgemaOsgiWidgetServiceImpl(permMan.getAccessManager(), am);
         wam.registerWebResource("/ogema/widget/servlet" , widgetService);
         this.sreg = ctx.registerService(WidgetAdminService.class, widgetService, null);
     }

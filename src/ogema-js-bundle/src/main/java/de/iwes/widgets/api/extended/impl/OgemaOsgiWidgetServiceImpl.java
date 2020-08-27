@@ -46,6 +46,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.ogema.accesscontrol.AccessManager;
 import org.ogema.core.application.AppID;
+import org.ogema.core.application.ApplicationManager;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.security.WebAccessManager;
 import org.slf4j.Logger;
@@ -60,6 +61,7 @@ import de.iwes.widgets.api.extended.WidgetAdminService;
 import de.iwes.widgets.api.extended.WidgetAppImpl;
 import de.iwes.widgets.api.extended.WidgetPageBase;
 import de.iwes.widgets.api.extended.plus.InitWidget;
+import de.iwes.widgets.api.extended.util.UserLocaleUtil;
 import de.iwes.widgets.api.extended.xxx.ConfiguredWidget;
 import de.iwes.widgets.api.extended.xxx.WidgetGroupDerived;
 import de.iwes.widgets.api.widgets.OgemaWidget;
@@ -92,6 +94,7 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
 	//private final static String PATH_PREFIX = "/ogema/";
     private final static String PATH_PREFIX = "/ogema/widget/";
     private final AccessManager accessManager;
+    private final ApplicationManager appMan;
     
     // FIXME use only logging mechanism!
     @Deprecated
@@ -122,8 +125,9 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
 //    private final ConcurrentMap<String, ConcurrentMap<String,WidgetGroupDerived>> widgetGroups = new ConcurrentHashMap<String, ConcurrentMap<String,WidgetGroupDerived>>();
     private final Map<String, WidgetAppImpl> apps = new LinkedHashMap<>();
     
-    public OgemaOsgiWidgetServiceImpl(AccessManager accessManager) {
+    public OgemaOsgiWidgetServiceImpl(AccessManager accessManager, ApplicationManager appMan) {
     	this.accessManager = accessManager;
+    	this.appMan = appMan;
     	timer.schedule(sessionManagement, Constants.SESSION_CHECK_PERIOD, Constants.SESSION_CHECK_PERIOD);
     }
     
@@ -290,6 +294,8 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
     
     private String getPreferredLanguage(HttpServletRequest req) {
     	// TODO:  Get preferred language from OgemaGuiService
+    	String user = UserLocaleUtil.getUserLoggedInBase(req.getSession());
+    	String locale = UserLocaleUtil.getLocaleString(user, appMan);
     	String locl = req.getHeader("Accept-Language");
     	if (locl == null)
     		locl = "en";
