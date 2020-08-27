@@ -1,4 +1,4 @@
-package de.iwes.widgets.api.extended.impl;
+package de.iwes.widgets.api.extended.util;
 
 import org.ogema.core.administration.UserAccount;
 import org.ogema.core.administration.UserConstants;
