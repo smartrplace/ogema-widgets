@@ -293,10 +293,11 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
     }
     
     private String getPreferredLanguage(HttpServletRequest req) {
-    	// TODO:  Get preferred language from OgemaGuiService
     	String user = UserLocaleUtil.getUserLoggedInBase(req.getSession());
-    	String locale = UserLocaleUtil.getLocaleString(user, appMan);
-    	String locl = req.getHeader("Accept-Language");
+    	String locl = UserLocaleUtil.getLocaleString(user, appMan);
+    	if (locl != null) return locl;
+
+    	locl = req.getHeader("Accept-Language");
     	if (locl == null)
     		locl = "en";
     	if (locl.contains(",")) {
