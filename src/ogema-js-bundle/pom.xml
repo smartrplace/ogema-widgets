@@ -10,7 +10,7 @@
     <artifactId>ogema-js-bundle</artifactId>
 
     <name>OGEMA Tools :: JavaScript Service</name>
-
+    <packaging>bundle</packaging>
     <build>
         <plugins>
             <plugin>
