@@ -52,6 +52,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 
 import de.iwes.widgets.api.OgemaGuiService;
+import de.iwes.widgets.api.messaging.Message;
 import de.iwes.widgets.api.messaging.MessagePriority;
 import de.iwes.widgets.api.messaging.listener.MessageListener;
 import de.iwes.widgets.api.messaging.listener.ReceivedMessage;
@@ -88,6 +89,9 @@ public class PushoverService implements Application, MessageListener {
         private final static int HTTP_DELAY_S = 30;
         /** delay (seconds) for repeated attempts if pushover server return an internal error (5xx) */
         private final static int HTTP_5XX_DELAY_S = 30;
+        
+        // pushover: do not query more than once in 5s
+        private final static long PUSHOVER_RECEIPT_QUERY_INTERVAL_MS = 8000;
     
         private final static String TARGET_URI = "https://api.pushover.net/1/messages.json";
 	private volatile BundleContext ctx;
@@ -181,14 +185,14 @@ public class PushoverService implements Application, MessageListener {
 		}
                 String apiToken = receivers.iterator().next();
                 
-                users.forEach(sender -> sendPushoverMessage(uri, message, apiToken, sender));
+                users.forEach(sender -> sendPushoverMessage(uri, message.getOriginalMessage(), apiToken, sender));
 	}
         
-        private void sendPushoverMessage(URI uri, ReceivedMessage message, String apiToken, String user) {
+        private void sendPushoverMessage(URI uri, Message message, String apiToken, String user) {
                 final int poPrio;
                 if(Boolean.getBoolean("org.ogema.widgets.pushover.service.testwithoutconnection"))
                 	return;
-                switch (message.getOriginalMessage().priority()) {
+                switch (message.priority()) {
                         case HIGH : poPrio = 2; break;
                         case MEDIUM : poPrio = 1; break;
                         case LOW : poPrio = 0; break;
@@ -212,18 +216,18 @@ public class PushoverService implements Application, MessageListener {
                 });
         }
         
-        private HttpEntity buildRequestBody(ReceivedMessage message, String apiToken, String user, int poPrio) {
+        private HttpEntity buildRequestBody(Message message, String apiToken, String user, int poPrio) {
                 final List<NameValuePair> bodyEntries = new ArrayList<>();
 		bodyEntries.add(new BasicNameValuePair("token", apiToken));
 		bodyEntries.add(new BasicNameValuePair("user", user));
-		bodyEntries.add(new BasicNameValuePair("message", message.getOriginalMessage().message(OgemaLocale.ENGLISH)));
-                MessagePriority prio = message.getOriginalMessage().priority();
+		bodyEntries.add(new BasicNameValuePair("message", message.message(OgemaLocale.ENGLISH)));
+                MessagePriority prio = message.priority();
                 bodyEntries.add(new BasicNameValuePair("priority", Integer.toString(poPrio)));
                 if (poPrio == 2) {
                     bodyEntries.add(new BasicNameValuePair("expire", Integer.toString(PRIO2_EXPIRE_S)));
                     bodyEntries.add(new BasicNameValuePair("retry", Integer.toString(PRIO2_RETRY_S)));
                 }
-		String title = message.getOriginalMessage().title(OgemaLocale.ENGLISH);
+		String title = message.title(OgemaLocale.ENGLISH);
 		if (title != null) {
 			title= title.trim();
 			if (!title.isEmpty()) {
@@ -233,7 +237,7 @@ public class PushoverService implements Application, MessageListener {
                 return new UrlEncodedFormEntity(bodyEntries, StandardCharsets.UTF_8);
         }
         
-        private void handleResponse(HttpResponse response, URI uri, ReceivedMessage message, String apiToken, String user, int poPrio) {
+        private void handleResponse(HttpResponse response, URI uri, Message message, String apiToken, String user, int poPrio) {
                 final StatusLine status = response.getStatusLine();
 		final int code = status.getStatusCode();
                 if (code >= 500) {
@@ -263,7 +267,7 @@ public class PushoverService implements Application, MessageListener {
                 }
         }
         
-        private void storeEmergencyMessage(String receipt, ReceivedMessage msg, String apiToken) {
+        private void storeEmergencyMessage(String receipt, Message msg, String apiToken) {
             config.emergencyMessages().getSubResource("_" + receipt, EmergencyMessage.class).storeMessage(receipt, msg, apiToken);
         }
         
@@ -309,8 +313,7 @@ public class PushoverService implements Application, MessageListener {
                         logger.warn("could not update receipt info for {}", receipt, ex);
                 }
             try {
-                // pushover: do not query more than once in 5s
-                Thread.sleep(8000);
+                Thread.sleep(PUSHOVER_RECEIPT_QUERY_INTERVAL_MS);
             } catch (InterruptedException ex) {
                 // okay
             }

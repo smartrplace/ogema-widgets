@@ -9,14 +9,22 @@
 
     <artifactId>ogema-js-bundle</artifactId>
 
-    <packaging>bundle</packaging>
     <name>OGEMA Tools :: JavaScript Service</name>
-
+    <packaging>bundle</packaging>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-scr-plugin</artifactId>
+                <version>1.26.4</version>
+            </plugin>
+            <plugin>    
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>

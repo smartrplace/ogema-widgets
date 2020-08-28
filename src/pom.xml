@@ -199,6 +199,11 @@
 	<build>
 		<pluginManagement>
         	<plugins>
+                <plugin>
+                    <groupId>ro.isdc.wro4j</groupId>
+                    <artifactId>wro4j-maven-plugin</artifactId>
+                    <version>1.8.0</version>
+                </plugin>
 	       		<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
