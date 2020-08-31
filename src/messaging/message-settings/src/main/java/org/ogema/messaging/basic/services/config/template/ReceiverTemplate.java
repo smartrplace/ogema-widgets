@@ -57,6 +57,15 @@ public class ReceiverTemplate extends RowTemplate<ReceiverConfiguration> {
 	protected final ResourceAccess ra;
 	protected final ResourceManagement resMan;
 
+	/** overwrite to add additional widgets in row before edit popup/button
+	 * @param row 
+	 * @param id 
+	 * @param config 
+	 * @param req 
+	 */
+	protected void addAdditionalRowWidgets(ReceiverConfiguration config, String id, Row row, OgemaHttpRequest req) {};
+	protected void addAdditionalColumns(Map<String, Object> receiverHeader) {};
+	
 	public ReceiverTemplate(ResourceList<ReceiverConfiguration> list, ApplicationManager am,
 			DynamicTable<ReceiverConfiguration> table, Alert alert, WidgetPage<?> page) {
 		
@@ -80,6 +89,7 @@ public class ReceiverTemplate extends RowTemplate<ReceiverConfiguration> {
 		receiverHeader.put("receiverRESTColumn", "REST-address:");
 		receiverHeader.put("receiverRESTUserColumn", "REST-user:");
 		receiverHeader.put("receiverRESTPwColumn", "REST-password:");
+		addAdditionalColumns(receiverHeader);
 		receiverHeader.put("editReceiverPopupColumn", "");
 		receiverHeader.put("editReceiverButtonColumn", "");
 		receiverHeader.put("deleteReceiverButtonColumn", "");
@@ -286,6 +296,8 @@ public class ReceiverTemplate extends RowTemplate<ReceiverConfiguration> {
 			
 		};
 
+		addAdditionalRowWidgets(config, id, row, req);
+		
 		final Popup editReceiverPopup = new Popup(page, "ediReceiverPopup_" + id, true);
 		editReceiverPopup.setTitle("Edit receiver ", null);
 		row.addCell("editReceiverPopupColumn", editReceiverPopup);

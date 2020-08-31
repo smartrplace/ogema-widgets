@@ -18,6 +18,7 @@ package org.ogema.messaging.basic.services.config;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.ogema.core.application.ApplicationManager;
@@ -40,6 +41,7 @@ import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
 import de.iwes.widgets.html.alert.Alert;
 import de.iwes.widgets.html.alert.AlertData;
 import de.iwes.widgets.html.complextable.DynamicTable;
+import de.iwes.widgets.html.complextable.RowTemplate.Row;
 import de.iwes.widgets.html.form.button.Button;
 import de.iwes.widgets.html.form.button.ButtonData;
 import de.iwes.widgets.html.form.label.Header;
@@ -54,9 +56,17 @@ public class ReceiverPageBuilder implements ResourceDemandListener<ReceiverConfi
 	private static final String XMPP_REGEX = "[A-Za-z0-9.-]+[@][A-Za-z0-9.-]+[.][a-zA-Z_0-9]+$";
 	
 	private final ResourceList<ReceiverConfiguration> receiverConfigs;
-	private final DynamicTable<ReceiverConfiguration> receiverTable;
+	public final DynamicTable<ReceiverConfiguration> receiverTable;
 
-	
+	/** overwrite to add additional widgets in row before edit popup/button
+	 * @param row 
+	 * @param id 
+	 * @param config 
+	 * @param req 
+	 */
+	protected void addAdditionalRowWidgets(ReceiverConfiguration config, String id, Row row, OgemaHttpRequest req) {};
+	protected void addAdditionalColumns(Map<String, Object> receiverHeader) {};
+		
 	@SuppressWarnings({ "serial", "unchecked" })
 	public ReceiverPageBuilder(final WidgetPage<MessageSettingsDictionary> page, ApplicationManager appMan) {
 
@@ -102,7 +112,18 @@ public class ReceiverPageBuilder implements ResourceDemandListener<ReceiverConfi
 		alert.setDefaultVisibility(false);
 		page.append(alert).linebreak();
 
-		ReceiverTemplate receiverTemplate = new ReceiverTemplate(receiverConfigs, appMan, receiverTable, alert, page);
+		ReceiverTemplate receiverTemplate = new ReceiverTemplate(receiverConfigs, appMan, receiverTable, alert, page) {
+			@Override
+			protected void addAdditionalRowWidgets(ReceiverConfiguration config, String id, Row row,
+					OgemaHttpRequest req) {
+				ReceiverPageBuilder.this.addAdditionalRowWidgets(config, id, row, req);
+			}
+			
+			@Override
+			protected void addAdditionalColumns(Map<String, Object> receiverHeader) {
+				ReceiverPageBuilder.this.addAdditionalColumns(receiverHeader);
+			}
+		};
 		receiverTable.setRowTemplate(receiverTemplate);
 		receiverTable.setDefaultRowIdComparator(null);
 

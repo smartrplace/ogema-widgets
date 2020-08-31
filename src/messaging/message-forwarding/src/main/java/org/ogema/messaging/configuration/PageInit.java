@@ -9,11 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.ogema.core.application.ApplicationManager;
-import org.ogema.core.model.Resource;
 import org.ogema.core.model.ResourceList;
-import org.ogema.core.model.simple.BooleanResource;
-import org.ogema.core.model.simple.IntegerResource;
-import org.ogema.core.model.simple.StringResource;
 import org.ogema.messaging.configuration.localisation.SelectConnectorDictionary;
 import org.ogema.messaging.configuration.localisation.SelectConnectorDictionary_de;
 import org.ogema.messaging.configuration.localisation.SelectConnectorDictionary_en;
@@ -42,8 +38,6 @@ import de.iwes.widgets.html.form.label.Header;
 import de.iwes.widgets.html.form.label.Label;
 import de.iwes.widgets.messaging.MessageReader;
 import de.iwes.widgets.messaging.MessagingApp;
-import de.iwes.widgets.messaging.model.MessagingService;
-import de.iwes.widgets.messaging.model.UserConfig;
 import de.iwes.widgets.template.PageSnippetTemplate;
 
 public class PageInit {
@@ -157,6 +151,24 @@ public class PageInit {
 		userData.triggerAction(appAccordion, TriggeringAction.GET_REQUEST, TriggeredAction.GET_REQUEST);
 	}
 	
+	public static Map<MessageListener, List<String>> getInitListeners(MessageReader reader) {
+		Map<MessageListener, List<String>> listeners = reader.getMessageListeners().values().stream()
+				.collect(Collectors.toMap(Function.identity(), MessageListener::getKnownUsers));
+		return listeners;
+	}
+	public static Map<String, List<MessageListener>> getUsers(MessageReader reader) {
+		Map<MessageListener, List<String>> listeners = getInitListeners(reader);
+		
+		return UsersData.setUsersStatic(listeners);
+		//Map<MessageListener, List<String>> users = listeners.entrySet().stream()
+		//		.flatMap(entry -> entry.getValue().stream().map(user -> new SimpleEntry<>(user, entry.getKey())))
+		//		.collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+		//return users;
+	}
+	public static List<MessageListener> getListenersForUser(String userName, MessageReader reader) {
+		return getUsers(reader).get(userName);
+	}
+	
 	@SuppressWarnings("serial")
 	static class UsersInit extends EmptyWidget implements InitWidget {
 		
@@ -169,8 +181,9 @@ public class PageInit {
 
 		@Override
 		public void init(OgemaHttpRequest req) {
-			final Map<MessageListener, List<String>> listeners = reader.getMessageListeners().values().stream()
-				.collect(Collectors.toMap(Function.identity(), MessageListener::getKnownUsers));
+			final Map<MessageListener, List<String>> listeners = getInitListeners(reader);
+			//final Map<MessageListener, List<String>> listeners = reader.getMessageListeners().values().stream()
+			//	.collect(Collectors.toMap(Function.identity(), MessageListener::getKnownUsers));
 			((UsersData) getData(req)).setUsers(listeners);
 		}
 		
@@ -205,6 +218,13 @@ public class PageInit {
 				.collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
 		}
 		
+		public static Map<String, List<MessageListener>> setUsersStatic(Map<MessageListener, List<String>> listeners) {
+			Map<String, List<MessageListener>> users = listeners.entrySet().stream()
+				.flatMap(entry -> entry.getValue().stream().map(user -> new SimpleEntry<>(user, entry.getKey())))
+				.collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+			return users;
+		}
+
 		public Map<String, List<MessageListener>> getUsers() {
 			return users;
 		}
@@ -240,7 +260,12 @@ public class PageInit {
 			final String lineId = getLineId(object);
 			row.addCell("user", object);
 			for (MessageListener l: listeners) {
-				@SuppressWarnings("serial")
+				final EnumDropdown<MessagePriority> prioDrop = new MessagePriorityDropdown(init,
+						lineId + "_x_" + ResourceUtils.getValidResourceName(l.getId()) + "_prio",
+						l, object,
+						appResources, app,
+						req);
+				/*@SuppressWarnings("serial")
 				final EnumDropdown<MessagePriority> prioDrop = new EnumDropdown<MessagePriority>(init, lineId + "_x_" + ResourceUtils.getValidResourceName(l.getId()) + "_prio", req, MessagePriority.class) {
 					
 					@Override
@@ -297,30 +322,13 @@ public class PageInit {
 						cfg.priority().<IntegerResource> create().setValue(prio.getPriority());
 						cfg.activate(true);
 					}
-				};
+				};*/
 				row.addCell(ResourceUtils.getValidResourceName(l.getId()), prioDrop);
 				prioDrop.selectDefaultItem(MessagePriority.NONE);
 			}
 			return row;
 		}
 		
-		private de.iwes.widgets.messaging.model.MessagingApp get(final boolean doCreate) {
-			return appResources.getAllElements().stream()
-				.filter(appRes -> appRes.appId().isActive() && app.getMessagingId().equals(appRes.appId().getValue()))
-				.findAny()
-				.orElseGet(() -> {
-					if (!doCreate)
-						return null;
-					final de.iwes.widgets.messaging.model.MessagingApp mapp = appResources.getSubResource(
-							ResourceUtils.getValidResourceName(app.getMessagingId()), de.iwes.widgets.messaging.model.MessagingApp.class);
-					mapp.appId().<StringResource> create().setValue(app.getMessagingId());
-					mapp.active().<BooleanResource> create().setValue(true);
-					mapp.activate(true);
-					return mapp;
-				});
-			
-		}
-
 		@Override
 		public String getLineId(String object) {
 			return ResourceUtils.getValidResourceName(app.getMessagingId() + "_x_" + object);
