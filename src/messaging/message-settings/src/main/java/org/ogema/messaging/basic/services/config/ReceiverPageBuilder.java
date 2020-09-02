@@ -91,7 +91,7 @@ public class ReceiverPageBuilder implements ResourceDemandListener<ReceiverConfi
 			}
 
 		};
-		header.addDefaultStyle(WidgetData.TEXT_ALIGNMENT_CENTERED);
+		header.addDefaultStyle(WidgetData.TEXT_ALIGNMENT_LEFT);
 		page.append(header).linebreak();
 
 		Alert info = new Alert(page, "description", "Explanation") {
