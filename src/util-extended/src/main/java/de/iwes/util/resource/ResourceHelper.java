@@ -553,4 +553,16 @@ public class ResourceHelper {
 		}
 		return (T) result;
 	}
+	
+	/** Get sub resource if existing without creation of unnessary virtual resources*/
+	@SuppressWarnings("unchecked")
+	public static <T extends Resource> T getSubResourceIfExisting(Resource parent, String name,
+			Class<T> resourceType) {
+		Resource destRelRes = parent.getSubResource(name);
+		if(destRelRes != null && resourceType.isAssignableFrom(destRelRes.getResourceType())) {
+			return (T) destRelRes;
+		}
+		return null;
+	}
+
 }
