@@ -225,6 +225,14 @@ public class ResourceHelper {
 	public static LocalGatewayInformation getLocalGwInfo(ResourceAccess resAcc) {
 		return getTopLevelResource("OGEMA_Gateway", LocalGatewayInformation.class, resAcc);
 	}
+	public static LocalGatewayInformation getLocalGwInfo(ApplicationManager appMan) {
+		LocalGatewayInformation result = getLocalGwInfo(appMan.getResourceAccess());
+		if(result != null)
+			return result;
+		result = appMan.getResourceManagement().createResource("OGEMA_Gateway", LocalGatewayInformation.class);
+		result.activate(true);
+		return result;
+	}
 	
 	/**Works like {@link Resource#getSubResource(String, Class<? extends Resource>)}, but
 	 * allows to specify a subPath over several sub resources. This resource preserves

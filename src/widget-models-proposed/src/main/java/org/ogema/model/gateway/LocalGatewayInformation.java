@@ -29,4 +29,7 @@ public interface LocalGatewayInformation extends PhysicalElement {
 	 * and within all gateways connected to common cloud services.
 	 */
 	StringResource id();
+	
+	/** Base URL of gateway to connect to via internet, e.g. https://customer.manufacturer.de:2000*/
+	StringResource gatewayBaseUrl();
 }
