@@ -333,6 +333,9 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
 	    	if (inLocale == null) inLocale = Locale.ENGLISH; 
  			String inLocaleString = inLocale.getLanguage();
 			ogReq = new OgemaHttpRequest(req, false, inLocaleString );
+		} else {
+			// update stored language, e.g. when user chooses a different language
+			UserLocaleUtil.setLocaleString(ogReq, ogReq.getLocaleString(), appMan);
 		}
 		JSONObject result = new JSONObject();
 		// FIXME

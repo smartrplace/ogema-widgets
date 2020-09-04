@@ -18,11 +18,39 @@ public class UserLocaleUtil {
 		return userAccount.getProperties().getOrDefault(UserConstants.PREFERRED_LOCALE, "EN").toString();
 	}
 	
+	public static String getLocaleString(OgemaHttpRequest req, ApplicationManager appMan) {
+		String user = getUserLoggedIn(req);
+		if (user == null) return null;
+		return getLocaleString(user, appMan);
+	}
+	
+	public static boolean hasLocaleStringStored(String userName, ApplicationManager appMan) {
+		UserAccount userAccount = appMan.getAdministrationManager().getUser(userName);
+		return userAccount.getProperties().containsKey(UserConstants.PREFERRED_LOCALE);
+	}
+
+	public static boolean hasLocaleStringStored(OgemaHttpRequest req, ApplicationManager appMan) {
+		boolean r = hasLocaleStringStoredTmp(req, appMan);
+		System.out.println(getUserLoggedIn(req) + " has language stored? " + (r ? "yes" : "no"));
+		return r;
+	}
+	public static boolean hasLocaleStringStoredTmp(OgemaHttpRequest req, ApplicationManager appMan) {
+		String user = getUserLoggedIn(req);
+		if (user == null) return false;
+		return hasLocaleStringStored(user, appMan);
+	}
+
 	public static void setLocaleString(String userName, String localeString, ApplicationManager appMan) {
 		UserAccount userAccount = appMan.getAdministrationManager().getUser(userName);
 		if(userAccount == null)
 			return;
 		userAccount.getProperties().put(UserConstants.PREFERRED_LOCALE, localeString);
+	}
+
+	public static void setLocaleString(OgemaHttpRequest req, String localeString, ApplicationManager appMan) {
+		String user = getUserLoggedIn(req);
+		if (user != null)
+			setLocaleString(user, localeString, appMan);
 	}
 	
 	public static String getUserLoggedIn(OgemaHttpRequest req) {
