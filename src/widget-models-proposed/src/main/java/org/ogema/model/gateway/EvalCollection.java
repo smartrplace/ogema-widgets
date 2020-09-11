@@ -18,7 +18,7 @@ package org.ogema.model.gateway;
 import org.ogema.model.prototypes.PhysicalElement;
 
 /** Collection of evaluation information provided on the OGEMA instance
- * @deprecated use org.ogema.model.gateway.eval.plus.EvalCollection */
+ * Use this model: Note that now org.ogema.model.gateway.eval.plus.EvalCollection is marked deprecated*/
 public interface EvalCollection extends PhysicalElement {
 	//ResourceList<IncidentProvider> incidentProviders();
 	//ResourceList<IncidentAutoClearanceConfiguration> incidenceAutoClearanceConfigs();

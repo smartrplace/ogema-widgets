@@ -15,6 +15,9 @@
  */
 package de.iwes.widgets.template;
 
+import org.ogema.core.model.Resource;
+import org.ogema.tools.resource.util.ResourceUtils;
+
 import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 
 public class DefaultDisplayTemplate<T> implements DisplayTemplate<T> {
@@ -25,6 +28,8 @@ public class DefaultDisplayTemplate<T> implements DisplayTemplate<T> {
 			final String label = ((LabelledItem) object).label(locale);
 			if (label != null) // should not return null, but we never know...
 				return label;
+		} else if(object instanceof Resource) {
+			return ResourceUtils.getHumanReadableName((Resource) object);
 		}
 		return object.toString();
 	}

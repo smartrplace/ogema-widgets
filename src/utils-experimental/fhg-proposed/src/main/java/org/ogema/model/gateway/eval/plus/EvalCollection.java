@@ -4,6 +4,7 @@ import org.ogema.core.model.ResourceList;
 import org.ogema.model.scheduleviewer.config.ScheduleViewerConfig;
 
 /** Collection of evaluation information provided on the OGEMA instance
+ * @deprecated use org.ogema.model.gateway.EvalCollection instead
  */
 public interface EvalCollection extends org.ogema.model.gateway.EvalCollection {
 	//ResourceList<IncidentProvider> incidentProviders();
