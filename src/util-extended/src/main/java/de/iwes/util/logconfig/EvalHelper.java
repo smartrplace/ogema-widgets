@@ -17,7 +17,6 @@ package de.iwes.util.logconfig;
 
 import org.ogema.core.application.ApplicationManager;
 import org.ogema.core.model.Resource;
-import org.ogema.core.model.ResourceList;
 import org.ogema.model.gateway.EvalCollection;
 
 public class EvalHelper {

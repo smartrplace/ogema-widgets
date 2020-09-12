@@ -15,11 +15,20 @@
  */
 package org.ogema.model.gateway;
 
+import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.model.prototypes.PhysicalElement;
 
 /** Collection of evaluation information provided on the OGEMA instance
  * Use this model: Note that now org.ogema.model.gateway.eval.plus.EvalCollection is marked deprecated*/
 public interface EvalCollection extends PhysicalElement {
+	/** This counter shall be incremented each time a change in the device-room structure is detected.
+	 * Increments may only be made after several changes that are made directly after each other shall
+	 * be committed together. Applications can detect these increments and trigger a restart of the
+	 * application logic etc.
+	 */
+	IntegerResource roomDeviceUpdateCounter();
+	
+	
 	//ResourceList<IncidentProvider> incidentProviders();
 	//ResourceList<IncidentAutoClearanceConfiguration> incidenceAutoClearanceConfigs();
 	//ResourceList<IncidentNotificationTriggerConfiguration> incidentTriggerConfigs();

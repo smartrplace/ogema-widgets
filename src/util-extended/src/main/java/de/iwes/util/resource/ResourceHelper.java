@@ -219,6 +219,16 @@ public class ResourceHelper {
 		return null;
 	}
 	
+	public static <T extends Resource> T getOrCreateTopLevelResource(String name, Class<T> type,
+			ApplicationManager appMan) {
+		T result = getTopLevelResource(name, type, appMan.getResourceAccess());
+		if(result != null)
+			return result;
+		result = appMan.getResourceManagement().createResource(name, type);
+		result.activate(true);
+		return result;
+	}
+	
 	/** Get the resource of type {@link LocalGatewayInformation} that specifies the
 	 * respective information for the OGEMA system
 	 */
@@ -226,12 +236,17 @@ public class ResourceHelper {
 		return getTopLevelResource("OGEMA_Gateway", LocalGatewayInformation.class, resAcc);
 	}
 	public static LocalGatewayInformation getLocalGwInfo(ApplicationManager appMan) {
-		LocalGatewayInformation result = getLocalGwInfo(appMan.getResourceAccess());
+		return getOrCreateTopLevelResource("OGEMA_Gateway", LocalGatewayInformation.class, appMan);
+		/*LocalGatewayInformation result = getLocalGwInfo(appMan.getResourceAccess());
 		if(result != null)
 			return result;
 		result = appMan.getResourceManagement().createResource("OGEMA_Gateway", LocalGatewayInformation.class);
 		result.activate(true);
-		return result;
+		return result;*/
+	}
+	
+	public static EvalCollection getEvalCollection(ApplicationManager appMan) {
+		return EvalHelper.getEvalCollection(appMan);
 	}
 	
 	/**Works like {@link Resource#getSubResource(String, Class<? extends Resource>)}, but
