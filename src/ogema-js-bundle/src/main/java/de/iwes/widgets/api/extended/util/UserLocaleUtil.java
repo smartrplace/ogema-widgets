@@ -15,7 +15,7 @@ public class UserLocaleUtil {
 		UserAccount userAccount = appMan.getAdministrationManager().getUser(userName);
 		if(userAccount == null)
 			return null;
-		return userAccount.getProperties().getOrDefault(UserConstants.PREFERRED_LOCALE, "EN").toString();
+		return userAccount.getProperties().getOrDefault(UserConstants.PREFERRED_LOCALE, "en").toString();
 	}
 	
 	public static String getLocaleString(OgemaHttpRequest req, ApplicationManager appMan) {

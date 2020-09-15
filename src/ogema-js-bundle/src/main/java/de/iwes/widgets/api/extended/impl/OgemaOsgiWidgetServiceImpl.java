@@ -327,16 +327,18 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
     	String groupId = req.getParameter("groupId");
     	String getGroup = req.getParameter("getGroup");
 		OgemaHttpRequest ogReq = new OgemaHttpRequest(req, false);
-		if(ogReq.getLocaleString() == null) {
+		// TODO: We get here every time the page is loaded, but also when the languageSelector dropdown is clicked. The locale may be set
+		// to some default even if the page is loaded the first time, so we do not know whether the languageSelector has been used
+		//if(ogReq.getLocaleString() == null) {
 	    	String locl = getPreferredLanguage(req);
 	    	Locale inLocale = Locale.forLanguageTag(locl);
 	    	if (inLocale == null) inLocale = Locale.ENGLISH; 
  			String inLocaleString = inLocale.getLanguage();
 			ogReq = new OgemaHttpRequest(req, false, inLocaleString );
-		} else {
+		//} else {
 			// update stored language, e.g. when user chooses a different language
-			UserLocaleUtil.setLocaleString(ogReq, ogReq.getLocaleString(), appMan);
-		}
+		//	UserLocaleUtil.setLocaleString(ogReq, ogReq.getLocaleString(), appMan);
+		//}
 		JSONObject result = new JSONObject();
 		// FIXME
 		if (logger.isTraceEnabled() && printmessages != null) {
@@ -411,9 +413,9 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
         		int idx = locl.indexOf(",");
         		locl = locl.substring(0, idx);
         	}*/
-        	String locl = getPreferredLanguage(req);
-        	Locale inLocale = Locale.forLanguageTag(locl);   // set initial locale to Browser locale
-        	if (inLocale == null) inLocale = Locale.ENGLISH;
+        	//String locl = getPreferredLanguage(req);
+        	//Locale inLocale = Locale.forLanguageTag(locl);   // set initial locale to Browser locale
+        	//if (inLocale == null) inLocale = Locale.ENGLISH;
         	// System.out.println("  In Locale for config request " + inLocale.getLanguage() + ", locl = " + locl);
         	
         	JSONObject obj = new JSONObject();
