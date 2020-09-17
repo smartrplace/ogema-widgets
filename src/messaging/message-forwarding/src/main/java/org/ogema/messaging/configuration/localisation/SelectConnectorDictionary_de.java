@@ -37,15 +37,15 @@ public class SelectConnectorDictionary_de implements SelectConnectorDictionary {
 			return "When priority 'LOW' is chosen for a certain service on an app all messages "
 			+ "of this app will be sent via the service; when 'HIGH' is chosen only messages "
 			+ "with highest priority are sent etc."	;
-		return "Auf dieser Seite kannst Du einstellen welche Nachrichten von welchen OGEMA-Apps an "
+		return "Auf dieser Seite kannst Du einstellen welche Nachrichten von welchen Apps an "
 				+ "welche Empfänger weitergeleitet werden, z.B. per Email, SMS oder XMPP. Weitere "
 				+ "Nachrichtentypen können über entsprechende Apps nachinstalliert werden. "
 				+ "Damit ein Empfänger ausgewählt werden kann, muss er zunächst für den entsprechenden "
 				+ "Nachrichtendienst konfiguriert werden. Dafür sollte dieser eine entsprechende Seite "
 				+ "bereitstellen, siehe z.B. die <a href=\"" + MESSAGE_SETTINGS_LINK + "\">"
 				+ "<b>Konfigurationsseite für die Basisdienste</b></a>.\n"
-				+ "Alle Nachrichten die von OGEMA Apps verschickt wurden können auch im Browser angesehen werden: "
-				+ "<a href=\"" + MESSAGE_READER_LINK + "\"><b>OGEMA Message Reader</b></a>.<br>"
+				+ "Alle Nachrichten die von verschickt wurden können auch im Browser angesehen werden: "
+				+ "<a href=\"" + MESSAGE_READER_LINK + "\"><b>Message Reader</b></a>.<br>"
 				+ "Wenn für einen Dienst die Priorität 'LOW' gewählt ist, werden alle Nachrichten "
 				+ "der entsprechenden App gesendet, wenn 'HIGH' gewählt wird, nur die Nachrichten "
 				+ "mit höchster Priorität etc.";

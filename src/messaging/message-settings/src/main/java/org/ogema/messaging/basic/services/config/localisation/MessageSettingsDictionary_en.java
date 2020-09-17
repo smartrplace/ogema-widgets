@@ -39,7 +39,7 @@ public class MessageSettingsDictionary_en implements MessageSettingsDictionary {
 		if(Boolean.getBoolean("org.ogema.messaging.basic.services.config.fixconfigenglish"))
 			return "For the configuration which applications send mesages to which receiver "+
 				"see <a href=\"" + SELECT_CONNECTOR_LINK + "\"><b>here</b></a>.\n";
-		return "This page allows you to configure receivers for messages sent by OGEMA apps, for the " 
+		return "This page allows you to configure receivers for messages, for the " 
 				+ "three basic messenger services Email, SMS and XMPP. Creating a receiver does yet not imply "
 				+ "that any messages will be forwarded to the respective address, rather there is another "
 				+ "page which allows the <a href=\"" + SELECT_CONNECTOR_LINK + "\"><b>configuration of the message forwarding</b></a>.\n"
@@ -47,8 +47,8 @@ public class MessageSettingsDictionary_en implements MessageSettingsDictionary {
 				+ "sender address be configured, which can be done <a href=\""
 				+  SENDER_LINK + "\"><b>on this page</b></a>.\n"
 				+ "Any data entered is only stored locally on the gateway.\n"
-				+ "Messages sent by OGEMA applications can also be viewed in the broser: "
-				+ "<a href=\"" + MESSAGE_READER_LINK + "\"><b>OGEMA Message Reader</b></a>.";
+				+ "Messages sent can also be viewed in the broser: "
+				+ "<a href=\"" + MESSAGE_READER_LINK + "\"><b>Message Reader</b></a>.";
 	}
 
 	@Override

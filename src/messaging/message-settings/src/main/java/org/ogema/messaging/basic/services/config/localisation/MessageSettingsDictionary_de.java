@@ -41,7 +41,7 @@ public class MessageSettingsDictionary_de implements MessageSettingsDictionary {
 		if(Boolean.getBoolean("org.ogema.messaging.basic.services.config.fixconfigenglish"))
 			return "For the configuration which applications send mesages to which receiver "+
 				"see <a href=\"" + SELECT_CONNECTOR_LINK + "\"><b>here</b></a>.\n";
-		return "Auf dieser Seite kannst Du Empfänger für Nachrichten von OGEMA-Apps einrichten, für die drei"
+		return "Auf dieser Seite kannst Du Empfänger für Nachrichten einrichten, für die drei"
 				+ " Basisdienste Email, SMS und XMPP. Das Anlegen der Empfänger auf dieser Seite führt noch"
 				+ " nicht dazu, dass Nachrichten verschickt werden. Dazu gibt es eine weitere Seite, auf der "
 				+ "zu jeder App einzeln festgelegt werden kann, welcher Empfänger die gesendeten Nachrichten"
@@ -50,8 +50,8 @@ public class MessageSettingsDictionary_de implements MessageSettingsDictionary {
 				+ " sie Nachrichten verschicken können. Die entsprechende Seite findest Du <a href=\""
 				+  SENDER_LINK + "\"><b>hier</b></a>.\n"
 				+ "Die eingegebenen Daten werden nur lokal auf dem Gateway gespeichert.\n"
-				+ "Alle Nachrichten die von OGEMA Apps verschickt wurden können auch im Browser angesehen werden: "
-				+ "<a href=\"" + MESSAGE_READER_LINK + "\"><b>OGEMA Message Reader</b></a>.";
+				+ "Alle Nachrichten die erschickt wurden können auch im Browser angesehen werden: "
+				+ "<a href=\"" + MESSAGE_READER_LINK + "\"><b>Message Reader</b></a>.";
 	}
 
 	@Override
