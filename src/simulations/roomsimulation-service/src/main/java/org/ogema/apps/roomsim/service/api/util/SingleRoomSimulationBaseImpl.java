@@ -56,7 +56,7 @@ public abstract class SingleRoomSimulationBaseImpl implements SingleRoomSimulati
 	
 	public SingleRoomSimulationBaseImpl(Resource roomOrEnclosingResource,
 			RoomSimConfigPatternI configPattern, OgemaLogger logger) {
-		this(roomOrEnclosingResource, configPattern, logger, true);
+		this(roomOrEnclosingResource, configPattern, logger, false);
 	}
 	public SingleRoomSimulationBaseImpl(Resource roomOrEnclosingResource,
 			RoomSimConfigPatternI configPattern, OgemaLogger logger,
