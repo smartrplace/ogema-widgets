@@ -43,4 +43,6 @@ public interface NaturalPerson extends LegalEntity {
 
 	/** Citizenship */
 	//ResourceList<Region> citizenships();
+	
+	StringResource userRole();
 }

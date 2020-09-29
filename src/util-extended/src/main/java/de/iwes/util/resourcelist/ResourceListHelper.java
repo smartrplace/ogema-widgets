@@ -135,6 +135,13 @@ public class ResourceListHelper {
 		return result;
 	}
 
+	public static <T extends Resource> String getNameForElement(T el) {
+		StringResource name = el.getSubResource("name", StringResource.class);
+		if(name.exists() && !name.getValue().isEmpty())
+			return name.getValue();
+		return el.getName();
+	}
+	
 	public static <T extends Resource> List<T> getAllElementsLocation(ResourceList<T> resList) {
 		List<T> result = new ArrayList<>();
 		for(T r: resList.getAllElements()) {
