@@ -1,4 +1,4 @@
-package org.smartrplace.server.gateway;
+package org.smartrplace.system.guiappstore.config;
 
 import org.ogema.core.model.array.StringArrayResource;
 import org.ogema.core.model.simple.IntegerResource;
