@@ -231,12 +231,14 @@ public class GaRoEvalHelper {
 		if(recId.contains("competitionPosition")) return GaRoDataType.CompetitionPosition;
 		if(recId.contains("Points")) return GaRoDataType.CompetitionPoints;
 		
-		if(recId.contains("/powerSensor/reading")) return GaRoDataType.ReactivePowerMeterOutlet;
-		if(recId.contains("/reactivePowerSensor/reading")) return GaRoDataType.PowerMeterOutlet;
+		if(recId.contains("/powerSensor/reading")) return GaRoDataType.PowerMeterOutlet;
+		if(recId.contains("/reactivePowerSensor/reading")) return GaRoDataType.ReactivePowerMeterOutlet;
 		if(recId.contains("/currentSensor/reading")) return GaRoDataType.CurrentSensorOutlet;
 		if(recId.contains("/voltageSensor/reading")) return GaRoDataType.VoltageSensorOutlet;
 		if(recId.contains("/frequencySensor/reading")) return GaRoDataType.FrequencySensorOutlet;
 		if(recId.contains("/energySensor/reading")) return GaRoDataType.EnergyIntegralOutlet;
+		if(recId.contains("/setting/stateFeedback")) return GaRoDataType.MultiSwitchStateFeedback; //"onOffSwitch/stateFeedback"
+		if(recId.contains("/setting/stateControl")) return GaRoDataType.MultiSwitchStateControl; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/stateFeedback")) return GaRoDataType.SwitchStateFeedback; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/stateControl")) return GaRoDataType.SwitchStateControl; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/POWER_")) return GaRoDataType.Heatpower;
