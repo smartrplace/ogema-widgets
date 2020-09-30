@@ -320,7 +320,7 @@ var abortAjax = function () {
 	ogema.logout = function() {
         var onLogoutSuccess = function(data){ 
               loggedOut = true;
-              ogema.stopMessagePolling();
+              if (ogema.stopMessagePolling) { ogema.stopMessagePolling(); }
               abortAjax();
               window.location.assign(data);
         };
