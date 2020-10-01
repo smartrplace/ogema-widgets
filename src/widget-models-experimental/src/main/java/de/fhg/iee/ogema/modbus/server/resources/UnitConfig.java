@@ -29,4 +29,6 @@ public interface UnitConfig extends Configuration {
     
     ResourceList<RegisterConfig> registers();
     
+    ResourceList<DiscreteIO> discreteIOs();
+    
 }
