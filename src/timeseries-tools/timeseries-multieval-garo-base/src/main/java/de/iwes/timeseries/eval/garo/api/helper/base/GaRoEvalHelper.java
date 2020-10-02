@@ -117,7 +117,8 @@ public class GaRoEvalHelper {
 				"Humidity", "Luftfeuchtigkeit");
 		addRecId(GaRoDataType.WindowOpen, new String[] {"SHUTTER_CONTACT"}, recIdSnippets,
 				"Window Open Status", "Fensteröffnung");
-		addRecId(GaRoDataType.TemperatureSetpointFeedback, new String[] {"temperatureSensor/deviceFeedback/setpoint"}, recIdSnippets,
+		addRecId(GaRoDataType.TemperatureSetpointFeedback, new String[] {"temperatureSensor/deviceFeedback/setpoint",
+				"/temperatureSensor/deviceSettings/setpoint"}, recIdSnippets,
 				"Temperature Setpoint Thermostat", "Temperatursollwert real");
 		addRecId(GaRoDataType.TemperatureSetpointSet, new String[] {"temperatureSensor/settings/setpoint"}, recIdSnippets,
 				"Temperature Setpoint Requested", "Temperatursollwert angefordert");
@@ -203,6 +204,7 @@ public class GaRoEvalHelper {
 		//if(recId.contains("HUMIDITY")) return GaRoDataType.HumidityMeasurement;
 		//if(recId.contains("SHUTTER_CONTACT")) return GaRoDataType.WindowOpen;
 		if(recId.contains("MOTION_DETECTOR")) return GaRoDataType.MotionDetection;
+		if(recId.contains("/motionSensor/reading")) return GaRoDataType.MotionDetection;
 		//type TemperatureSetpoint is not recognized anymore
 		//if(recId.contains("temperatureSensor/deviceFeedback/setpoint")) return GaRoDataType.TemperatureSetpointFeedback;
 		//if(recId.contains("temperatureSensor/settings/setpoint")) return GaRoDataType.TemperatureSetpointSet;
@@ -256,6 +258,7 @@ public class GaRoEvalHelper {
 		if(recId.contains("/USER_DEFINED_0_0")) return GaRoDataType.CO2Concentration;
 		//if(recId.contains("NetworkState/mainNetworkOk")) return GaRoDataType.InternetConnection;
 		if(recId.contains("/communicationStatus/communicationDisturbed")) return GaRoDataType.CommunicationDisturbed;
+		if(recId.contains("/lightSensor/reading")) return GaRoDataType.LightSensor;
 		
 		for(GaRoDataType type: GaRoDataType.standardTypes) {
     		if(type.label(null).equals(recId)) return type;

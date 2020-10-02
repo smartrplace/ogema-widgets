@@ -25,6 +25,7 @@ import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.FloatResource;
 import org.ogema.core.model.simple.SingleValueResource;
 import org.ogema.core.model.units.AngleResource;
+import org.ogema.core.model.units.BrightnessResource;
 import org.ogema.core.model.units.ElectricCurrentResource;
 import org.ogema.core.model.units.EnergyResource;
 import org.ogema.core.model.units.FlowResource;
@@ -135,6 +136,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 			BooleanResource.class);
 	public static final GaRoDataType WindowOpen = new GaRoDataType("WindowOpen",
 			BooleanResource.class);
+	public static final GaRoDataType LightSensor = new GaRoDataType("LightSensor",
+			BrightnessResource.class);
 	public static final GaRoDataType ChargeSensor = new GaRoDataType("ChargeSensor",
 			BooleanResource.class);
 	public static final GaRoDataType ChargeVoltage = new GaRoDataType("ChargeVoltage",
