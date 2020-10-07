@@ -224,11 +224,12 @@ public class StringFormatHelper {
 		while(idx >= 0) {
 			int newIdx = serialized.indexOf(',', idx);
 			if(newIdx < 0) {
+				result.add(serialized.substring(idx).trim());
 				idx = -1;
-				continue;
+				break;
 			}
 			result.add(serialized.substring(idx, newIdx).trim());
-			idx = newIdx;
+			idx = newIdx+1;
 		}
 		return result;
 	}
