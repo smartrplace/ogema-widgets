@@ -15,7 +15,9 @@
  */
 package org.ogema.model.gateway;
 
+import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.simple.IntegerResource;
+import org.ogema.core.model.simple.StringResource;
 import org.ogema.model.prototypes.PhysicalElement;
 
 /** Collection of evaluation information provided on the OGEMA instance
@@ -28,7 +30,7 @@ public interface EvalCollection extends PhysicalElement {
 	 */
 	IntegerResource roomDeviceUpdateCounter();
 	
-	
+	ResourceList<StringResource> initDoneStatus();
 	//ResourceList<IncidentProvider> incidentProviders();
 	//ResourceList<IncidentAutoClearanceConfiguration> incidenceAutoClearanceConfigs();
 	//ResourceList<IncidentNotificationTriggerConfiguration> incidentTriggerConfigs();
