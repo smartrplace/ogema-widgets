@@ -102,6 +102,18 @@ public interface WidgetApp {
 	 * @param asStartPage
 	 */
 	public <D extends LocaleDictionary> void createLazyPage(String relativUrl, Consumer<WidgetPage<D>> callback, @SuppressWarnings("rawtypes") Class<? extends WidgetPage> pageType, boolean asStartPage);
+	
+	/**
+	 * Register a resource with the WidgetApp.
+	 * @param path
+	 * 		File name of the resource within the `resources` directory.
+	 * @param app
+	 * 		May be null, in which case no check for the file's existence is run,
+	 * 		resulting in 404s if the file at `path` doesn't exist.
+	 * @return
+	 * 		URL to the resource or null if it couldn't be registered.
+	 */
+	public default String addResource(String stylesheetName, Class<? extends Application> app) { return null; }
 
 	/**
 	 * Add a CSS stylesheet to all pages of the WidgetApp.

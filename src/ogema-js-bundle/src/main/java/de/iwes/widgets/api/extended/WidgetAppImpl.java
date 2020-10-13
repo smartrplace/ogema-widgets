@@ -407,15 +407,22 @@ public class WidgetAppImpl implements WidgetApp {
 	}
 
 	@Override
+	public String addResource(String path, Class<? extends Application> app) {
+		if (app != null && app.getResource("/" + path) == null) {
+			log.warn("Could not register resource {} (File not found).", path);
+			return null;
+		}
+		String url = this.appUrl().replaceAll("/$", "") + "/" + path;
+		return wam.registerWebResource(url, path);
+	}
+
+	@Override
 	public boolean addStylesheet(String stylesheetName, Class<? extends Application> app) {
 		
-		if (app != null && app.getResource("/" + stylesheetName) == null) {
-			log.warn("Stylesheet {} not found.", stylesheetName);
+		String stylesheetUrl = addResource(stylesheetName, app);
+		if (stylesheetUrl == null)
 			return false;
-		}
 		
-		String stylesheetUrl = this.appUrl().replaceAll("/$", "") + "/" + stylesheetName;
-		wam.registerWebResource(stylesheetUrl, stylesheetName);
 		HtmlLibrary style = new HtmlLibrary(HtmlLibrary.LibType.CSS, stylesheetName, stylesheetUrl);
 		Collection<WidgetPage<?>> pages = this.getPages().values();
 		for (WidgetPage<?> p : pages) {
