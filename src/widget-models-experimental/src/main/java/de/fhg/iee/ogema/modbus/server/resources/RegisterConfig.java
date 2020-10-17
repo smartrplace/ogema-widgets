@@ -15,17 +15,15 @@
  */
 package de.fhg.iee.ogema.modbus.server.resources;
 
-import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.IntegerResource;
-import org.ogema.model.prototypes.Configuration;
 
 /**
  *
  * @author jan.lapp@iee.fraunhofer.de
  */
-public interface RegisterConfig extends Configuration {
+public interface RegisterConfig extends PublishingDataElement {
 
-    IntegerResource address();
+    //IntegerResource address();
 
     /**
      * @return number of registers, where applicable, default 1.
@@ -35,6 +33,6 @@ public interface RegisterConfig extends Configuration {
     /**
      * @return create as writable (holding) register, default is {@code false} (input register)
      */
-    BooleanResource writable();
+    //BooleanResource writable();
     
 }
