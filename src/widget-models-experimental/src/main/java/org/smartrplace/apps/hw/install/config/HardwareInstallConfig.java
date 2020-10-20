@@ -66,4 +66,7 @@ public interface HardwareInstallConfig extends Data {
 	 * via the ResourceTypes. This may lead to showing devices in more than one DeviceHandlerProvider
 	 */
 	BooleanResource includeInactiveDevices();
+	
+	/** If true alarming is started, otherwise no alarm detection is performed*/
+	BooleanResource isAlarmingActive();
 }

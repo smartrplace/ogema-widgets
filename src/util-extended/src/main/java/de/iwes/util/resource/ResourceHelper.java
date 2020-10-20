@@ -506,8 +506,7 @@ public class ResourceHelper {
 	 * {@link #getSubResourceBest(Resource, String, Class)} is used<br>
 	 * types as the resource names may be different when stepping up from the parent resources.
 	 * @return null if no such resource exists*/
-	public static <T extends Resource> T getRelativeResource(Resource parentTemplate, T childTemplate, Resource parentDestination,
-			ResourceAccess resAcc) {
+	public static <T extends Resource> T getRelativeResource(Resource parentTemplate, T childTemplate, Resource parentDestination) {
 		String parentPath = parentTemplate.getLocation();
 		String childPath = childTemplate.getLocation();
 		if(childPath.startsWith(parentPath)) {
@@ -530,7 +529,7 @@ public class ResourceHelper {
 				return null;
 			parentPath = parentTemplate.getLocation();
 		}
-		return getRelativeResource(parentTemplate, childTemplate, parentDestination, resAcc);
+		return getRelativeResource(parentTemplate, childTemplate, parentDestination);
 	}
 
 	/** Get sub resource of a certain type. The sub resource shall either be defined by the model
