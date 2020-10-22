@@ -134,6 +134,51 @@ public class ResourceListHelper {
 		result.activate(true);
 		return result;
 	}
+	
+	public static <T extends Resource, R extends T> R getOrCreateNamedElementFlex(ResourceList<T> list,
+			Class<R> typeToCreate) {
+		String elementName = ResourceUtils.getValidResourceName(typeToCreate.getSimpleName());
+		elementName = elementName.substring(0, 1).toLowerCase()+elementName.substring(1);
+		return getOrCreateNamedElementFlex(elementName , list, typeToCreate);
+	}
+	@SuppressWarnings("unchecked")
+	/** Create an element in a resource list of a type inherited from the ResourceList type
+	 * 
+	 * @param <T>
+	 * @param <R>
+	 * @param elementName if not provided then derived from class name of typeToCreate
+	 * @param list
+	 * @param typeToCreate
+	 * @return
+	 */
+	public static <T extends Resource, R extends T> R getOrCreateNamedElementFlex(String elementName, ResourceList<T> list,
+			Class<R> typeToCreate) {
+		list.create();
+		for(T el: list.getAllElements()) {
+			if(el.getName().equals(elementName)) {
+				if(!typeToCreate.isAssignableFrom(el.getClass()))
+					return null;
+				return (R)el;
+			}
+			StringResource name = el.getSubResource("name", StringResource.class);
+			if(name.exists() && name.getValue().equals(elementName)) {
+				if(!typeToCreate.isAssignableFrom(el.getClass()))
+					return null;
+				return (R)el;
+			}
+		}
+		R result;
+		if(ResourceUtils.isValidResourceName(elementName))
+			result = list.addDecorator(elementName, typeToCreate);
+		else {
+			result = list.addDecorator(getUniqueNameForNewElement(list), typeToCreate);
+			StringResource name = result.getSubResource("name", StringResource.class);
+			name.create();
+			name.setValue(elementName);
+		}
+		result.activate(true);
+		return result;
+	}
 
 	public static <T extends Resource> String getNameForElement(T el) {
 		StringResource name = el.getSubResource("name", StringResource.class);
@@ -142,6 +187,21 @@ public class ResourceListHelper {
 		return el.getName();
 	}
 	
+	public static <T extends Resource> String getUniqueNameForNewElement(ResourceList<T> resList) {
+		int maxExist = -1;
+		String listNamePlus = resList.getName()+"_";
+		for(T r: resList.getAllElements()) {
+			if(r.getName().startsWith(listNamePlus))
+				continue;
+			try  {
+				int val = Integer.parseInt(r.getName().substring(listNamePlus.length()));
+				if(val > maxExist)
+					maxExist = val;
+			} catch(NumberFormatException e) {}
+		}
+		return listNamePlus+(maxExist+1);
+	}
+
 	public static <T extends Resource> List<T> getAllElementsLocation(ResourceList<T> resList) {
 		List<T> result = new ArrayList<>();
 		for(T r: resList.getAllElements()) {

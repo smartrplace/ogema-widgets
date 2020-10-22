@@ -97,7 +97,10 @@ public class TimeResourceTextField extends ValueResourceTextField<TimeResource> 
 	@Override
 	protected void setResourceValue(TimeResource resource, String value, OgemaHttpRequest req) {
 		try {
+			boolean exists = resource.exists();
+			if(!exists) resource.create();
 			resource.setValue(getTimeValue(value, getData(req).getInterval()));
+			if(!exists) resource.activate(false);
 		} catch (Exception e) {
 			// ignore: we do not want to write user data to the log
 		}

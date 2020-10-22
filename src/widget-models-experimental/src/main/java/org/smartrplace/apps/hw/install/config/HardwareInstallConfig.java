@@ -20,6 +20,7 @@ import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
+import org.ogema.model.prototypes.Configuration;
 import org.ogema.model.prototypes.Data;
 
 /** 
@@ -75,4 +76,6 @@ public interface HardwareInstallConfig extends Data {
 	IntegerResource maxMessageNumBeforeBulk();
 	/** Duration of bulk message aggregation*/
 	TimeResource bulkMessageIntervalDuration();
+	
+	ResourceList<Configuration> alarmingConfig();
 }
