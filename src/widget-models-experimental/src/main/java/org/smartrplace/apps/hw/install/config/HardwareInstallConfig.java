@@ -19,6 +19,7 @@ import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
+import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.prototypes.Data;
 
 /** 
@@ -69,4 +70,9 @@ public interface HardwareInstallConfig extends Data {
 	
 	/** If true alarming is started, otherwise no alarm detection is performed*/
 	BooleanResource isAlarmingActive();
+	/** Maximum alarming messages to be sent within {@link #bulkMessageIntervalDuration()} before
+	 * messages are aggregated into a single bulk message*/
+	IntegerResource maxMessageNumBeforeBulk();
+	/** Duration of bulk message aggregation*/
+	TimeResource bulkMessageIntervalDuration();
 }

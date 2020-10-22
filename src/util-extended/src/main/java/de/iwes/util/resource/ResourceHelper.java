@@ -40,6 +40,7 @@ import org.ogema.model.locations.Location;
 import org.ogema.model.prototypes.PhysicalElement;
 import org.ogema.tools.resource.util.ResourceUtils;
 import org.slf4j.LoggerFactory;
+import org.smartrplace.gateway.device.GatewayDevice;
 
 import de.iwes.util.logconfig.EvalHelper;
 import de.iwes.util.logconfig.LogHelper;
@@ -237,14 +238,15 @@ public class ResourceHelper {
 	}
 	public static LocalGatewayInformation getLocalGwInfo(ApplicationManager appMan) {
 		return getOrCreateTopLevelResource("OGEMA_Gateway", LocalGatewayInformation.class, appMan);
-		/*LocalGatewayInformation result = getLocalGwInfo(appMan.getResourceAccess());
-		if(result != null)
-			return result;
-		result = appMan.getResourceManagement().createResource("OGEMA_Gateway", LocalGatewayInformation.class);
-		result.activate(true);
-		return result;*/
 	}
 	
+	public static GatewayDevice getLocalDevice(ResourceAccess resAcc) {
+		return getTopLevelResource("Gateway_Device", GatewayDevice.class, resAcc);
+	}
+	public static GatewayDevice getLocalDevice(ApplicationManager appMan) {
+		return getOrCreateTopLevelResource("Gateway_Device", GatewayDevice.class, appMan);
+	}
+
 	public static EvalCollection getEvalCollection(ApplicationManager appMan) {
 		return EvalHelper.getEvalCollection(appMan);
 	}
@@ -444,62 +446,6 @@ public class ResourceHelper {
 		}
 		return false;
 	}
-	
-	/** Find resource that has the same relative path towards parentDestination as childTemplate has to parentTemplate and
-	 * which has the same resource type as childTemplate<br>
-	 * TODO: In the future the method should not only use the resource path element names, but rather resource
-	 * types as the resource names may be different when stepping up from the parent resources.
-	 * @return null if no such resource exists*/
-	/*@SuppressWarnings("unchecked")
-	public static <T extends Resource> T getRelativeResourceV1(Resource parentTemplate, T childTemplate, Resource parentDestination,
-			ResourceAccess resAcc) {
-		//int parentLevelsToStebUp = 0;
-		String parentPath = parentTemplate.getLocation();
-		String childPath =  childTemplate.getLocation();
-		String destPath = parentDestination.getLocation();
-		if(!childPath.startsWith(parentPath)) {
-			Resource parentTemplateUp = parentTemplate.getParent();
-			Resource parentDestUp = parentDestination.getParent();
-			if(parentTemplateUp == null || parentDestUp == null)
-				return null;
-			if(childPath.startsWith(parentTemplateUp.getLocation())) {
-				String parentToParentUp = parentPath.substring(parentTemplateUp.getLocation().length()+1);
-				String relPath = childPath.substring(parentTemplateUp.getLocation().length())+"/"+parentToParentUp;
-				Class<? extends Resource> parentType = parentTemplate.getResourceType();
-				Resource destRelRes = parentDestUp.getSubResource(parentToParentUp);
-				if(destRelRes != null && parentType.isAssignableFrom(destRelRes.getResourceType())) {
-					return (T) getRelativeResource(relPath, parentDestination.getLocation(),
-							 childTemplate.getResourceType(), resAcc);
-				}
-				List<? extends Resource> sameTypeResources = parentDestUp.getSubResources(parentType, false);
-				if(sameTypeResources.isEmpty())
-					return null;
-				return (T) getRelativeResource(relPath, sameTypeResources.get(0).getLocation(),
-						 childTemplate.getResourceType(), resAcc);
-			}
-			// TODO: recursive operation
-		}
-		*/
-		/*String parentEls[] = null;
-		String destEls[] = null;
-		while(!childPath.startsWith(parentPath)) {
-			if(parentEls == null) {
-				parentEls = parentPath.split("/");
-				destEls = destPath.split("/");
-				//if(parentEls.length != destEls.length)
-				//	return null;
-			}
-			parentLevelsToStebUp++;
-			if(parentLevelsToStebUp >= parentEls.length)
-				return null;
-			if(destEls.length < parentLevelsToStebUp)
-				return null;
-			parentPath = parentPath.substring(0, parentPath.length()-parentEls[parentEls.length-parentLevelsToStebUp].length()-1);
-			destPath = destPath.substring(0, destPath.length()-destEls[destEls.length-parentLevelsToStebUp].length()-1);
-		}*/
-		/*String relPath = childPath.substring(parentPath.length());
-		return (T) getRelativeResource(relPath, destPath, childTemplate.getResourceType(), resAcc);
-	}*/
 	
 	/** Find resource that has the same relative resource structure path towards parentDestination as childTemplate has to parentTemplate and
 	 * which has the same resource type as childTemplate. For the choice of each element the definition of

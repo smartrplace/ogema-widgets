@@ -5,6 +5,7 @@ import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.FloatResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.SingleValueResource;
+import org.ogema.core.model.simple.StringResource;
 import org.ogema.model.prototypes.Data;
 
 public interface AlarmConfiguration extends Data {
@@ -39,8 +40,11 @@ public interface AlarmConfiguration extends Data {
 	FloatResource alarmRepetitionTime();
 	
 	/** If an alarm is detected and the alarmStatus resource is active then the value given
-	 * here is written into the alarmStatus resource.<br>
-	 * For no-value alarms the level plus 1000 is used.
+	 * here is written into the alarmStatus resource. For no-value alarms the level plus 1000 is used.<br>
+	 * The alarm level is also used to determine the message priority:<br>
+	 * 1: LOW<br>
+	 * 2: MEDIUM<br>
+	 * 3: HIGH
 	 */
 	IntegerResource alarmLevel();
 	
@@ -62,4 +66,21 @@ public interface AlarmConfiguration extends Data {
 	 * able to configure to call the resourceChanged method of a single object from the
 	 * ResourceValueListeners of multiple SingleValueResources*/
 	StringArrayResource alarmingExtensions();
+	
+	/** Alarming app by which the configuration is sent. This determines which receivers get high, medium and low 
+	 * priority alarms. The settings of this configuration generate high priority alarms.
+	 */
+	StringResource alarmingAppId();
+	/** It is possible to provide additional settings that generate a medium priority alarm. The value limits and/or
+	 * the duration must be more relaxed so that medium priority messages are sent later and less frequently than
+	 * high low messages. Note that all receivers of the low priority messages will also receive the
+	 * medium priority messages. Note also that in this concept "low priority" means "send to first-level support"
+	 * so in this concept high priority messages indicate that the maximum level of escalation is reached.<br>
+	 * If this is not available then no mediumPriorityMessages are generated.<br>
+	 * Note that {@link #alarmLevel()} must be set correctly for each configuration variant
+	 */
+	AlarmConfiguration mediumPriorityConfig();
+	/** See {@link #mediumPriorityConfig()}
+	 */
+	AlarmConfiguration lowPriorityConfig();
 }

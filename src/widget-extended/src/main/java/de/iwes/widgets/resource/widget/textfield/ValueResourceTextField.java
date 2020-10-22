@@ -77,8 +77,9 @@ public class ValueResourceTextField<V extends SingleValueResource> extends Resou
 				output = String.format(Locale.ENGLISH, "%f", ((FloatResource) resource).getValue());
 			else
 				output = ValueResourceUtils.getValue((FloatResource) resource, nrDecimals); // default; override in derived class, if necessary // FIXME or use parameter?
-		}
-		else
+		//} else if(resource instanceof TimeResource) {
+		//	output = ValueResourceUtils.getValue(((TimeResource)resource).getValue()/(60*60000f), nrDecimals);
+		} else
 			output = ValueResourceUtils.getValue(resource);
 		return output;
 	}
@@ -92,8 +93,9 @@ public class ValueResourceTextField<V extends SingleValueResource> extends Resou
 		if(!exists) resource.create();
 		if (resource instanceof TemperatureResource)  {
 			((TemperatureResource) resource).setValue(Float.parseFloat(value) + 273.15F);
-		}
-		else
+		//} else if(resource instanceof TimeResource) {
+		//	((TimeResource) resource).setValue((long) (Double.parseDouble(value)*(60*60000l)));
+		} else
 			ValueResourceUtils.setValue(resource, value);
 		if(!exists) resource.activate(false);
 	}
