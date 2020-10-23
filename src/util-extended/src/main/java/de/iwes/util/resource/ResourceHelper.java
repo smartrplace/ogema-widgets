@@ -219,7 +219,18 @@ public class ResourceHelper {
 		}
 		return null;
 	}
+	/** Get top-level resource with standard name*/
+	public static <T extends Resource> T getTopLevelResource(Class<T> type, ResourceAccess resAcc) {
+		String name = type.getSimpleName().substring(0, 1).toLowerCase()+type.getSimpleName().substring(1);
+		return getTopLevelResource(name, type, resAcc);
+	}
 	
+	/** Get top-level resource with standard name*/
+	public static <T extends Resource> T getOrCreateTopLevelResource(Class<T> type,
+			ApplicationManager appMan) {
+		String name = type.getSimpleName().substring(0, 1).toLowerCase()+type.getSimpleName().substring(1);
+		return getOrCreateTopLevelResource(name, type, appMan);		
+	}
 	public static <T extends Resource> T getOrCreateTopLevelResource(String name, Class<T> type,
 			ApplicationManager appMan) {
 		T result = getTopLevelResource(name, type, appMan.getResourceAccess());
