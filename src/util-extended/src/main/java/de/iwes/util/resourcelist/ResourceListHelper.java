@@ -118,6 +118,7 @@ public class ResourceListHelper {
 		return result;
 	}
 	public static <T extends Resource> T getOrCreateNamedElementFlex(String elementName, ResourceList<T> list) {
+		list.create();
 		for(T el: list.getAllElements()) {
 			if(el.getName().equals(elementName))
 				return el;
