@@ -25,10 +25,13 @@
 package de.iwes.util.resourcelist;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.ogema.core.model.Resource;
 import org.ogema.core.model.ResourceList;
+import org.ogema.core.model.array.StringArrayResource;
+import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.tools.resource.util.ResourceUtils;
 
@@ -191,7 +194,7 @@ public class ResourceListHelper {
 		int maxExist = -1;
 		String listNamePlus = resList.getName()+"_";
 		for(T r: resList.getAllElements()) {
-			if(r.getName().startsWith(listNamePlus))
+			if(!r.getName().startsWith(listNamePlus))
 				continue;
 			try  {
 				int val = Integer.parseInt(r.getName().substring(listNamePlus.length()));
@@ -199,9 +202,14 @@ public class ResourceListHelper {
 					maxExist = val;
 			} catch(NumberFormatException e) {}
 		}
-		return listNamePlus+(maxExist+1);
+		return listNamePlus+String.format("%04d", maxExist+1);
 	}
 
+	public static <T extends Resource> T addWithOrderedName(ResourceList<T> resList) {
+		String name = getUniqueNameForNewElement(resList);
+		return resList.addDecorator(name, resList.getElementType());
+	}
+	
 	public static <T extends Resource> List<T> getAllElementsLocation(ResourceList<T> resList) {
 		List<T> result = new ArrayList<>();
 		for(T r: resList.getAllElements()) {
@@ -232,5 +240,20 @@ public class ResourceListHelper {
 			}
 		}
 		return false;
+	}
+
+	/** Sort elements based on the resource names.
+	 * This is usually required when a ResourceList may be re-read via ogj/ogx and the list order is not maintained.<br>
+	 * Note that this is NOT necessarily the order provided by getAllElements initially!*/
+	public static <T extends Resource>  List<T> getAllElementsSorted(ResourceList<T> resList) {
+		List<T> result = resList.getAllElements();
+		result.sort(new Comparator<T>() {
+
+			@Override
+			public int compare(T o1, T o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
+		return result;
 	}
 }

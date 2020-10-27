@@ -1,5 +1,6 @@
 package org.ogema.model.extended.alarming;
 
+import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.prototypes.Data;
@@ -20,4 +21,6 @@ public interface AlarmGroupData extends Data {
 	
 	/** Link to bug/task tracking tool where alarm is processed by support*/
 	StringResource linkToTaskTracking();
+	
+	BooleanResource isFinished();
 }
