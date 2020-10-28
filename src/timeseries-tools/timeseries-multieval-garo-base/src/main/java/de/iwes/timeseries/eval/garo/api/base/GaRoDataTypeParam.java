@@ -17,9 +17,6 @@ package de.iwes.timeseries.eval.garo.api.base;
 
 import java.util.List;
 
-import org.ogema.core.model.Resource;
-import org.ogema.tools.resource.util.ResourceUtils;
-
 import de.iwes.timeseries.eval.base.provider.utils.TimeSeriesDataImpl;
 import de.iwes.util.resource.ResourceHelper.DeviceInfo;
 

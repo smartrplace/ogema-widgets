@@ -15,8 +15,6 @@
  */
 package de.iwes.timeseries.eval.garo.api.base;
 
-import org.ogema.core.channelmanager.measurements.SampledValue;
-import org.ogema.core.model.units.TemperatureResource;
 import org.ogema.generictype.GenericDataTypeDeclaration;
 
 import de.iwes.timeseries.eval.garo.api.helper.base.GaRoEvalHelper;

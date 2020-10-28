@@ -23,6 +23,7 @@ import java.util.Objects;
 import org.ogema.core.model.Resource;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.FloatResource;
+import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.SingleValueResource;
 import org.ogema.core.model.units.AngleResource;
 import org.ogema.core.model.units.BrightnessResource;
@@ -212,6 +213,18 @@ public class GaRoDataType implements GaRoDataTypeI {
 	public static final GaRoDataType FreshWaterFlow = new GaRoDataType("FreshWaterFlow",
 			FloatResource.class);
 
+	public static final GaRoDataType SystemUpdateStatus = new GaRoDataType("SystemUpdateStatus",
+			IntegerResource.class);
+	public static final GaRoDataType SystemRestartLog = new GaRoDataType("SystemRestartLog",
+			IntegerResource.class);
+	public static final GaRoDataType RouterIPv4HM = new GaRoDataType("IPv4_HM",
+			IntegerResource.class);
+	public static final GaRoDataType RouterIPv4SSH = new GaRoDataType("IPv4_SSH",
+			IntegerResource.class);
+	public static final GaRoDataType RouterIPv6HM = new GaRoDataType("IPv6_HM",
+			IntegerResource.class);
+	public static final GaRoDataType RouterIPv6SSH = new GaRoDataType("IPv6_SSH",
+			IntegerResource.class);
 
 	
 	//The following options are per-gateway

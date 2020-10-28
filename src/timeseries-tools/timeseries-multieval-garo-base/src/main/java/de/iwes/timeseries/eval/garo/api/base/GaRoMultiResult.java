@@ -30,7 +30,6 @@ import de.iwes.timeseries.eval.api.extended.MultiEvaluationInputGeneric;
 import de.iwes.timeseries.eval.api.extended.util.AbstractMultiResult;
 import de.iwes.timeseries.eval.api.helper.EfficientTimeSeriesArray;
 import de.iwes.timeseries.eval.garo.api.helper.base.SpecialGaRoEvalResult;
-import de.iwes.util.resource.ResourceHelper.DeviceInfo;
 
 /** Result for the evaluations of all rooms and gateways in the multi-evaluation for a single evaluation interval*/
 public class GaRoMultiResult extends AbstractMultiResult {

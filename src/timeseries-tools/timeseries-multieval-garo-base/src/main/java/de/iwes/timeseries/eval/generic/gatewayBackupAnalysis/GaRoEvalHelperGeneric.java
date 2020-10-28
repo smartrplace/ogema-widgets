@@ -16,7 +16,6 @@
 package de.iwes.timeseries.eval.generic.gatewayBackupAnalysis;
 
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
@@ -39,7 +38,6 @@ import de.iwes.timeseries.eval.garo.api.helper.base.GaRoEvalHelper.CSVArchiveExp
 import de.iwes.timeseries.eval.garo.multibase.GaRoSingleEvalProvider;
 import de.iwes.timeseries.eval.garo.multibase.GaRoSingleEvalProviderPreEvalRequesting;
 import de.iwes.timeseries.eval.garo.multibase.GaRoSingleEvalProviderPreEvalRequesting.PreEvaluationRequested;
-import de.iwes.timeseries.eval.garo.multibase.GenericGaRoMultiEvaluation;
 import de.iwes.timeseries.eval.garo.multibase.GenericGaRoMultiProvider;
 
 public class GaRoEvalHelperGeneric {

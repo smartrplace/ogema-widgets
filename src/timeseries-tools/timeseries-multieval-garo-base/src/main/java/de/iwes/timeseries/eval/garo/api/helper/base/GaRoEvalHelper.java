@@ -259,6 +259,13 @@ public class GaRoEvalHelper {
 		//if(recId.contains("NetworkState/mainNetworkOk")) return GaRoDataType.InternetConnection;
 		if(recId.contains("/communicationStatus/communicationDisturbed")) return GaRoDataType.CommunicationDisturbed;
 		if(recId.contains("/lightSensor/reading")) return GaRoDataType.LightSensor;
+
+		if(recId.contains("Gateway_Device/gitUpdateStatus")) return GaRoDataType.SystemUpdateStatus;
+		if(recId.contains("Gateway_Device/systemRestart")) return GaRoDataType.SystemRestartLog;
+		if(recId.contains("numberIP4AddressesHM")) return GaRoDataType.RouterIPv4HM;
+		if(recId.contains("numberIP4AddressesSSH")) return GaRoDataType.RouterIPv4SSH;
+		if(recId.contains("numberIP6PlusAddressesHM")) return GaRoDataType.RouterIPv6HM;
+		if(recId.contains("numberIP6PlusAddressesSSH")) return GaRoDataType.RouterIPv6SSH;
 		
 		for(GaRoDataType type: GaRoDataType.standardTypes) {
     		if(type.label(null).equals(recId)) return type;

@@ -27,6 +27,7 @@ import de.iwes.timeseries.eval.api.EvaluationProvider;
 import de.iwes.timeseries.eval.api.ResultType;
 import de.iwes.timeseries.eval.api.extended.util.AbstractSuperMultiResult;
 import de.iwes.timeseries.eval.garo.api.base.GaRoDataTypeI;
+import de.iwes.timeseries.eval.garo.api.base.GaRoMultiEvalDataProvider;
 import de.iwes.timeseries.eval.garo.api.base.GaRoMultiResult;
 import de.iwes.timeseries.eval.garo.api.base.GaRoSuperEvalResult;
 import de.iwes.timeseries.eval.garo.api.helper.base.GaRoEvalHelper;
