@@ -30,8 +30,6 @@ import java.util.List;
 
 import org.ogema.core.model.Resource;
 import org.ogema.core.model.ResourceList;
-import org.ogema.core.model.array.StringArrayResource;
-import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.tools.resource.util.ResourceUtils;
 
@@ -117,8 +115,7 @@ public class ResourceListHelper {
 		result.activate(true);
 		return result;
 	}
-	public static <T extends Resource> T getOrCreateNamedElementFlex(String elementName, ResourceList<T> list) {
-		list.create();
+	public static <T extends Resource> T getNamedElementFlex(String elementName, ResourceList<T> list) {
 		for(T el: list.getAllElements()) {
 			if(el.getName().equals(elementName))
 				return el;
@@ -126,7 +123,20 @@ public class ResourceListHelper {
 			if(name.exists() && name.getValue().equals(elementName))
 				return el;
 		}
-		T result;
+		return null;
+	}
+	public static <T extends Resource> T getOrCreateNamedElementFlex(String elementName, ResourceList<T> list) {
+		list.create();
+		/*for(T el: list.getAllElements()) {
+			if(el.getName().equals(elementName))
+				return el;
+			StringResource name = el.getSubResource("name", StringResource.class);
+			if(name.exists() && name.getValue().equals(elementName))
+				return el;
+		}*/
+		T result = getNamedElementFlex(elementName, list);
+		if(result != null)
+			return result;
 		if(ResourceUtils.isValidResourceName(elementName))
 			result = list.addDecorator(elementName, list.getElementType());
 		else {
