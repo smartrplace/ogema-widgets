@@ -238,6 +238,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 			VoltageResource.class, Level.GATEWAY);
 	public static final GaRoDataType PowerMeterFrequency = new GaRoDataType("PowerMeterFrequency",
 			FrequencyResource.class, Level.GATEWAY);
+	public static final GaRoDataType PowerMeterReactiveAngle = new GaRoDataType("PowerMeterReactiveAngle",
+			AngleResource.class, Level.GATEWAY);
 	public static final GaRoDataType PowerMeterSubphase = new GaRoDataType("PowerMeterSubphase",
 			PowerResource.class, Level.GATEWAY);
 	public static final GaRoDataType PowerMeterEnergySubphase = new GaRoDataType("PowerMeterEnergySubphase",

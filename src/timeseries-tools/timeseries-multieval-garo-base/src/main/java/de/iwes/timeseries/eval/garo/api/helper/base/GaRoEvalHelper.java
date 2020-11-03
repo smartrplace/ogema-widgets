@@ -217,15 +217,16 @@ public class GaRoEvalHelper {
 		if(recId.contains("connection/currentSensor/reading")) return GaRoDataType.PowerMeterCurrent;
 		if(recId.contains("connection/voltageSensor/reading")) return GaRoDataType.PowerMeterVoltage;
 		if(recId.contains("connection/frequencySensor/reading")) return GaRoDataType.PowerMeterFrequency;
-		if(recId.contains("connection/subPhaseConnections")
+		if(recId.contains("connection/reactiveAngleSensor/reading")) return GaRoDataType.PowerMeterReactiveAngle;
+		if((recId.contains("connection/subPhaseConnections") || recId.contains("connection/L"))
 				&&recId.contains("powerSensor/reading")) return GaRoDataType.PowerMeterSubphase;
-		if(recId.contains("connection/subPhaseConnections")
+		if((recId.contains("connection/subPhaseConnections") || recId.contains("connection/L"))
 				&&recId.contains("energySensor/reading")) return GaRoDataType.PowerMeterEnergySubphase;
-		if(recId.contains("connection/subPhaseConnections")
+		if((recId.contains("connection/subPhaseConnections") || recId.contains("connection/L"))
 				&&recId.contains("currentSensor/reading")) return GaRoDataType.PowerMeterCurrentSubphase;
-		if(recId.contains("connection/subPhaseConnections")
+		if((recId.contains("connection/subPhaseConnections") || recId.contains("connection/L"))
 				&&recId.contains("voltageSensor/reading")) return GaRoDataType.PowerMeterVoltageSubphase;
-		if(recId.contains("connection/subPhaseConnections")
+		if((recId.contains("connection/subPhaseConnections") || recId.contains("connection/L"))
 				&&recId.contains("reactiveAngleSensor/reading")) return GaRoDataType.PowerMeterReactiveAngleSubphase;
 		if(recId.contains("RexometerSerial/configs/gas_energy/value")) return GaRoDataType.GasMeter;
 		if(recId.contains("RexometerSerial/configs/gas_batteryVoltage/value")) return GaRoDataType.GasMeterBatteryVoltage;
