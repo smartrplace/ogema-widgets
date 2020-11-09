@@ -3,6 +3,7 @@ package de.fhg.iee.ogema.modbus.server.resources;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.SingleValueResource;
+import org.ogema.core.model.simple.StringResource;
 import org.ogema.model.prototypes.Configuration;
 
 public interface PublishingDataElement extends Configuration {
@@ -21,4 +22,7 @@ public interface PublishingDataElement extends Configuration {
 	     * Note that this value must be unique among all resources of type {@link UnitConfig}
 	     * on the system.*/
 	    IntegerResource bacNetObjectInstanceNumber();
+	    
+	    /** Description to be used for bacnet property*/
+	    StringResource description();
 }
