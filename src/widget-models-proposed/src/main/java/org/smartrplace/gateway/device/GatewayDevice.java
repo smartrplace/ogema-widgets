@@ -1,6 +1,7 @@
 package org.smartrplace.gateway.device;
 
 import org.ogema.core.model.simple.IntegerResource;
+import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.prototypes.PhysicalElement;
 
 /** Sensor and actor data for the gateway itself<br>
@@ -22,4 +23,9 @@ public interface GatewayDevice extends PhysicalElement {
 	 */
 	IntegerResource systemRestart();
 	
+	/** Interval for heartbeat sending to superior instance*/
+	TimeResource heartBeatDelay();
+	
+	IntegerResource activeAlarmSupervision();
+	IntegerResource datapointsInAlarmState();
 }

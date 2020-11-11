@@ -25,6 +25,7 @@ import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.FloatResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.SingleValueResource;
+import org.ogema.core.model.simple.TimeResource;
 import org.ogema.core.model.units.AngleResource;
 import org.ogema.core.model.units.BrightnessResource;
 import org.ogema.core.model.units.ElectricCurrentResource;
@@ -225,7 +226,14 @@ public class GaRoDataType implements GaRoDataTypeI {
 			IntegerResource.class);
 	public static final GaRoDataType RouterIPv6SSH = new GaRoDataType("IPv6_SSH",
 			IntegerResource.class);
-
+	public static final GaRoDataType HeartbeatSendInterval = new GaRoDataType("HeartbeatSendInterval",
+			TimeResource.class);
+	public static final GaRoDataType HeartbeatMaxInterval = new GaRoDataType("HeartbeatMaxInterval",
+			TimeResource.class);
+	public static final GaRoDataType AlarmSupervisionNum = new GaRoDataType("AlarmSupervisionNum",
+			IntegerResource.class);
+	public static final GaRoDataType DatapointsAlarmNum = new GaRoDataType("DatapointsAlarmNum",
+			IntegerResource.class);
 	
 	//The following options are per-gateway
 	public static final GaRoDataType PowerMeter = new GaRoDataType("PowerMeter",

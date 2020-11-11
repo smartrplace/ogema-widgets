@@ -271,6 +271,11 @@ public class GaRoEvalHelper {
 		for(GaRoDataType type: GaRoDataType.standardTypes) {
     		if(type.label(null).equals(recId)) return type;
     	}
+		if(recId.contains("Gateway_Device/heartBeatDelay")) return GaRoDataType.HeartbeatSendInterval;
+		if(recId.contains("warningMessageInterval")) return GaRoDataType.HeartbeatMaxInterval;
+		if(recId.contains("Gateway_Device/activeAlarmSupervision")) return GaRoDataType.AlarmSupervisionNum;
+		if(recId.contains("Gateway_Device/datapointsInAlarmState")) return GaRoDataType.DatapointsAlarmNum;
+		
 		if(recId.contains("$$")) return GaRoDataType.Internal;
 		return GaRoDataType.Unknown;
 	}
