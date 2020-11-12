@@ -26,4 +26,7 @@ public interface GatewayData extends PhysicalElement {
 	
 	/** Maximum interval of heartbeat signals to avoid sending a connection lost message in milliseconds*/
 	TimeResource warningMessageInterval();
+	
+	/** Interval for sending the entire communication structure requested in milliseconds*/
+	TimeResource structureUpdateInterval();
 }
