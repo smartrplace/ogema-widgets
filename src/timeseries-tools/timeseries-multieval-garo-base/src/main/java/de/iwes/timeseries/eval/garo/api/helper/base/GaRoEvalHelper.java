@@ -276,6 +276,9 @@ public class GaRoEvalHelper {
 		if(recId.contains("Gateway_Device/activeAlarmSupervision")) return GaRoDataType.AlarmSupervisionNum;
 		if(recId.contains("Gateway_Device/datapointsInAlarmState")) return GaRoDataType.DatapointsAlarmNum;
 		
+		if(recId.contains("/energyDaily/reading")) return GaRoDataType.EnergyDaily;
+		if(recId.contains("/energyReactiveDaily/reading")) return GaRoDataType.EnergyReactiveDaily;
+
 		if(recId.contains("$$")) return GaRoDataType.Internal;
 		return GaRoDataType.Unknown;
 	}
