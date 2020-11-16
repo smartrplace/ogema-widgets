@@ -244,6 +244,11 @@ public class GaRoDataType implements GaRoDataTypeI {
 	public static final GaRoDataType EnergyReactiveDailyAccumulated = new GaRoDataType("EnergyReactiveDailyAccumulated",
 			EnergyResource.class);
 
+	public static final GaRoDataType SmokeDetect = new GaRoDataType("SmokeDetect",
+			BooleanResource.class);
+	public static final GaRoDataType SmokeDetectError = new GaRoDataType("SmokeDetectError",
+			BooleanResource.class);
+
 	//The following options are per-gateway
 	public static final GaRoDataType PowerMeter = new GaRoDataType("PowerMeter",
 			PowerResource.class, Level.GATEWAY);
