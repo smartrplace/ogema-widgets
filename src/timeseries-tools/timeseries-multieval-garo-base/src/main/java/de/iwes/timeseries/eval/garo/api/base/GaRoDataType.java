@@ -239,6 +239,10 @@ public class GaRoDataType implements GaRoDataTypeI {
 			EnergyResource.class);
 	public static final GaRoDataType EnergyReactiveDaily = new GaRoDataType("EnergyReactiveDaily",
 			EnergyResource.class);
+	public static final GaRoDataType EnergyDailyAccumulated = new GaRoDataType("EnergyDailyAccumulated",
+			EnergyResource.class);
+	public static final GaRoDataType EnergyReactiveDailyAccumulated = new GaRoDataType("EnergyReactiveDailyAccumulated",
+			EnergyResource.class);
 
 	//The following options are per-gateway
 	public static final GaRoDataType PowerMeter = new GaRoDataType("PowerMeter",
