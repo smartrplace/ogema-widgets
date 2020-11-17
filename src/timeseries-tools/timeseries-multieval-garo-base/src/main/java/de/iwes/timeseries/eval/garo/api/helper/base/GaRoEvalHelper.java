@@ -280,6 +280,8 @@ public class GaRoEvalHelper {
 		if(recId.contains("/energyReactiveDaily/reading")) return GaRoDataType.EnergyReactiveDaily;
 		if(recId.contains("/energyAccumulatedDaily/reading")) return GaRoDataType.EnergyDailyAccumulated;
 		if(recId.contains("/energyReactiveAccumulatedDaily/reading")) return GaRoDataType.EnergyReactiveDailyAccumulated;
+		if(recId.contains("/billedEnergy/reading")) return GaRoDataType.BilledEnergy;
+		if(recId.contains("/billedEnergyReactive/reading")) return GaRoDataType.BilledEnergyReactive;
 
 		if(recId.contains("/SMOKE_DETECTOR") && (recId.contains("/reading"))) return GaRoDataType.SmokeDetect;
 		if(recId.contains("/SMOKE_DETECTOR") && (recId.contains("/error"))) return GaRoDataType.SmokeDetectError;
