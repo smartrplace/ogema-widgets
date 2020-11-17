@@ -34,6 +34,7 @@ import org.ogema.core.application.ApplicationManager;
 import org.ogema.core.model.Resource;
 import org.ogema.core.resourcemanager.ResourceAccess;
 import org.ogema.core.resourcemanager.pattern.ResourcePattern;
+import org.ogema.model.gateway.APIDataCollection;
 import org.ogema.model.gateway.EvalCollection;
 import org.ogema.model.gateway.LocalGatewayInformation;
 import org.ogema.model.locations.Location;
@@ -256,6 +257,9 @@ public class ResourceHelper {
 	}
 	public static GatewayDevice getLocalDevice(ApplicationManager appMan) {
 		return getOrCreateTopLevelResource("Gateway_Device", GatewayDevice.class, appMan);
+	}
+	public static APIDataCollection getAPIData(ApplicationManager appMan) {
+		return getOrCreateTopLevelResource(APIDataCollection.class, appMan);
 	}
 
 	public static EvalCollection getEvalCollection(ApplicationManager appMan) {
