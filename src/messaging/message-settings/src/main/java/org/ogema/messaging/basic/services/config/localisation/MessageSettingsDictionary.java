@@ -21,7 +21,7 @@ public interface MessageSettingsDictionary extends LocaleDictionary {
 	
 	final static String SELECT_CONNECTOR_LINK = "/de/iwes/ogema/apps/select-connector/index.html";
 	final static String MESSAGE_READER_LINK = "/de/iwes/ogema/apps/message/reader/index.html";
-	final static String SENDER_LINK = "sender.html";
+	final static String SENDER_LINK = "/de/iwes/ogema/apps/messageSettings/sender.html"; //"sender.html";
 	final static String RECEIVER_LINK = "index.html";
 
 	String headerSenders();

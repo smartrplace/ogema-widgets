@@ -217,12 +217,14 @@ public class ResAdminApp implements BundleActivator, Application {
 	        // 
 	        controller = new ResAdminController(appMan);
 			
-			//register a web page with dynamically generated HTML
-			widgetApp = guiService.createWidgetApp(urlPath, appManager);
-			WidgetPage<?> page = widgetApp.createStartPage();
-			//mainPage = new MainPage(page, this);
-			//WidgetApp wReal = new WidgetApp(urlPath, urlPath, widgetService, appManager);
-			new MainPageImpl(page, controller);
+	 		if(!Boolean.getBoolean("org.smartrplace.internal.resadmin.registerpagelate")) {
+				//register a web page with dynamically generated HTML
+				widgetApp = guiService.createWidgetApp(urlPath, appManager);
+				WidgetPage<?> page = widgetApp.createStartPage();
+				//mainPage = new MainPage(page, this);
+				//WidgetApp wReal = new WidgetApp(urlPath, urlPath, widgetService, appManager);
+				new MainPageImpl(page, controller);
+	 		}
 			try {
 				this.shellCommands = new ShellCommands(controller, ctx);
 			} catch (NoClassDefFoundError expected) {} // optional dependency
@@ -230,6 +232,14 @@ public class ResAdminApp implements BundleActivator, Application {
  			final CountDownLatch latch = this.startLatch;
  			if (latch != null)
  				latch.countDown();
+	 		if(Boolean.getBoolean("org.smartrplace.internal.resadmin.useseparateguiapp")) {
+				//register a web page with dynamically generated HTML
+				widgetApp = guiService.createWidgetApp(urlPath, appManager);
+				WidgetPage<?> page = widgetApp.createStartPage();
+				//mainPage = new MainPage(page, this);
+				//WidgetApp wReal = new WidgetApp(urlPath, urlPath, widgetService, appManager);
+				new MainPageImpl(page, controller);
+	 		}
  		}
      }
 

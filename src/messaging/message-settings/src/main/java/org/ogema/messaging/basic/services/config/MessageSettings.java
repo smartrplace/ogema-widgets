@@ -56,11 +56,11 @@ public class MessageSettings implements Application {
 		logger.debug("{} started", getClass().getName());
 
 		wApp = guiService.createWidgetApp("/de/iwes/ogema/apps/messageSettings", appManager);
-		WidgetPage<MessageSettingsDictionary> senderPage = wApp.createWidgetPage("sender.html");
+		WidgetPage<MessageSettingsDictionary> senderPage = wApp.createWidgetPage("sender.html", true);
 		senderPage.registerLocalisation(MessageSettingsDictionary_de.class).registerLocalisation(MessageSettingsDictionary_en.class);
 		senderPageBuilder = new SenderPageBuilder(senderPage, appManager);
 
-		WidgetPage<MessageSettingsDictionary> receiverPage = wApp.createStartPage();
+		WidgetPage<MessageSettingsDictionary> receiverPage = wApp.createWidgetPage("index.html", false); //wApp.createStartPage();
 		receiverPage.registerLocalisation(MessageSettingsDictionary_de.class).registerLocalisation(MessageSettingsDictionary_en.class);
 		receiverPageBuilder = new ReceiverPageBuilder(receiverPage, appManager);
 
@@ -69,7 +69,7 @@ public class MessageSettings implements Application {
 		resAcc.addResourceDemand(XmppConfiguration.class, senderPageBuilder.getXmppListener());
 		resAcc.addResourceDemand(ReceiverConfiguration.class, receiverPageBuilder);
 
-		if(!Boolean.getBoolean("org.ogema.messaging.basic.services.config.fixconfigenglish")) {
+		//if(!Boolean.getBoolean("org.ogema.messaging.basic.services.config.fixconfigenglish")) {
 			NavigationMenu nm = new NavigationMenu(" Select page");
 			nm.addEntry("Edit senders", senderPage);
 			nm.addEntry("Edit receivers", receiverPage);
@@ -78,11 +78,11 @@ public class MessageSettings implements Application {
 			mc.setCustomNavigation(nm);
 			mc = senderPage.getMenuConfiguration();
 			mc.setCustomNavigation(nm);
-		} else {
+		/*} else {
 			MenuConfiguration mc = receiverPage.getMenuConfiguration();
 			mc.setLanguageSelectionVisible(false);
 			mc.setNavigationVisible(false); 					
-		}
+		}*/
 	}
 
 	@Override

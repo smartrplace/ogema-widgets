@@ -74,8 +74,9 @@ public class EmailTemplate extends RowTemplate<EmailConfiguration> {
 		emailHeader.put("serverColumn", "Server-URL: ");
 		emailHeader.put("portColumn", "Port: ");
 		emailHeader.put("editPopupColumn", "");
-		emailHeader.put("editColumn", "");
-		emailHeader.put("deleteColumn", "");
+		emailHeader.put("editColumn", "Edit:");
+		emailHeader.put("saveColumn", "Save:");
+		emailHeader.put("deleteColumn", "Delete:");
 		return emailHeader;
 	}
 
@@ -180,7 +181,8 @@ public class EmailTemplate extends RowTemplate<EmailConfiguration> {
 
 		final Popup editEmailUserPopup = new Popup(page, "editEmailUserPopup_" + id, true);
 		editEmailUserPopup.setTitle("Edit user ", null);
-		row.addCell("editEmailPopupColumn", editEmailUserPopup);
+		//row.addCell("editEmailPopupColumn", editEmailUserPopup);
+		row.addCell("editPopupColumn", editEmailUserPopup);
 
 		final Button editEmailUserButton = new Button(page, "editEmailUserButton" + id);
 		editEmailUserButton.triggerAction(editEmailTextField, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
@@ -191,7 +193,8 @@ public class EmailTemplate extends RowTemplate<EmailConfiguration> {
 		editEmailUserButton.triggerAction(editEmailUserPopup, TriggeringAction.POST_REQUEST, TriggeredAction.SHOW_WIDGET);
 		editEmailUserButton.addDefaultStyle(ButtonData.BOOTSTRAP_GREEN);
 		editEmailUserButton.setDefaultText("Edit");
-		row.addCell("editEmailColumn", editEmailUserButton);
+		//row.addCell("editEmailColumn", editEmailUserButton);
+		row.addCell("editColumn", editEmailUserButton);
 
 		final ButtonConfirm confirmEmailChangesButton = new ButtonConfirm(page, "confirmEmailChangesButton_" + id) {
 
@@ -231,6 +234,7 @@ public class EmailTemplate extends RowTemplate<EmailConfiguration> {
 
 			}
 		};
+		row.addCell("saveColumn", confirmEmailChangesButton);
 		confirmEmailChangesButton.addDefaultStyle(ButtonData.BOOTSTRAP_GREEN);
 		confirmEmailChangesButton.setDefaultText("Save changes");
 		confirmEmailChangesButton.setDefaultConfirmPopupTitle("Edit " + id);
@@ -276,7 +280,7 @@ public class EmailTemplate extends RowTemplate<EmailConfiguration> {
 		deleteEmailUserButton.setDefaultConfirmMsg("Do you really want to delete '" + id + "' from your list ?");
 		deleteEmailUserButton.triggerAction(table, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		deleteEmailUserButton.triggerAction(alert, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
-		row.addCell("deleteEmailColumn", deleteEmailUserButton);
+		row.addCell("deleteColumn", deleteEmailUserButton);
 
 		return row;
 	}
