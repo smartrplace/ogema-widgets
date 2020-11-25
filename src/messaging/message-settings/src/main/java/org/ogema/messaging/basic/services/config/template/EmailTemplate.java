@@ -215,7 +215,8 @@ public class EmailTemplate extends RowTemplate<EmailConfiguration> {
 					port = Integer.parseInt(serverPort);
 				}
 
-				if ((port <= 65535) && email.matches(emailRegex) && server.matches(serverRegex) && !pw.isEmpty()) {
+				boolean serverInvalid = (!server.matches(serverRegex)) && (!server.startsWith("localhost"));
+				if ((port <= 65535) && email.matches(emailRegex) && (!serverInvalid) && !pw.isEmpty()) {
 					config.email().setValue(email);
 					config.password().setValue(pw);
 					config.serverURL().setValue(server);
@@ -224,7 +225,7 @@ public class EmailTemplate extends RowTemplate<EmailConfiguration> {
 				} else {
 					if (!email.matches(emailRegex))
 						alert.showAlert("Invalid email-address", false, req);
-					if ((!server.matches(serverRegex)) && (!server.startsWith("localhost")))
+					if (serverInvalid)
 						alert.showAlert("Invalid server-URL", false, req);
 					if ((port > 65535))
 						alert.showAlert("Invalid port", false, req);
