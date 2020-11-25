@@ -224,7 +224,7 @@ public class EmailTemplate extends RowTemplate<EmailConfiguration> {
 				} else {
 					if (!email.matches(emailRegex))
 						alert.showAlert("Invalid email-address", false, req);
-					if (!server.matches(serverRegex))
+					if ((!server.matches(serverRegex)) && (!server.startsWith("localhost")))
 						alert.showAlert("Invalid server-URL", false, req);
 					if ((port > 65535))
 						alert.showAlert("Invalid port", false, req);
