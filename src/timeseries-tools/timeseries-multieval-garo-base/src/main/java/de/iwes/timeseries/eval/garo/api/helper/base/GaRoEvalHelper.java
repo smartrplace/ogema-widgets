@@ -239,11 +239,16 @@ public class GaRoEvalHelper {
 		if(recId.contains("/currentSensor/reading")) return GaRoDataType.CurrentSensorOutlet;
 		if(recId.contains("/voltageSensor/reading")) return GaRoDataType.VoltageSensorOutlet;
 		if(recId.contains("/frequencySensor/reading")) return GaRoDataType.FrequencySensorOutlet;
+		if(recId.contains("/reactiveAngleSensor/reading")) return GaRoDataType.PowerMeterReactiveAngle;
 		if(recId.contains("/energySensor/reading")) return GaRoDataType.EnergyIntegralOutlet;
 		if(recId.contains("/setting/stateFeedback")) return GaRoDataType.MultiSwitchStateFeedback; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/setting/stateControl")) return GaRoDataType.MultiSwitchStateControl; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/stateFeedback")) return GaRoDataType.SwitchStateFeedback; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/stateControl")) return GaRoDataType.SwitchStateControl; //"onOffSwitch/stateFeedback"
+
+		if(recId.contains("/powerSensor/settings/setpoint")) return GaRoDataType.DevicePowerControl;
+		if(recId.contains("/reactivePowerSensor/settings/setpoint")) return GaRoDataType.DeviceReactivePowerControl;
+		
 		if(recId.contains("/POWER_")) return GaRoDataType.Heatpower;
 		if(recId.contains("/ENERGY_")) return GaRoDataType.HeatEnergyIntegral;
 		if(recId.contains("/VOLUME_FLOW_")) return GaRoDataType.HeatFlow;

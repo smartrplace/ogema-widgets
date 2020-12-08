@@ -164,6 +164,12 @@ public class GaRoDataType implements GaRoDataTypeI {
 			BooleanResource.class);
 	public static final GaRoDataType MultiSwitchStateControl = new GaRoDataType("MultiSwitchStateControl",
 			BooleanResource.class);
+	
+	public static final GaRoDataType DevicePowerControl = new GaRoDataType("DevicePowerControl",
+			PowerResource.class);
+	public static final GaRoDataType DeviceReactivePowerControl = new GaRoDataType("DeviceReactivePowerControl",
+			PowerResource.class);
+
 	public static final GaRoDataType Heatpower = new GaRoDataType("Heatpower",
 			PowerResource.class);
 	public static final GaRoDataType HeatEnergyIntegral = new GaRoDataType("HeatEnergyIntegral",

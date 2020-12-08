@@ -212,6 +212,7 @@ public class ValueResourceHelper {
 		fres.setValue(value);
 		return false;
 	}
+	
 	/** write into resoure and create it. If the resource does not exist prior to callling
 	 * the method it it first created, then written, then activated.
 	 * @return true if resource was created and value was written
