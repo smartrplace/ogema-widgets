@@ -282,9 +282,11 @@ public class GaRoEvalHelper {
 		if(recId.contains("Gateway_Device/datapointsInAlarmState")) return GaRoDataType.DatapointsAlarmNum;
 		
 		if(recId.contains("/energyDaily/reading")) return GaRoDataType.EnergyDaily;
+		if(recId.contains("/energyDailyAccumulatedFull/reading")) return GaRoDataType.EnergyDailyAccumulatedFull;
 		if(recId.contains("/energyReactiveDaily/reading")) return GaRoDataType.EnergyReactiveDaily;
 		if(recId.contains("/energyAccumulatedDaily/reading")) return GaRoDataType.EnergyDailyAccumulated;
 		if(recId.contains("/energyReactiveAccumulatedDaily/reading")) return GaRoDataType.EnergyReactiveDailyAccumulated;
+		if(recId.contains("/energyReactiveAccumulatedDailyFull/reading")) return GaRoDataType.EnergyReactiveDailyAccumulatedFull;
 		if(recId.contains("/billedEnergy/reading")) return GaRoDataType.BilledEnergy;
 		if(recId.contains("/billedEnergyReactive/reading")) return GaRoDataType.BilledEnergyReactive;
 

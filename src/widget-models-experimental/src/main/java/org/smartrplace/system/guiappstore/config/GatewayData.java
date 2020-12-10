@@ -29,4 +29,9 @@ public interface GatewayData extends PhysicalElement {
 	
 	/** Interval for sending the entire communication structure requested in milliseconds*/
 	TimeResource structureUpdateInterval();
+	
+	/** SmartrCockpit quick hacks*/
+	StringResource buildingType();
+	/** String to identify remote slotsDB data*/
+	StringResource mainMeterLocationOnGateway();
 }
