@@ -31,6 +31,7 @@ public interface EvalCollection extends PhysicalElement {
 	IntegerResource roomDeviceUpdateCounter();
 	
 	ResourceList<StringResource> initDoneStatus();
+	
 	//ResourceList<IncidentProvider> incidentProviders();
 	//ResourceList<IncidentAutoClearanceConfiguration> incidenceAutoClearanceConfigs();
 	//ResourceList<IncidentNotificationTriggerConfiguration> incidentTriggerConfigs();
