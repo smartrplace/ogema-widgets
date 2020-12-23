@@ -101,7 +101,7 @@ public class ResourceListHelper {
 		return false;
 	}
 	
-	
+	/** Create element that has a subresource name containing the elementName*/
 	public static <T extends Resource> T getOrCreateNamedElement(String elementName, ResourceList<T> list) {
 		for(T el: list.getAllElements()) {
 			StringResource name = el.getSubResource("name", StringResource.class);
