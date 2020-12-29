@@ -28,8 +28,12 @@ class MessagingAppImpl implements MessagingApp {
 //	private final AppID appId;
 	private final Dictionary<String, String> headers;
 	private final String messagingId;
+	private final String name;
 	
 	MessagingAppImpl(final AppID appId, final String id) {
+		this(appId, id, null);
+	}
+	MessagingAppImpl(final AppID appId, final String id, String name) {
 //		this.appId = appId;
 		this.headers = AccessController.doPrivileged(new PrivilegedAction<Dictionary<String, String>>() {
 
@@ -39,10 +43,13 @@ class MessagingAppImpl implements MessagingApp {
 			}
 		});
 		this.messagingId = id;
+		this.name = name;
 	}
 
 	@Override
 	public String getName() {
+		if(this.name != null)
+			return this.name;
 		return headers.get("Bundle-Name");
 	}
 

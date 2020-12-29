@@ -58,6 +58,15 @@ public interface MessagingService {
 	 */
 	void registerMessagingApp(AppID appId, String humanReadableId) throws IllegalArgumentException;
 	
+	/** Like {@link #registerMessagingApp(AppID, String)}, but allow to set name of Alarming application explicitly.
+	 * Otherwise the name of the bundle declated in the pom.xml is used.
+	 * @param appId
+	 * @param humanReadableId
+	 * @param name
+	 * @throws IllegalArgumentException
+	 */
+	void registerMessagingApp(AppID appId, String humanReadableId, String name) throws IllegalArgumentException;
+	
 	/**
 	 * Unregister an app
 	 * @param appId

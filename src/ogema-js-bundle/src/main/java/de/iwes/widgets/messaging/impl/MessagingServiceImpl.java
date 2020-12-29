@@ -296,6 +296,10 @@ public class MessagingServiceImpl implements MessagingService, Application {
 
 	@Override
 	public void registerMessagingApp(AppID appId, String humanReadableId) throws IllegalArgumentException {
+		registerMessagingApp(appId, humanReadableId, null);
+	}
+	@Override
+	public void registerMessagingApp(AppID appId, String humanReadableId, String name) throws IllegalArgumentException {
 		Objects.requireNonNull(appId);
 		Objects.requireNonNull(humanReadableId);
 		if (humanReadableId.trim().length() < 5)
@@ -305,7 +309,7 @@ public class MessagingServiceImpl implements MessagingService, Application {
 		// FIXME we should rather check for identity at the level of valid ids
 		if (messages.registeredMessageSenders.containsKey(appId))
 			throw new IllegalArgumentException("App with appId " + appId.getIDString() + " already registered");
-		MessagingAppImpl mai = new MessagingAppImpl(appId, humanReadableId);
+		MessagingAppImpl mai = new MessagingAppImpl(appId, humanReadableId, name);
 		messages.registeredMessageSenders.put(appId,mai);
 	}
 
