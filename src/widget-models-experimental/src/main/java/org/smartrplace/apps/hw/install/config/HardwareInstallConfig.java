@@ -78,4 +78,6 @@ public interface HardwareInstallConfig extends Data {
 	TimeResource bulkMessageIntervalDuration();
 	
 	ResourceList<Configuration> alarmingConfig();
+	/** Duration for which alarming events are given in the overview*/
+	TimeResource basicEvalInterval();
 }

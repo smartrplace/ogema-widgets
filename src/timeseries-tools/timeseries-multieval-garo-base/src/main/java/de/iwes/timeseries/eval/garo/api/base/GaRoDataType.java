@@ -350,6 +350,10 @@ public class GaRoDataType implements GaRoDataTypeI {
 	};
 	
 	//The following options are not linked to a specific GaRo level
+	public static final GaRoDataType KPI_DURATION = new GaRoDataType("Duration",
+			TimeResource.class);
+	
+	//General
 	public static final GaRoDataType Internal = new GaRoDataType("Internal",
 			SingleValueResource.class);
 	public static final GaRoDataType Unknown = new GaRoDataType("Unknown",

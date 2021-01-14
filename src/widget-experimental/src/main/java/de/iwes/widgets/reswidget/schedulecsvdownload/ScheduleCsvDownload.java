@@ -150,7 +150,7 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 					List<T> schedules = getSchedules(req);
 					long start = Long.MAX_VALUE;
 					for (T schedule: schedules) {
-						SampledValue sv = schedule.getNextValue(Long.MIN_VALUE);
+						SampledValue sv = schedule.getNextValue(0);
 						if (sv == null)
 							continue;
 						long t = sv.getTimestamp();
@@ -367,62 +367,6 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 
 			boolean exportJSON = buttonPressed.equals(ScheduleCsvDownload.JSON);
 			return exportFile(start, end, schedules, tempFolder, "schedules_", exportJSON, filters, null);
-			
-			/*if (!Files.exists(tempFolder))
-				Files.createDirectories(tempFolder);
-			final Path base = Files.createTempDirectory(tempFolder, "schedules_");
-
-			final long start = downloadStartPicker.getDateLong(req); 
-			final long end = downloadEndPicker.getDateLong(req);
-			if (start > end) {
-				return null;
-			}
-			final Path zipFile = tempFolder.resolve(base.getFileName() + ".zip");
-	        final URI uri = URI.create("jar:" + zipFile.toUri());
-	        int i = 0;
-	        try (final FileSystem zipfs = FileSystems.newFileSystem(uri, Collections.singletonMap("create", "true"))) {
-				for (T rd : schedules) {
-					final String id;
-					if (rd instanceof RecordedData)
-						id = ((RecordedData) rd).getPath();
-					else if (rd instanceof Schedule)
-						id = ((Schedule) rd).getPath();
-					else if (rd instanceof SchedulePresentationData)
-						id = ((SchedulePresentationData) rd).getLabel(OgemaLocale.ENGLISH);
-					else if (rd instanceof OnlineTimeSeries)
-						id = ((OnlineTimeSeries) rd).getResource().getPath();
-					else if (rd instanceof TreeTimeSeries)
-						id = "TreeTimeSeries_" + i++;
-					else
-						id = "_" + new BigInteger(65, new Random()).toString(32);
-					String formatId = System.getProperty("org.ogema.widgets.schedulecsvdownload.formatid");
-					if(formatId != null && formatId.contains("HUMREAD")) {
-						if(id.contains("TEMPERATURE")|| id.contains("temperatureSensor") || ScheduleRowTemplate.isTemperatureSchedule(rd))
-							formatId += "CELSIUS";
-					}
-					
-					String fileFormat = System.getProperty("org.ogema.widgets.schedulecsvdownload.fileformat");
-					String filename;
-					if(filters != null && fileFormat != null && fileFormat.equals("FULL")) {
-						filename = getShortLabel(rd, filters, null, null);
-						filename = filename.replace("TemperatureRoomSensor", "TempRS");
-					} else
-						filename = id.replace("/", "%2F");
-					for (char c : ILLEGAL_CHARACTERS) {
-						filename = filename.replace(c, '_');
-					}
-					
-					if(buttonPressed.equals(ScheduleCsvDownload.JSON)) {
-						writeValuesToFile(base, start, end, zipfs, rd, filename+".json", formatId);
-					}else if(buttonPressed.equals(ScheduleCsvDownload.CSV)){
-						writeValuesToFile(base, start, end, zipfs, rd, filename+".csv", formatId);
-					}
-					
-				}
-				
-			}
-			FileUtils.deleteDirectory(base.toAbsolutePath().toFile());
-	        return zipFile;*/
 		}
 
 		public void setSchedules(Collection<T> schedules, Collection<? extends TimeSeriesFilterExtended> filters) {
@@ -448,15 +392,6 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 			}
 		}
 		
-		/*public void addSchedule(T schedule) {
-			writeLock();
-			try {
-				schedules.add(schedule);
-			} finally {
-				writeUnlock();
-			}
-		}*/
-
 		public boolean isEmpty() {
 			readLock();
 			try {
