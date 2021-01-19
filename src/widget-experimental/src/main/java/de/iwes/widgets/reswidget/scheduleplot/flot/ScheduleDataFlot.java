@@ -28,6 +28,7 @@ import org.ogema.core.channelmanager.measurements.SampledValue;
 import org.ogema.core.channelmanager.measurements.Value;
 import org.ogema.core.timeseries.InterpolationMode;
 import org.ogema.core.timeseries.ReadOnlyTimeSeries;
+import org.ogema.tools.resource.util.TimeUtils;
 import org.ogema.tools.timeseries.iterator.api.MultiTimeSeriesIterator;
 import org.ogema.tools.timeseries.iterator.api.MultiTimeSeriesIteratorBuilder;
 import org.slf4j.LoggerFactory;
@@ -86,18 +87,19 @@ public class ScheduleDataFlot extends ScheduleData<FlotDataSet> {
 		SampledValue last = null;
 		long localTZOffset = 0;
 		Value container;
-		float value;
+		float value = 0;
 		JSONArray point;
 		boolean first = true;
 //		for (SampledValue sv: vals) {
 		SampledValue sv;
+		long t = -1;
 		while (it.hasNext()) {
 			sv = it.next();
 			if (first) {
 				localTZOffset = DateTimeZone.getDefault().getOffset(sv.getTimestamp());
 				first = false;
 			}
-			long t = (sv.getTimestamp()) + localTZOffset;
+			t = (sv.getTimestamp()) + localTZOffset;
 			if (sv.getQuality()== Quality.BAD) {
 				if (last == null || t - last.getTimestamp() < 1)
 					continue;
@@ -133,6 +135,19 @@ public class ScheduleDataFlot extends ScheduleData<FlotDataSet> {
 				continue;
 			}
 			array.put(point);
+		}
+		if(array.length() == 1) {
+			// a single value is not plotted with a time stamp
+			long tadd = t + 1000;
+			JSONArray addPoint = new JSONArray();
+			try {
+				System.out.println("Adding Auxiliary 1 sec after single value at "+TimeUtils.getDateAndTimeString(tadd)+" (double time shift from UTC, ScheduleDataFlot)");
+				addPoint.put(tadd); addPoint.put(value);
+			} catch (JSONException e) {
+				LoggerFactory.getLogger(ScheduleDataFlot.class).warn("Value not allowed in JSON; skipping this {}; {}", value, e.toString());
+				return array;
+			}
+			array.put(addPoint);
 		}
 		return array;
 	}
