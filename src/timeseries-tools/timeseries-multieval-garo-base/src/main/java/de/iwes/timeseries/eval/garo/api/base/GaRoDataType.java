@@ -278,6 +278,11 @@ public class GaRoDataType implements GaRoDataTypeI {
 	public static final GaRoDataType WindDirection = new GaRoDataType("WindDirection",
 			AngleResource.class);
 
+	public static final GaRoDataType SirenStatus = new GaRoDataType("SirenStatus",
+			BooleanResource.class);
+	public static final GaRoDataType CO_Alert = new GaRoDataType("CO_Alert",
+			BooleanResource.class);
+
 	//The following options are per-gateway
 	public static final GaRoDataType PowerMeter = new GaRoDataType("PowerMeter",
 			PowerResource.class, Level.GATEWAY);

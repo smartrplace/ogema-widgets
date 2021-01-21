@@ -111,9 +111,9 @@ public class GaRoEvalHelper {
 		
 		addRecId(GaRoDataType.ChargeVoltage, new String[] {"chargeSensor", "internalVoltage"}, recIdSnippets,
 				"Battery Voltage", "Batteriespannung");
-		addRecId(GaRoDataType.ChargeSensor, new String[] {"batteryLow"}, recIdSnippets,
+		addRecId(GaRoDataType.ChargeSensor, new String[] {"batteryLow", "battery_low"}, recIdSnippets,
 				"Battery Status", "Batterie Status");
-		addRecId(GaRoDataType.HumidityMeasurement, new String[] {"HUMIDITY"}, recIdSnippets,
+		addRecId(GaRoDataType.HumidityMeasurement, new String[] {"HUMIDITY", "/humidity"}, recIdSnippets,
 				"Humidity", "Luftfeuchtigkeit");
 		addRecId(GaRoDataType.WindowOpen, new String[] {"SHUTTER_CONTACT"}, recIdSnippets,
 				"Window Open Status", "Fensteröffnung");
@@ -124,7 +124,7 @@ public class GaRoEvalHelper {
 				"Temperature Setpoint Requested", "Temperatursollwert angefordert");
 		addRecId(GaRoDataType.TemperatureMeasurementThermostat, new String[] {"temperatureSensor/reading"}, recIdSnippets,
 				"Temperature measured at thermostat", "Temperaturmesswert Thermostat");
-		addRecId(GaRoDataType.TemperatureMeasurementRoomSensor, new String[] {"TEMPERATURE/reading", "EXTERNAL_TEMPERATURE_0_0"}, recIdSnippets,
+		addRecId(GaRoDataType.TemperatureMeasurementRoomSensor, new String[] {"TEMPERATURE/reading", "EXTERNAL_TEMPERATURE_0_0", "/sensors/temperature"}, recIdSnippets,
 				"Room Sensor Temperature", "Raumsensor Temperatur");
 		addRecId(GaRoDataType.OutsideTemperatureGw, new String[] {"/sensors/TEMPERATURE"}, recIdSnippets,
 				"Outsude Sensor Temperature", "Außensensor Temperatur");
@@ -296,6 +296,7 @@ public class GaRoEvalHelper {
 		if(recId.contains("/billedEnergyReactive/reading")) return GaRoDataType.BilledEnergyReactive;
 
 		if(recId.contains("/SMOKE_DETECTOR") && (recId.contains("/reading"))) return GaRoDataType.SmokeDetect;
+		if(recId.contains("/sensors/smoke")) return GaRoDataType.SmokeDetect;
 		if(recId.contains("/SMOKE_DETECTOR") && (recId.contains("/error"))) return GaRoDataType.SmokeDetectError;
 
 		if(recId.contains("/sensors/RAIN_COUNTER")) return GaRoDataType.RainCounter; //"onOffSwitch/stateFeedback"
@@ -303,6 +304,9 @@ public class GaRoEvalHelper {
 		if(recId.contains("/sensors/WIND_SPEED")) return GaRoDataType.WindSpeed; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/sensors/WIND_DIRECTION")) return GaRoDataType.WindDirection; //"onOffSwitch/stateFeedback"
 		
+		if(recId.contains("/sensors/co_alert")) return GaRoDataType.CO_Alert; //"onOffSwitch/stateFeedback"
+		if(recId.contains("/sensors/siren")) return GaRoDataType.SirenStatus; //"onOffSwitch/stateFeedback"
+
 		if(recId.contains("$$")) return GaRoDataType.Internal;
 		return GaRoDataType.Unknown;
 	}
