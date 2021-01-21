@@ -67,6 +67,7 @@ public interface HardwareInstallConfig extends Data {
 	/** If true the relation of devices to DeviceHandlerProviders is not determined via the PatternsFound, but
 	 * via the ResourceTypes. This may lead to showing devices in more than one DeviceHandlerProvider
 	 */
+	@Deprecated //not supported anymore
 	BooleanResource includeInactiveDevices();
 	
 	/** If true alarming is started, otherwise no alarm detection is performed*/

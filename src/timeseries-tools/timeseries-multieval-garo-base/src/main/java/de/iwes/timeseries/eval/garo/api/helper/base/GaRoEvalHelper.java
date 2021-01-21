@@ -126,6 +126,8 @@ public class GaRoEvalHelper {
 				"Temperature measured at thermostat", "Temperaturmesswert Thermostat");
 		addRecId(GaRoDataType.TemperatureMeasurementRoomSensor, new String[] {"TEMPERATURE/reading", "EXTERNAL_TEMPERATURE_0_0"}, recIdSnippets,
 				"Room Sensor Temperature", "Raumsensor Temperatur");
+		addRecId(GaRoDataType.OutsideTemperatureGw, new String[] {"/sensors/TEMPERATURE"}, recIdSnippets,
+				"Outsude Sensor Temperature", "Außensensor Temperatur");
 		addRecId(GaRoDataType.ValvePosition, new String[] {"valve/setting/stateFeedback"}, recIdSnippets,
 				"Valve Position", "Ventilstellung");
 		addRecId(GaRoDataType.InternetConnection, new String[] {"NetworkState/mainNetworkOk"}, recIdSnippets,
@@ -265,6 +267,8 @@ public class GaRoEvalHelper {
 		//if(recId.contains("NetworkState/mainNetworkOk")) return GaRoDataType.InternetConnection;
 		if(recId.contains("/communicationStatus/communicationDisturbed")) return GaRoDataType.CommunicationDisturbed;
 		if(recId.contains("/lightSensor/reading")) return GaRoDataType.LightSensor;
+		if(recId.contains("BRIGHTNESS/reading")) return GaRoDataType.LightSensor;
+		if(recId.contains("/sensors/BRIGHTNESS/rawValue")) return GaRoDataType.LightSensorRaw;
 
 		if(recId.contains("Gateway_Device/gitUpdateStatus")) return GaRoDataType.SystemUpdateStatus;
 		if(recId.contains("Gateway_Device/systemRestart")) return GaRoDataType.SystemRestartLog;
@@ -272,6 +276,7 @@ public class GaRoEvalHelper {
 		if(recId.contains("numberIP4AddressesSSH")) return GaRoDataType.RouterIPv4SSH;
 		if(recId.contains("numberIP6PlusAddressesHM")) return GaRoDataType.RouterIPv6HM;
 		if(recId.contains("numberIP6PlusAddressesSSH")) return GaRoDataType.RouterIPv6SSH;
+		if(recId.contains("/uptime")) return GaRoDataType.UptimeInterval;
 		
 		for(GaRoDataType type: GaRoDataType.standardTypes) {
     		if(type.label(null).equals(recId)) return type;
@@ -293,6 +298,11 @@ public class GaRoEvalHelper {
 		if(recId.contains("/SMOKE_DETECTOR") && (recId.contains("/reading"))) return GaRoDataType.SmokeDetect;
 		if(recId.contains("/SMOKE_DETECTOR") && (recId.contains("/error"))) return GaRoDataType.SmokeDetectError;
 
+		if(recId.contains("/sensors/RAIN_COUNTER")) return GaRoDataType.RainCounter; //"onOffSwitch/stateFeedback"
+		if(recId.contains("/sensors/RAINING")) return GaRoDataType.RainStatus; //"onOffSwitch/stateFeedback"
+		if(recId.contains("/sensors/WIND_SPEED")) return GaRoDataType.WindSpeed; //"onOffSwitch/stateFeedback"
+		if(recId.contains("/sensors/WIND_DIRECTION")) return GaRoDataType.WindDirection; //"onOffSwitch/stateFeedback"
+		
 		if(recId.contains("$$")) return GaRoDataType.Internal;
 		return GaRoDataType.Unknown;
 	}
