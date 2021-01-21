@@ -207,6 +207,7 @@ public class GaRoEvalHelper {
 		//if(recId.contains("SHUTTER_CONTACT")) return GaRoDataType.WindowOpen;
 		if(recId.contains("MOTION_DETECTOR")) return GaRoDataType.MotionDetection;
 		if(recId.contains("/motionSensor/reading")) return GaRoDataType.MotionDetection;
+		if(recId.contains("/sensors/motion")) return GaRoDataType.MotionDetection;
 		//type TemperatureSetpoint is not recognized anymore
 		//if(recId.contains("temperatureSensor/deviceFeedback/setpoint")) return GaRoDataType.TemperatureSetpointFeedback;
 		//if(recId.contains("temperatureSensor/settings/setpoint")) return GaRoDataType.TemperatureSetpointSet;
