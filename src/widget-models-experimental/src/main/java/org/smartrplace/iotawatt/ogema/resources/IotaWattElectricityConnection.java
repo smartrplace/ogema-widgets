@@ -2,14 +2,17 @@ package org.smartrplace.iotawatt.ogema.resources;
 
 import java.time.Duration;
 import java.util.Optional;
+
 import org.ogema.core.model.array.StringArrayResource;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.model.connections.ElectricityConnection;
-import org.ogema.model.prototypes.Configuration;
 import org.ogema.model.prototypes.PhysicalElement;
 
-/**
+/** Note that there are two configuration options for Iotwatt. For a simpler configuration
+ * 		just writing values into the destination resources see {@link IotaWattConnection}.<br> 
+ * This configuration writes directly into the slotsDB of the destination resources.
+ * All data measured by Iotawatt is recorded
  *
  * @author jlapp
  */
@@ -22,7 +25,8 @@ public interface IotaWattElectricityConnection extends PhysicalElement {
     
     /**
      * Time window to use for average power readings as ISO8601 duration string.
-     * Default is {@code PT15m}, i.e.  15 minutes.
+     * Default is {@code PT15m}, i.e.  15 minutes.<br>
+     * Should usually be equal or shorter than {@link #updateInterval()} and {@link #updateIntervalEnergy()}.
      * 
      * @return Time window to use when computing average power readings. 
      */
