@@ -13,7 +13,7 @@ import org.ogema.model.prototypes.PhysicalElement;
  *
  * @author jlapp
  */
-public interface IotaWattElectricityConnection extends Configuration, PhysicalElement {
+public interface IotaWattElectricityConnection extends PhysicalElement {
     
     /**
      * @return URI of the IotaWatt query API.
