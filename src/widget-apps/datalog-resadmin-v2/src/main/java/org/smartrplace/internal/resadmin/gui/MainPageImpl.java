@@ -62,6 +62,7 @@ import de.iwes.widgets.api.widgets.dynamics.TriggeringAction;
 import de.iwes.widgets.api.widgets.html.StaticTable;
 import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
 import de.iwes.widgets.html.alert.Alert;
+import de.iwes.widgets.html.buttonconfirm.ButtonConfirm;
 import de.iwes.widgets.html.complextable.RowTemplate;
 import de.iwes.widgets.html.filedownload.FileDownload;
 import de.iwes.widgets.html.filedownload.FileDownloadData;
@@ -530,16 +531,23 @@ public class MainPageImpl { // extends WidgetPage<LocaleDictionary> {
 				TriggeredAction.GET_REQUEST);
 		buttonDownloadProgram.triggerAction(download, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST); // GET then triggers download start
 
-		final Button buttonSendProgram = new Button(page, "buttonSendProgram", "Send Backup") {
+		final ButtonConfirm buttonSendProgram = new ButtonConfirm(page, "buttonSendProgram", "Update generalBackup.zip"+(
+				Boolean.getBoolean("org.smartrplace.intern.backup.pattern.zipOnly")?"":"and try Send")) {
+		//final Button buttonSendProgram = new Button(page, "buttonSendProgram", "Send Backup") {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void onPrePOST(String data, OgemaHttpRequest req) {
 				ActionHelper.runExtendedActionNonBlocking(SCPDataCollectionAction.class, "backup-install",
 						appData.appMan, 2, "No Backup sending action found!");
-				alert.showAlert("Started sending backup to server", true, req);
+				if(Boolean.getBoolean("org.smartrplace.intern.backup.pattern.zipOnly"))
+					alert.showAlert("Started generation of generalBackup.zip file", true, req);
+				else
+					alert.showAlert("Started sending backup to server", true, req);
 			}
 		};
+		buttonSendProgram.setDefaultConfirmMsg("To transfer the file to the server perform /gateway-backup.sh generalBackup on the console of the gateway."
+				+ " To transfer to gateway perform sync.sh in rundir-src-test on development PC.");
 
 		final Button buttonDeleteProgram = new Button(page, "buttonDeleteProgram", "Delete Program") {
 			private static final long serialVersionUID = 1L;
