@@ -23,7 +23,7 @@ public interface SystemUpdate extends Data {
 	/** Last part of version of bundles in update, which shall be a unique index*/
 	IntegerResource updateIndex();
 	
-	/** List of bundles in update*/
+	/** List of bundles in update, repoPath shall be remoteUrl*/
 	StringArrayResource repoPath();
 	StringArrayResource mavenCoordUnmversioned();
 	StringArrayResource version();
