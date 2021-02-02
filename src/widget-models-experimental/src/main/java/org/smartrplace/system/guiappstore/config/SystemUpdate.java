@@ -31,4 +31,9 @@ public interface SystemUpdate extends Data {
 	//Dynamic data
 	IntegerResource approvalStatus();
 	StringResource comment();
+	
+	/** Reference to another system update that determines the versions of all bundles that are not
+	 * in this SystemUpdate
+	 */
+	SystemUpdate parentUpdate();
 }
