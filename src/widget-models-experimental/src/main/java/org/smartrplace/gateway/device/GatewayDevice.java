@@ -1,8 +1,10 @@
 package org.smartrplace.gateway.device;
 
+import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.prototypes.PhysicalElement;
+import org.smartrplace.monitoring.vnstat.resources.NetworkTrafficData;
 
 /** Sensor and actor data for the gateway itself<br>
  * Note that a top-level resource of this type can be obtained/created via the method ResourceHelper#getLocalDevice(ApplicationManager)*/
@@ -28,4 +30,6 @@ public interface GatewayDevice extends PhysicalElement {
 	
 	IntegerResource activeAlarmSupervision();
 	IntegerResource datapointsInAlarmState();
+	
+	ResourceList<NetworkTrafficData> networkTrafficData();
 }

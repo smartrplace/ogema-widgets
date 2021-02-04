@@ -101,13 +101,13 @@ public class GaRoEvalHelper {
 		addRecId(GaRoDataType.OutsideTemperaturePerForcecast, new String[] {"OpenWeatherMapData/temperatureSensor"}, recIdSnippets,
 				"Outside temperature(FC)", "Außentemperature(vorhergesagt)");
 		addRecId(GaRoDataType.OutsideHumidityPerForcecast, new String[] {"OpenWeatherMapData/humiditySensor"}, recIdSnippets,
-				"Outside temperature(FC)", "Außentemperature(vorhergesagt)");
+				"Humidity(FC)", "Luftfeuchtigkeit(vorhergesagt)");
 		addRecId(GaRoDataType.SolarIrradiationPerForcecast, new String[] {"OpenWeatherMapData/solarIrradiationSensor"}, recIdSnippets,
-				"Outside temperature(FC)", "Außentemperature(vorhergesagt)");
+				"Solar Irraditaion(FC)", "Einstrahlung(vorhergesagt)");
 		addRecId(GaRoDataType.WindSpeedPerForcecast, new String[] {"OpenWeatherMapData/windSensor/speed"}, recIdSnippets,
-				"Outside temperature(FC)", "Außentemperature(vorhergesagt)");
+				"Wind Speed(FC)", "Windgeschwindigkeit(vorhergesagt)");
 		addRecId(GaRoDataType.WindDirectionPerForcecast, new String[] {"OpenWeatherMapData/windSensor/direction"}, recIdSnippets,
-				"Outside temperature(FC)", "Außentemperature(vorhergesagt)");
+				"Wind Direction(FC)", "Windrichtung(vorhergesagt)");
 		
 		addRecId(GaRoDataType.ChargeVoltage, new String[] {"chargeSensor", "internalVoltage"}, recIdSnippets,
 				"Battery Voltage", "Batteriespannung");
@@ -302,11 +302,14 @@ public class GaRoEvalHelper {
 
 		if(recId.contains("/sensors/RAIN_COUNTER")) return GaRoDataType.RainCounter; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/sensors/RAINING")) return GaRoDataType.RainStatus; //"onOffSwitch/stateFeedback"
-		if(recId.contains("/sensors/WIND_SPEED")) return GaRoDataType.WindSpeed; //"onOffSwitch/stateFeedback"
-		if(recId.contains("/sensors/WIND_DIRECTION")) return GaRoDataType.WindDirection; //"onOffSwitch/stateFeedback"
+		if(recId.contains("/sensors/WIND_SPEED") || recId.contains("/sensors/wind/speed")) return GaRoDataType.WindSpeed; //"onOffSwitch/stateFeedback"
+		if(recId.contains("/sensors/WIND_DIRECTION") || recId.contains("/sensors/wind/direction")) return GaRoDataType.WindDirection; //"onOffSwitch/stateFeedback"
+		if(recId.contains("/sensors/solarIrradiation")) return GaRoDataType.SolarIrradiation; //"onOffSwitch/stateFeedback"
 		
 		if(recId.contains("/sensors/co_alert")) return GaRoDataType.CO_Alert; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/sensors/siren")) return GaRoDataType.SirenStatus; //"onOffSwitch/stateFeedback"
+
+		if(recId.contains("/monthlyTotalKiB")) return GaRoDataType.TrafficDataTotal;
 
 		if(recId.contains("$$")) return GaRoDataType.Internal;
 		return GaRoDataType.Unknown;

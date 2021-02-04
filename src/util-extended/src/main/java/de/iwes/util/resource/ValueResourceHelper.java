@@ -25,6 +25,7 @@
 package de.iwes.util.resource;
 
 import org.ogema.core.model.Resource;
+import org.ogema.core.model.array.IntegerArrayResource;
 import org.ogema.core.model.array.StringArrayResource;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.FloatResource;
@@ -218,6 +219,16 @@ public class ValueResourceHelper {
 	 * @return true if resource was created and value was written
 	 */
 	public static boolean setCreate(StringArrayResource fres, String[] values) {
+		if(!fres.exists()) {
+			fres.create();
+			fres.setValues(values);
+			fres.activate(false);
+			return true;
+		}
+		fres.setValues(values);
+		return false;
+	}
+	public static boolean setCreate(IntegerArrayResource fres, int[] values) {
 		if(!fres.exists()) {
 			fres.create();
 			fres.setValues(values);

@@ -282,6 +282,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 			BooleanResource.class);
 	public static final GaRoDataType CO_Alert = new GaRoDataType("CO_Alert",
 			BooleanResource.class);
+	public static final GaRoDataType TrafficDataTotal = new GaRoDataType("kBTrafficTotal",
+			FloatResource.class);
 
 	//The following options are per-gateway
 	public static final GaRoDataType PowerMeter = new GaRoDataType("PowerMeter",
@@ -344,21 +346,29 @@ public class GaRoDataType implements GaRoDataTypeI {
 			return Arrays.asList(new GenericAttribute[] {GenericAttributeImpl.OUTSIDE});
 		}		
 	};
-	public static final GaRoDataType WindSpeedPerForcecast= new GaRoDataType("WindSpeedPerForcecast",
-			TemperatureResource.class, Level.GATEWAY) {
-		@Override
-		public List<GenericAttribute> attributes() {
-			return Arrays.asList(new GenericAttribute[] {GenericAttributeImpl.OUTSIDE});
-		}		
-	};
-	public static final GaRoDataType WindDirectionPerForcecast= new GaRoDataType("WindDirectionPerForcecast",
-			TemperatureResource.class, Level.GATEWAY) {
-		@Override
-		public List<GenericAttribute> attributes() {
-			return Arrays.asList(new GenericAttribute[] {GenericAttributeImpl.OUTSIDE});
-		}		
-	};
 	
+	public static final GaRoDataType SolarIrradiation = new GaRoDataType("SolarIrradiation",
+			TemperatureResource.class, Level.GATEWAY) {
+		@Override
+		public List<GenericAttribute> attributes() {
+			return Arrays.asList(new GenericAttribute[] {GenericAttributeImpl.OUTSIDE});
+		}		
+	};
+	public static final GaRoDataType WindSpeedPerForcecast= new GaRoDataType("WindSpeed",
+			TemperatureResource.class, Level.GATEWAY) {
+		@Override
+		public List<GenericAttribute> attributes() {
+			return Arrays.asList(new GenericAttribute[] {GenericAttributeImpl.OUTSIDE});
+		}		
+	};
+	public static final GaRoDataType WindDirectionPerForcecast= new GaRoDataType("WindDirection",
+			TemperatureResource.class, Level.GATEWAY) {
+		@Override
+		public List<GenericAttribute> attributes() {
+			return Arrays.asList(new GenericAttribute[] {GenericAttributeImpl.OUTSIDE});
+		}		
+	};
+
 	//The following options are for all gateways. Note that most overall options can also be
 	//applied as individual inputs per gateway
 	public static final GaRoDataType OutsideTemperatureOverall = new GaRoDataType("OutsideTemperatureOverall",
