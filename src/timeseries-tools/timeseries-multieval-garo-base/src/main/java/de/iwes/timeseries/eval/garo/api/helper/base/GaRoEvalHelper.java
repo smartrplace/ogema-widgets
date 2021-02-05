@@ -236,11 +236,16 @@ public class GaRoEvalHelper {
 		if(recId.contains("semaLevel")) return GaRoDataType.CompetitionLevel;
 		if(recId.contains("competitionPosition")) return GaRoDataType.CompetitionPosition;
 		if(recId.contains("Points")) return GaRoDataType.CompetitionPoints;
+
+		if(recId.contains("/apparentEnergy/reading")) return GaRoDataType.ApparentEnergy;
+		if(recId.contains("/apparentPower/reading")) return GaRoDataType.ApparentPower;
 		
 		if(recId.contains("/powerSensor/reading")) return GaRoDataType.PowerMeterOutlet;
 		if(recId.contains("/reactivePowerSensor/reading")) return GaRoDataType.ReactivePowerMeterOutlet;
+		if(recId.contains("/reactiveEnergy/reading")) return GaRoDataType.ReactiveEnergy;
 		if(recId.contains("/currentSensor/reading")) return GaRoDataType.CurrentSensorOutlet;
 		if(recId.contains("/voltageSensor/reading")) return GaRoDataType.VoltageSensorOutlet;
+		if(recId.contains("/voltageSensor")) return GaRoDataType.VoltageSensorPhase;
 		if(recId.contains("/frequencySensor/reading")) return GaRoDataType.FrequencySensorOutlet;
 		if(recId.contains("/reactiveAngleSensor/reading")) return GaRoDataType.PowerMeterReactiveAngle;
 		if(recId.contains("/energySensor/reading")) return GaRoDataType.EnergyIntegralOutlet;

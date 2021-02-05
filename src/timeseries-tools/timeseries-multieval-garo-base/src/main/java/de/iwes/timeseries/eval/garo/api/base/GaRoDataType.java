@@ -151,9 +151,17 @@ public class GaRoDataType implements GaRoDataTypeI {
 			PowerResource.class);
 	public static final GaRoDataType ReactivePowerMeterOutlet = new GaRoDataType("ReactivePowerMeterOutlet",
 			PowerResource.class);
+	public static final GaRoDataType ReactiveEnergy = new GaRoDataType("ReactiveEnergy",
+			EnergyResource.class);
+	public static final GaRoDataType ApparentPower = new GaRoDataType("ApparentPower",
+			PowerResource.class);
+	public static final GaRoDataType ApparentEnergy = new GaRoDataType("ApparentEnergy",
+			EnergyResource.class);
 	public static final GaRoDataType CurrentSensorOutlet = new GaRoDataType("CurrentSensorOutlet",
 			ElectricCurrentResource.class);
 	public static final GaRoDataType VoltageSensorOutlet = new GaRoDataType("VoltageSensorOutlet",
+			VoltageResource.class);
+	public static final GaRoDataType VoltageSensorPhase = new GaRoDataType("VoltageSensorPhase",
 			VoltageResource.class);
 	public static final GaRoDataType FrequencySensorOutlet = new GaRoDataType("FrequencySensorOutlet",
 			FrequencyResource.class);
