@@ -37,12 +37,21 @@ public class FileUploadServlet extends HttpServlet {
 
     private final UploadState uploadState;
     private final boolean multiUpload;
-    private final ApplicationManager am;
+    //private final ApplicationManager am;
+
+    protected final File repository;
 
     FileUploadServlet(UploadState uploadState, boolean multiUpload, ApplicationManager am) {
         this.uploadState = uploadState;
         this.multiUpload = multiUpload;
-        this.am = am;
+        //this.am = am;
+        repository = am.getDataFile("uploads");
+    }
+    public FileUploadServlet(UploadState uploadState, boolean multiUpload, File destinationFolder, ApplicationManager am) {
+        this.uploadState = uploadState;
+        this.multiUpload = multiUpload;
+        //this.am = am;
+        repository = destinationFolder;
     }
 
     @Override
@@ -57,7 +66,6 @@ public class FileUploadServlet extends HttpServlet {
 	        // Configure a repository (to ensure a secure temp location is used)
 	//        ServletContext servletContext = this.getServletConfig().getServletContext();
 	//        File repository = (File) servletContext.getAttribute("javax.servlet.context.tempdir");
-	        File repository = am.getDataFile("uploads");
 	        repository.mkdirs();
 	        factory.setRepository(repository);
 	

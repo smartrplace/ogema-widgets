@@ -41,6 +41,7 @@ public class FileUpload extends OgemaWidgetBase<FileUploadData> {
 
     private static final long serialVersionUID = 1L;
     private final ApplicationManager am;
+    final String servletPathExisting;
 
     /**
      * ********* Constructor
@@ -52,8 +53,13 @@ public class FileUpload extends OgemaWidgetBase<FileUploadData> {
      * @param globalWidget
      */
     public FileUpload(WidgetPage<?> page, String id, ApplicationManager appMan, boolean globalWidget) {
+    	this(page, id, appMan, globalWidget, null);
+    }
+    public FileUpload(WidgetPage<?> page, String id, ApplicationManager appMan, boolean globalWidget,
+    		String servletPathExisting) {
         super(page, id, globalWidget);
         this.am = appMan;
+        this.servletPathExisting = servletPathExisting;
     }
 
     public FileUpload(WidgetPage<?> page, String id, ApplicationManager appMan) {

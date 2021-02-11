@@ -51,11 +51,14 @@ public class FileUploadData extends WidgetData implements UploadState {
         return new BigInteger(130, random).toString(32);
     }
 
-    final void init(boolean multiUpload) {
+    final void init(boolean multiUpload, String servletPathExisting) {
         this.multiUpload = multiUpload;
-        servlet = new FileUploadServlet(this, multiUpload, appMan);
-        servletPath = "/upload/" + nextSessionId();
-        servletPath = appMan.getWebAccessManager().registerWebResourcePath(servletPath, servlet);
+        if(servletPathExisting == null) {
+            servlet = new FileUploadServlet(this, multiUpload, appMan);
+        	servletPath = "/upload/" + nextSessionId();
+        	servletPath = appMan.getWebAccessManager().registerWebResourcePath(servletPath, servlet);
+        } else
+        	servletPath = servletPathExisting;
     }
 
     private void unregisterServlet() {
@@ -87,7 +90,7 @@ public class FileUploadData extends WidgetData implements UploadState {
         super(upload);
         this.appMan = am;
         this.logger = am.getLogger();
-        init(multiUpload);
+        init(multiUpload, upload.servletPathExisting);
     }
 
     /**
