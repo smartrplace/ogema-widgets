@@ -1,5 +1,6 @@
 package org.smartrplace.system.guiappstore.config;
 
+import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.prototypes.PhysicalElement;
@@ -34,4 +35,7 @@ public interface GatewayData extends PhysicalElement {
 	StringResource buildingType();
 	/** String to identify remote slotsDB data*/
 	StringResource mainMeterLocationOnGateway();
+	
+	/** If true the gateway configuration shall be scanned for additional bundles to update*/
+	BooleanResource hasSpecialBundles();
 }
