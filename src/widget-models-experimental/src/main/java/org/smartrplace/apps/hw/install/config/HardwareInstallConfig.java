@@ -20,8 +20,11 @@ import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
+import org.ogema.model.connections.ElectricityConnection;
 import org.ogema.model.prototypes.Configuration;
 import org.ogema.model.prototypes.Data;
+import org.ogema.model.prototypes.PhysicalElement;
+import org.ogema.model.sensors.VolumeAccumulatedSensor;
 
 /** 
  * The global configuration resource type for this app.
@@ -81,4 +84,7 @@ public interface HardwareInstallConfig extends Data {
 	ResourceList<Configuration> alarmingConfig();
 	/** Duration for which alarming events are given in the overview*/
 	TimeResource basicEvalInterval();
+	
+	ElectricityConnection mainMeter();
+	VolumeAccumulatedSensor mainGasMeter();
 }

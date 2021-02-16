@@ -272,6 +272,16 @@ public class GaRoDataType implements GaRoDataTypeI {
 	public static final GaRoDataType BilledEnergyReactive = new GaRoDataType("BilledEnergyReactive",
 			EnergyResource.class);
 
+	public static final GaRoDataType EnergySumHourly = new GaRoDataType("EnergySumHourly",
+			EnergyResource.class);
+	public static final GaRoDataType EnergySumDaily = new GaRoDataType("EnergySumDaily",
+			EnergyResource.class);
+	public static final GaRoDataType EnergySumMonthly = new GaRoDataType("EnergySumMonthly",
+			EnergyResource.class);
+	public static final GaRoDataType EnergySumYearly = new GaRoDataType("EnergySumYearly",
+			EnergyResource.class);
+
+	
 	public static final GaRoDataType SmokeDetect = new GaRoDataType("SmokeDetect",
 			BooleanResource.class);
 	public static final GaRoDataType SmokeDetectError = new GaRoDataType("SmokeDetectError",

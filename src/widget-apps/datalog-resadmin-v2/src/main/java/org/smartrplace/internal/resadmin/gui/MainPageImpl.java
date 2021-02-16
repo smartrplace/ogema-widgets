@@ -532,7 +532,7 @@ public class MainPageImpl { // extends WidgetPage<LocaleDictionary> {
 		buttonDownloadProgram.triggerAction(download, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST); // GET then triggers download start
 
 		final ButtonConfirm buttonSendProgram = new ButtonConfirm(page, "buttonSendProgram", "Update generalBackup.zip"+(
-				Boolean.getBoolean("org.smartrplace.intern.backup.pattern.zipOnly")?"":"and try Send")) {
+				Boolean.getBoolean("org.smartrplace.intern.backup.pattern.zipOnly")?"":" and try Send")) {
 		//final Button buttonSendProgram = new Button(page, "buttonSendProgram", "Send Backup") {
 			private static final long serialVersionUID = 1L;
 
