@@ -8,8 +8,9 @@
         <version>2.2.2-SNAPSHOT</version> 
     </parent>
     
-     <groupId>org.ogema.tools</groupId>
+    <groupId>org.ogema.tools</groupId>
     <artifactId>system-supervision-gui</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
     <name>System supervision GUI</name>
     <packaging>bundle</packaging>
    

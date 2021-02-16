@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>app-collections</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>OGEMA Applications :: app collections</name>
 

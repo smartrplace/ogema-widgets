@@ -8,6 +8,7 @@
     </parent>
     
     <artifactId>message-settings</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
     <name>Message Settings</name>
     <description>Configure receiver and sender addresses for the basic messaging services Email, SMS and XMPP.</description>
     <packaging>bundle</packaging>

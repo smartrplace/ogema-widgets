@@ -8,6 +8,7 @@
 	</parent>
 
 	<artifactId>timeseries-eval-tests</artifactId>
+	<version>2.2.2-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	<name>Timeseries evaluation tests</name>
 	<description>Timeseries evaluation tests</description>

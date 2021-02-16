@@ -3,11 +3,12 @@
 
     <parent>
         <groupId>org.ogema.widgets</groupId>
-		<artifactId>widget-tools</artifactId>
+        <artifactId>widget-tools</artifactId>
         <version>2.2.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>reveal-base</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
     <name>Reveal.js pages</name>
 	<description>Create Reveal.js presentations with OGEMA widgets</description>
     <packaging>bundle</packaging>

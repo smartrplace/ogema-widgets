@@ -9,8 +9,9 @@
         <version>2.2.2-SNAPSHOT</version>
     </parent>
 
-	<groupId>org.ogema.messaging</groupId>
+    <groupId>org.ogema.messaging</groupId>
     <artifactId>ogema-messaging</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>OGEMA Messaging toolbox</name>
 

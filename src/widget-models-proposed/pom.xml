@@ -7,8 +7,9 @@
         <version>2.2.2-SNAPSHOT</version>
     </parent>
 
-	<groupId>org.ogema.model</groupId>
+    <groupId>org.ogema.model</groupId>
     <artifactId>widget-models-proposed</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
     <name>Selected model extensions</name>
 	<description>Selected model extensions provided by Fraunhofer</description>
     <packaging>bundle</packaging>

@@ -9,8 +9,9 @@
         <version>2.2.2-SNAPSHOT</version>
     </parent>
 
-	<groupId>org.ogema.eval</groupId>
+    <groupId>org.ogema.eval</groupId>
     <artifactId>timeseries-tools</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>OGEMA timeseries tools</name>    
 

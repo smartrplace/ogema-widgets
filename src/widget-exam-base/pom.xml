@@ -8,6 +8,7 @@
     </parent>
 
     <artifactId>widget-exam-base</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
 
     <packaging>bundle</packaging>
     <name>Test base for the widgets framework</name>

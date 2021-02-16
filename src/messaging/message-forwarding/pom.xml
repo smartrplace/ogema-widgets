@@ -8,6 +8,7 @@
     </parent>
     
     <artifactId>message-forwarding</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
     <name>Message Forwarding</name>
     <description>Configure the forwarding of messages via different services, such as Email, SMS, XMPP, etc.</description>
     <packaging>bundle</packaging>

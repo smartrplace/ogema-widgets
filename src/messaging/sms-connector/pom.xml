@@ -8,6 +8,7 @@
     </parent>
     
     <artifactId>email-to-sms-connector</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
     <name>email-to-sms-connector</name>
 
     <packaging>bundle</packaging>

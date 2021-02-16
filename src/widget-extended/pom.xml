@@ -8,6 +8,7 @@
     </parent>
 
     <artifactId>widget-extended</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
 
     <packaging>bundle</packaging>
     <name>OGEMA Tools :: Widget extensions for resource and pattern handling</name>

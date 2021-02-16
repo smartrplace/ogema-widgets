@@ -8,6 +8,7 @@
     </parent>
     
     <artifactId>remote-message-connector</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
     <name>remote-message-connector</name>
     <packaging>bundle</packaging>
    

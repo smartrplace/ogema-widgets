@@ -8,6 +8,7 @@
     </parent>
     
     <artifactId>remote-message-publisher</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
     <name>remote-message-publisher</name>
     <description>Re-publishes received client messages on the server</description>
 

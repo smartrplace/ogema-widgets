@@ -9,6 +9,7 @@
     
     <groupId>com.example.app</groupId>
     <artifactId>simprovider-template</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
     <name>OGEMA Simulation Provider Template</name>
     <description>Template for development of simulation providers</description>
     <version>1.0.0-SNAPSHOT</version>

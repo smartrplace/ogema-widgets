@@ -9,6 +9,7 @@
     
     <artifactId>roominside-user-simulations</artifactId>
     <groupId>org.ogema.sim</groupId>
+    <version>2.2.2-SNAPSHOT</version>
     <name>OGEMA Tools: User behaviour simulation (room-inside)</name>
 
     <description>OGEMA Tools: User behaviour simulation (room-inside)</description>

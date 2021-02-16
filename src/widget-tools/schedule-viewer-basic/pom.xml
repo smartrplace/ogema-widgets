@@ -4,12 +4,13 @@
 
     <parent>
         <groupId>org.ogema.widgets</groupId>
-		<artifactId>widget-tools</artifactId>
+        <artifactId>widget-tools</artifactId>
         <version>2.2.2-SNAPSHOT</version>
     </parent>
 
-	<groupId>org.ogema.tools</groupId>
+    <groupId>org.ogema.tools</groupId>
     <artifactId>schedule-viewer-basic</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
     <name>Schedule viewer basic</name>
 	<description>Displays available schedules, and allows to edit them</description>
     <packaging>bundle</packaging>

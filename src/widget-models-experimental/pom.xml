@@ -8,8 +8,9 @@
         <version>2.2.2-SNAPSHOT</version>
     </parent>
 
-	<groupId>org.ogema.model</groupId>
+    <groupId>org.ogema.model</groupId>
     <artifactId>widget-models-experimental</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
     <name>Experimental OGEMA model extensions</name>
 	<description>Experimental OGEMA model extensions</description>
     <packaging>bundle</packaging>

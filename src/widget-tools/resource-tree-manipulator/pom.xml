@@ -3,12 +3,13 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.ogema.widgets</groupId>
-		<artifactId>widget-tools</artifactId>
+        <artifactId>widget-tools</artifactId>
         <version>2.2.2-SNAPSHOT</version>
     </parent>
 
-	<groupId>org.ogema.tools</groupId>
+    <groupId>org.ogema.tools</groupId>
     <artifactId>resource-tree-manipulator</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
     <packaging>bundle</packaging>
 	
     <build>

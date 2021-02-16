@@ -4,12 +4,13 @@
 
     <parent>
         <groupId>org.ogema.widgets</groupId>
-		<artifactId>widget-tools</artifactId>
+        <artifactId>widget-tools</artifactId>
         <version>2.2.2-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ogema.drivers</groupId>
     <artifactId>remote-rest-configurator</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <build>

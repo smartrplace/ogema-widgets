@@ -9,6 +9,7 @@
     </parent>
     
     <artifactId>event-converter</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <name>OGEMA Tools :: Event converter</name>

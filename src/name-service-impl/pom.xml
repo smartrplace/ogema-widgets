@@ -2,12 +2,13 @@
     <modelVersion>4.0.0</modelVersion>
     
     <parent>
-       <groupId>org.ogema.widgets</groupId>
+        <groupId>org.ogema.widgets</groupId>
         <artifactId>ogema-widgets</artifactId>
         <version>2.2.2-SNAPSHOT</version> 
     </parent>
     
     <artifactId>name-service-impl</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
 
     <name>OGEMA Tools :: NameService Default Implementation</name>
     <packaging>bundle</packaging>

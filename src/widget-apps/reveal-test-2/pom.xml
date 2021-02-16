@@ -3,11 +3,12 @@
 
     <parent>
         <groupId>org.ogema.widgets</groupId>
-		<artifactId>widget-apps</artifactId>
+        <artifactId>widget-apps</artifactId>
         <version>2.2.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>reveal-test-2</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
     <name>Reveal.js test pages 2</name>
 	<description>Test pages for the Reveal.js integration</description>
     <packaging>bundle</packaging>

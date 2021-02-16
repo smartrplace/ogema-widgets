@@ -8,6 +8,7 @@
     </parent>
     
     <artifactId>remote-user-administration</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
     <name>remote-user-administration</name>
 
     <packaging>bundle</packaging>

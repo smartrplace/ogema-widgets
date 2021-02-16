@@ -8,6 +8,7 @@
 	</parent>
 	
     <artifactId>telegram-connector</artifactId>
+    <version>2.2.2-SNAPSHOT</version>
     <name>Telegram connector</name>
     <description>Client for the Telegram bot</description>
     
