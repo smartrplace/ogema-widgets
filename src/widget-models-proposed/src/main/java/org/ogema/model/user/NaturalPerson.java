@@ -26,6 +26,7 @@
  */
 package org.ogema.model.user;
 
+import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.stakeholders.LegalEntity;
@@ -45,4 +46,9 @@ public interface NaturalPerson extends LegalEntity {
 	//ResourceList<Region> citizenships();
 	
 	StringResource userRole();
+	
+	/** If true then the user access data can also be used for login as mobile user on
+	 * standard servlets
+	 */
+	BooleanResource restAccessEnabled();
 }
