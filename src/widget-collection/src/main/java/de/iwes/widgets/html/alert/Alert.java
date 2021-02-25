@@ -26,6 +26,7 @@ public class Alert extends OgemaWidgetBase<AlertData> {
 	private String defaultText;
 	private boolean defaultTextAsHtml;
 	private boolean defaultAllowDismiss = false;
+	private Long defaultAutoDismiss = null;
 	
 	/*********** Constructor **********/
 	
@@ -58,6 +59,8 @@ public class Alert extends OgemaWidgetBase<AlertData> {
 		else
 			opt.setText(defaultText);
 		opt.allowDismiss(defaultAllowDismiss);
+		if(defaultAutoDismiss != null)
+			opt.autoDismiss(defaultAutoDismiss);
 		super.setDefaultValues(opt);
 	}
 
@@ -102,6 +105,10 @@ public class Alert extends OgemaWidgetBase<AlertData> {
      */
     public void setDefaultAllowDismiss(boolean allowDismiss) {
     	this.defaultAllowDismiss = allowDismiss;
+    }
+
+    public void setDefaultAutoDismiss(long autoDismiss) {
+    	this.defaultAutoDismiss = autoDismiss;
     }
 
     public void allowDismiss(boolean allowDismiss,OgemaHttpRequest req) {
