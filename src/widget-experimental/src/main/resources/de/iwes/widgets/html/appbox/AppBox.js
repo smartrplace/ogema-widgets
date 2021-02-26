@@ -24,11 +24,11 @@ AppBox.prototype.update = function( data ) {
 			description = "";
 		var appHtml = 
 			"<div style=\"flex:0 0 100px;\" id=\"" + appData.id + "\"><div class=\"app-container\">" +
-				"<center><img src=\"/ogema/widget/apps?action=getIcon&id=" + appData.id;
+				"<div class='wrapper_top_image_title'><center><img src=\"/ogema/widget/apps?action=getIcon&id=" + appData.id;
 		if (typeof otusr !== "undefined")
 			appHtml += "&user=" + otusr + "&pw=" + otpwd;
 		appHtml += "\"/></center>" +
-				"<b>" + metainfo.Bundle_Name + "</b>" +
+				"<b>" + metainfo.Bundle_Name + "</b></div>" +
 				"<p style=\"font-size:80%;\">" + metainfo.Bundle_Version + "<p>" +
 				"<p>" + description + "</p>" + 
 			"</div></div>";
