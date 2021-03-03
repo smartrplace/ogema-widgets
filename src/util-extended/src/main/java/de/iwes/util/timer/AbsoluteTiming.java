@@ -40,4 +40,11 @@ public class AbsoluteTiming {
 	final public static int HALF_MINUTE = 1000;
 	final public static int TEN_SECOND = 1020;
 	final public static int SECOND = 102;
+	
+	/** ANY_RANGE can be used in some settings to indicate that no special alignment takes
+	 * place but that data dependencies exist over all input data. Esepcially for online
+	 * evaluations that means that calculations may have to be repeated on all input data
+	 * on every request/update.
+	 */
+	final public static int ANY_RANGE = -100;	
 }
