@@ -318,6 +318,7 @@ public class GaRoEvalHelper {
 		
 		if(recId.contains("/sensors/co_alert")) return GaRoDataType.CO_Alert; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/sensors/siren")) return GaRoDataType.SirenStatus; //"onOffSwitch/stateFeedback"
+		if(recId.contains("/sensors/air")) return GaRoDataType.AirQuality1Best10Worst; //"onOffSwitch/stateFeedback"
 
 		if(recId.contains("/monthlyTotalKiB")) return GaRoDataType.TrafficDataTotal;
 

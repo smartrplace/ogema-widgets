@@ -300,6 +300,9 @@ public class GaRoDataType implements GaRoDataTypeI {
 			BooleanResource.class);
 	public static final GaRoDataType CO_Alert = new GaRoDataType("CO_Alert",
 			BooleanResource.class);
+	public static final GaRoDataType AirQuality1Best10Worst = new GaRoDataType("AirQuality_1Best_10Worst",
+			FloatResource.class);
+	
 	public static final GaRoDataType TrafficDataTotal = new GaRoDataType("kBTrafficTotal",
 			FloatResource.class);
 
