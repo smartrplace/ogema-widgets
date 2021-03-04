@@ -349,4 +349,17 @@ public class RoomHelper {
 	public static int[] getRoomTypeKeys() {
 		return new int[]{ 0,1,2,3,4,5,6,7,8,10,20,100,101,200,210 };
 	}
+
+	@Deprecated 
+	/** @deprecated Use {@link ResourceUtils#getDevicesFromRoom()} instead.
+	 * */
+	public static <T extends PhysicalElement> List<T> getDevicesInRoom(Room room, Class<T> type, ResourceAccess ra) {
+		List<T> result = new ArrayList<T>();
+		List<T> all = ra.getResources(type);
+		for(T dev: all) {
+			if(dev.location().room().equalsLocation(room))
+				result.add(dev);
+		}
+		return result ;
+	}
 }

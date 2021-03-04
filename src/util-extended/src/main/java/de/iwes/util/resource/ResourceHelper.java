@@ -548,4 +548,13 @@ public class ResourceHelper {
 		return null;
 	}
 
+	public static <T extends Resource> T getResourceByName(String name, Class<T> type, ResourceAccess ra) {
+		List<T> all = ra.getResources(type);
+		for(T res: all) {
+			if(ResourceUtils.getHumanReadableShortName(res).equals(name))
+				return res;
+		}
+		return null;
+	}
+
 }
