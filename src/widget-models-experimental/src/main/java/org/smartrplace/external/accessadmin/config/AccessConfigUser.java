@@ -26,7 +26,7 @@ public interface AccessConfigUser extends Data {
 	 * represent a group. As such resources may not exist on all OGEMA systems the value may not be set,
 	 * though.
 	 */
-	NaturalPerson user();
+	//NaturalPerson user();
 	
 	/** Direct super groups. The list shall only contain references to these settings.
 	 * All settings are inherited that are not overwritten by an own setting in
