@@ -1,8 +1,10 @@
 package org.ogema.model.extended.alarming;
 
 import org.ogema.core.model.simple.BooleanResource;
+import org.ogema.core.model.simple.FloatResource;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
+import org.ogema.model.locations.Room;
 import org.ogema.model.prototypes.Data;
 
 public interface AlarmGroupData extends Data {
@@ -23,4 +25,12 @@ public interface AlarmGroupData extends Data {
 	StringResource linkToTaskTracking();
 	
 	BooleanResource isFinished();
+	
+	/** If negative then no new messages shall be sent. If positive then the default value for the alarm is overwritten during the
+	 * known fault state. Default is -1, so default is blocking. If zero the value set for the individual datapoint is used.
+	 */
+	FloatResource minimumTimeBetweenAlarms();
+	
+	/** Reference to room for room faults*/
+	Room room();
 }

@@ -5,6 +5,8 @@ import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.model.extended.alarming.AlarmConfiguration;
+import org.ogema.model.extended.alarming.AlarmGroupData;
+import org.ogema.model.extended.alarming.AlarmingData;
 import org.ogema.model.prototypes.Data;
 import org.ogema.model.prototypes.PhysicalElement;
 
@@ -52,8 +54,14 @@ public interface InstallAppDevice extends Data {
 	 */
 	public StringResource deviceId();
 	
-	/** Alarms for the device*/
+	/** Single datapoint alarms for the device*/
 	public ResourceList<AlarmConfiguration> alarms();
+	
+	/** Known fault on device. Note that in the future room and gateway fault states may be stored in
+	 * {@link AlarmingData#knownSystemFaults()}. If not active of not existing then the device has no
+	 * active fault.*/
+	public AlarmGroupData knownFault();
+	//public ResourceList<KnownFault> knownFaults();
 	
 	/** Devices that cannot or shall not be deleted entirely/set inactive can be marked as trash. These devices will also not be
 	 * processed anymore.

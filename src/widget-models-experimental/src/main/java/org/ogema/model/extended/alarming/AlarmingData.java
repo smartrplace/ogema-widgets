@@ -8,5 +8,7 @@ import org.smartrplace.apps.hw.install.config.InstallAppDevice;
  * this configuration
  */
 public interface AlarmingData extends Data {
+	/** Device known faults are stored in {@link InstallAppDevice#knownFaults()}. Faults that are
+	 * released and room/gateway faults are stored here.*/
 	ResourceList<AlarmGroupData> ongoingGroups();
 }
