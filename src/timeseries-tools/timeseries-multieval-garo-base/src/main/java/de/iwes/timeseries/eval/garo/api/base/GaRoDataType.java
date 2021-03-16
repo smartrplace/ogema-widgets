@@ -60,6 +60,9 @@ public class GaRoDataType implements GaRoDataTypeI {
 	private final String label;
 	private final Level level;
 	
+	/** Experimental: Usually no special unit information is provided, but it is possible*/
+	public String unit = null;
+	
 	public GaRoDataType(String label, Class<? extends Resource> representingResourceType) {
 		this(label, representingResourceType, Level.ROOM);
 	}
@@ -150,6 +153,14 @@ public class GaRoDataType implements GaRoDataTypeI {
 	public static final GaRoDataType PowerMeterOutlet = new GaRoDataType("PowerMeterOutlet",
 			PowerResource.class);
 	public static final GaRoDataType ReactivePowerMeterOutlet = new GaRoDataType("ReactivePowerMeterOutlet",
+			PowerResource.class);
+	public static final GaRoDataType ReactivePowerMeterQ1 = new GaRoDataType("ReactivePowerQ1",
+			PowerResource.class);
+	public static final GaRoDataType ReactivePowerMeterQ2 = new GaRoDataType("ReactivePowerQ2",
+			PowerResource.class);
+	public static final GaRoDataType ReactivePowerMeterQ3 = new GaRoDataType("ReactivePowerQ3",
+			PowerResource.class);
+	public static final GaRoDataType ReactivePowerMeterQ4 = new GaRoDataType("ReactivePowerQ4",
 			PowerResource.class);
 	public static final GaRoDataType ReactiveEnergy = new GaRoDataType("ReactiveEnergy",
 			EnergyResource.class);

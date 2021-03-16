@@ -242,6 +242,10 @@ public class GaRoEvalHelper {
 		
 		if(recId.contains("/powerSensor/reading")) return GaRoDataType.PowerMeterOutlet;
 		if(recId.contains("/reactivePowerSensor/reading")) return GaRoDataType.ReactivePowerMeterOutlet;
+		if(recId.contains("/reactivePowerSensorQ1/reading")) return GaRoDataType.ReactivePowerMeterQ1;
+		if(recId.contains("/reactivePowerSensorQ2/reading")) return GaRoDataType.ReactivePowerMeterQ2;
+		if(recId.contains("/reactivePowerSensorQ3/reading")) return GaRoDataType.ReactivePowerMeterQ3;
+		if(recId.contains("/reactivePowerSensorQ4/reading")) return GaRoDataType.ReactivePowerMeterQ4;
 		if(recId.contains("/reactiveEnergy/reading")) return GaRoDataType.ReactiveEnergy;
 		if(recId.contains("/currentSensor/reading")) return GaRoDataType.CurrentSensorOutlet;
 		if(recId.contains("/voltageSensor/reading")) return GaRoDataType.VoltageSensorOutlet;
