@@ -2,6 +2,7 @@ package org.smartrplace.gateway.device;
 
 import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.simple.IntegerResource;
+import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.prototypes.PhysicalElement;
 import org.smartrplace.monitoring.vnstat.resources.NetworkTrafficData;
@@ -32,4 +33,11 @@ public interface GatewayDevice extends PhysicalElement {
 	IntegerResource datapointsInAlarmState();
 	
 	ResourceList<NetworkTrafficData> networkTrafficData();
+    
+    /**
+     * The gateway's public IP address, if any.
+     * @return (optional) gateways public IP address
+     */
+    StringResource publicAddress();
+    
 }
