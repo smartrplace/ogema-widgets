@@ -280,6 +280,10 @@ public class GaRoEvalHelper {
 		if(recId.contains("BRIGHTNESS/reading")) return GaRoDataType.LightSensor;
 		if(recId.contains("/sensors/BRIGHTNESS/rawValue")) return GaRoDataType.LightSensorRaw;
 
+		if(recId.contains("/connected/")) return GaRoDataType.ConnectedStatus;
+		if(recId.contains("/dutyCycle/")) return GaRoDataType.DutyCycle;
+		if(recId.contains("/communicationStatus/communicationDisturbed")) return GaRoDataType.CommunicationDisturbed;
+
 		if(recId.contains("Gateway_Device/gitUpdateStatus")) return GaRoDataType.SystemUpdateStatus;
 		if(recId.contains("Gateway_Device/systemRestart")) return GaRoDataType.SystemRestartLog;
 		if(recId.contains("numberIP4AddressesHM")) return GaRoDataType.RouterIPv4HM;

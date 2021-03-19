@@ -228,6 +228,10 @@ public class GaRoDataType implements GaRoDataTypeI {
 			FloatResource.class);
 	public static final GaRoDataType CommunicationDisturbed = new GaRoDataType("CommunicationDisturbed",
 			BooleanResource.class);
+	public static final GaRoDataType ConnectedStatus = new GaRoDataType("ConnectedStatus",
+			BooleanResource.class);
+	public static final GaRoDataType DutyCycle = new GaRoDataType("DutyCycle",
+			FloatResource.class);
 	/** Food amount added at a certain time*/
 	public static final GaRoDataType FoodAmount = new GaRoDataType("FoodAmount",
 			FloatResource.class);
