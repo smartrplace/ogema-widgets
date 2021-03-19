@@ -1,6 +1,8 @@
 package org.smartrplace.gateway.device;
 
 import org.ogema.core.model.ResourceList;
+import org.ogema.core.model.array.StringArrayResource;
+import org.ogema.core.model.simple.FloatResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.prototypes.PhysicalElement;
@@ -32,4 +34,12 @@ public interface GatewayDevice extends PhysicalElement {
 	IntegerResource datapointsInAlarmState();
 	
 	ResourceList<NetworkTrafficData> networkTrafficData();
+	
+	StringArrayResource apiMethods();
+	/** When the API is accessed then an entry into this resource is made (maximum one entry per 5 seconds per API method)
+	 * The index of the API method is from {@link #apiMethods()} is written. For mobile access 0.5 is added.
+	 * Note that the method indeces are stored persistently but will vary between gateways. This may be adapted in the
+	 * future, but would require coordinated indexing of the methods
+	 */
+	FloatResource apiMethodAccess();
 }
