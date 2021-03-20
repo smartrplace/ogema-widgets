@@ -41,7 +41,6 @@ import org.ogema.core.model.units.VolumeResource;
 import org.ogema.generictype.GenericAttribute;
 import org.ogema.generictype.GenericAttributeImpl;
 
-import de.iwes.timeseries.eval.garo.api.helper.base.GaRoEvalHelper;
 import de.iwes.timeseries.eval.garo.multibase.GaRoSingleEvalProviderPreEvalRequesting;
 import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 
@@ -320,6 +319,11 @@ public class GaRoDataType implements GaRoDataTypeI {
 	
 	public static final GaRoDataType TrafficDataTotal = new GaRoDataType("kBTrafficTotal",
 			FloatResource.class);
+	public static final GaRoDataType IPAddrPartLastProcessed = new GaRoDataType("IPPartLast",
+			IntegerResource.class);
+	public static final GaRoDataType APIAccessCounter = new GaRoDataType("APIaccess",
+			FloatResource.class);
+	
 
 	//The following options are per-gateway
 	public static final GaRoDataType PowerMeter = new GaRoDataType("PowerMeter",

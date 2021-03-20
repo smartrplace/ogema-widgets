@@ -50,6 +50,7 @@ public interface GatewayDevice extends PhysicalElement {
      */
     StringResource publicAddress();
     
-    /**When a change in the publicAddress is detected in the relevant last part then the new value is written here*/
+    /**When a change in the publicAddress is detected in the relevant last part then the new value is written here
+     * Depending on local requirements this may be the full IP address as integer*/
     IntegerResource foundPublicAddressLastPart();
 }
