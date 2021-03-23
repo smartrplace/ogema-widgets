@@ -20,16 +20,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.Map.Entry;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -73,6 +72,17 @@ public abstract class WidgetData {
     protected final ReentrantReadWriteLock lock;
     protected final boolean globalWidget;
 
+    private Map<String, Object> sessionDataFlex = null;
+    public Object putSessionDataFlex(String key, Object value) {
+    	if(sessionDataFlex == null)
+    		sessionDataFlex = new HashMap<>();
+    	return sessionDataFlex.put(key, value);
+    }
+    public Object getSessionDataFlex(String key) {
+    	if(sessionDataFlex == null)
+    		return null;
+    	return sessionDataFlex.get(key);
+    }
     /**
      * Use {@link #getsessionDependencies()} to initialize this on demand
      */

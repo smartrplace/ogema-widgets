@@ -188,9 +188,12 @@ public class AppBoxData extends WidgetData {
 			}
 			singleApp.put("metainfo",metainfo);
 			
-			String startPage = entry.getWebAccess().getStartUrl();			
-			if (startPage != null)
+			String startPage = entry.getWebAccess().getStartUrl();
+			if (startPage != null) {
+				if(startPage.startsWith("/linkonly/"))
+					startPage = "https://"+startPage.substring("/linkonly/".length());
 				singleApp.put("startPage", startPage);
+			}
 			String descr = ((AppBox) widget).getDescription(entry);
 			if (descr != null) 
 				singleApp.put("tooltip", descr);
