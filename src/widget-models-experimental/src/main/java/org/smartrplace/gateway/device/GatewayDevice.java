@@ -49,6 +49,11 @@ public interface GatewayDevice extends PhysicalElement {
      * @return (optional) gateways public IP address
      */
     StringResource publicAddress();
+   
+    /** Each time the public address is written this is updated with the information to be written into 
+     * {@link #foundPublicAddressLastPart()} if a change is detected or a negative error code if no scanning is possible
+     */
+    IntegerResource foundPublicAddressLastPartRaw();
     
     /**When a change in the publicAddress is detected in the relevant last part then the new value is written here
      * Depending on local requirements this may be the full IP address as integer*/
