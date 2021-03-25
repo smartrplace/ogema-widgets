@@ -190,8 +190,11 @@ public class AppBoxData extends WidgetData {
 			
 			String startPage = entry.getWebAccess().getStartUrl();
 			if (startPage != null) {
-				if(startPage.startsWith("/linkonly/"))
+				if(startPage.startsWith("/linkonly/")) {
 					startPage = "https://"+startPage.substring("/linkonly/".length());
+					if(startPage.endsWith("/index.html"))
+						startPage = startPage.substring(0, startPage.length()-"/index.html".length());
+				}
 				singleApp.put("startPage", startPage);
 			}
 			String descr = ((AppBox) widget).getDescription(entry);
