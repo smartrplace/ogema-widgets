@@ -329,8 +329,8 @@ public class GaRoEvalHelper {
 		if(recId.contains("/sensors/air")) return GaRoDataType.AirQuality1Best10Worst; //"onOffSwitch/stateFeedback"
 
 		if(recId.contains("/monthlyTotalKiB")) return GaRoDataType.TrafficDataTotal;
-		if(recId.contains("/foundPublicAddressLastPart")) return GaRoDataType.IPAddrPartLastProcessed;
 		if(recId.contains("/foundPublicAddressLastPartRaw")) return GaRoDataType.IPAddrPartLastProcessedRaw;
+		if(recId.contains("/foundPublicAddressLastPart")) return GaRoDataType.IPAddrPartLastProcessed;
 		if(recId.contains("/apiMethodAccess")) return GaRoDataType.APIAccessCounter;
 
 		if(recId.contains("$$")) return GaRoDataType.Internal;
