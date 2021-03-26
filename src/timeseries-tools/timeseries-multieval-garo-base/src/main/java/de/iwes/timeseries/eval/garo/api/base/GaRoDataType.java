@@ -321,6 +321,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 			FloatResource.class);
 	public static final GaRoDataType IPAddrPartLastProcessed = new GaRoDataType("IPPartLast",
 			IntegerResource.class);
+	public static final GaRoDataType IPAddrPartLastProcessedRaw = new GaRoDataType("IPPartLastRaw",
+			IntegerResource.class);
 	public static final GaRoDataType APIAccessCounter = new GaRoDataType("APIaccess",
 			FloatResource.class);
 	
