@@ -32,6 +32,7 @@ import org.ogema.core.administration.AdministrationManager;
 import org.osgi.framework.Bundle;
 
 import de.iwes.widgets.api.extended.WidgetData;
+import de.iwes.widgets.api.extended.util.UserLocaleUtil;
 import de.iwes.widgets.api.widgets.dynamics.TriggeredAction;
 import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
 
@@ -191,9 +192,29 @@ public class AppBoxData extends WidgetData {
 			String startPage = entry.getWebAccess().getStartUrl();
 			if (startPage != null) {
 				if(startPage.startsWith("/linkonly/")) {
-					startPage = "https://"+startPage.substring("/linkonly/".length());
-					if(startPage.endsWith("/index.html"))
-						startPage = startPage.substring(0, startPage.length()-"/index.html".length());
+					String url = startPage.substring("/linkonly/".length());
+					if(url.endsWith("/index.html"))
+						url = url.substring(0, url.length()-"/index.html".length());
+					if(url.startsWith("$")) {
+						String jsonstr = "{"+url.replaceAll("\\$", "\"")+"}";
+						JSONObject json = new JSONObject(jsonstr);
+						String user = UserLocaleUtil.getUserLoggedInBase(req.getSession());
+						String allUrl = null;
+						boolean found = false;
+						for(String key: json.keySet()) {
+							String optUrl = json.getString(key);
+							if(key.equals("all"))
+								allUrl = optUrl;
+							else if(key.equals(user)) {
+								url = optUrl;
+								found = true;
+								break;
+							}
+						}
+						if(!found && allUrl != null)
+							url = allUrl;
+					}
+					startPage = "https://"+url;
 				}
 				singleApp.put("startPage", startPage);
 			}
