@@ -372,7 +372,7 @@ public class MainPageImpl { // extends WidgetPage<LocaleDictionary> {
 				try {
 					File destFile = null;
 					File tempDir = new File("tempUpload"); // FIXME unnecessary to copy the file to the disk
-					if (fileItem.getName().endsWith(".ogx") || fileItem.getName().endsWith(".zip"))
+					if (fileItem.getName().endsWith(".ogx") || fileItem.getName().endsWith(".ogj") ||fileItem.getName().endsWith(".zip"))
 						destFile = new File("tempUpload", fileItem.getName());
 					if(!destFile.exists())
 						destFile.mkdirs();
