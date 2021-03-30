@@ -54,6 +54,11 @@ public class TimeResourceTextField extends ValueResourceTextField<TimeResource> 
     	setDefaultInterval(defaultInterval);
     }
 
+    public TimeResourceTextField(WidgetPage<?> page, String id, Interval defaultInterval, TimeResource resource) {
+    	super(page, id, resource);
+    	setDefaultInterval(defaultInterval);
+    }
+
     public TimeResourceTextField(OgemaWidget parent, String id, Interval defaultInterval, TimeResource resource, OgemaHttpRequest req) {
     	super(parent, id, resource, req);
     	setDefaultInterval(defaultInterval);
