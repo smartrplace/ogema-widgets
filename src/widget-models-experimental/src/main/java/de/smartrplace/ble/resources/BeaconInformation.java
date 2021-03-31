@@ -3,14 +3,14 @@ package de.smartrplace.ble.resources;
 import org.ogema.core.model.ModelModifiers;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
-import org.ogema.model.prototypes.Data;
+import org.ogema.model.prototypes.PhysicalElement;
 import org.ogema.model.sensors.GenericFloatSensor;
 
 /**
  *
  * @author jlapp
  */
-public interface BeaconInformation extends Data {
+public interface BeaconInformation extends PhysicalElement {
     
     /**
      * String identifier for the beacon, structure will depend on the concrete
