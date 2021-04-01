@@ -282,6 +282,8 @@ public class GaRoEvalHelper {
 
 		if(recId.contains("/connected/")) return GaRoDataType.ConnectedStatus;
 		if(recId.contains("/dutyCycle/")) return GaRoDataType.DutyCycle;
+		if(recId.contains("/dutyCycleLevel/")) return GaRoDataType.DutyCycleLevel;
+		if(recId.contains("/carrierSensLevel/")) return GaRoDataType.CarrierSensLevel;
 		if(recId.contains("/communicationStatus/communicationDisturbed")) return GaRoDataType.CommunicationDisturbed;
 
 		if(recId.contains("Gateway_Device/gitUpdateStatus")) return GaRoDataType.SystemUpdateStatus;

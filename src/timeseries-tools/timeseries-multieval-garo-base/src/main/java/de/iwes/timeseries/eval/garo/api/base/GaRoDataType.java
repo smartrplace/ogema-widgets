@@ -231,6 +231,10 @@ public class GaRoDataType implements GaRoDataTypeI {
 			BooleanResource.class);
 	public static final GaRoDataType DutyCycle = new GaRoDataType("DutyCycle",
 			FloatResource.class);
+	public static final GaRoDataType DutyCycleLevel = new GaRoDataType("DutyCycleLevel",
+			FloatResource.class);
+	public static final GaRoDataType CarrierSensLevel = new GaRoDataType("CarrierSensLevel",
+			FloatResource.class);
 	/** Food amount added at a certain time*/
 	public static final GaRoDataType FoodAmount = new GaRoDataType("FoodAmount",
 			FloatResource.class);
