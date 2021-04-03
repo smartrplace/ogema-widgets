@@ -318,6 +318,8 @@ public class ReceiverTemplate extends RowTemplate<ReceiverConfiguration> {
 		editReceiverTable.setContent(5, 1, editRESTUserTextField);
 		editReceiverTable.setContent(6, 1, editRESTPwTextField);
 
+		if(config.getName().equals("testButtonReceiver"))
+			return row;
 		final Button editReceiverButton = new Button(page, "editReceiverButton" + id);
 		editReceiverButton.triggerAction(editEMailTextField, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		editReceiverButton.triggerAction(editSmsTextField, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
