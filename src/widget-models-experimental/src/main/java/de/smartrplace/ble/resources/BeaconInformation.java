@@ -22,6 +22,11 @@ public interface BeaconInformation extends PhysicalElement {
     StringResource id();
     
     /**
+     * @return beacon address (MAC)
+     */
+    StringResource address();
+    
+    /**
      * @return beacon signal strength.
      */
     GenericFloatSensor rssiSensor();
