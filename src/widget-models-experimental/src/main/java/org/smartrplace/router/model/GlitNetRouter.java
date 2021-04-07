@@ -37,4 +37,7 @@ public interface GlitNetRouter extends PhysicalElement {
 	IntegerResource ipv4viaMndsAddressUpdates();
 	/** The last address processed is stored here to check when real changes occur*/
 	StringResource ipv4lastAddress();
+    
+    ResourceList<WifiInfo> wifis();
+    
 }
