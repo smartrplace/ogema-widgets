@@ -323,6 +323,10 @@ public class GaRoDataType implements GaRoDataTypeI {
 	
 	public static final GaRoDataType TrafficDataTotal = new GaRoDataType("kBTrafficTotal",
 			FloatResource.class);
+	public static final GaRoDataType BitRate = new GaRoDataType("BitRate",
+			IntegerResource.class);
+	public static final GaRoDataType CommChannel = new GaRoDataType("Channel",
+			IntegerResource.class);
 	public static final GaRoDataType IPAddrPartLastProcessed = new GaRoDataType("IPPartLast",
 			IntegerResource.class);
 	public static final GaRoDataType IPAddrPartLastProcessedRaw = new GaRoDataType("IPPartLastRaw",

@@ -132,7 +132,7 @@ public class GaRoEvalHelper {
 				"Valve Position", "Ventilstellung");
 		addRecId(GaRoDataType.InternetConnection, new String[] {"NetworkState/mainNetworkOk"}, recIdSnippets,
 				"Main Internet connection status", "DSL Status");
-		addRecId(GaRoDataType.RSSIDevice, new String[] {"/rssiDevice", "/communicationStatus/RSSI"}, recIdSnippets,
+		addRecId(GaRoDataType.RSSIDevice, new String[] {"/rssiDevice", "/communicationStatus/RSSI", "/signal/reading"}, recIdSnippets,
 				"RSSI Device");
 		addRecId(GaRoDataType.RSSIPeer, new String[] {"/rssiPeer"}, recIdSnippets,
 				"RSSI Peer");
@@ -333,6 +333,8 @@ public class GaRoEvalHelper {
 		if(recId.contains("/sensors/air")) return GaRoDataType.AirQuality1Best10Worst; //"onOffSwitch/stateFeedback"
 
 		if(recId.contains("/monthlyTotalKiB")) return GaRoDataType.TrafficDataTotal;
+		if(recId.contains("/bitrate")) return GaRoDataType.BitRate;
+		if(recId.endsWith("/channel")) return GaRoDataType.CommChannel;
 		if(recId.contains("/foundPublicAddressLastPartRaw")) return GaRoDataType.IPAddrPartLastProcessedRaw;
 		if(recId.contains("/foundPublicAddressLastPart")) return GaRoDataType.IPAddrPartLastProcessed;
 		if(recId.contains("/apiMethodAccess")) return GaRoDataType.APIAccessCounter;
