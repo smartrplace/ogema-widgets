@@ -266,7 +266,9 @@ public class GaRoEvalHelper {
 		if(recId.contains("/VOLUME_FLOW_")) return GaRoDataType.HeatFlow;
 		if(recId.contains("/VOLUME")) return GaRoDataType.HeatVolumeIntegral;
 		if(recId.contains("/FLOW_TEMPERATURE_")) return GaRoDataType.HeatSupplyTemperatur;
+		if(recId.contains("/inputTemperature/")) return GaRoDataType.HeatSupplyTemperatur;
 		if(recId.contains("/RETURN_TEMPERATURE_")) return GaRoDataType.HeatReturnTemperatur;
+		if(recId.contains("/outputTemperature/")) return GaRoDataType.HeatReturnTemperatur;
 		
 		if(recId.contains("/pH_Wert_1/sensor/reading")) return GaRoDataType.WaterPHValue;
 		//if(recId.contains("/Leitwert_S__1/sensor/reading")) return GaRoDataType.WaterConductivityValue;

@@ -23,7 +23,6 @@ import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.connections.ElectricityConnection;
 import org.ogema.model.prototypes.Configuration;
 import org.ogema.model.prototypes.Data;
-import org.ogema.model.prototypes.PhysicalElement;
 import org.ogema.model.sensors.VolumeAccumulatedSensor;
 
 /** 
@@ -87,4 +86,13 @@ public interface HardwareInstallConfig extends Data {
 	
 	ElectricityConnection mainMeter();
 	VolumeAccumulatedSensor mainGasMeter();
+	
+	/** Note that for some changes to take effect a system restart is necessary as pages have to be added/
+	 * removed at applications.
+	 *  0: No extended view mode
+	 *  1: master only. If master-only is not possible (as pages are added/removed at applications cannot be
+	 *  	controlled on a per-user base) no extended mode is supported at such positions.
+	 *  2: all users if not blocked by other permissions
+	 */
+	IntegerResource extendedViewMode();
 }

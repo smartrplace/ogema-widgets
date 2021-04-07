@@ -241,6 +241,26 @@ public class OGEMAResourceCopyHelper {
 		}
 		return true;
 	}
+	
+	/** Copy one ValueResource to another with active status, but without decorators etc.*/
+	public static void copyValueResource(ValueResource source, ValueResource destination) {
+		if(source.isActive()) {
+			if(destination.isActive())
+				copyValue(source, destination);
+			else {
+				destination.create();
+				copyValue(source, destination);
+				destination.activate(false);
+			}
+		} else if(source.exists()) {
+			destination.create();
+			destination.deactivate(false);
+			copyValue(source, destination);
+		} else if(destination.exists()) {
+			destination.delete();
+		}
+	}
+
 	/** Copy the value from one ValueResource to another of the same type*/
 	public static <T extends ValueResource> void copyValue(T source, T dest) {
 		if(FloatResource.class.isAssignableFrom(source.getResourceType())) {
