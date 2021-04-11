@@ -7,6 +7,7 @@ import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.locations.Room;
 import org.ogema.model.prototypes.Data;
 
+/** If the resource exists then an ongoing alarm is active*/
 public interface AlarmGroupData extends Data {
 	/** User that accepted the alarm. May be a StringArrayResource in the future*/
 	StringResource acceptedByUser();
