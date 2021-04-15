@@ -6,6 +6,7 @@ import org.ogema.core.model.simple.FloatResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
+import org.ogema.model.extended.alarming.AlarmGroupData;
 import org.ogema.model.prototypes.PhysicalElement;
 import org.smartrplace.monitoring.vnstat.resources.NetworkTrafficData;
 
@@ -33,6 +34,15 @@ public interface GatewayDevice extends PhysicalElement {
 	
 	IntegerResource activeAlarmSupervision();
 	IntegerResource datapointsInAlarmState();
+	
+	IntegerResource knownIssuesOther();
+	IntegerResource knownIssuesAssignedOperation();
+	IntegerResource knownIssuesAssignedDev();
+	IntegerResource knownIssuesAssignedCustomer();
+	IntegerResource knownIssuesAssignedBacklog();
+	
+	/** Known issues of different types given as same index as {@link AlarmGroupData#USER_ROLES}*/
+	//IntegerArrayResource knownIssues();
 	
 	ResourceList<NetworkTrafficData> networkTrafficData();
 	
