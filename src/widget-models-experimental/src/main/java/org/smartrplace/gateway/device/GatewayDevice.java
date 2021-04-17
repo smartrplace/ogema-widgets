@@ -68,4 +68,20 @@ public interface GatewayDevice extends PhysicalElement {
     /**When a change in the publicAddress is detected in the relevant last part then the new value is written here
      * Depending on local requirements this may be the full IP address as integer*/
     IntegerResource foundPublicAddressLastPart();
+    
+    /** Memore timeseries supervision*/
+    FloatResource pstMultiToSingleEvents();
+    FloatResource pstMultiToSingleCounter();
+    FloatResource pstMultiToSingleAggregations();
+    FloatResource pstMultiToSingleAggregationsCounter();
+
+    FloatResource pstBlockingSingeEvents();
+    FloatResource pstBlockingCounter();
+    FloatResource pstSubTsBuild();
+    FloatResource pstSubTsBuildCounter();
+
+    FloatResource pstUpdateValuesPS2();
+    FloatResource pstUpdateValuesPS2Counter();
+    FloatResource pstTSServlet();
+    FloatResource pstTSServletCounter();
 }

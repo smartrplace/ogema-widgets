@@ -305,6 +305,7 @@ public class GaRoEvalHelper {
 		if(recId.contains("Gateway_Device/datapointsInAlarmState")) return GaRoDataType.DatapointsAlarmNum;
 		
 		if(recId.contains("/energyDaily/reading")) return GaRoDataType.EnergyDaily;
+		if(recId.contains("/energyMonthly/reading")) return GaRoDataType.EnergyMonthly;
 		if(recId.contains("/energyDailyAccumulatedFull/reading")) return GaRoDataType.EnergyDailyAccumulatedFull;
 		if(recId.contains("/energyReactiveDaily/reading")) return GaRoDataType.EnergyReactiveDaily;
 		if(recId.contains("/energyAccumulatedDaily/reading")) return GaRoDataType.EnergyDailyAccumulated;
@@ -338,6 +339,8 @@ public class GaRoEvalHelper {
 		if(recId.contains("/foundPublicAddressLastPartRaw")) return GaRoDataType.IPAddrPartLastProcessedRaw;
 		if(recId.contains("/foundPublicAddressLastPart")) return GaRoDataType.IPAddrPartLastProcessed;
 		if(recId.contains("/apiMethodAccess")) return GaRoDataType.APIAccessCounter;
+
+		if(recId.contains("Gateway_Device/pst")) return GaRoDataType.MemoryTsDebug;
 
 		if(recId.contains("$$")) return GaRoDataType.Internal;
 		return GaRoDataType.Unknown;

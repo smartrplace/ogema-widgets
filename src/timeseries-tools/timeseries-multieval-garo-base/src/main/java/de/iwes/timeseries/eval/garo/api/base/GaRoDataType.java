@@ -275,6 +275,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 	
 	public static final GaRoDataType EnergyDaily = new GaRoDataType("EnergyDaily",
 			EnergyResource.class);
+	public static final GaRoDataType EnergyMonthly = new GaRoDataType("EnergyMonthly",
+			EnergyResource.class);
 	public static final GaRoDataType EnergyReactiveDaily = new GaRoDataType("EnergyReactiveDaily",
 			EnergyResource.class);
 	public static final GaRoDataType EnergyDailyAccumulated = new GaRoDataType("EnergyDailyAccumulated",
@@ -332,6 +334,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 	public static final GaRoDataType IPAddrPartLastProcessedRaw = new GaRoDataType("IPPartLastRaw",
 			IntegerResource.class);
 	public static final GaRoDataType APIAccessCounter = new GaRoDataType("APIaccess",
+			FloatResource.class);
+	public static final GaRoDataType MemoryTsDebug = new GaRoDataType("PST",
 			FloatResource.class);
 	
 
