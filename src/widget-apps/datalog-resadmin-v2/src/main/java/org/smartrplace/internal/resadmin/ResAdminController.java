@@ -60,6 +60,7 @@ import org.ogema.core.logging.OgemaLogger;
 import org.ogema.core.model.Resource;
 import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.simple.BooleanResource;
+import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.core.resourcemanager.AccessPriority;
@@ -81,6 +82,7 @@ import org.smartrplace.resadmin.config.ResAdminConfig;
 
 import de.iwes.util.format.StringFormatHelper;
 import de.iwes.util.performanceeval.ExecutionTimeLogger;
+import de.iwes.util.resource.ValueResourceHelper;
 import de.iwes.util.resourcelist.ResourceListHelper;
 
 // here the controller logic is implemented
@@ -167,6 +169,13 @@ public class ResAdminController {
 		}
         initDemands();
 
+        //reset application inits
+		Resource mirrorList = appMan.getResourceAccess().getResource("serverMirror");
+		if(mirrorList != null) {
+			IntegerResource initStatus = mirrorList.getSubResource("initStatus", IntegerResource.class);
+			initStatus.setValue(0);
+		}
+		
 		//add overwriteExistingBackup to all Configs
 		for(BackupConfig config: this.appConfigData.configList().getAllElements()) {
 			if(config.overwriteExistingBackup().exists())
