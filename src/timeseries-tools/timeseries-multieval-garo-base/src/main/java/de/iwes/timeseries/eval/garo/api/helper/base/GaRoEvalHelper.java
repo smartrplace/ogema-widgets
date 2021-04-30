@@ -109,6 +109,8 @@ public class GaRoEvalHelper {
 		addRecId(GaRoDataType.WindDirectionPerForcecast, new String[] {"OpenWeatherMapData/windSensor/direction"}, recIdSnippets,
 				"Wind Direction(FC)", "Windrichtung(vorhergesagt)");
 		
+		addRecId(GaRoDataType.StateOfCharge, new String[] {"/chargeSensor/reading"}, recIdSnippets,
+				"SOC", "SOC");
 		addRecId(GaRoDataType.ChargeVoltage, new String[] {"chargeSensor", "internalVoltage"}, recIdSnippets,
 				"Battery Voltage", "Batteriespannung");
 		addRecId(GaRoDataType.ChargeSensor, new String[] {"batteryLow", "battery_low"}, recIdSnippets,
@@ -253,7 +255,11 @@ public class GaRoEvalHelper {
 		if(recId.contains("/frequencySensor/reading")) return GaRoDataType.FrequencySensorOutlet;
 		if(recId.contains("/reactiveAngleSensor/reading")) return GaRoDataType.PowerMeterReactiveAngle;
 		if(recId.contains("/energySensor/reading")) return GaRoDataType.EnergyIntegralOutlet;
+		if(recId.contains("/operationMode/stateFeedback")) return GaRoDataType.OperationModeFb; //"onOffSwitch/stateFeedback"
+		if(recId.contains("/fan/setting/stateFeedback")) return GaRoDataType.FanFb; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/setting/stateFeedback")) return GaRoDataType.MultiSwitchStateFeedback; //"onOffSwitch/stateFeedback"
+		if(recId.contains("/operationMode/stateControl")) return GaRoDataType.OperationModeControl; //"onOffSwitch/stateFeedback"
+		if(recId.contains("/fan/setting/stateControl")) return GaRoDataType.FanControl; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/setting/stateControl")) return GaRoDataType.MultiSwitchStateControl; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/stateFeedback")) return GaRoDataType.SwitchStateFeedback; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/stateControl")) return GaRoDataType.SwitchStateControl; //"onOffSwitch/stateFeedback"

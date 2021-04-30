@@ -149,6 +149,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 			BooleanResource.class);
 	public static final GaRoDataType ChargeVoltage = new GaRoDataType("ChargeVoltage",
 			VoltageResource.class);
+	public static final GaRoDataType StateOfCharge = new GaRoDataType("SOC",
+			FloatResource.class);
 	public static final GaRoDataType PowerMeterOutlet = new GaRoDataType("PowerMeterOutlet",
 			PowerResource.class);
 	public static final GaRoDataType ReactivePowerMeterOutlet = new GaRoDataType("ReactivePowerMeterOutlet",
@@ -182,9 +184,17 @@ public class GaRoDataType implements GaRoDataTypeI {
 	public static final GaRoDataType SwitchStateControl = new GaRoDataType("SwitchStateControl",
 			BooleanResource.class);
 	public static final GaRoDataType MultiSwitchStateFeedback = new GaRoDataType("MultiSwitchStateFeedback",
-			BooleanResource.class);
+			FloatResource.class);
 	public static final GaRoDataType MultiSwitchStateControl = new GaRoDataType("MultiSwitchStateControl",
-			BooleanResource.class);
+			FloatResource.class);
+	public static final GaRoDataType OperationModeFb = new GaRoDataType("OperationModeFb",
+			FloatResource.class);
+	public static final GaRoDataType OperationModeControl = new GaRoDataType("OperationModeCtrl",
+			FloatResource.class);
+	public static final GaRoDataType FanFb = new GaRoDataType("FanFb",
+			FloatResource.class);
+	public static final GaRoDataType FanControl = new GaRoDataType("FanCtrl",
+			FloatResource.class);
 	
 	public static final GaRoDataType DevicePowerControl = new GaRoDataType("DevicePowerControl",
 			PowerResource.class);
