@@ -50,5 +50,7 @@ public interface NaturalPerson extends LegalEntity {
 	/** If true then the user access data can also be used for login as mobile user on
 	 * standard servlets
 	 */
+	@Deprecated
 	BooleanResource restAccessEnabled();
+	BooleanResource restAccessDisabled();
 }
