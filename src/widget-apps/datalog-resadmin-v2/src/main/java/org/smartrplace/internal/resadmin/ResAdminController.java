@@ -560,6 +560,7 @@ public class ResAdminController {
 			
 			//copy entire folder config
 			copyDirectoryIfExists(new File("./config"), destDir);
+			copyDirectoryIfExists(new File("./security"), destDir);
 		}
 		
 		/*for(ResourceTypeConfigurations typeStr: config.resourceTypeConfigs().getAllElements()) {
