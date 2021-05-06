@@ -294,8 +294,8 @@ public class GaRoEvalHelper {
 		if(recId.contains("/carrierSensLevel/")) return GaRoDataType.CarrierSensLevel;
 		if(recId.contains("/communicationStatus/communicationDisturbed")) return GaRoDataType.CommunicationDisturbed;
 
-		if(recId.contains("/totalWritePerHour/")) return GaRoDataType.SetpointPerHour;
-		if(recId.contains("/conditionalWritePerHour/")) return GaRoDataType.SetpointPerHourConditional;
+		if(recId.contains("/totalWritePerHour")) return GaRoDataType.SetpointPerHour;
+		if(recId.contains("/conditionalWritePerHour")) return GaRoDataType.SetpointPerHourConditional;
 
 		if(recId.contains("Gateway_Device/gitUpdateStatus")) return GaRoDataType.SystemUpdateStatus;
 		if(recId.contains("Gateway_Device/systemRestart")) return GaRoDataType.SystemRestartLog;
