@@ -70,18 +70,30 @@ public interface GatewayDevice extends PhysicalElement {
     IntegerResource foundPublicAddressLastPart();
     
     /** Memore timeseries supervision*/
+    @Deprecated
     FloatResource pstMultiToSingleEvents();
+    @Deprecated
     FloatResource pstMultiToSingleCounter();
+    @Deprecated
     FloatResource pstMultiToSingleAggregations();
+    @Deprecated
     FloatResource pstMultiToSingleAggregationsCounter();
 
+    @Deprecated
     FloatResource pstBlockingSingeEvents();
+    @Deprecated
     FloatResource pstBlockingCounter();
+    @Deprecated
     FloatResource pstSubTsBuild();
+    @Deprecated
     FloatResource pstSubTsBuildCounter();
 
+    @Deprecated
     FloatResource pstUpdateValuesPS2();
+    @Deprecated
     FloatResource pstUpdateValuesPS2Counter();
+    @Deprecated
     FloatResource pstTSServlet();
+    @Deprecated
     FloatResource pstTSServletCounter();
 }

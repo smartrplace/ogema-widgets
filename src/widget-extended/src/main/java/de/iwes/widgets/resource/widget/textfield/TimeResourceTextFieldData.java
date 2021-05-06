@@ -98,7 +98,7 @@ public class TimeResourceTextFieldData extends ValueResourceTextFieldData<TimeRe
 	}
 
 	public static final String getIntervalString(long value, Interval i) {
-		if (value < 0) {
+		if (value == -1) {
 			return getNaValue("--", i);
 		}
 		switch (i) {

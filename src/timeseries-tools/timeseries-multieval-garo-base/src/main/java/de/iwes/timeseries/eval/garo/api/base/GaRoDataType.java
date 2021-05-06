@@ -245,6 +245,12 @@ public class GaRoDataType implements GaRoDataTypeI {
 			FloatResource.class);
 	public static final GaRoDataType CarrierSensLevel = new GaRoDataType("CarrierSensLevel",
 			FloatResource.class);
+	
+	public static final GaRoDataType SetpointPerHour = new GaRoDataType("SetpointPerHour",
+			FloatResource.class);
+	public static final GaRoDataType SetpointPerHourConditional = new GaRoDataType("SetpointPerHourConditional",
+			FloatResource.class);
+	
 	/** Food amount added at a certain time*/
 	public static final GaRoDataType FoodAmount = new GaRoDataType("FoodAmount",
 			FloatResource.class);
