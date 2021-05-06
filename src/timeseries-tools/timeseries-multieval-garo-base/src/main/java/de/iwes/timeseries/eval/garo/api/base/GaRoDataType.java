@@ -250,6 +250,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 			FloatResource.class);
 	public static final GaRoDataType SetpointPerHourConditional = new GaRoDataType("SetpointPerHourConditional",
 			FloatResource.class);
+	public static final GaRoDataType SetpointPerHourDrop = new GaRoDataType("SetpointPerHourDrop",
+			FloatResource.class);
 	
 	/** Food amount added at a certain time*/
 	public static final GaRoDataType FoodAmount = new GaRoDataType("FoodAmount",

@@ -296,6 +296,7 @@ public class GaRoEvalHelper {
 
 		if(recId.contains("/totalWritePerHour")) return GaRoDataType.SetpointPerHour;
 		if(recId.contains("/conditionalWritePerHour")) return GaRoDataType.SetpointPerHourConditional;
+		if(recId.contains("/conditionalDropPerHour")) return GaRoDataType.SetpointPerHourDrop;
 
 		if(recId.contains("Gateway_Device/gitUpdateStatus")) return GaRoDataType.SystemUpdateStatus;
 		if(recId.contains("Gateway_Device/systemRestart")) return GaRoDataType.SystemRestartLog;
