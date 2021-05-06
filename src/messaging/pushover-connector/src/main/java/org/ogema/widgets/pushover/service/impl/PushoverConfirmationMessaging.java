@@ -83,6 +83,9 @@ public class PushoverConfirmationMessaging {
 
         @Override
         public String message(OgemaLocale locale) {
+            if (locale == null) {
+                locale = OgemaLocale.ENGLISH;
+            }
             ResourceBundle rb = ResourceBundle.getBundle(basename, locale.getLocale(), loader);
             String msg = rb.getString("message");
             return messageParams != null
@@ -92,6 +95,9 @@ public class PushoverConfirmationMessaging {
 
         @Override
         public String title(OgemaLocale locale) {
+            if (locale == null) {
+                locale = OgemaLocale.ENGLISH;
+            }
             ResourceBundle rb = ResourceBundle.getBundle(basename, locale.getLocale(), loader);
             String msg = rb.getString("title");
             return titleParams != null
