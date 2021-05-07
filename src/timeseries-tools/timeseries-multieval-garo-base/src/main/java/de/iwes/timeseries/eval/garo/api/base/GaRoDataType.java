@@ -237,6 +237,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 			FloatResource.class);
 	public static final GaRoDataType CommunicationDisturbed = new GaRoDataType("CommunicationDisturbed",
 			BooleanResource.class);
+	public static final GaRoDataType ControllerOpenFiles = new GaRoDataType("OpenFiles",
+			FloatResource.class);
 	public static final GaRoDataType ConnectedStatus = new GaRoDataType("ConnectedStatus",
 			BooleanResource.class);
 	public static final GaRoDataType DutyCycle = new GaRoDataType("DutyCycle",
@@ -340,6 +342,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 			BooleanResource.class);
 	public static final GaRoDataType AirQuality1Best10Worst = new GaRoDataType("AirQuality_1Best_10Worst",
 			FloatResource.class);
+	public static final GaRoDataType MessageInterval = new GaRoDataType("MessageInterval",
+			IntegerResource.class);
 	
 	public static final GaRoDataType TrafficDataTotal = new GaRoDataType("kBTrafficTotal",
 			FloatResource.class);

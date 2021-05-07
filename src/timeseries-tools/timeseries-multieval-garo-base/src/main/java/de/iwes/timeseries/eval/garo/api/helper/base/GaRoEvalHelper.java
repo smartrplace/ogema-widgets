@@ -282,6 +282,7 @@ public class GaRoEvalHelper {
 		if(recId.contains("/Sauerstoff_1/sensor/reading")) return GaRoDataType.WaterOxygenConcentrationValue;
 		if(recId.contains("/Temperatur_1/sensor/reading")) return GaRoDataType.WaterTemperatureValue;
 		if(recId.contains("/USER_DEFINED_0_0")) return GaRoDataType.CO2Concentration;
+		if(recId.contains("/co2/reading")) return GaRoDataType.CO2Concentration;
 		//if(recId.contains("NetworkState/mainNetworkOk")) return GaRoDataType.InternetConnection;
 		if(recId.contains("/communicationStatus/communicationDisturbed")) return GaRoDataType.CommunicationDisturbed;
 		if(recId.contains("/lightSensor/reading")) return GaRoDataType.LightSensor;
@@ -294,6 +295,7 @@ public class GaRoEvalHelper {
 		if(recId.contains("/carrierSensLevel/")) return GaRoDataType.CarrierSensLevel;
 		if(recId.contains("/communicationStatus/communicationDisturbed")) return GaRoDataType.CommunicationDisturbed;
 
+		if(recId.contains("/openFiles/reading")) return GaRoDataType.ControllerOpenFiles;
 		if(recId.contains("/totalWritePerHour")) return GaRoDataType.SetpointPerHour;
 		if(recId.contains("/conditionalWritePerHour")) return GaRoDataType.SetpointPerHourConditional;
 		if(recId.contains("/conditionalDropPerHour")) return GaRoDataType.SetpointPerHourDrop;
@@ -342,6 +344,7 @@ public class GaRoEvalHelper {
 		if(recId.contains("/sensors/co_alert")) return GaRoDataType.CO_Alert; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/sensors/siren")) return GaRoDataType.SirenStatus; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/sensors/air")) return GaRoDataType.AirQuality1Best10Worst; //"onOffSwitch/stateFeedback"
+		if(recId.endsWith("MessageInterval")) return GaRoDataType.MessageInterval; //"onOffSwitch/stateFeedback"
 
 		if(recId.contains("/monthlyTotalKiB")) return GaRoDataType.TrafficDataTotal;
 		if(recId.contains("/bitrate")) return GaRoDataType.BitRate;
