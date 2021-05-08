@@ -326,13 +326,16 @@ public class ResourceHelper {
 		if(parent == null) return null;
 		return getSubResource(parent, subPath, type);
 	}
-	public static <T extends Resource> T getSingleSubResourceOfDirectParent(Resource r, Class<T> type) {
-		Resource parent = r.getParent();
-		if(parent == null) return null;
-		List<T> subs = parent.getSubResources(type, false);
+	public static <T extends Resource> T getSingleSubResource(Resource r, Class<T> type) {
+		List<T> subs = r.getSubResources(type, false);
 		if(subs.isEmpty() || subs.size() > 1)
 			return null;
 		return subs.get(0);
+	}
+	public static <T extends Resource> T getSingleSubResourceOfDirectParent(Resource r, Class<T> type) {
+		Resource parent = r.getParent();
+		if(parent == null) return null;
+		return getSingleSubResource(parent, type);
 	}
 	/** See {@link #getSubResourceOfParent(Resource, String, String, Class)}, but we do not search for a parent of the given type, but for a
 	 * sibbling below the direct parent here.
