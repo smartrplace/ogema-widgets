@@ -65,6 +65,7 @@ import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.core.resourcemanager.AccessPriority;
 import org.ogema.core.resourcemanager.InvalidResourceTypeException;
+import org.ogema.core.resourcemanager.NoSuchResourceException;
 import org.ogema.core.resourcemanager.pattern.ResourcePatternAccess;
 import org.ogema.model.action.Action;
 import org.ogema.model.gateway.LocalGatewayInformation;
@@ -644,11 +645,16 @@ public class ResAdminController {
 		//write rooms and users
 //		log.debug("parentDir : " + parentDir + ", res : " + res + ", data : " + data);
 		if(data.includeStdRefs) for(Class<? extends Resource> resType: data.refTypes) {
-			for(Resource refRes: res.getSubResources(resType, true)) {
-				Resource locRefRes = refRes.getLocationResource();
-				if(locRefRes.isTopLevel()) {
-					writeIfNotYetWrittenResource(locRefRes, parentDir, data, true);
-				}
+			try {
+				for(Resource refRes: res.getSubResources(resType, true)) {
+					Resource locRefRes = refRes.getLocationResource();
+					if(locRefRes.isTopLevel()) {
+						writeIfNotYetWrittenResource(locRefRes, parentDir, data, true);
+					}
+				}				
+			} catch(NoSuchResourceException e) {
+				//Should not occur, but sometimes required as quick fix
+				continue;
 			}
 		}
 		writeIfNotYetWrittenResource(res, parentDir, data, true);

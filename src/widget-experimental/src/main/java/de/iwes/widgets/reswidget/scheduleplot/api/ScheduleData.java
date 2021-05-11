@@ -326,7 +326,7 @@ public abstract class ScheduleData<D extends Plot2DDataSet> {
 					lab += String.format("+%.2f", settings.offset);
 				id = Utils.getValidJSName(lab);
 			}
-			else if (doScale && maxValues.containsKey(key)) {
+			else if (doScale && maxValues.containsKey(key) && offset == 0) {
 				//perform scaling
 				float maxVal = maxValues.get(key);
 				float maxRatio = overallMax / maxVal;
