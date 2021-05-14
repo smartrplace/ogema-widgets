@@ -275,6 +275,11 @@ public class GaRoEvalHelper {
 		if(recId.contains("/inputTemperature/")) return GaRoDataType.HeatSupplyTemperatur;
 		if(recId.contains("/RETURN_TEMPERATURE_")) return GaRoDataType.HeatReturnTemperatur;
 		if(recId.contains("/outputTemperature/")) return GaRoDataType.HeatReturnTemperatur;
+
+		if(recId.startsWith("vpFlowScope/") && recId.contains("/flow/reading")) return GaRoDataType.HeatFlow;
+		if(recId.startsWith("vpFlowScope/") && recId.contains("/flowInLpmin/reading")) return GaRoDataType.HeatFlowInLpmin;
+		if(recId.startsWith("vpFlowScope/") && recId.contains("/pressure/reading")) return GaRoDataType.HeatFlowPressure;
+		if(recId.startsWith("vpFlowScope/") && recId.contains("/temperature/reading")) return GaRoDataType.HeatSupplyTemperatur;
 		
 		if(recId.contains("/pH_Wert_1/sensor/reading")) return GaRoDataType.WaterPHValue;
 		//if(recId.contains("/Leitwert_S__1/sensor/reading")) return GaRoDataType.WaterConductivityValue;
@@ -298,7 +303,12 @@ public class GaRoEvalHelper {
 		if(recId.contains("/openFiles/reading")) return GaRoDataType.ControllerOpenFiles;
 		if(recId.contains("/totalWritePerHour")) return GaRoDataType.SetpointPerHour;
 		if(recId.contains("/conditionalWritePerHour")) return GaRoDataType.SetpointPerHourConditional;
-		if(recId.contains("/conditionalDropPerHour")) return GaRoDataType.SetpointPerHourDrop;
+		if(recId.contains("/conditionalDropPerHour")) return GaRoDataType.SetpointPerHourCondDrop;
+		if(recId.contains("/priorityWritePerHour")) return GaRoDataType.SetpointPerHourPriority;
+		if(recId.contains("/priorityDropPerHour")) return GaRoDataType.SetpointPerHourPrioDrop;
+		if(recId.contains("/resendMissingFbPerHour")) return GaRoDataType.SetpointResendMissingFbPerHour;
+		if(recId.contains("/dutyCycleMax")) return GaRoDataType.DutyCycleEff;
+		if(recId.contains("/relativeLoadEff")) return GaRoDataType.RouterLoadEff;
 
 		if(recId.contains("Gateway_Device/gitUpdateStatus")) return GaRoDataType.SystemUpdateStatus;
 		if(recId.contains("Gateway_Device/systemRestart")) return GaRoDataType.SystemRestartLog;

@@ -213,6 +213,11 @@ public class GaRoDataType implements GaRoDataTypeI {
 			TemperatureResource.class);
 	public static final GaRoDataType HeatReturnTemperatur = new GaRoDataType("HeatReturnTemperatur",
 			TemperatureResource.class);
+	public static final GaRoDataType HeatFlowInLpmin = new GaRoDataType("HeatFlowInLpmin",
+			FlowResource.class);
+	public static final GaRoDataType HeatFlowPressure = new GaRoDataType("HeatFlowPressure",
+			FlowResource.class);	
+	
 	public static final GaRoDataType WaterPHValue = new GaRoDataType("WaterPHValue",
 			FloatResource.class);
 	public static final GaRoDataType WaterConductivityValue = new GaRoDataType("WaterConductivityValue",
@@ -252,7 +257,17 @@ public class GaRoDataType implements GaRoDataTypeI {
 			FloatResource.class);
 	public static final GaRoDataType SetpointPerHourConditional = new GaRoDataType("SetpointPerHourConditional",
 			FloatResource.class);
-	public static final GaRoDataType SetpointPerHourDrop = new GaRoDataType("SetpointPerHourDrop",
+	public static final GaRoDataType SetpointPerHourCondDrop = new GaRoDataType("SetpointPerHourCondDrop",
+			FloatResource.class);
+	public static final GaRoDataType SetpointPerHourPriority = new GaRoDataType("SetpointPerHourPriority",
+			FloatResource.class);
+	public static final GaRoDataType SetpointPerHourPrioDrop = new GaRoDataType("SetpointPerHourPrioDrop",
+			FloatResource.class);
+	public static final GaRoDataType SetpointResendMissingFbPerHour = new GaRoDataType("SetpointResendMissingFbPerHour",
+			FloatResource.class);
+	public static final GaRoDataType DutyCycleEff = new GaRoDataType("DutyCycleEff",
+			FloatResource.class);
+	public static final GaRoDataType RouterLoadEff = new GaRoDataType("RouterLoadEff",
 			FloatResource.class);
 	
 	/** Food amount added at a certain time*/
