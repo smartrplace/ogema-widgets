@@ -22,7 +22,6 @@ import java.util.Map;
 import org.ogema.core.application.ApplicationManager;
 import org.ogema.core.logging.OgemaLogger;
 import org.ogema.core.model.ResourceList;
-import org.ogema.core.resourcemanager.ResourceAccess;
 import org.ogema.core.resourcemanager.ResourceManagement;
 import org.ogema.messaging.basic.services.config.model.ReceiverConfiguration;
 import org.ogema.tools.resource.util.ResourceUtils;
@@ -48,13 +47,13 @@ public class ReceiverTemplate extends RowTemplate<ReceiverConfiguration> {
 	private final String EMAIL_REGEX = "[A-Za-z0-9.-]+[@][A-Za-z0-9.-]+[.][a-zA-Z_0-9]+$";
 	private final String SMS_REGEX = "[0-9]+[A-Za-z0-9.-]+[@][A-Za-z0-9.-]+[.][a-zA-Z_0-9]+$";
 	
-	protected final ResourceList<ReceiverConfiguration> receiverConfigs;
+	//protected final ResourceList<ReceiverConfiguration> receiverConfigs2;
 	protected final DynamicTable<ReceiverConfiguration> receiverTable;
 	protected final Alert alert;
 	protected final WidgetPage<?> page;
 	protected final ApplicationManager am;
 	protected final OgemaLogger logger;
-	protected final ResourceAccess ra;
+	//protected final ResourceAccess ra2;
 	protected final ResourceManagement resMan;
 
 	/** overwrite to add additional widgets in row before edit popup/button
@@ -65,17 +64,18 @@ public class ReceiverTemplate extends RowTemplate<ReceiverConfiguration> {
 	 */
 	protected void addAdditionalRowWidgets(ReceiverConfiguration config, String id, Row row, OgemaHttpRequest req) {};
 	protected void addAdditionalColumns(Map<String, Object> receiverHeader) {};
+	protected boolean showOnlyMainListeners() {return false;};
 	
 	public ReceiverTemplate(ResourceList<ReceiverConfiguration> list, ApplicationManager am,
 			DynamicTable<ReceiverConfiguration> table, Alert alert, WidgetPage<?> page) {
 		
-		this.receiverConfigs = list;
+		//this.receiverConfigs = list;
 		this.receiverTable = table;
 		this.alert = alert;
 		this.page = page;
 		this.am = am;
 		this.logger = am.getLogger();
-		this.ra = am.getResourceAccess();
+		//this.ra = am.getResourceAccess();
 		this.resMan = am.getResourceManagement();
 	}
 
@@ -85,10 +85,13 @@ public class ReceiverTemplate extends RowTemplate<ReceiverConfiguration> {
 		receiverHeader.put("receiverNameColumn", "Name:");
 		receiverHeader.put("receiverEMailColumn", "Email-address:");
 		receiverHeader.put("receiverSmsColumn", "Sms-address:");
-		receiverHeader.put("receiverXmppColumn", "Xmpp-address:");
-		receiverHeader.put("receiverRESTColumn", "REST-address:");
-		receiverHeader.put("receiverRESTUserColumn", "REST-user:");
-		receiverHeader.put("receiverRESTPwColumn", "REST-password:");
+		boolean showOnlyMainListens = showOnlyMainListeners();
+		if(!showOnlyMainListens) {
+			receiverHeader.put("receiverXmppColumn", "Xmpp-address:");
+			receiverHeader.put("receiverRESTColumn", "REST-address:");
+			receiverHeader.put("receiverRESTUserColumn", "REST-user:");
+			receiverHeader.put("receiverRESTPwColumn", "REST-password:");
+		}
 		addAdditionalColumns(receiverHeader);
 		receiverHeader.put("editReceiverPopupColumn", "");
 		receiverHeader.put("editReceiverButtonColumn", "");
@@ -141,66 +144,77 @@ public class ReceiverTemplate extends RowTemplate<ReceiverConfiguration> {
 		};
 		row.addCell("receiverSmsColumn", newSmsLabel);
 
-		final Label newXmppLabel = new Label(page, "newXmppLabel_" + id, true) {
-			
-			@Override
-			public void onGET(OgemaHttpRequest req) {
-				if (config.xmpp().exists()) {
-					setText(config.xmpp().getValue(), req);
-				} else {
-					setText("", req);
+		boolean showOnlyMainListens = showOnlyMainListeners();
+		final Label newXmppLabel;
+		final Label newRESTLabel;
+		final Label newRESTUserLabel;
+		final Label newRESTPwLabel;
+		if(!showOnlyMainListens) {
+			newXmppLabel = new Label(page, "newXmppLabel_" + id, true) {
+				
+				@Override
+				public void onGET(OgemaHttpRequest req) {
+					if (config.xmpp().exists()) {
+						setText(config.xmpp().getValue(), req);
+					} else {
+						setText("", req);
+					}
 				}
-			}
+				
+			};
+			newXmppLabel.setDefaultText(config.xmpp().getValue());
+			row.addCell("receiverXmppColumn", newXmppLabel);
 			
-		};
-		newXmppLabel.setDefaultText(config.xmpp().getValue());
-		row.addCell("receiverXmppColumn", newXmppLabel);
-		
-		final Label newRESTLabel = new Label(page, "newRESTLabel_" + id, true) {
-			
-			@Override
-			public void onGET(OgemaHttpRequest req) {
-				if (config.remoteMessageRestUrl().exists()) {
-					setText(config.remoteMessageRestUrl().getValue(), req);
-				} else {
-					setText("", req);
+			newRESTLabel = new Label(page, "newRESTLabel_" + id, true) {
+				
+				@Override
+				public void onGET(OgemaHttpRequest req) {
+					if (config.remoteMessageRestUrl().exists()) {
+						setText(config.remoteMessageRestUrl().getValue(), req);
+					} else {
+						setText("", req);
+					}
 				}
-			}
+				
+			};
+			newRESTLabel.setDefaultText(config.remoteMessageRestUrl().getValue());
+			row.addCell("receiverRESTColumn", newRESTLabel);
 			
-		};
-		newRESTLabel.setDefaultText(config.remoteMessageRestUrl().getValue());
-		row.addCell("receiverRESTColumn", newRESTLabel);
-		
-		final Label newRESTUserLabel = new Label(page, "newRESTUserLabel_" + id, true) {
-			
-			@Override
-			public void onGET(OgemaHttpRequest req) {
-				if (config.remoteMessageUser().exists()) {
-					setText(config.remoteMessageUser().getValue(), req);
-				} else {
-					setText("", req);
+			newRESTUserLabel = new Label(page, "newRESTUserLabel_" + id, true) {
+				
+				@Override
+				public void onGET(OgemaHttpRequest req) {
+					if (config.remoteMessageUser().exists()) {
+						setText(config.remoteMessageUser().getValue(), req);
+					} else {
+						setText("", req);
+					}
 				}
-			}
+				
+			};
+			newRESTUserLabel.setDefaultText(config.remoteMessageUser().getValue());
+			row.addCell("receiverRESTUserColumn", newRESTUserLabel);
 			
-		};
-		newRESTUserLabel.setDefaultText(config.remoteMessageUser().getValue());
-		row.addCell("receiverRESTUserColumn", newRESTUserLabel);
-		
-		final Label newRESTPwLabel = new Label(page, "newRESTPwLabel_" + id, true) {
-			
-			@Override
-			public void onGET(OgemaHttpRequest req) {
-				if (config.xmpp().exists()) {
-					setText(config.remoteMessagePassword().getValue(), req);
-				} else {
-					setText("", req);
+			newRESTPwLabel = new Label(page, "newRESTPwLabel_" + id, true) {
+				
+				@Override
+				public void onGET(OgemaHttpRequest req) {
+					if (config.xmpp().exists()) {
+						setText(config.remoteMessagePassword().getValue(), req);
+					} else {
+						setText("", req);
+					}
 				}
-			}
-			
-		};
-		newRESTPwLabel.setDefaultText(config.remoteMessagePassword().getValue());
-		row.addCell("receiverRESTPwColumn", newRESTPwLabel);
-
+				
+			};
+			newRESTPwLabel.setDefaultText(config.remoteMessagePassword().getValue());
+			row.addCell("receiverRESTPwColumn", newRESTPwLabel);
+		} else {
+			newXmppLabel = null;
+			newRESTLabel = null;
+			newRESTUserLabel = null;
+			newRESTPwLabel = null;			
+		}
 		// EDIT
 		final Label editNameLabel = new Label(page, "editNameLabel_" + id, true);
 		editNameLabel.setDefaultText("Name: ");
@@ -208,15 +222,26 @@ public class ReceiverTemplate extends RowTemplate<ReceiverConfiguration> {
 		editEMailLabel.setDefaultText("New email-address: ");
 		final Label editSmsLabel = new Label(page, "editSmsLabel_" + id, true);
 		editSmsLabel.setDefaultText("New sms-number: ");
-		final Label editXmppLabel = new Label(page, "editXmppLabel_" + id, true);
-		editXmppLabel.setDefaultText("New xmpp-address: ");
-		final Label editRESTLabel = new Label(page, "editRESTLabel_" + id, true);
-		editRESTLabel.setDefaultText("New rest-address: ");
-		final Label editRESTUserLabel = new Label(page, "editRESTUserLabel_" + id, true);
-		editRESTUserLabel.setDefaultText("New rest-user: ");
-		final Label editRESTPwLabel = new Label(page, "editRESTPwLabel_" + id, true);
-		editRESTPwLabel.setDefaultText("New rest-password: ");
-
+		final Label editXmppLabel;
+		final Label editRESTLabel;
+		final Label editRESTUserLabel;
+		final Label editRESTPwLabel;
+		if(!showOnlyMainListens) {
+			editXmppLabel = new Label(page, "editXmppLabel_" + id, true);
+			editXmppLabel.setDefaultText("New xmpp-address: ");
+			editRESTLabel = new Label(page, "editRESTLabel_" + id, true);
+			editRESTLabel.setDefaultText("New rest-address: ");
+			editRESTUserLabel = new Label(page, "editRESTUserLabel_" + id, true);
+			editRESTUserLabel.setDefaultText("New rest-user: ");
+			editRESTPwLabel = new Label(page, "editRESTPwLabel_" + id, true);
+			editRESTPwLabel.setDefaultText("New rest-password: ");
+		} else {
+			editXmppLabel = null;
+			editRESTLabel = null;
+			editRESTUserLabel = null;
+			editRESTPwLabel = null;			
+		}
+		
 		final TextField editEMailTextField = new TextField(page, "editEMailTextField_" + id, true) {
 			private static final long serialVersionUID = 1L;
 			
@@ -244,58 +269,69 @@ public class ReceiverTemplate extends RowTemplate<ReceiverConfiguration> {
 			
 		};
 
-		final TextField editXmppTextField = new TextField(page, "editXmppTextField_" + id, true) {
-			
-			@Override
-			public void onGET(OgemaHttpRequest req) {
-				if (config.xmpp().exists()) {
-					this.setValue(config.xmpp().getValue(), req);
-				} else {
-					this.setValue("", req);
+		final TextField editXmppTextField;
+		final TextField editRESTTextField;
+		final TextField editRESTUserTextField;
+		final TextField editRESTPwTextField;
+		if(!showOnlyMainListens) {
+			editXmppTextField = new TextField(page, "editXmppTextField_" + id, true) {
+				
+				@Override
+				public void onGET(OgemaHttpRequest req) {
+					if (config.xmpp().exists()) {
+						this.setValue(config.xmpp().getValue(), req);
+					} else {
+						this.setValue("", req);
+					}
 				}
-			}
+				
+			};
 			
-		};
-		
-		final TextField editRESTTextField = new TextField(page, "editRESTTextField_" + id, true) {
-			
-			@Override
-			public void onGET(OgemaHttpRequest req) {
-				if (config.remoteMessageRestUrl().exists()) {
-					this.setValue(config.remoteMessageRestUrl().getValue(), req);
-				} else {
-					this.setValue("", req);
+			editRESTTextField = new TextField(page, "editRESTTextField_" + id, true) {
+				
+				@Override
+				public void onGET(OgemaHttpRequest req) {
+					if (config.remoteMessageRestUrl().exists()) {
+						this.setValue(config.remoteMessageRestUrl().getValue(), req);
+					} else {
+						this.setValue("", req);
+					}
 				}
-			}
+				
+			};
 			
-		};
-		
-		final TextField editRESTUserTextField = new TextField(page, "editRESTUserTextField_" + id, true) {
-			
-			@Override
-			public void onGET(OgemaHttpRequest req) {
-				if (config.remoteMessageUser().exists()) {
-					this.setValue(config.remoteMessageUser().getValue(), req);
-				} else {
-					this.setValue("", req);
+			editRESTUserTextField = new TextField(page, "editRESTUserTextField_" + id, true) {
+				
+				@Override
+				public void onGET(OgemaHttpRequest req) {
+					if (config.remoteMessageUser().exists()) {
+						this.setValue(config.remoteMessageUser().getValue(), req);
+					} else {
+						this.setValue("", req);
+					}
 				}
-			}
+				
+			};
 			
-		};
-		
-		final TextField editRESTPwTextField = new TextField(page, "editRESTPwTextField_" + id, true) {
-			
-			@Override
-			public void onGET(OgemaHttpRequest req) {
-				if (config.remoteMessagePassword().exists()) {
-					this.setValue(config.remoteMessagePassword().getValue(), req);
-				} else {
-					this.setValue("", req);
+			editRESTPwTextField = new TextField(page, "editRESTPwTextField_" + id, true) {
+				
+				@Override
+				public void onGET(OgemaHttpRequest req) {
+					if (config.remoteMessagePassword().exists()) {
+						this.setValue(config.remoteMessagePassword().getValue(), req);
+					} else {
+						this.setValue("", req);
+					}
 				}
-			}
+				
+			};
+		} else {
+			editXmppTextField = null;
+			editRESTTextField = null;
+			editRESTUserTextField = null;
+			editRESTPwTextField = null;
 			
-		};
-
+		}
 		addAdditionalRowWidgets(config, id, row, req);
 		
 		final Popup editReceiverPopup = new Popup(page, "ediReceiverPopup_" + id, true);
@@ -306,29 +342,32 @@ public class ReceiverTemplate extends RowTemplate<ReceiverConfiguration> {
 		editReceiverTable.setContent(0, 0, editNameLabel);
 		editReceiverTable.setContent(1, 0, editEMailLabel);
 		editReceiverTable.setContent(2, 0, editSmsLabel);
-		editReceiverTable.setContent(3, 0, editXmppLabel);
-		editReceiverTable.setContent(4, 0, editRESTLabel);
-		editReceiverTable.setContent(5, 0, editRESTUserLabel);
-		editReceiverTable.setContent(6, 0, editRESTPwLabel);
 		editReceiverTable.setContent(0, 1, config.userName().getValue());
 		editReceiverTable.setContent(1, 1, editEMailTextField);
 		editReceiverTable.setContent(2, 1, editSmsTextField);
-		editReceiverTable.setContent(3, 1, editXmppTextField);
-		editReceiverTable.setContent(4, 1, editRESTTextField);
-		editReceiverTable.setContent(5, 1, editRESTUserTextField);
-		editReceiverTable.setContent(6, 1, editRESTPwTextField);
 
 		if(config.getName().equals("testButtonReceiver"))
 			return row;
 		final Button editReceiverButton = new Button(page, "editReceiverButton" + id);
 		editReceiverButton.triggerAction(editEMailTextField, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		editReceiverButton.triggerAction(editSmsTextField, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
-		editReceiverButton.triggerAction(editXmppTextField, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		editReceiverButton.triggerAction(receiverTable, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		editReceiverButton.triggerAction(editReceiverPopup, TriggeringAction.POST_REQUEST, TriggeredAction.SHOW_WIDGET);
 		editReceiverButton.addDefaultStyle(ButtonData.BOOTSTRAP_GREEN);
 		editReceiverButton.setDefaultText("Edit");
 		row.addCell("editReceiverButtonColumn", editReceiverButton);
+
+		if(!showOnlyMainListens) {
+			editReceiverTable.setContent(3, 0, editXmppLabel);
+			editReceiverTable.setContent(4, 0, editRESTLabel);
+			editReceiverTable.setContent(5, 0, editRESTUserLabel);
+			editReceiverTable.setContent(6, 0, editRESTPwLabel);
+			editReceiverTable.setContent(3, 1, editXmppTextField);
+			editReceiverTable.setContent(4, 1, editRESTTextField);
+			editReceiverTable.setContent(5, 1, editRESTUserTextField);
+			editReceiverTable.setContent(6, 1, editRESTPwTextField);
+			editReceiverButton.triggerAction(editXmppTextField, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		}
 
 		final ButtonConfirm confirmReceiverChangesButton = new ButtonConfirm(page,
 				"confirmReceiverChangesButton_" + id) {
@@ -338,54 +377,73 @@ public class ReceiverTemplate extends RowTemplate<ReceiverConfiguration> {
 
 				String email = editEMailTextField.getValue(req).trim();
 				String sms = editSmsTextField.getValue(req).trim();
-				String xmpp = editXmppTextField.getValue(req).trim();
-				String rest = editRESTTextField.getValue(req).trim();
-				String restUser = editRESTUserTextField.getValue(req).trim();
-				String restPw = editRESTPwTextField.getValue(req);
-				
-				if (changesAreValid(email, sms, xmpp, rest, restUser, restPw, req)) {
-					if (!email.isEmpty()) {
-						config.email().create();
-						config.email().setValue(email);
-						config.email().activate(true);
-					} else {
-						config.email().delete();
+				if(!showOnlyMainListens) {
+					String xmpp = editXmppTextField.getValue(req).trim();
+					String rest = editRESTTextField.getValue(req).trim();
+					String restUser = editRESTUserTextField.getValue(req).trim();
+					String restPw = editRESTPwTextField.getValue(req);
+					if (changesAreValid(email, sms, xmpp, rest, restUser, restPw, req)) {
+						if (!email.isEmpty()) {
+							config.email().create();
+							config.email().setValue(email);
+							config.email().activate(true);
+						} else {
+							config.email().delete();
+						}
+						if (!sms.isEmpty()) {
+							config.sms().create();
+							config.sms().setValue(sms);
+							config.sms().activate(true);
+						} else {
+							config.sms().delete();
+						}
+						if (!xmpp.isEmpty()) {
+							config.xmpp().create();
+							config.xmpp().setValue(xmpp);
+							config.xmpp().activate(true);
+						} else {
+							config.xmpp().delete();
+						}
+						if (!rest.isEmpty()) {
+							config.remoteMessageRestUrl().create();
+							config.remoteMessageRestUrl().setValue(rest.endsWith("/") ? rest : rest + "/");
+							config.remoteMessageRestUrl().activate(true);
+						} else {
+							config.remoteMessageRestUrl().delete();
+						}
+						if (!restUser.isEmpty()) {
+							config.remoteMessageUser().create();
+							config.remoteMessageUser().setValue(restUser);
+							config.remoteMessageUser().activate(true);
+						} else {
+							config.remoteMessageUser().delete();
+						}
+						if (!restPw.isEmpty()) {
+							config.remoteMessagePassword().create();
+							config.remoteMessagePassword().setValue(restPw);
+							config.remoteMessagePassword().activate(true);
+						} else {
+							config.remoteMessagePassword().delete();
+						}
 					}
-					if (!sms.isEmpty()) {
-						config.sms().create();
-						config.sms().setValue(sms);
-						config.sms().activate(true);
-					} else {
-						config.sms().delete();
+				} else {
+					if (changesAreValid(email, sms, req)) {
+						if (!email.isEmpty()) {
+							config.email().create();
+							config.email().setValue(email);
+							config.email().activate(true);
+						} else {
+							config.email().delete();
+						}
+						if (!sms.isEmpty()) {
+							config.sms().create();
+							config.sms().setValue(sms);
+							config.sms().activate(true);
+						} else {
+							config.sms().delete();
+						}
 					}
-					if (!xmpp.isEmpty()) {
-						config.xmpp().create();
-						config.xmpp().setValue(xmpp);
-						config.xmpp().activate(true);
-					} else {
-						config.xmpp().delete();
-					}
-					if (!rest.isEmpty()) {
-						config.remoteMessageRestUrl().create();
-						config.remoteMessageRestUrl().setValue(rest.endsWith("/") ? rest : rest + "/");
-						config.remoteMessageRestUrl().activate(true);
-					} else {
-						config.remoteMessageRestUrl().delete();
-					}
-					if (!restUser.isEmpty()) {
-						config.remoteMessageUser().create();
-						config.remoteMessageUser().setValue(restUser);
-						config.remoteMessageUser().activate(true);
-					} else {
-						config.remoteMessageUser().delete();
-					}
-					if (!restPw.isEmpty()) {
-						config.remoteMessagePassword().create();
-						config.remoteMessagePassword().setValue(restPw);
-						config.remoteMessagePassword().activate(true);
-					} else {
-						config.remoteMessagePassword().delete();
-					}
+
 					alert.showAlert("Changes on receiver '" + id + "' confirmed", true, req);
 				}
 			}
@@ -436,6 +494,33 @@ public class ReceiverTemplate extends RowTemplate<ReceiverConfiguration> {
 				return false;
 			}
 
+			public boolean changesAreValid(String email, String sms, OgemaHttpRequest req) {
+				boolean emailAccepted = false;
+				boolean smsAccepted = false;
+
+				if (email.isEmpty() || email.matches(EMAIL_REGEX))
+					emailAccepted = true;
+				if (sms.isEmpty() || sms.matches(SMS_REGEX))
+					smsAccepted = true;
+					
+				
+				if (emailAccepted && smsAccepted) {
+					return true;
+				}
+
+				if (!emailAccepted) {
+					alert.showAlert("Invalid email-address", false, req);
+				} else if (!smsAccepted) {
+					alert.showAlert("Invalid sms-email-address. The address must have the format "
+							+ "<Phonenumber-with-country-code-without beginning + or 0 signs>."
+							+ "<email-address of SMS-gateway>",	false, req);
+					
+				} else {
+					alert.showAlert("Please enter atleast one address", false, req);
+				}
+
+				return false;
+			}
 		};
 		confirmReceiverChangesButton.addDefaultStyle(ButtonData.BOOTSTRAP_GREEN);
 		confirmReceiverChangesButton.setDefaultText("Save changes");
@@ -443,10 +528,12 @@ public class ReceiverTemplate extends RowTemplate<ReceiverConfiguration> {
 		confirmReceiverChangesButton.setDefaultConfirmMsg("Accept changes ?");
 		confirmReceiverChangesButton.triggerAction(newEMailLabel, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		confirmReceiverChangesButton.triggerAction(newSmsLabel, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
-		confirmReceiverChangesButton.triggerAction(newXmppLabel, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
-		confirmReceiverChangesButton.triggerAction(newRESTLabel, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
-		confirmReceiverChangesButton.triggerAction(newRESTUserLabel, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
-		confirmReceiverChangesButton.triggerAction(newRESTPwLabel, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		if(!showOnlyMainListens) {
+			confirmReceiverChangesButton.triggerAction(newXmppLabel, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+			confirmReceiverChangesButton.triggerAction(newRESTLabel, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+			confirmReceiverChangesButton.triggerAction(newRESTUserLabel, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+			confirmReceiverChangesButton.triggerAction(newRESTPwLabel, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		}
 		confirmReceiverChangesButton.triggerAction(receiverTable, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		confirmReceiverChangesButton.triggerAction(alert, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		confirmReceiverChangesButton.triggerAction(editReceiverPopup, TriggeringAction.POST_REQUEST, TriggeredAction.HIDE_WIDGET);

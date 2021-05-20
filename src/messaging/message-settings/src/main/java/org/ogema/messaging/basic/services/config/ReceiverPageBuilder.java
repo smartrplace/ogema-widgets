@@ -66,6 +66,9 @@ public class ReceiverPageBuilder implements ResourceDemandListener<ReceiverConfi
 	 */
 	protected void addAdditionalRowWidgets(ReceiverConfiguration config, String id, Row row, OgemaHttpRequest req) {};
 	protected void addAdditionalColumns(Map<String, Object> receiverHeader) {};
+	protected boolean showOnlyMainListeners() {
+		return false;
+	}
 		
 	@SuppressWarnings({ "serial", "unchecked" })
 	public ReceiverPageBuilder(final WidgetPage<MessageSettingsDictionary> page, ApplicationManager appMan) {
@@ -123,6 +126,11 @@ public class ReceiverPageBuilder implements ResourceDemandListener<ReceiverConfi
 			protected void addAdditionalColumns(Map<String, Object> receiverHeader) {
 				ReceiverPageBuilder.this.addAdditionalColumns(receiverHeader);
 			}
+			
+			@Override
+			protected boolean showOnlyMainListeners() {
+				return ReceiverPageBuilder.this.showOnlyMainListeners();
+			}
 		};
 		receiverTable.setRowTemplate(receiverTemplate);
 		receiverTable.setDefaultRowIdComparator(null);
@@ -134,42 +142,56 @@ public class ReceiverPageBuilder implements ResourceDemandListener<ReceiverConfi
 		final Label nameLabel = new Label(page, "nameLabel");
 		final Label emailLabel = new Label(page, "emailLabel");
 		final Label smsLabel = new Label(page, "smsLabel");
-		final Label xmppLabel = new Label(page, "xmppLabel");
-		final Label restLabel = new Label(page, "restLabel");
-		final Label restUserLabel = new Label(page, "restUserLabel");
-		final Label restPwLabel = new Label(page, "restPwLabel");
 		
 		nameLabel.setDefaultText("Name: ");
 		emailLabel.setDefaultText("Email-address: ");
 		smsLabel.setDefaultText("Sms-number: ");
-		xmppLabel.setDefaultText("Xmpp-address: ");
-		restLabel.setDefaultText("Remote-message-address: ");
-		restUserLabel.setDefaultText("Remote-message-user: ");
-		restPwLabel.setDefaultText("Remote-message-password: ");
 
 		final TextField nameInput = new TextField(page, "nameInput");
 		final TextField emailInput = new TextField(page, "emailInput");
 		final TextField smsInput = new TextField(page, "smsInput");
-		final TextField xmppInput = new TextField(page, "xmppInput");
-		final TextField restInput = new TextField(page, "restInput");
-		final TextField restUserInput = new TextField(page, "restUserInput");
-		final TextField restPwInput = new TextField(page, "restPwInput");
 
-		final StaticTable newReceiverTable = new StaticTable(7, 2);
+		boolean showOnlyListens = showOnlyMainListeners();
+		final StaticTable newReceiverTable = new StaticTable(showOnlyListens?3:7, 2);
 		newReceiverTable.setContent(0, 0, nameLabel);
 		newReceiverTable.setContent(1, 0, emailLabel);
 		newReceiverTable.setContent(2, 0, smsLabel);
-		newReceiverTable.setContent(3, 0, xmppLabel);
-		newReceiverTable.setContent(4, 0, restLabel);
-		newReceiverTable.setContent(5, 0, restUserLabel);
-		newReceiverTable.setContent(6, 0, restPwLabel);
 		newReceiverTable.setContent(0, 1, nameInput);
 		newReceiverTable.setContent(1, 1, emailInput);
 		newReceiverTable.setContent(2, 1, smsInput);
-		newReceiverTable.setContent(3, 1, xmppInput);
-		newReceiverTable.setContent(4, 1, restInput);
-		newReceiverTable.setContent(5, 1, restUserInput);
-		newReceiverTable.setContent(6, 1, restPwInput);
+		final TextField xmppInput;
+		final TextField restInput;
+		final TextField restUserInput;
+		final TextField restPwInput;
+		if(!showOnlyListens) {
+			final Label xmppLabel = new Label(page, "xmppLabel");
+			final Label restLabel = new Label(page, "restLabel");
+			final Label restUserLabel = new Label(page, "restUserLabel");
+			final Label restPwLabel = new Label(page, "restPwLabel");
+			xmppLabel.setDefaultText("Xmpp-address: ");
+			restLabel.setDefaultText("Remote-message-address: ");
+			restUserLabel.setDefaultText("Remote-message-user: ");
+			restPwLabel.setDefaultText("Remote-message-password: ");
+
+			xmppInput = new TextField(page, "xmppInput");
+			restInput = new TextField(page, "restInput");
+			restUserInput = new TextField(page, "restUserInput");
+			restPwInput = new TextField(page, "restPwInput");
+			
+			newReceiverTable.setContent(3, 0, xmppLabel);
+			newReceiverTable.setContent(4, 0, restLabel);
+			newReceiverTable.setContent(5, 0, restUserLabel);
+			newReceiverTable.setContent(6, 0, restPwLabel);
+			newReceiverTable.setContent(3, 1, xmppInput);
+			newReceiverTable.setContent(4, 1, restInput);
+			newReceiverTable.setContent(5, 1, restUserInput);
+			newReceiverTable.setContent(6, 1, restPwInput);
+		} else {
+			xmppInput = null;
+			restInput = null;
+			restUserInput = null;
+			restPwInput = null;			
+		}
 
 		final Popup newReceiverPopup = new Popup(page, "newReceiverPopup", true);
 		newReceiverPopup.setTitle("New receiver", null);
@@ -182,19 +204,30 @@ public class ReceiverPageBuilder implements ResourceDemandListener<ReceiverConfi
 				String name = nameInput.getValue(req).trim();
 				String email = emailInput.getValue(req).trim();
 				String sms = smsInput.getValue(req).trim();
-				String xmpp = xmppInput.getValue(req).trim();
-				String rest = restInput.getValue(req).trim();
-				String restUser = restUserInput.getValue(req).trim();
-				String restPw = restPwInput.getValue(req);
-				
-				try {
+				boolean showOnlyListens = showOnlyMainListeners();
+				if(!showOnlyListens) {
+					String xmpp = xmppInput.getValue(req).trim();
+					String rest = restInput.getValue(req).trim();
+					String restUser = restUserInput.getValue(req).trim();
+					String restPw = restPwInput.getValue(req);
 					
-					Logger.getGlobal().info(rest + ", " + restUser + ", " + restPw);					
-					filter(name, email, sms, xmpp, rest, restUser, restPw, req);
-					addNewReceiver(receiverConfigs, name, email, sms, xmpp, rest, restUser, restPw);
-					alert.showAlert("Receiver '" + name + "' successfully created",	true, req);
-				} catch (Exception e) {
-					alert.showAlert("Could not create new user: " + e.getMessage(), false, req);
+					try {
+						
+						Logger.getGlobal().info(rest + ", " + restUser + ", " + restPw);					
+						filter(name, email, sms, xmpp, rest, restUser, restPw, req);
+						addNewReceiver(receiverConfigs, name, email, sms, xmpp, rest, restUser, restPw);
+						alert.showAlert("Receiver '" + name + "' successfully created",	true, req);
+					} catch (Exception e) {
+						alert.showAlert("Could not create new user: " + e.getMessage(), false, req);
+					}
+				} else {
+					try {
+						filter(name, email, sms, req);
+						addNewReceiver(receiverConfigs, name, email, sms);
+						alert.showAlert("Receiver '" + name + "' successfully created",	true, req);
+					} catch (Exception e) {
+						alert.showAlert("Could not create new user: " + e.getMessage(), false, req);
+					}					
 				}
 			}
 
@@ -236,14 +269,17 @@ public class ReceiverPageBuilder implements ResourceDemandListener<ReceiverConfi
 		email.setValue("testtransmitter@web.de");
 		StringResource sms = testConfig.sms().create();
 		sms.setValue("49157123456789.testtransmitter@tmsg.de");
-		StringResource xmpp = testConfig.xmpp().create();
-		xmpp.setValue("testtransmitter2@jabber.de");
-		StringResource rest = testConfig.remoteMessageRestUrl().create();
-		rest.setValue("https://localhost:8444/rest/resources");
-		StringResource restUser = testConfig.remoteMessageRestUrl().create();
-		restUser.setValue("rest");
-		StringResource restPw = testConfig.remoteMessagePassword().create();
-		restPw.setValue("rest");
+		boolean showOnlyListens = showOnlyMainListeners();
+		if(!showOnlyListens) {
+			StringResource xmpp = testConfig.xmpp().create();
+			xmpp.setValue("testtransmitter2@jabber.de");
+			StringResource rest = testConfig.remoteMessageRestUrl().create();
+			rest.setValue("https://localhost:8444/rest/resources");
+			StringResource restUser = testConfig.remoteMessageRestUrl().create();
+			restUser.setValue("rest");
+			StringResource restPw = testConfig.remoteMessagePassword().create();
+			restPw.setValue("rest");
+		}
 		
 		testConfig.activate(true);
 	}
@@ -269,6 +305,7 @@ public class ReceiverPageBuilder implements ResourceDemandListener<ReceiverConfi
 			newReceiver.email().<StringResource>create().setValue(email);
 		if(!sms.isEmpty())
 			newReceiver.sms().<StringResource>create().setValue(sms);
+
 		if(!xmpp.isEmpty())
 			newReceiver.xmpp().<StringResource>create().setValue(xmpp);
 		if(!rest.isEmpty())
@@ -279,6 +316,19 @@ public class ReceiverPageBuilder implements ResourceDemandListener<ReceiverConfi
 		if(!restPw.isEmpty())
 			newReceiver.remoteMessagePassword().<StringResource>create().setValue(restPw);
 		
+		newReceiver.activate(true);
+	}
+
+	public static void addNewReceiver(ResourceList<ReceiverConfiguration> receiverConfigs, String name,
+			String email, String sms) {
+
+		ReceiverConfiguration newReceiver = receiverConfigs.add();
+
+		newReceiver.userName().<StringResource>create().setValue(name);
+		if(!email.isEmpty())
+			newReceiver.email().<StringResource>create().setValue(email);
+		if(!sms.isEmpty())
+			newReceiver.sms().<StringResource>create().setValue(sms);
 		newReceiver.activate(true);
 	}
 
@@ -317,6 +367,19 @@ public class ReceiverPageBuilder implements ResourceDemandListener<ReceiverConfi
 		}
 	}
 
+	private void filter(String name, String email, String sms, OgemaHttpRequest req) throws IllegalArgumentException {
+		
+		atLeastOneAddress(email, sms);
+		
+		if (name.isEmpty()) {
+			throw new IllegalArgumentException("Empty username");
+		}
+		
+		if (checkIfReceiverExists(receiverConfigs, name)) {
+			throw new IllegalArgumentException("The entered username " + name + " already exists, please choose a different one");
+		}
+	}
+
 	private static void atLeastOneAddress(String email, String sms, String xmpp, String rest) throws IllegalArgumentException {
 
 		boolean emailMatchesRegex = (!email.isEmpty() && email.matches(EMAIL_REGEX));
@@ -343,4 +406,18 @@ public class ReceiverPageBuilder implements ResourceDemandListener<ReceiverConfi
 
 	}
 
+	private static void atLeastOneAddress(String email, String sms) throws IllegalArgumentException {
+
+		boolean emailMatchesRegex = (!email.isEmpty() && email.matches(EMAIL_REGEX));
+		boolean smsMatchesRegex = (!sms.isEmpty() && sms.matches(SMS_REGEX));
+
+		if (!emailMatchesRegex && !email.isEmpty()) {
+			throw new IllegalArgumentException("Invalid email-address");
+		} else if (!smsMatchesRegex && !sms.isEmpty()) {
+			throw new IllegalArgumentException("Invalid sms-address");
+		} else if ((email.isEmpty()) && (sms.isEmpty())) {
+			throw new IllegalArgumentException("Please enter atleast one address");
+		}
+
+	}
 }

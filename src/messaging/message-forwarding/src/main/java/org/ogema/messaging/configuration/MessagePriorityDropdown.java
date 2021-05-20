@@ -22,18 +22,25 @@ public class MessagePriorityDropdown extends EnumDropdown<MessagePriority> {
 	protected final MessageListener l;
 	protected final String object;
 	protected final ResourceList<de.iwes.widgets.messaging.model.MessagingApp> appResources;
-	protected final MessagingApp app;
+	protected final MessagingApp[] appList;
 	
 	public MessagePriorityDropdown(OgemaWidget parent, String id, 
 			MessageListener l, String userName,
 			final ResourceList<de.iwes.widgets.messaging.model.MessagingApp> appResources,
 			final MessagingApp app,
 			OgemaHttpRequest req) {
+		this(parent, id, l, userName, appResources, new MessagingApp[] {app}, req);
+	}
+	public MessagePriorityDropdown(OgemaWidget parent, String id, 
+			MessageListener l, String userName,
+			final ResourceList<de.iwes.widgets.messaging.model.MessagingApp> appResources,
+			final MessagingApp[] appList,
+			OgemaHttpRequest req) {
 		super(parent, id, req, MessagePriority.class);
 		this.l = l;
 		this.object = userName;
 		this.appResources = appResources;
-		this.app = app;
+		this.appList = appList;
 		finishConstructor();
 	}
 
@@ -41,11 +48,18 @@ public class MessagePriorityDropdown extends EnumDropdown<MessagePriority> {
 			MessageListener l, String userName,
 			final ResourceList<de.iwes.widgets.messaging.model.MessagingApp> appResources,
 			final MessagingApp app) {
+		this(page, id, l, userName, appResources, new MessagingApp[] {app});
+	}
+	public MessagePriorityDropdown(WidgetPage<?> page, String id, 
+			MessageListener l, String userName,
+			final ResourceList<de.iwes.widgets.messaging.model.MessagingApp> appResources,
+			final MessagingApp[] appList) {
 		super(page, id, MessagePriority.class);
 		this.l = l;
 		this.object = userName;
 		this.appResources = appResources;
-		this.app = app;
+		//this.app = app;
+		this.appList = appList;
 		finishConstructor();
 	}
 
@@ -70,7 +84,7 @@ public class MessagePriorityDropdown extends EnumDropdown<MessagePriority> {
 	
 	@Override
 	public void onGET(OgemaHttpRequest req) {
-		final de.iwes.widgets.messaging.model.MessagingApp mapp = get(false);
+		final de.iwes.widgets.messaging.model.MessagingApp mapp = get(appList[0], false);
 		if (mapp == null) {
 			selectItem(MessagePriority.NONE, req);
 			return;
@@ -97,7 +111,14 @@ public class MessagePriorityDropdown extends EnumDropdown<MessagePriority> {
 	public void onPOSTComplete(String data, OgemaHttpRequest req) {
 		final MessagePriority prio = getSelectedItem(req);
 		final boolean isUnset = prio == MessagePriority.NONE;
-		final de.iwes.widgets.messaging.model.MessagingApp mapp = get(!isUnset);
+
+		for(MessagingApp app: appList) {
+			setSingleApp(app, prio, isUnset);
+		}
+	}
+	
+	private void setSingleApp(MessagingApp app, final MessagePriority prio, final boolean isUnset) {
+		final de.iwes.widgets.messaging.model.MessagingApp mapp = get(app, !isUnset);
 		if (mapp == null)
 			return;
 		if (!isUnset && !mapp.isActive())
@@ -110,6 +131,7 @@ public class MessagePriorityDropdown extends EnumDropdown<MessagePriority> {
 			service.serviceId().<StringResource> create().setValue(l.getId());
 			service.activate(true);
 		}
+		
 		final UserConfig cfg = service.users().getSubResource(ResourceUtils.getValidResourceName(object), UserConfig.class).create();
 		if (!cfg.isActive()) {
 			if (isUnset)
@@ -123,7 +145,7 @@ public class MessagePriorityDropdown extends EnumDropdown<MessagePriority> {
 		cfg.activate(true);
 	}
 	
-	private de.iwes.widgets.messaging.model.MessagingApp get(final boolean doCreate) {
+	private de.iwes.widgets.messaging.model.MessagingApp get(MessagingApp app, final boolean doCreate) {
 			//final ResourceList<de.iwes.widgets.messaging.model.MessagingApp> appResources,
 			//final MessagingApp app) {
 		return appResources.getAllElements().stream()
