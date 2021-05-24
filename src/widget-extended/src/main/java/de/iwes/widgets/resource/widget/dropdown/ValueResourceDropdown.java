@@ -60,17 +60,20 @@ public class ValueResourceDropdown<V extends SingleValueResource> extends Templa
 	public ValueResourceDropdown(WidgetPage<?> page, String id, V valueResource,
 			List<String> displayedValues) {
 		super(page, id);
+		setComparator(null);
 		this.defaultResource = valueResource;
 		this.defaultDisplayedValues = displayedValues;
 	}
 	
 	public ValueResourceDropdown(OgemaWidget parent, String id, OgemaHttpRequest req) {
 		super(parent, id, req);
+		setComparator(null);
 	}
 
 	public ValueResourceDropdown(OgemaWidget parent, String id, V valueResource,
 			List<String> displayedValues, OgemaHttpRequest req) {
 		super(parent, id, req);
+		setComparator(null);
 		selectDefaultItem(valueResource);
 		setDefaultDisplayedValues(displayedValues);
 	}

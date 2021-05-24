@@ -10,7 +10,7 @@ import org.ogema.model.prototypes.Data;
 
 /** If the resource exists then an ongoing alarm is active*/
 public interface AlarmGroupData extends Data {
-	public final static String[] USER_ROLES = {"Other", "Operation", "Development", "Customer", "Backlog"};
+	//public final static String[] USER_ROLES = {"Other", "Operation", "Development", "Customer", "Backlog"};
 	
 	@Override
 	/** ID of the AlarmOngoingGroup to which the data belongs. If no such group is available anymore
@@ -36,6 +36,7 @@ public interface AlarmGroupData extends Data {
 	Room room();
 	
 	/** User that accepted the alarm. May be a StringArrayResource in the future*/
+	@Deprecated
 	StringResource acceptedByUser();
 	
 	/** The following types are currently defined:<br>
@@ -52,5 +53,9 @@ public interface AlarmGroupData extends Data {
 	 * 40: Thermostat requires wall thermostat or other room temperature measurement (own temperature measurement not sufficient)
 	 * 50: Battery low
 	 */
+	//@Deprecated // currently not used
 	IntegerResource diagnosis();
+	
+	/** See AlarmingConfigUtil#ASSIGNEMENT_ROLES*/
+	IntegerResource assigned();
 }

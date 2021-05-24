@@ -17,7 +17,6 @@ package de.iwes.widgets.html.form.dropdown;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -201,7 +200,7 @@ public class TemplateDropdownData<T> extends DropdownData implements TemplateDat
 	public Map<T, Boolean> getSelectionItems() {
 		readLock();
 		try {
-			return new HashMap<>(listOptions);
+			return new LinkedHashMap<>(listOptions);
 		} finally {
 			readUnlock();
 		}
