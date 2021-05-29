@@ -14,6 +14,8 @@ public interface GatewayData extends PhysicalElement {
 	
 	GatewayGroupData installationLevelGroup();
 	
+	BooleanResource expectedOnHeartbeat();
+	
 	StringResource customer();
 	//StringResource comment();
 	StringResource guiLink();

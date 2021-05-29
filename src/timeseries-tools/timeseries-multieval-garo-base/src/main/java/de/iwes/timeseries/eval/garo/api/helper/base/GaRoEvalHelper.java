@@ -324,7 +324,9 @@ public class GaRoEvalHelper {
 		if(recId.contains("Gateway_Device/heartBeatDelay")) return GaRoDataType.HeartbeatSendInterval;
 		if(recId.contains("warningMessageInterval")) return GaRoDataType.HeartbeatMaxInterval;
 		if(recId.contains("Gateway_Device/activeAlarmSupervision")) return GaRoDataType.AlarmSupervisionNum;
+		if(recId.contains("EvalCollection/knownIssueDataGw/activeAlarmSupervision")) return GaRoDataType.AlarmSupervisionNum;
 		if(recId.contains("Gateway_Device/datapointsInAlarmState")) return GaRoDataType.DatapointsAlarmNum;
+		if(recId.contains("EvalCollection/knownIssueDataGw/datapointsInAlarmState")) return GaRoDataType.DatapointsAlarmNum;
 		
 		if(recId.contains("/energyDaily/reading")) return GaRoDataType.EnergyDaily;
 		if(recId.contains("/energyMonthly/reading")) return GaRoDataType.EnergyMonthly;

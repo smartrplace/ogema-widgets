@@ -32,13 +32,20 @@ public interface GatewayDevice extends PhysicalElement {
 	/** Interval for heartbeat sending to superior instance*/
 	TimeResource heartBeatDelay();
 	
+	@Deprecated
 	IntegerResource activeAlarmSupervision();
+	@Deprecated
 	IntegerResource datapointsInAlarmState();
 	
+	@Deprecated
 	IntegerResource knownIssuesOther();
+	@Deprecated
 	IntegerResource knownIssuesAssignedOperation();
+	@Deprecated
 	IntegerResource knownIssuesAssignedDev();
+	@Deprecated
 	IntegerResource knownIssuesAssignedCustomer();
+	@Deprecated
 	IntegerResource knownIssuesAssignedBacklog();
 	
 	/** Known issues of different types given as same index as {@link AlarmGroupData#USER_ROLES}*/

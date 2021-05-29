@@ -72,4 +72,6 @@ public interface InstallAppDevice extends Data {
 	 * Contains the DatapointGroup location for which it is template
 	 * TODO: In the future a device may be used as template for several device type groups, this is not supported yet*/
 	StringResource isTemplate();
+
+	public IntegerResource dpNum();
 }
