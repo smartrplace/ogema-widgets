@@ -30,4 +30,12 @@ public interface KnownIssueDataGw extends PhysicalElement {
 	@NonPersistent
 	IntegerResource knownIssuesDevExternal();
 	
+	@NonPersistent
+	IntegerResource qualityShort();
+	@NonPersistent
+	IntegerResource qualityLong();
+	@NonPersistent
+	IntegerResource qualityShortGold();
+	@NonPersistent
+	IntegerResource qualityLongGold();
 }
