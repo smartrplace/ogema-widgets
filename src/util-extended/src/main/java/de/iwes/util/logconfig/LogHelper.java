@@ -26,6 +26,7 @@ package de.iwes.util.logconfig;
 
 import java.util.List;
 
+import org.ogema.core.application.ApplicationManager;
 import org.ogema.core.model.Resource;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.FloatResource;
@@ -37,8 +38,10 @@ import org.ogema.core.recordeddata.RecordedDataConfiguration.StorageType;
 import org.ogema.core.resourcemanager.pattern.ResourcePattern;
 import org.ogema.model.prototypes.PhysicalElement;
 import org.ogema.tools.resource.util.LoggingUtils;
+import org.smartrplace.gateway.device.GatewayDevice;
 
 import de.iwes.util.resource.ResourceHelper;
+import de.iwes.util.resource.ValueResourceHelper;
 
 public class LogHelper {
 	//public static final String generalScheduleViewerConfigName = "ScheduleViewerConfigGeneral";
@@ -148,4 +151,31 @@ public class LogHelper {
 			((TimeResource)target).getHistoricalData().setConfiguration(powerConf);
 		}
 	}
+	
+	/** Log startup of a certain app
+	 * 
+	 * @param startupAppId must be a power of 2
+	 * @param appManager
+	 */
+	public static void logStartup(int startupAppId, ApplicationManager appManager) {
+        GatewayDevice gw = ResourceHelper.getLocalDevice(appManager);
+        if(!gw.systemRestart().exists()) {
+        	gw.systemRestart().create();
+        	gw.systemRestart().getAndAdd(startupAppId);
+        	gw.systemRestart().activate(false);
+        } else {
+        	int curVal = gw.systemRestart().getValue();
+        	if((curVal & startupAppId) != 0) {
+        		appManager.getLogger().warn("Startup ID "+startupAppId+" re-notification!");
+        		return;
+        	}
+        	gw.systemRestart().getAndAdd(startupAppId);
+        }
+	}
+	
+	public static void resetStartup(ApplicationManager appManager) {
+        GatewayDevice gw = ResourceHelper.getLocalDevice(appManager);
+        ValueResourceHelper.setCreate(gw.systemRestart(), 0);
+	}
+
 }

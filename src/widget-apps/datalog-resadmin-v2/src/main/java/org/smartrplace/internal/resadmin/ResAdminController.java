@@ -82,6 +82,7 @@ import org.smartrplace.resadmin.config.BackupConfig;
 import org.smartrplace.resadmin.config.ResAdminConfig;
 
 import de.iwes.util.format.StringFormatHelper;
+import de.iwes.util.logconfig.LogHelper;
 import de.iwes.util.performanceeval.ExecutionTimeLogger;
 import de.iwes.util.resource.ValueResourceHelper;
 import de.iwes.util.resourcelist.ResourceListHelper;
@@ -151,6 +152,9 @@ public class ResAdminController {
 		} else {
 			log.warn("ResAdmin: No replay directory configured");
 		}
+
+		LogHelper.resetStartup(appMan);
+
 		if (appConfigData != null)
 			this.appConfigData = appConfigData;
 		else

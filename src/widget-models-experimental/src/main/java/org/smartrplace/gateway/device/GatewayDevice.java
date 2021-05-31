@@ -21,11 +21,17 @@ public interface GatewayDevice extends PhysicalElement {
 	IntegerResource gitUpdateStatus();
 	
 	/** Indication of an operating system and bundle restart
+	 * 0 : Restart of the OGEMA framework detected 
 	 * 1  : Reboot of the operating system detected (e.g. because power was disconnected for some time or because reboot was
 	 * 		initiated from console)
-	 * 10 : Restart of the OGEMA framework detected 
-	 * 100: API-testing bundle (no custom resources)
-	 * 200: Roomcontrol bundle
+	 *  04: Alarming App Expert
+	 *  08: User Management expert
+	 *  16: Permissions app
+	 *  32: Charts expert
+	 *  64: Installation & Setup expert
+	 * 128: API-testing bundle (no custom resources)
+	 * 256: Roomcontrol bundle
+	 * 512: Monitoring driver services
 	 */
 	IntegerResource systemRestart();
 	
