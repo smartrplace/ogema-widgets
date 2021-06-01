@@ -288,6 +288,7 @@ public class GaRoEvalHelper {
 		if(recId.contains("/Temperatur_1/sensor/reading")) return GaRoDataType.WaterTemperatureValue;
 		if(recId.contains("/USER_DEFINED_0_0")) return GaRoDataType.CO2Concentration;
 		if(recId.contains("/co2/reading")) return GaRoDataType.CO2Concentration;
+		if(recId.contains("/CARBON_DIOXIDE_RECEIVER_")) return GaRoDataType.CO2Concentration;
 		//if(recId.contains("NetworkState/mainNetworkOk")) return GaRoDataType.InternetConnection;
 		if(recId.contains("/communicationStatus/communicationDisturbed")) return GaRoDataType.CommunicationDisturbed;
 		if(recId.contains("/lightSensor/reading")) return GaRoDataType.LightSensor;
