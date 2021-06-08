@@ -677,6 +677,10 @@ public class ResAdminController {
 				found = true;
 			} else {
 				for(Class<? extends Resource> resType: data.refTypes) {
+if(resType == null) {
+	log.error("   NULL AS RESOURCE_TYPE in "+data.refTypes.length+" elements");
+	continue;
+}
 					if(resType.isAssignableFrom(locRefRes.getResourceType())) {
 						plusPrefix = "";
 						found = true;
