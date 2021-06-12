@@ -35,6 +35,7 @@ public class ScheduleViewerConfiguration {
 	
 	public static final ScheduleViewerConfiguration DEFAULT_CONFIGURATION = new ScheduleViewerConfiguration(false, true, true,  null);
 	public final boolean showManipulator;
+	public final boolean showMinMaxTable;
 	public final boolean showCsvDownload;
 	public final boolean useNameService;
 	public final boolean showOptionsSwitch;
@@ -127,6 +128,7 @@ public class ScheduleViewerConfiguration {
 			ScheduleManipulatorConfiguration manipulatorConfiguration, boolean showNrPointsPreview, Long startTime, Long endTime, 
 			List<Collection<TimeSeriesFilter>> programs, List<Collection<ConditionalTimeSeriesFilter<?>>> filters, Long bufferWindow) {
 		this.showManipulator = showManipulator;
+		this.showMinMaxTable = Boolean.getBoolean("de.iwes.widgets.reswidget.scheduleviewer.api.showMinMax");
 		this.showCsvDownload = showCsvDownload;
 		this.useNameService = useNameService;
 		this.showOptionsSwitch = showOptionsSwitch;
@@ -193,6 +195,7 @@ public class ScheduleViewerConfiguration {
 			boolean showIndividualConfigPopup, boolean showIntervals, boolean showPlotTypeSelector, boolean downsamplingItv, boolean showUpdateInterval,
 			Class<? extends TimeSeriesPlot> plotType, boolean loadSchedulesOnInit) {
 		this.showManipulator = showManipulator;
+		this.showMinMaxTable = Boolean.getBoolean("de.iwes.widgets.reswidget.scheduleviewer.api.showMinMax");
 		this.showCsvDownload = showCsvDownload;
 		this.useNameService = useNameService;
 		this.showOptionsSwitch = showOptionsSwitch;
