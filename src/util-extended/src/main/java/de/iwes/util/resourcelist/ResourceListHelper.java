@@ -103,6 +103,7 @@ public class ResourceListHelper {
 	
 	/** Create element that has a subresource name containing the elementName*/
 	public static <T extends Resource> T getOrCreateNamedElement(String elementName, ResourceList<T> list) {
+		list.create();
 		for(T el: list.getAllElements()) {
 			StringResource name = el.getSubResource("name", StringResource.class);
 			if(name.exists() && name.getValue().equals(elementName))
@@ -126,14 +127,11 @@ public class ResourceListHelper {
 		return null;
 	}
 	public static <T extends Resource> T getOrCreateNamedElementFlex(String elementName, ResourceList<T> list) {
+		return getOrCreateNamedElementFlex(elementName, list, true);
+	}
+	public static <T extends Resource> T getOrCreateNamedElementFlex(String elementName, ResourceList<T> list,
+			boolean activateNew) {
 		list.create();
-		/*for(T el: list.getAllElements()) {
-			if(el.getName().equals(elementName))
-				return el;
-			StringResource name = el.getSubResource("name", StringResource.class);
-			if(name.exists() && name.getValue().equals(elementName))
-				return el;
-		}*/
 		T result = getNamedElementFlex(elementName, list);
 		if(result != null)
 			return result;
@@ -145,7 +143,8 @@ public class ResourceListHelper {
 			name.create();
 			name.setValue(elementName);
 		}
-		result.activate(true);
+		if(activateNew)
+			result.activate(true);
 		return result;
 	}
 	
@@ -167,6 +166,10 @@ public class ResourceListHelper {
 	 */
 	public static <T extends Resource, R extends T> R getOrCreateNamedElementFlex(String elementName, ResourceList<T> list,
 			Class<R> typeToCreate) {
+		return getOrCreateNamedElementFlex(elementName, list, typeToCreate, true);
+	}
+	public static <T extends Resource, R extends T> R getOrCreateNamedElementFlex(String elementName, ResourceList<T> list,
+			Class<R> typeToCreate, boolean activateNew) {
 		list.create();
 		for(T el: list.getAllElements()) {
 			if(el.getName().equals(elementName)) {
@@ -190,7 +193,8 @@ public class ResourceListHelper {
 			name.create();
 			name.setValue(elementName);
 		}
-		result.activate(true);
+		if(activateNew)
+			result.activate(true);
 		return result;
 	}
 

@@ -15,8 +15,10 @@
  */
 package org.ogema.model.gateway;
 
+import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.model.prototypes.PhysicalElement;
+import org.smartrplace.apps.eval.timedjob.TimedJobConfig;
 
 /** 
  * Information on the OGEMA Gateway
@@ -36,4 +38,6 @@ public interface LocalGatewayInformation extends PhysicalElement {
 	/** ID of system default locale (obtained by OgemaLocale.getLocale().getLanguage() ), which can
 	 * be used to obtain OgemaLocale object by OgemaLocale#getLocale*/
 	StringResource systemLocale();
+	
+	ResourceList<TimedJobConfig> timedJobs();
 }
