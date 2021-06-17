@@ -18,10 +18,11 @@ public interface TimedJobConfig extends Data {
 	IntegerResource alignedInterval();
 	
 	/** If alignedInterval is inactive or zero/negative then the job is executed after each interval without alignment
-	 * provided in MINUTES*/
+	 * provided in MINUTES. If the value is shorter than MINIMUM_MINUTES_FOR_TIMER_START then timer cannot be activated,
+	 * but call on startup will be executed if configured.*/
 	FloatResource interval();
 	
-	/**Only relevant if {@link #performOperationOnStartUp()} is true. If active and zero then the operation is started directly during startup. If positive the operation shall be executed once after startup with a delayof milliseconds
+	/**Only relevant if {@link #performOperationOnStartUp()} is true. If active and zero or positive the operation shall be executed once after startup with a delay of milliseconds
 	 * indicated by this element. The delay can be used to give other components time to start up.<br>
 	 * Provided in MINUTES.
 	 */

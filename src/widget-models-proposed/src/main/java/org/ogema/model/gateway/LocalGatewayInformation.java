@@ -40,4 +40,6 @@ public interface LocalGatewayInformation extends PhysicalElement {
 	StringResource systemLocale();
 	
 	ResourceList<TimedJobConfig> timedJobs();
+	
+	StringResource initDoneStatus();
 }
