@@ -32,7 +32,7 @@ public class HumdityCalculator {
 	public HumdityCalculator(float humidityStart, float temperatureStart) {
 		absoluteVapor = HumidityHelper.getAbsoluteHumidity(temperatureStart, humidityStart);
 		outSideVapor = HumidityHelper.getAbsoluteHumidity(22f+273.15f, 0.4f);
-		System.out.println("Init HumCalc:"+absoluteVapor+" outSide:"+outSideVapor);
+//		System.out.println("Init HumCalc:"+absoluteVapor+" outSide:"+outSideVapor);
 	}
 	
 	public float getNewValue(long deltaT, float vaporEmission, float temperature) {
