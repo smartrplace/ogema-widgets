@@ -58,6 +58,7 @@ public interface GatewayDevice extends PhysicalElement {
 	//IntegerArrayResource knownIssues();
 	
 	ResourceList<NetworkTrafficData> networkTrafficData();
+	PhysicalElement networkTrafficDataViaMirror();
 	
 	StringArrayResource apiMethods();
 	/** When the API is accessed then an entry into this resource is made (maximum one entry per 5 seconds per API method)
