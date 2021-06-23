@@ -4,6 +4,7 @@ import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
+import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.extended.alarming.AlarmConfiguration;
 import org.ogema.model.extended.alarming.AlarmGroupData;
 import org.ogema.model.extended.alarming.AlarmingData;
@@ -73,5 +74,9 @@ public interface InstallAppDevice extends Data {
 	 * TODO: In the future a device may be used as template for several device type groups, this is not supported yet*/
 	StringResource isTemplate();
 
+	/** Provided for transmission to superior via heartbeat*/
 	public IntegerResource dpNum();
+	
+	/** Used for internal status supervision of some device types*/
+	//public TimeResource supervisionStatus();
 }

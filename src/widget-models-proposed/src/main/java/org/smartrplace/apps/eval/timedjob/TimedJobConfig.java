@@ -13,6 +13,9 @@ public interface TimedJobConfig extends Data {
 	@Override
 	StringResource name();
 	
+	/** The persistent index is used for start logging*/
+	IntegerResource persistentIndex();
+	
 	/** See AbsoluteTiming for values. If positive and active then the job is executed at each aligned interval plus the
 	 * the time defined by interval()*/
 	IntegerResource alignedInterval();
@@ -33,4 +36,5 @@ public interface TimedJobConfig extends Data {
 	
 	/**The configuration may be temporarily disabled to avoid further operations*/
 	BooleanResource disable();
+	
 }
