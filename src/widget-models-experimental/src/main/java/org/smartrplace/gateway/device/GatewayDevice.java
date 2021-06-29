@@ -2,6 +2,7 @@ package org.smartrplace.gateway.device;
 
 import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.array.StringArrayResource;
+import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.FloatResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
@@ -82,6 +83,9 @@ public interface GatewayDevice extends PhysicalElement {
     /**When a change in the publicAddress is detected in the relevant last part then the new value is written here
      * Depending on local requirements this may be the full IP address as integer*/
     IntegerResource foundPublicAddressLastPart();
+  
+    /** link to room control ecoMode*/
+    BooleanResource ecoMode();
     
     /** Memore timeseries supervision*/
     @Deprecated

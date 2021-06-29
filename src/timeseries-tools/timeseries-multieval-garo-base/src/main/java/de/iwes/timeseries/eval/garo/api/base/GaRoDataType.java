@@ -374,6 +374,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 			FloatResource.class);
 	public static final GaRoDataType MemoryTsDebug = new GaRoDataType("PST",
 			FloatResource.class);
+	public static final GaRoDataType EcoMode = new GaRoDataType("EcoMode",
+			BooleanResource.class);
 	
 
 	//The following options are per-gateway

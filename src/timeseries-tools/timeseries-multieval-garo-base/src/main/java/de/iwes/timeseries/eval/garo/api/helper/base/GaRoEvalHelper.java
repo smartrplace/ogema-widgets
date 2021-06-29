@@ -367,6 +367,7 @@ public class GaRoEvalHelper {
 		if(recId.contains("/apiMethodAccess")) return GaRoDataType.APIAccessCounter;
 
 		if(recId.contains("Gateway_Device/pst")) return GaRoDataType.MemoryTsDebug;
+		if(recId.endsWith("/ecoMode")||recId.endsWith("/ecoModeActive")) return GaRoDataType.EcoMode;
 
 		if(recId.contains("$$")) return GaRoDataType.Internal;
 		return GaRoDataType.Unknown;
