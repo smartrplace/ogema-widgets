@@ -32,7 +32,14 @@ public interface PushoverConfiguration extends Configuration {
 	 * @return
 	 */
 	ResourceList<StringResource> applicationTokens();
-        
-        ResourceList<EmergencyMessage> emergencyMessages();
+	
+	ResourceList<EmergencyMessage> emergencyMessages();
+    
+    /**
+     * (Optional) Maximum age of emergency messages as ISO8601 duration (default 'P30D'),
+     * older messages will be deleted.
+     * @return Maximum age of emergency messages.
+     */
+    StringResource maxAge();
 
 }
