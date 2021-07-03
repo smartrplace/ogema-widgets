@@ -9,6 +9,7 @@ import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.extended.alarming.AlarmGroupData;
 import org.ogema.model.prototypes.PhysicalElement;
+import org.ogema.model.sensors.GenericFloatSensor;
 import org.smartrplace.monitoring.vnstat.resources.NetworkTrafficData;
 
 /** Sensor and actor data for the gateway itself<br>
@@ -86,6 +87,9 @@ public interface GatewayDevice extends PhysicalElement {
   
     /** link to room control ecoMode*/
     BooleanResource ecoMode();
+    
+    /** Used disk space in per cent*/
+    GenericFloatSensor usedSpace_Root();
     
     /** Memore timeseries supervision*/
     @Deprecated
