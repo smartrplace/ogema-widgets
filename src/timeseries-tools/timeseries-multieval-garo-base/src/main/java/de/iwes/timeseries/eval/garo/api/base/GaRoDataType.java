@@ -29,6 +29,7 @@ import org.ogema.core.model.simple.TimeResource;
 import org.ogema.core.model.units.AngleResource;
 import org.ogema.core.model.units.BrightnessResource;
 import org.ogema.core.model.units.ElectricCurrentResource;
+import org.ogema.core.model.units.EnergyPerAreaResource;
 import org.ogema.core.model.units.EnergyResource;
 import org.ogema.core.model.units.FlowResource;
 import org.ogema.core.model.units.FrequencyResource;
@@ -41,6 +42,7 @@ import org.ogema.core.model.units.VolumeResource;
 import org.ogema.generictype.GenericAttribute;
 import org.ogema.generictype.GenericAttributeImpl;
 
+import de.iwes.timeseries.eval.garo.api.helper.base.GaRoEvalHelper;
 import de.iwes.timeseries.eval.garo.multibase.GaRoSingleEvalProviderPreEvalRequesting;
 import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 
@@ -418,6 +420,43 @@ public class GaRoDataType implements GaRoDataTypeI {
 			return Arrays.asList(new GenericAttribute[] {GenericAttributeImpl.OUTSIDE});
 		}		
 	};
+	public static final GaRoDataType OutsideTemperatureExt = new GaRoDataType("OutsideTemperatureExt",
+			TemperatureResource.class, Level.GATEWAY) {
+		@Override
+		public List<GenericAttribute> attributes() {
+			return Arrays.asList(new GenericAttribute[] {GenericAttributeImpl.OUTSIDE});
+		}		
+	};
+	public static final GaRoDataType OutsideHumidityExt = new GaRoDataType("OutsideHumiditiyExt",
+			FloatResource.class, Level.GATEWAY) {
+		@Override
+		public List<GenericAttribute> attributes() {
+			return Arrays.asList(new GenericAttribute[] {GenericAttributeImpl.OUTSIDE});
+		}		
+	};
+	public static final GaRoDataType SolarIrradiationExt= new GaRoDataType("SolarIrradiationExt",
+			EnergyPerAreaResource.class, Level.GATEWAY) {
+		@Override
+		public List<GenericAttribute> attributes() {
+			return Arrays.asList(new GenericAttribute[] {GenericAttributeImpl.OUTSIDE});
+		}		
+	};
+	
+	public static final GaRoDataType WindSpeedExt = new GaRoDataType("WindSpeedExt",
+			VelocityResource.class, Level.GATEWAY) {
+		@Override
+		public List<GenericAttribute> attributes() {
+			return Arrays.asList(new GenericAttribute[] {GenericAttributeImpl.OUTSIDE});
+		}		
+	};
+	public static final GaRoDataType WindDirectionExt = new GaRoDataType("WindDirectionExt",
+			AngleResource.class, Level.GATEWAY) {
+		@Override
+		public List<GenericAttribute> attributes() {
+			return Arrays.asList(new GenericAttribute[] {GenericAttributeImpl.OUTSIDE});
+		}		
+	};
+	
 	public static final GaRoDataType OutsideTemperaturePerForcecast= new GaRoDataType("OutsideTemperaturePerForcecast",
 			TemperatureResource.class, Level.GATEWAY) {
 		@Override
@@ -426,14 +465,14 @@ public class GaRoDataType implements GaRoDataTypeI {
 		}		
 	};
 	public static final GaRoDataType OutsideHumidityPerForcecast= new GaRoDataType("OutsideHumiditiyPerForcecast",
-			TemperatureResource.class, Level.GATEWAY) {
+			FloatResource.class, Level.GATEWAY) {
 		@Override
 		public List<GenericAttribute> attributes() {
 			return Arrays.asList(new GenericAttribute[] {GenericAttributeImpl.OUTSIDE});
 		}		
 	};
 	public static final GaRoDataType SolarIrradiationPerForcecast= new GaRoDataType("SolarIrradiationPerForcecast",
-			TemperatureResource.class, Level.GATEWAY) {
+			EnergyPerAreaResource.class, Level.GATEWAY) {
 		@Override
 		public List<GenericAttribute> attributes() {
 			return Arrays.asList(new GenericAttribute[] {GenericAttributeImpl.OUTSIDE});
@@ -441,21 +480,21 @@ public class GaRoDataType implements GaRoDataTypeI {
 	};
 	
 	public static final GaRoDataType SolarIrradiation = new GaRoDataType("SolarIrradiation",
-			TemperatureResource.class, Level.GATEWAY) {
+			EnergyPerAreaResource.class, Level.GATEWAY) {
 		@Override
 		public List<GenericAttribute> attributes() {
 			return Arrays.asList(new GenericAttribute[] {GenericAttributeImpl.OUTSIDE});
 		}		
 	};
 	public static final GaRoDataType WindSpeedPerForcecast= new GaRoDataType("WindSpeed",
-			TemperatureResource.class, Level.GATEWAY) {
+			VelocityResource.class, Level.GATEWAY) {
 		@Override
 		public List<GenericAttribute> attributes() {
 			return Arrays.asList(new GenericAttribute[] {GenericAttributeImpl.OUTSIDE});
 		}		
 	};
 	public static final GaRoDataType WindDirectionPerForcecast= new GaRoDataType("WindDirection",
-			TemperatureResource.class, Level.GATEWAY) {
+			AngleResource.class, Level.GATEWAY) {
 		@Override
 		public List<GenericAttribute> attributes() {
 			return Arrays.asList(new GenericAttribute[] {GenericAttributeImpl.OUTSIDE});
@@ -503,6 +542,7 @@ public class GaRoDataType implements GaRoDataTypeI {
 			TemperatureSetpoint, TemperatureSetpointFeedback, TemperatureSetpointSet, ValvePosition,
 			HumidityMeasurement, MotionDetection, WindowOpen, ChargeSensor, ChargeVoltage,
 			PowerMeter, CompetitionLevel, CompetitionPosition, CompetitionPoints, OutsideTemperatureGw,
+			OutsideTemperatureExt,
 			OutsideTemperatureOverall, Unknown, Any, LowLevel, PreEvaluated, OncePerGateway};
 	
 	public static GaRoDataType[] standardEvalTypes = new GaRoDataType[] {

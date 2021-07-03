@@ -109,6 +109,17 @@ public class GaRoEvalHelper {
 		addRecId(GaRoDataType.WindDirectionPerForcecast, new String[] {"OpenWeatherMapData/windSensor/direction"}, recIdSnippets,
 				"Wind Direction(FC)", "Windrichtung(vorhergesagt)");
 		
+		addRecId(GaRoDataType.OutsideTemperatureExt, new String[] {"BigBlueRoom/sensors/temperature", "WeatherData/sensors/temperature"}, recIdSnippets,
+				"Outside temperature(Ext)", "Außentemperature(ext)");
+		addRecId(GaRoDataType.OutsideHumidityExt, new String[] {"BigBlueRoom/sensors/humidity", "WeatherData/sensors/humidity"}, recIdSnippets,
+				"Humidity(Ext)", "Luftfeuchtigkeit(ext)");
+		addRecId(GaRoDataType.SolarIrradiationExt, new String[] {"BigBlueRoom/sensors/solarIrradiation", "WeatherData/sensors/solarIrradiation"}, recIdSnippets,
+				"Solar Irraditaion(Ext)", "Einstrahlung(ext)");
+		addRecId(GaRoDataType.WindSpeedExt, new String[] {"BigBlueRoom/sensors/wind/speed", "WeatherData/sensors/wind/speed"}, recIdSnippets,
+				"Wind Speed(Ext)", "Windgeschwindigkeit(ext)");
+		addRecId(GaRoDataType.WindDirectionExt, new String[] {"BigBlueRoom/sensors/wind/direction", "WeatherData/sensors/wind/direction"}, recIdSnippets,
+				"Wind Direction(Ext)", "Windrichtung(ext)");
+
 		addRecId(GaRoDataType.StateOfCharge, new String[] {"/chargeSensor/reading"}, recIdSnippets,
 				"SOC", "SOC");
 		addRecId(GaRoDataType.ChargeVoltage, new String[] {"chargeSensor", "internalVoltage"}, recIdSnippets,
@@ -129,7 +140,7 @@ public class GaRoEvalHelper {
 		addRecId(GaRoDataType.TemperatureMeasurementRoomSensor, new String[] {"TEMPERATURE/reading", "EXTERNAL_TEMPERATURE_0_0", "/sensors/temperature"}, recIdSnippets,
 				"Room Sensor Temperature", "Raumsensor Temperatur");
 		addRecId(GaRoDataType.OutsideTemperatureGw, new String[] {"/sensors/TEMPERATURE"}, recIdSnippets,
-				"Outsude Sensor Temperature", "Außensensor Temperatur");
+				"Outside Sensor Temperature", "Außensensor Temperatur");
 		addRecId(GaRoDataType.ValvePosition, new String[] {"valve/setting/stateFeedback"}, recIdSnippets,
 				"Valve Position", "Ventilstellung");
 		addRecId(GaRoDataType.InternetConnection, new String[] {"NetworkState/mainNetworkOk"}, recIdSnippets,
