@@ -98,26 +98,31 @@ public class GaRoEvalHelper {
 	 */
 	public static final Map<String, RecIdVal> recIdSnippets = new LinkedHashMap<>();
 	static {
-		addRecId(GaRoDataType.OutsideTemperaturePerForcecast, new String[] {"OpenWeatherMapData/temperatureSensor"}, recIdSnippets,
+		addRecId(GaRoDataType.OutsideTemperaturePerForcecast, new String[] {"OpenWeatherMapData/temperatureSensor/reading/forecast"}, recIdSnippets,
 				"Outside temperature(FC)", "Außentemperature(vorhergesagt)");
-		addRecId(GaRoDataType.OutsideHumidityPerForcecast, new String[] {"OpenWeatherMapData/humiditySensor"}, recIdSnippets,
+		addRecId(GaRoDataType.OutsideHumidityPerForcecast, new String[] {"OpenWeatherMapData/humiditySensor/reading/forecast"}, recIdSnippets,
 				"Humidity(FC)", "Luftfeuchtigkeit(vorhergesagt)");
-		addRecId(GaRoDataType.SolarIrradiationPerForcecast, new String[] {"OpenWeatherMapData/solarIrradiationSensor"}, recIdSnippets,
+		addRecId(GaRoDataType.SolarIrradiationPerForcecast, new String[] {"OpenWeatherMapData/solarIrradiationSensor/reading/forecast"}, recIdSnippets,
 				"Solar Irraditaion(FC)", "Einstrahlung(vorhergesagt)");
-		addRecId(GaRoDataType.WindSpeedPerForcecast, new String[] {"OpenWeatherMapData/windSensor/speed"}, recIdSnippets,
+		addRecId(GaRoDataType.WindSpeedPerForcecast, new String[] {"OpenWeatherMapData/windSensor/speed/reading/forecast"}, recIdSnippets,
 				"Wind Speed(FC)", "Windgeschwindigkeit(vorhergesagt)");
-		addRecId(GaRoDataType.WindDirectionPerForcecast, new String[] {"OpenWeatherMapData/windSensor/direction"}, recIdSnippets,
+		addRecId(GaRoDataType.WindDirectionPerForcecast, new String[] {"OpenWeatherMapData/windSensor/direction/reading/forecast"}, recIdSnippets,
 				"Wind Direction(FC)", "Windrichtung(vorhergesagt)");
 		
-		addRecId(GaRoDataType.OutsideTemperatureExt, new String[] {"BigBlueRoom/sensors/temperature", "WeatherData/sensors/temperature"}, recIdSnippets,
+		addRecId(GaRoDataType.OutsideTemperatureExt, new String[] {"BigBlueRoom/sensors/temperature", "WeatherData/sensors/temperature",
+				"OpenWeatherMapData/temperatureSensor"}, recIdSnippets,
 				"Outside temperature(Ext)", "Außentemperature(ext)");
-		addRecId(GaRoDataType.OutsideHumidityExt, new String[] {"BigBlueRoom/sensors/humidity", "WeatherData/sensors/humidity"}, recIdSnippets,
+		addRecId(GaRoDataType.OutsideHumidityExt, new String[] {"BigBlueRoom/sensors/humidity", "WeatherData/sensors/humidity",
+				"OpenWeatherMapData/humiditySensor"}, recIdSnippets,
 				"Humidity(Ext)", "Luftfeuchtigkeit(ext)");
-		addRecId(GaRoDataType.SolarIrradiationExt, new String[] {"BigBlueRoom/sensors/solarIrradiation", "WeatherData/sensors/solarIrradiation"}, recIdSnippets,
+		addRecId(GaRoDataType.SolarIrradiationExt, new String[] {"BigBlueRoom/sensors/solarIrradiation",
+				"WeatherData/sensors/solarIrradiation", "OpenWeatherMapData/solarIrradiationSensor"}, recIdSnippets,
 				"Solar Irraditaion(Ext)", "Einstrahlung(ext)");
-		addRecId(GaRoDataType.WindSpeedExt, new String[] {"BigBlueRoom/sensors/wind/speed", "WeatherData/sensors/wind/speed"}, recIdSnippets,
+		addRecId(GaRoDataType.WindSpeedExt, new String[] {"BigBlueRoom/sensors/wind/speed",
+				"WeatherData/sensors/wind/speed", "OpenWeatherMapData/windSensor/speed"}, recIdSnippets,
 				"Wind Speed(Ext)", "Windgeschwindigkeit(ext)");
-		addRecId(GaRoDataType.WindDirectionExt, new String[] {"BigBlueRoom/sensors/wind/direction", "WeatherData/sensors/wind/direction"}, recIdSnippets,
+		addRecId(GaRoDataType.WindDirectionExt, new String[] {"BigBlueRoom/sensors/wind/direction",
+				"WeatherData/sensors/wind/direction", "OpenWeatherMapData/windSensor/direction"}, recIdSnippets,
 				"Wind Direction(Ext)", "Windrichtung(ext)");
 
 		addRecId(GaRoDataType.StateOfCharge, new String[] {"/chargeSensor/reading"}, recIdSnippets,
