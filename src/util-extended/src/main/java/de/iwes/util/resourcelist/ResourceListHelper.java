@@ -168,6 +168,7 @@ public class ResourceListHelper {
 			Class<R> typeToCreate) {
 		return getOrCreateNamedElementFlex(elementName, list, typeToCreate, true);
 	}
+	@SuppressWarnings("unchecked")
 	public static <T extends Resource, R extends T> R getOrCreateNamedElementFlex(String elementName, ResourceList<T> list,
 			Class<R> typeToCreate, boolean activateNew) {
 		list.create();
@@ -270,5 +271,12 @@ public class ResourceListHelper {
 			}
 		});
 		return result;
+	}
+
+	public static <T extends Resource> void clear(ResourceList<T> intervals) {
+		List<T> all = intervals.getAllElements();
+		for(T el: all) {
+			el.delete();
+		}
 	}
 }

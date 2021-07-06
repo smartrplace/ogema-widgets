@@ -88,6 +88,9 @@ public interface GatewayDevice extends PhysicalElement {
     /** link to room control ecoMode*/
     BooleanResource ecoMode();
     
+    /** link to room control seasonMode */
+    IntegerResource seasonMode();
+    
     /** Used disk space in per cent*/
     GenericFloatSensor usedSpace_Root();
     
