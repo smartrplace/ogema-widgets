@@ -38,4 +38,6 @@ public interface KnownIssueDataGw extends PhysicalElement {
 	IntegerResource qualityShortGold();
 	@NonPersistent
 	IntegerResource qualityLongGold();
+	
+	MemoryTimeseriesPST referenceForDeviceHandler();
 }
