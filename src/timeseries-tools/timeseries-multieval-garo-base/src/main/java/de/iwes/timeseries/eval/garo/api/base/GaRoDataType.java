@@ -378,6 +378,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 			FloatResource.class);
 	public static final GaRoDataType EcoMode = new GaRoDataType("EcoMode",
 			BooleanResource.class);
+	public static final GaRoDataType SeasonMode = new GaRoDataType("SeasonMode",
+			IntegerResource.class);
 	public static final GaRoDataType UsedDiskSpace = new GaRoDataType("UsedDiskSpace",
 			FloatResource.class);
 	

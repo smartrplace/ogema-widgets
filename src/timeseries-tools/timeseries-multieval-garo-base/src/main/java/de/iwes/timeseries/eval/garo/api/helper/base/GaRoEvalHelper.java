@@ -384,6 +384,7 @@ public class GaRoEvalHelper {
 
 		if(recId.contains("Gateway_Device/pst")) return GaRoDataType.MemoryTsDebug;
 		if(recId.endsWith("/ecoMode")||recId.endsWith("/ecoModeActive")) return GaRoDataType.EcoMode;
+		if(recId.endsWith("/seasonMode")) return GaRoDataType.SeasonMode;
 		if(recId.contains("Gateway_Device/usedSpace")) return GaRoDataType.UsedDiskSpace;
 
 		if(recId.contains("$$")) return GaRoDataType.Internal;
