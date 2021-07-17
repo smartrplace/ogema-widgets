@@ -18,7 +18,9 @@ public interface GatewayDevice extends PhysicalElement {
 	/** Each time a pull operation on Git is performed on update shall be written into the resource:
 	 * 1: success, no update found
 	 * 2: update found, OGEMA restart triggered (more details may be provided with additional positive values)
-	 * -1: pull operation failed (more detailed negative values may be defined to provide more information)
+	 * 0: RundirUpdateStatus/failed written to false
+	 * -1: RundirUpdateStatus/failed written to true: pull operation failed (more detailed negative values may be defined to provide more information)
+	 * ==> Values 0 and 1 are "normal", 2 indicates a relevant update found, -1 is an error.
 	 */
 	IntegerResource gitUpdateStatus();
 	

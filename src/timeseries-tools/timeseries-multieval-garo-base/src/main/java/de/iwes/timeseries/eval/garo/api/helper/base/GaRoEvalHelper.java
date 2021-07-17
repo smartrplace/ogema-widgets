@@ -376,6 +376,7 @@ public class GaRoEvalHelper {
 		if(recId.endsWith("MessageInterval")) return GaRoDataType.MessageInterval; //"onOffSwitch/stateFeedback"
 
 		if(recId.contains("/monthlyTotalKiB")) return GaRoDataType.TrafficDataTotal;
+		if(recId.contains("/trafficSum")) return GaRoDataType.TrafficDataTotal;
 		if(recId.contains("/bitrate")) return GaRoDataType.BitRate;
 		if(recId.endsWith("/channel")) return GaRoDataType.CommChannel;
 		if(recId.contains("/foundPublicAddressLastPartRaw")) return GaRoDataType.IPAddrPartLastProcessedRaw;
