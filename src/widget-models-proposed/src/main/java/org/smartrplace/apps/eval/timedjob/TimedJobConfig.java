@@ -25,7 +25,7 @@ public interface TimedJobConfig extends Data {
 	 * but call on startup will be executed if configured.*/
 	FloatResource interval();
 	
-	/**Only relevant if {@link #performOperationOnStartUp()} is true. If active and zero or positive the operation shall be executed once after startup with a delay of milliseconds
+	/** If active and zero or positive the operation shall be executed once after startup with a delay of milliseconds
 	 * indicated by this element. The delay can be used to give other components time to start up.<br>
 	 * Provided in MINUTES.
 	 */
