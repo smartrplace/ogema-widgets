@@ -40,7 +40,7 @@ import de.iwes.timeseries.eval.garo.api.helper.base.GaRoEvalHelper.CSVArchiveExp
 import de.iwes.timeseries.eval.generic.gatewayBackupAnalysis.GaRoEvalHelperGeneric.InstanceReceiver;
 
 public class GaRoTestStarter<T extends GaRoMultiResult> implements Callable<Void> {
-	private final String FILE_PATH = System.getProperty("de.iwes.tools.timeseries-multieval.resultpath", "../evaluationresults");
+	public final static String FILE_PATH = System.getProperty("de.iwes.tools.timeseries-multieval.resultpath", "./data/evaluationresults"); //"../evaluationresults");
 	private final GaRoEvalProvider<T> garoEval;
 	//private final GatewayBackupAnalysisAccess gatewayParser;
 	private final long startTime;
