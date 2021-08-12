@@ -53,7 +53,7 @@ public class MainPageBak {
 
     public final long UPDATE_RATE = 5 * 1000;
     private final WidgetPage<?> page;
-    private final String FILE_PATH = System.getProperty("de.iwes.tools.timeseries-multieval.resultpath", "../evaluationresults");
+    private final String FILE_PATH = de.iwes.timeseries.eval.generic.gatewayBackupAnalysis.GaRoTestStarter.FILE_PATH;
     private final TeststarterController app;
     //public final RedirectButton basicSmartHomeButton2;
     //private final Button basicSmartHomeButton3;

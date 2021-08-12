@@ -43,7 +43,7 @@ import de.iwes.timeseries.eval.garo.helper.jaxb.GaRoEvalHelperGeneric.CSVArchive
 import de.iwes.timeseries.eval.garo.helper.jaxb.GaRoEvalHelperGeneric.InstanceReceiver;
 
 public class GaRoTestStarter<T extends GaRoMultiResult> implements Callable<Void> {
-	private final String FILE_PATH = System.getProperty("de.iwes.tools.timeseries-multieval.resultpath", "../evaluationresults");
+	private final String FILE_PATH = de.iwes.timeseries.eval.generic.gatewayBackupAnalysis.GaRoTestStarter.FILE_PATH;
 	private final GaRoEvalProvider<T> garoEval;
 	private final GatewayBackupAnalysis gatewayParser;
 	private final long startTime;

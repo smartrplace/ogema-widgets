@@ -57,7 +57,7 @@ public class MainPage {
     //February - April
     static long[] startEndTotal = {startEnd[1] + 600000, startEnd[startEnd.length - 2]-(24*3600*1000l)};
     static long[] startEndYear = {startEnd[1] + 600000, startEnd[1] + 600000+(356*24*3600*1000l)};
-    private final String FILE_PATH = System.getProperty("de.iwes.tools.timeseries-multieval.resultpath", "../evaluationresults");
+    private final String FILE_PATH = de.iwes.timeseries.eval.generic.gatewayBackupAnalysis.GaRoTestStarter.FILE_PATH;
     public final long UPDATE_RATE = 5 * 1000;
     private final WidgetPage<?> page;
 
