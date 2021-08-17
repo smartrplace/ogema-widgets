@@ -271,15 +271,27 @@ public class GaRoEvalHelper {
 		if(recId.contains("/frequencySensor/reading")) return GaRoDataType.FrequencySensorOutlet;
 		if(recId.contains("/reactiveAngleSensor/reading")) return GaRoDataType.PowerMeterReactiveAngle;
 		if(recId.contains("/energySensor/reading")) return GaRoDataType.EnergyIntegralOutlet;
+		
+		if(recId.endsWith("/r")) return GaRoDataType.MultiColorRed;
+		if(recId.endsWith("/g")) return GaRoDataType.MultiColorGreen;
+		if(recId.endsWith("/b")) return GaRoDataType.MultiColorBlue;
+		if(recId.endsWith("/c")) return GaRoDataType.MultiColorColdWhite;
+		if(recId.endsWith("/w")) return GaRoDataType.MultiColorWarmWhite;
+		if(recId.contains("/dimmer/onOffSwitch/stateControl")) return GaRoDataType.DimmerOnOffControl;
+		if(recId.contains("/dimmer/onOffSwitch/stateFeedback")) return GaRoDataType.DimmerOnOffFb;
+		if(recId.contains("/dimmer/setting/stateControl")) return GaRoDataType.DimmerStateControl;
+		if(recId.contains("/dimmer/setting/stateFeedback")) return GaRoDataType.DimmerStateFb;
+		
 		if(recId.contains("/operationMode/stateFeedback")) return GaRoDataType.OperationModeFb; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/fan/setting/stateFeedback")) return GaRoDataType.FanFb; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/setting/stateFeedback")) return GaRoDataType.MultiSwitchStateFeedback; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/operationMode/stateControl")) return GaRoDataType.OperationModeControl; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/fan/setting/stateControl")) return GaRoDataType.FanControl; //"onOffSwitch/stateFeedback"
-		if(recId.contains("/setting/stateControl")) return GaRoDataType.MultiSwitchStateControl; //"onOffSwitch/stateFeedback"
+		if(recId.contains("/setting/stateControl")) return GaRoDataType.MultiSwitchStateControl; //"onOffSwitch/stateFeedback"		
 		if(recId.contains("/stateFeedback")) return GaRoDataType.SwitchStateFeedback; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/stateControl")) return GaRoDataType.SwitchStateControl; //"onOffSwitch/stateFeedback"
 
+		
 		if(recId.contains("/powerSensor/settings/setpoint")) return GaRoDataType.DevicePowerControl;
 		if(recId.contains("/reactivePowerSensor/settings/setpoint")) return GaRoDataType.DeviceReactivePowerControl;
 		

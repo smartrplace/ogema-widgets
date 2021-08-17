@@ -197,6 +197,26 @@ public class GaRoDataType implements GaRoDataTypeI {
 			FloatResource.class);
 	public static final GaRoDataType FanControl = new GaRoDataType("FanCtrl",
 			FloatResource.class);
+
+	public static final GaRoDataType MultiColorRed = new GaRoDataType("Red",
+			IntegerResource.class);
+	public static final GaRoDataType MultiColorGreen = new GaRoDataType("Green",
+			IntegerResource.class);
+	public static final GaRoDataType MultiColorBlue = new GaRoDataType("Blue",
+			IntegerResource.class);
+	public static final GaRoDataType MultiColorColdWhite = new GaRoDataType("ColdWhite",
+			IntegerResource.class);
+	public static final GaRoDataType MultiColorWarmWhite = new GaRoDataType("WarmWhite",
+			IntegerResource.class);
+	public static final GaRoDataType DimmerOnOffControl = new GaRoDataType("DimmerOnOffControl",
+			BooleanResource.class);
+	public static final GaRoDataType DimmerOnOffFb = new GaRoDataType("DimmerOnOffFb",
+			BooleanResource.class);
+	public static final GaRoDataType DimmerStateControl = new GaRoDataType("DimmerStateControl",
+			BooleanResource.class);
+	public static final GaRoDataType DimmerStateFb = new GaRoDataType("DimmerStateFb",
+			BooleanResource.class);
+
 	
 	public static final GaRoDataType DevicePowerControl = new GaRoDataType("DevicePowerControl",
 			PowerResource.class);
