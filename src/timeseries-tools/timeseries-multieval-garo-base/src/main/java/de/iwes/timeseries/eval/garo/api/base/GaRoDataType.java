@@ -137,6 +137,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 			TemperatureResource.class);
 	public static final GaRoDataType ValvePosition = new GaRoDataType("ValvePosition", 
 			FloatResource.class);
+	public static final GaRoDataType ValvePositionLimit = new GaRoDataType("ValvePositionLimit", 
+			FloatResource.class);
 	public static final GaRoDataType HumidityMeasurement = new GaRoDataType("HumidityMeasurement",
 			PercentageResource.class);
 	public static final GaRoDataType MotionDetection = new GaRoDataType("MotionDetection",
@@ -403,6 +405,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 	public static final GaRoDataType UsedDiskSpace = new GaRoDataType("UsedDiskSpace",
 			FloatResource.class);
 	
+	public static final GaRoDataType TemperatureGradient = new GaRoDataType("TemperatureGradient",
+			FloatResource.class);
 
 	//The following options are per-gateway
 	public static final GaRoDataType PowerMeter = new GaRoDataType("PowerMeter",

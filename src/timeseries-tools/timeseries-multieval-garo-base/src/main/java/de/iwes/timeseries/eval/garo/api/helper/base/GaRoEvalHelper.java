@@ -148,6 +148,8 @@ public class GaRoEvalHelper {
 				"Outside Sensor Temperature", "Außensensor Temperatur");
 		addRecId(GaRoDataType.ValvePosition, new String[] {"valve/setting/stateFeedback"}, recIdSnippets,
 				"Valve Position", "Ventilstellung");
+		addRecId(GaRoDataType.ValvePositionLimit, new String[] {"/maximumValvePosition"}, recIdSnippets,
+				"MaxValveLimit", "Maximale Ventilstellung");
 		addRecId(GaRoDataType.InternetConnection, new String[] {"NetworkState/mainNetworkOk"}, recIdSnippets,
 				"Main Internet connection status", "DSL Status");
 		addRecId(GaRoDataType.RSSIDevice, new String[] {"/rssiDevice", "/communicationStatus/RSSI", "/signal/reading"}, recIdSnippets,
