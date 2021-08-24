@@ -154,7 +154,7 @@ public class ResourceListHelper {
 		elementName = elementName.substring(0, 1).toLowerCase()+elementName.substring(1);
 		return getOrCreateNamedElementFlex(elementName , list, typeToCreate);
 	}
-	@SuppressWarnings("unchecked")
+
 	/** Create an element in a resource list of a type inherited from the ResourceList type
 	 * 
 	 * @param <T>
@@ -248,6 +248,23 @@ public class ResourceListHelper {
 		return result;
 	}
 	
+	/** Get element in resource list that has sub resource with name referenceName that is a reference
+	 * to object
+	 * @param <T>
+	 * @param resList
+	 * @param object
+	 * @param referenceName
+	 * @return
+	 */
+	public static <T extends Resource> T getReferencingElement(ResourceList<T> resList, Resource object, String referenceName) {
+		for(T el: resList.getAllElements()) {
+			Resource ref = el.getSubResource(referenceName);
+			if(ref.exists() && ref.isReference(false) && ref.equalsLocation(object))
+				return el;
+		}
+		return null;
+	}
+
 	public static <T extends Resource> boolean removeReferenceOrObject(ResourceList<T> resList, T object) {
 		for(T res: resList.getAllElements()) {
 			if(res.equalsLocation(object)) {
