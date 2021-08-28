@@ -32,18 +32,14 @@ import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
  */
 public class LabelData extends WidgetData {
 	
-	@Deprecated
 	public static final WidgetStyle<Label> BOOTSTRAP_BLUE = new WidgetStyle<Label>("labelText",Arrays.asList("label","label-primary"),0);
-	@Deprecated
 	public static final WidgetStyle<Label> BOOTSTRAP_RED = new WidgetStyle<Label>("labelText",Arrays.asList("label","label-danger"),0);
-	@Deprecated
 	public static final WidgetStyle<Label> BOOTSTRAP_GREEN = new WidgetStyle<Label>("labelText",Arrays.asList("label","label-success"),0);
-	@Deprecated
 	public static final WidgetStyle<Label> BOOTSTRAP_LIGHT_BLUE = new WidgetStyle<Label>("labelText",Arrays.asList("label","label-info"),0);
-	@Deprecated
-	public static final WidgetStyle<Label> BOOTSTRAP_DEFAULT = new WidgetStyle<Label>("labelText",Arrays.asList("label","label-default"),0);
-	@Deprecated
+	public static final WidgetStyle<Label> BOOTSTRAP_GREY = new WidgetStyle<Label>("labelText",Arrays.asList("label","label-default"),0);
 	public static final WidgetStyle<Label> BOOTSTRAP_ORANGE = new WidgetStyle<Label>("labelText",Arrays.asList("label","label-warning"),0);
+	//public static final WidgetStyle<Label> BOOTSTRAP_LIGHTGREY = new WidgetStyle<Label>("labelText",Arrays.asList("label","label-light"),0);
+	//public static final WidgetStyle<Label> BOOTSTRAP_DARKGREY = new WidgetStyle<Label>("labelText",Arrays.asList("label","label-secondary"),0);
 
     String text = "";
     String textEscaped = "";

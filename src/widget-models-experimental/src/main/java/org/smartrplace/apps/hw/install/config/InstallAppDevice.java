@@ -11,13 +11,7 @@ import org.ogema.model.extended.alarming.AlarmingData;
 import org.ogema.model.prototypes.Data;
 import org.ogema.model.prototypes.PhysicalElement;
 
-public interface InstallAppDevice extends Data {
-	/** Reference to the device, usually provided by driver*/
-	public PhysicalElement device();
-	
-	/** The resource contains the devHandlerId*/
-	public StringResource devHandlerInfo();
-	
+public interface InstallAppDevice extends InstallAppDeviceBase {
 	/** Description of the installation location. If the device is alread placed in correct room then
 	 * the room should be represented by the resource <device>/location/room . Otherwise the description
 	 * may contain room information to be used for setting up the room and moving the device later on. 
@@ -55,25 +49,6 @@ public interface InstallAppDevice extends Data {
 	 */
 	public StringResource deviceId();
 	
-	/** Single datapoint alarms for the device*/
-	public ResourceList<AlarmConfiguration> alarms();
-	
-	/** Known fault on device. Note that in the future room and gateway fault states may be stored in
-	 * {@link AlarmingData#knownSystemFaults()}. If not active of not existing then the device has no
-	 * active fault.*/
-	public AlarmGroupData knownFault();
-	//public ResourceList<KnownFault> knownFaults();
-	
-	/** Devices that cannot or shall not be deleted entirely/set inactive can be marked as trash. These devices will also not be
-	 * processed anymore.
-	 */
-	BooleanResource isTrash();
-	
-	/** Templates are used for general configurations per device type, e.g. for alarming.
-	 * Contains the DatapointGroup location for which it is template
-	 * TODO: In the future a device may be used as template for several device type groups, this is not supported yet*/
-	StringResource isTemplate();
-
 	/** Provided for transmission to superior via heartbeat*/
 	public IntegerResource dpNum();
 	

@@ -83,4 +83,9 @@ public interface AlarmConfiguration extends Data {
 	/** See {@link #mediumPriorityConfig()}
 	 */
 	AlarmConfiguration lowPriorityConfig();
+	
+	/** Set a reference to the alarming configuration below a DevelopmentTask if this shall be relevant for
+	 * sending messages*
+	 */
+	//AlarmConfiguration developmentAlarmConfig();
 }

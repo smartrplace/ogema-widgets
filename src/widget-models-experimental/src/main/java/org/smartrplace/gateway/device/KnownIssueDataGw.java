@@ -17,6 +17,12 @@ public interface KnownIssueDataGw extends PhysicalElement {
 	@NonPersistent
 	IntegerResource knownIssuesUnassigned();
 	@NonPersistent
+	IntegerResource knownIssuesAssignedBattery();
+	@NonPersistent
+	IntegerResource knownIssuesAssignedDevNotReacheable();
+	@NonPersistent
+	IntegerResource knownIssuesAssignedSignalStrength();
+	@NonPersistent //other operation
 	IntegerResource knownIssuesAssignedOther();
 	@NonPersistent
 	IntegerResource knownIssuesAssignedOperationOwn();
