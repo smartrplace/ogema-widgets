@@ -1,5 +1,6 @@
 package org.smartrplace.apps.eval.timedjob;
 
+import org.ogema.core.model.ModelModifiers.NonPersistent;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.FloatResource;
 import org.ogema.core.model.simple.IntegerResource;
@@ -37,4 +38,7 @@ public interface TimedJobConfig extends Data {
 	/**The configuration may be temporarily disabled to avoid further operations*/
 	BooleanResource disable();
 	
+	@NonPersistent
+	/** Write here to trigger a start a TimedJob with a delay below 1000ms. A listener will then trigger the job*/
+	IntegerResource triggerTimedJobStartsWithoutDelay();
 }
