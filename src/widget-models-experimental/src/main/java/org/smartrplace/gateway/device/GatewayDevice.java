@@ -38,6 +38,8 @@ public interface GatewayDevice extends PhysicalElement {
 	 * 512: Monitoring driver services
 	 */
 	IntegerResource systemRestart();
+	/** Counter is incremented on each system startup and set to zero after 2 hours of operation*/
+	IntegerResource systemRestartCounterLastHours();
 	
 	/** Interval for heartbeat sending to superior instance*/
 	TimeResource heartBeatDelay();

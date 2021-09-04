@@ -38,12 +38,18 @@ import org.ogema.core.recordeddata.RecordedDataConfiguration.StorageType;
 import org.ogema.core.resourcemanager.pattern.ResourcePattern;
 import org.ogema.model.prototypes.PhysicalElement;
 import org.ogema.tools.resource.util.LoggingUtils;
+import org.ogema.tools.resourcemanipulator.timer.CountDownDelayedExecutionTimer;
 import org.smartrplace.gateway.device.GatewayDevice;
 
 import de.iwes.util.resource.ResourceHelper;
 import de.iwes.util.resource.ValueResourceHelper;
 
 public class LogHelper {
+	public static final long MINUTE_MILLIS = 60000;
+	public static final long HOUR_MILLIS = 60*60000;
+	public static final long DAY_MILLIS = 24*HOUR_MILLIS;
+	public static final long YEAR_MILLIS = (long)(365.25*DAY_MILLIS);
+
 	//public static final String generalScheduleViewerConfigName = "ScheduleViewerConfigGeneral";
 	/**Short string that can be added to a single value resource information to indicate to the
 	 * user whether and how the resource is logged
@@ -157,6 +163,7 @@ public class LogHelper {
 	 * @param startupAppId must be a power of 2
 	 * @param appManager
 	 */
+	private static boolean loggedStartup = false;
 	public static void logStartup(int startupAppId, ApplicationManager appManager) {
         GatewayDevice gw = ResourceHelper.getLocalDevice(appManager);
         if(!gw.systemRestart().exists()) {
@@ -170,6 +177,20 @@ public class LogHelper {
         		return;
         	}
         	gw.systemRestart().getAndAdd(startupAppId);
+        }
+        if(!loggedStartup) {
+        	if(!gw.systemRestartCounterLastHours().exists()) {
+        		ValueResourceHelper.setCreate(gw.systemRestartCounterLastHours(), 1);
+        	} else
+        		gw.systemRestartCounterLastHours().getAndAdd(1);
+        	new CountDownDelayedExecutionTimer(appManager, 2*HOUR_MILLIS) {
+				
+				@Override
+				public void delayedExecution() {
+					gw.systemRestartCounterLastHours().setValue(0);
+				}
+			};
+        	loggedStartup = true;
         }
 	}
 	

@@ -1,15 +1,7 @@
 package org.smartrplace.apps.hw.install.config;
 
-import org.ogema.core.model.ResourceList;
-import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
-import org.ogema.core.model.simple.TimeResource;
-import org.ogema.model.extended.alarming.AlarmConfiguration;
-import org.ogema.model.extended.alarming.AlarmGroupData;
-import org.ogema.model.extended.alarming.AlarmingData;
-import org.ogema.model.prototypes.Data;
-import org.ogema.model.prototypes.PhysicalElement;
 
 public interface InstallAppDevice extends InstallAppDeviceBase {
 	/** Description of the installation location. If the device is alread placed in correct room then
@@ -51,6 +43,33 @@ public interface InstallAppDevice extends InstallAppDeviceBase {
 	
 	/** Provided for transmission to superior via heartbeat*/
 	public IntegerResource dpNum();
+	
+	/** Only relevant for devices connected via IP to the gateway. The connection information given here is the
+	 * connection that is used by the gateway. So a device or a controller may have an additional VPN connection that may not be
+	 * given here if it is not used by the gateway. The following options are defined:<br>
+	 * IP::<IP-Address> : device with a fixed IP address in the local network that cannot change via DHCP<br>
+	 * VPN::<IP-Address> : device with a fixed IP address in the VPN that cannot change via DHCP<br>
+	 * URL::<URL> cloud service that is connected via a URL or local URL access
+	 * MAC::<MAC-Address> : device receives IP address via  DHCP. The device IP address can be found via a local network ping scan.<br>
+	 * Sub::<Controller deviceID> : device is connected in a subnetwork of a controller. So the IP address and the MAC address visible to
+	 * 		the gateway are the addresses of the respective controller. <br>
+	 * Bridge::<Controller deviceID> : bridge configuration receiving a local IP address via DHCP via a controller. So the MAC address
+			reported via a network scan is the MAC address of the controller.<br>
+	 * MQTT::<Broker> : Device connects to MQTT broker. TODO: To discuss: Should this information provided in the ComType enum?<br>
+	 */
+	public StringResource networkIdentifier();
+	
+	/** IP address that may be available as a backup. Usually a VPN IP address*/
+	public StringResource backupAddress();
+
+	/** For devices without fixed IP address the last address detected can be given here, which can speed up debugging
+	 * if the address did not change in the meantime and can help to detect changes in the address assigned via DHCP.*/
+	public StringResource lastAddress();
+
+	/** For devices with complex connection modes the MAC address should be given here 
+	 * for debugging purposes
+	 */
+	public StringResource macAddress();
 	
 	/** Used for internal status supervision of some device types*/
 	//public TimeResource supervisionStatus();
