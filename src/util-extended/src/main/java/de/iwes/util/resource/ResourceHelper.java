@@ -568,4 +568,20 @@ public class ResourceHelper {
 		return null;
 	}
 
+	public static String getUniqueNameForNewSubResource(Resource resList, String baseName) {
+		int maxExist = -1;
+		Resource exact = resList.getSubResource(baseName);
+		if(exact == null || (!exact.exists()))
+			return baseName;
+		for(Resource r: resList.getSubResources(false)) {
+			if(!r.getName().startsWith(baseName))
+				continue;
+			try  {
+				int val = Integer.parseInt(r.getName().substring(baseName.length()));
+				if(val > maxExist)
+					maxExist = val;
+			} catch(NumberFormatException e) {}
+		}
+		return baseName+String.format("%04d", maxExist+1);
+	}
 }
