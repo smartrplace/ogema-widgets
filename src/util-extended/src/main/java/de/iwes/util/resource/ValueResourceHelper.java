@@ -173,6 +173,13 @@ public class ValueResourceHelper {
 		fres.setValue(value);
 		return false;
 	}
+	public static boolean setCreateIfChanged(IntegerResource fres, int value) {
+		if(!fres.exists())
+			return setCreate(fres, value);
+		if(fres.getValue() == value)
+			return false;
+		return setCreate(fres, value);
+	}
 	/** write into resoure and create it. If the resource does not exist prior to callling
 	 * the method it it first created, then written, then activated.
 	 * @return true if resource was created and value was written
