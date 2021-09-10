@@ -18,7 +18,11 @@ package de.iwes.util.collectionother;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
+
+import de.iwes.util.format.StringFormatHelper;
 
 /** Static methods for processing IP addresses*/
 public class IPNetworkHelper {
@@ -28,7 +32,11 @@ public class IPNetworkHelper {
 	 * @return standard String representation of the IP address
 	 */
 	public static String getLocalIPAddress() {
-		String ipList = null;
+		List<String> ipads = getLocalIPAddresses();
+		if(ipads.isEmpty()) return "none";
+		return StringFormatHelper.getListToPrint(ipads);
+		
+		/*String ipList = null;
 		try {
 			Enumeration<?> e;
 			e = NetworkInterface.getNetworkInterfaces();
@@ -53,6 +61,39 @@ public class IPNetworkHelper {
 			e1.printStackTrace();
 		}
 		if(ipList == null) return "none";
-		return ipList;
+		return ipList;*/
+	}
+	
+	public static List<String> getLocalIPAddresses() {
+		List<String> ipList = new ArrayList<>();
+		try {
+			Enumeration<?> e;
+			e = NetworkInterface.getNetworkInterfaces();
+			while(e.hasMoreElements())
+			{
+			    NetworkInterface n = (NetworkInterface) e.nextElement();
+			    Enumeration<?> ee = n.getInetAddresses();
+			    while (ee.hasMoreElements())
+			    {
+			        InetAddress i = (InetAddress) ee.nextElement();
+			        String s = i.getHostAddress();
+			        if(s.startsWith("127")) continue;
+			        if(s.contains(":")) continue;
+			        ipList.add(s);
+			    }
+			}
+		} catch (SocketException e1) {
+			e1.printStackTrace();
+		}
+		return ipList;	
+	}
+	
+	public static String getNonVPNAddress() {
+		List<String> ipads = getLocalIPAddresses();
+		for(String ip: ipads) {
+			if(!ip.startsWith("172.31."))
+				return ip;
+		}
+		return "LOC???";
 	}
 }
