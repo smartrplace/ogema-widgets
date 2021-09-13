@@ -25,6 +25,7 @@ public interface AlarmGroupData extends Data {
 	/** Link to bug/task tracking tool where alarm is processed by support*/
 	StringResource linkToTaskTracking();
 	
+	@Deprecated // always false
 	BooleanResource isFinished();
 	
 	/** If negative then no new messages shall be sent. If positive then the default value for the alarm is overwritten during the
@@ -58,4 +59,12 @@ public interface AlarmGroupData extends Data {
 	
 	/** See AlarmingConfigUtil#ASSIGNEMENT_ROLES*/
 	IntegerResource assigned();
+	
+	/** If 1=releaseProposed then the known fault is marked for release. E.g. because a device marked for "not reacheable" is sending
+	 * data again or a device that is off due to battery is sending data again and battery voltage indicates a
+	 * battery change.<br>
+	 * TODO: The following status unknown is not implemented yet: If the device is not sending data again then the forRelease status shall be set to 2=unknown.
+	 * Note that the entire device is set to forRelease when new data is obtained and it is not checked if all missing data
+	 * is returned. TODO: This may be the next step.*/
+	IntegerResource forRelease();
 }
