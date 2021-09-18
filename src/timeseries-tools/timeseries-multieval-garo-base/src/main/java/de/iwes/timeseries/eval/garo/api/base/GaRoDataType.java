@@ -139,6 +139,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 			FloatResource.class);
 	public static final GaRoDataType ValvePositionLimit = new GaRoDataType("ValvePositionLimit", 
 			FloatResource.class);
+	public static final GaRoDataType ValvePositionLimitRequested = new GaRoDataType("ValvePositionLimitRequested", 
+			FloatResource.class);
 	public static final GaRoDataType HumidityMeasurement = new GaRoDataType("HumidityMeasurement",
 			PercentageResource.class);
 	public static final GaRoDataType MotionDetection = new GaRoDataType("MotionDetection",
