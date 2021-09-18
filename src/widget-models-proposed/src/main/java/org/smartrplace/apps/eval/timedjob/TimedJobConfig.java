@@ -41,4 +41,7 @@ public interface TimedJobConfig extends Data {
 	@NonPersistent
 	/** Write here to trigger a start a TimedJob with a delay below 1000ms. A listener will then trigger the job*/
 	IntegerResource triggerTimedJobStartsWithoutDelay();
+	
+	/** Store recalc times done and potentially more*/
+	StringResource initDoneStatus();
 }
