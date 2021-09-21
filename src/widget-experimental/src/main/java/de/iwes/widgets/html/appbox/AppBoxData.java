@@ -22,6 +22,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -227,4 +228,14 @@ public class AppBoxData extends WidgetData {
 		return array;
 	}
 	
+	public static String getLink(Map<String, String> userLinks) {
+		String result = "/linkonly/";
+		boolean init = false;
+		for(Entry<String, String> e: userLinks.entrySet()) {
+			if(init)
+				result += ",";
+			result += "$"+e.getKey()+"$:$"+e.getValue()+"$";
+		}
+		return result;
+	}
 }
