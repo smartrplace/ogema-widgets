@@ -372,6 +372,7 @@ public class GaRoEvalHelper {
 		if(recId.contains("/billedEnergy/reading")) return GaRoDataType.BilledEnergy;
 		if(recId.contains("/billedEnergyReactive/reading")) return GaRoDataType.BilledEnergyReactive;
 
+		if(recId.contains("/energySum15min/reading")) return GaRoDataType.EnergySum15min;
 		if(recId.contains("/energySumHourly/reading")) return GaRoDataType.EnergySumHourly;
 		if(recId.contains("/energySumDaily/reading")) return GaRoDataType.EnergySumDaily;
 		if(recId.contains("/energySumMonthly/reading")) return GaRoDataType.EnergySumMonthly;
