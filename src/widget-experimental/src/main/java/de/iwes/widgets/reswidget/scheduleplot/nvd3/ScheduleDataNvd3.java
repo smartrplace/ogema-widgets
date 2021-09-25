@@ -119,7 +119,7 @@ public class ScheduleDataNvd3 extends ScheduleData<Nvd3DataSet> {
 				point.put("x", t);
 				point.put("y", value);
 			} catch (JSONException e) {
-				LoggerFactory.getLogger(ScheduleDataNvd3.class).warn("Value not allowed in JSON; skipping this {}; {}", value, e.toString());
+				LoggerFactory.getLogger(ScheduleDataNvd3.class).debug("Value not allowed in JSON; skipping this {}; {}", value, e.toString());
 				continue;
 			}
 			array.put(point);

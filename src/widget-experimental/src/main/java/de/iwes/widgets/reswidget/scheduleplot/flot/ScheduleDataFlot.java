@@ -131,7 +131,7 @@ public class ScheduleDataFlot extends ScheduleData<FlotDataSet> {
 			try {
 				point.put(t); point.put(value);
 			} catch (JSONException e) {
-				LoggerFactory.getLogger(ScheduleDataFlot.class).warn("Value not allowed in JSON; skipping this {}; {}", value, e.toString());
+				LoggerFactory.getLogger(ScheduleDataFlot.class).debug("Value not allowed in JSON; skipping this {}; {}", value, e.toString());
 				continue;
 			}
 			array.put(point);
@@ -144,7 +144,7 @@ public class ScheduleDataFlot extends ScheduleData<FlotDataSet> {
 				System.out.println("Adding Auxiliary 1 sec after single value at "+TimeUtils.getDateAndTimeString(tadd)+" (double time shift from UTC, ScheduleDataFlot)");
 				addPoint.put(tadd); addPoint.put(value);
 			} catch (JSONException e) {
-				LoggerFactory.getLogger(ScheduleDataFlot.class).warn("Value not allowed in JSON; skipping this {}; {}", value, e.toString());
+				LoggerFactory.getLogger(ScheduleDataFlot.class).debug("Value not allowed in JSON; skipping this {}; {}", value, e.toString());
 				return array;
 			}
 			array.put(addPoint);
