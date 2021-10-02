@@ -106,10 +106,17 @@ public class EMailService implements Application, MessageListener {
 				message.setFrom(new InternetAddress(sender.email.getValue()));
 				message.setRecipient(Message.RecipientType.TO, new InternetAddress(rec.emailAddress.getValue()));
 				message.setSubject(ms.getOriginalMessage().title(null));
-				String body = "Notification : " + ms.getOriginalMessage().message(null) + "\n" + "Sender : "
-						+ ms.getAppName() + "\n" + "Time : " + new Date(ms.getTimestamp()).toString();
+				String body;
+				String msgRaw = ms.getOriginalMessage().message(null);
+				if(msgRaw.startsWith("<!DOCTYPE html")) {
+					body = msgRaw;
+					message.setContent(body, "text/html");
+				} else {
+					body = "Notification : " + msgRaw + "\n" + "Sender : "
+							+ ms.getAppName() + "\n" + "Time : " + new Date(ms.getTimestamp()).toString();
+					message.setText(body);
+				}
 
-				message.setText(body);
 				message.setSentDate(new Date());
 
 				AccessController.doPrivileged(new PrivilegedAction<Void>() {
