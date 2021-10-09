@@ -255,7 +255,7 @@ public class AppBoxData extends WidgetData {
 		Map<String, String> userKeys = new HashMap<>();
 		String allKey = System.getProperty("org.ogema.apps.dash.allkey");
 		if(allKey == null)
-			return baseLink;
+			return "/"+baseLink;
 		//TODO: Also define user-specific properties
 		userKeys.put("all", allKey);
 		return getLink(baseLink, userKeys);		
