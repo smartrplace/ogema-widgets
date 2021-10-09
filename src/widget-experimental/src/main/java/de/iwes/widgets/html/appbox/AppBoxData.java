@@ -238,4 +238,26 @@ public class AppBoxData extends WidgetData {
 		}
 		return result;
 	}
+	
+	public static String getLink(String baseLink, Map<String, String> userKeys) {
+		String result = "/linkonly/";
+		boolean init = false;
+		for(Entry<String, String> e: userKeys.entrySet()) {
+			if(init)
+				result += ",";
+			result += "$"+e.getKey()+"$:$"+baseLink+e.getValue()+"$";
+		}
+		return result;
+		
+	}
+	
+	public static String getLinkByProperties(String baseLink) {
+		Map<String, String> userKeys = new HashMap<>();
+		String allKey = System.getProperty("org.ogema.apps.dash.allkey");
+		if(allKey == null)
+			return baseLink;
+		//TODO: Also define user-specific properties
+		userKeys.put("all", allKey);
+		return getLink(baseLink, userKeys);		
+	}
 }
