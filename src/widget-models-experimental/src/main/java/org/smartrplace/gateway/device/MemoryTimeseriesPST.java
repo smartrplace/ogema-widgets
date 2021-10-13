@@ -29,4 +29,6 @@ public interface MemoryTimeseriesPST extends PhysicalElement {
      * Logging is performed when a job is finished, but maximum every 5 minutes or adjustable fixed interval
      */
     FloatResource jobLoad();
+    
+    FloatResource hmDevicesLost();
 }

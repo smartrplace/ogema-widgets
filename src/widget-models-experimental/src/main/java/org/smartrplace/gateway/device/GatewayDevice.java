@@ -98,6 +98,13 @@ public interface GatewayDevice extends PhysicalElement {
     /** Used disk space in per cent*/
     GenericFloatSensor usedSpace_Root();
     
+    /** Traffic assigned to startup and software updates (detected via startups).
+     * NOTE: Currently not used*/
+    FloatResource trafficUpdatePlus();
+	
+    /** Traffic counted by heartbeat*/
+    FloatResource heartbeatTraffic();
+    
     /** Memore timeseries supervision*/
     @Deprecated
     FloatResource pstMultiToSingleEvents();
