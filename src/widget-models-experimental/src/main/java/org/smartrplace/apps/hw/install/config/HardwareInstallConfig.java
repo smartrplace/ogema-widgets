@@ -103,4 +103,17 @@ public interface HardwareInstallConfig extends Data {
 	 * 1: KNI, Location
 	 */
 	IntegerResource showModePageOrder();
+	
+	/** Allows to enable manipulation of {@link InstallAppDevice#deviceId()}s. This shall only be done as long as the hardware
+	 * devices have not been labelled yet with the ids. Options:<br>
+	 *  0: not allowed (default)<br>
+	 *  positive: allow manual changes until the time represented by the resource (take care not to leave any doubles !). This also allows
+	 *  auto-reset to be triggered by button.
+	 */
+	TimeResource deviceIdManipulationUntil();
+	/** If true then button for auto-reset of deviceIds cannot be activated anymore. This resource can be set to false only
+	 * in resource view as this is very dangerous. Blocking is activated after running auto-reset once and when later installation
+	 * steps are detected.
+	 */
+	BooleanResource blockAutoResetOfDeviceIds();
 }
