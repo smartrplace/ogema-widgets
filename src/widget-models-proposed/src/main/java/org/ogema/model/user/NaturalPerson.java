@@ -53,4 +53,9 @@ public interface NaturalPerson extends LegalEntity {
 	@Deprecated
 	BooleanResource restAccessEnabled();
 	BooleanResource restAccessDisabled();
+	
+	/** If true then an email invite has been sent to the user. In this case following emails are sent as
+	 * password resets.
+	 */
+	BooleanResource inviteSentOut();
 }
