@@ -55,8 +55,12 @@ import de.iwes.widgets.template.DisplayTemplate;
 
 public class NewRoomPopupBuilder {
 	
+	public static interface RoomCreationListern {
+		void roomCreated(Room room);
+	}
+	
 	public static Button addWidgets(final WidgetPage<RoomLinkDictionary> page, Popup newRoomPopup, final Alert alert, final ApplicationManager am,
-			boolean addType) {
+			boolean addType, RoomCreationListern listener) {
 		PageSnippet bodySnippet  = new PageSnippet(page, "bodySnippet", true);
 		StaticTable tab = new StaticTable(3, 2, new int[]{5,7});
 //		tab.setContent(0, 0, text).setContent(0, 1, nameField).setContent(0, 2, confirmBtn);
@@ -84,7 +88,7 @@ public class NewRoomPopupBuilder {
 		if(addType) {
 			return finishAddWidgetsWithType(page, newRoomPopup, alert, am, newRoomName, newRoomNameLabel, tab, bodySnippet);
 		} else {
-			return finishAddWidgetsWithoutType(page, newRoomPopup, alert, am, newRoomName, newRoomNameLabel, tab, bodySnippet);
+			return finishAddWidgetsWithoutType(page, newRoomPopup, alert, am, newRoomName, newRoomNameLabel, tab, bodySnippet, listener);
 		}
 	}
 	public static Button finishAddWidgetsWithType(final WidgetPage<RoomLinkDictionary> page, Popup newRoomPopup, final Alert alert, final ApplicationManager am,
@@ -208,7 +212,8 @@ public class NewRoomPopupBuilder {
 	}
 	
 	public static Button finishAddWidgetsWithoutType(final WidgetPage<RoomLinkDictionary> page, Popup newRoomPopup, final Alert alert, final ApplicationManager am,
-			final TextField newRoomName, Label newRoomNameLabel, StaticTable tab, PageSnippet bodySnippet) {
+			final TextField newRoomName, Label newRoomNameLabel, StaticTable tab, PageSnippet bodySnippet,
+			RoomCreationListern roomListener) {
 		newRoomPopup.setBody(bodySnippet, null);		
 		Button createRoomButton = new Button(page, "createRoomButton") {
 			
@@ -248,6 +253,8 @@ public class NewRoomPopupBuilder {
 				try {
 					Thread.sleep(1000);	// hope that FileUpload will be complete by then, so new image is shown immediately
 				} catch (InterruptedException e) {}
+				if(roomListener != null)
+					roomListener.roomCreated(room);
 			}
 		};
 		//createRoomButton.triggerAction(createRoomGroup, TriggeringAction.PRE_POST_REQUEST, TriggeredAction.POST_REQUEST);

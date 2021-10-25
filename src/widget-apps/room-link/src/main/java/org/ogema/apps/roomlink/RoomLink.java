@@ -300,7 +300,7 @@ public class RoomLink implements Application {
         editRoomPopupTrigger.triggerAction(editRoomPopup, TriggeringAction.POST_REQUEST, TriggeredAction.SHOW_WIDGET);
         
         Popup newRoomPopup = new Popup(widgetPage, "newRoomPopup", true);
-        Button createBtn = NewRoomPopupBuilder.addWidgets(widgetPage, newRoomPopup, alert, appManager, true);
+        Button createBtn = NewRoomPopupBuilder.addWidgets(widgetPage, newRoomPopup, alert, appManager, true, null);
         createBtn.triggerAction(ddAssign, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
         createBtn.triggerAction(newRoomPopup, TriggeringAction.POST_REQUEST, TriggeredAction.HIDE_WIDGET);
         Button newRoomPopupTrigger =new Button(widgetPage, "newRoomPopupTrigger") {
