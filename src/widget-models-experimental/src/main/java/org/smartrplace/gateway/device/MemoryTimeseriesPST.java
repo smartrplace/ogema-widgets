@@ -31,4 +31,5 @@ public interface MemoryTimeseriesPST extends PhysicalElement {
     FloatResource jobLoad();
     
     FloatResource hmDevicesLost();
+    FloatResource hmDevicesLostHighPrio();
 }
