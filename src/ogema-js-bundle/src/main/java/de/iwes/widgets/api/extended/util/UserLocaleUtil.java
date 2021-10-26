@@ -15,6 +15,9 @@ public class UserLocaleUtil {
 	public static void setSystemDefaultLocale(String localeString) {
 		systemDefaultLocaleString = localeString;
 	}
+	public static String getSystemDefaultLocaleString() {
+		return systemDefaultLocaleString;
+	}
 	
 	public static String getLocaleStringRaw(String userName, ApplicationManager appMan) {
 		UserAccount userAccount = appMan.getAdministrationManager().getUser(userName);
