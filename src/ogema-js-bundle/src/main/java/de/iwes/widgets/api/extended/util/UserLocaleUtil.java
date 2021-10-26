@@ -11,6 +11,11 @@ import org.ogema.core.application.ApplicationManager;
 import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
 
 public class UserLocaleUtil {
+	private static String systemDefaultLocaleString = "en";
+	public static void setSystemDefaultLocale(String localeString) {
+		systemDefaultLocaleString = localeString;
+	}
+	
 	public static String getLocaleStringRaw(String userName, ApplicationManager appMan) {
 		UserAccount userAccount = appMan.getAdministrationManager().getUser(userName);
 		if(userAccount == null)
@@ -25,7 +30,7 @@ public class UserLocaleUtil {
 		UserAccount userAccount = appMan.getAdministrationManager().getUser(userName);
 		if(userAccount == null)
 			return null;
-		return userAccount.getProperties().getOrDefault(UserConstants.PREFERRED_LOCALE, "en").toString();
+		return userAccount.getProperties().getOrDefault(UserConstants.PREFERRED_LOCALE, systemDefaultLocaleString).toString();
 	}
 	
 	public static String getLocaleString(OgemaHttpRequest req, ApplicationManager appMan) {
