@@ -27,12 +27,14 @@ package de.iwes.util.logconfig;
 import java.util.List;
 
 import org.ogema.core.application.ApplicationManager;
+import org.ogema.core.channelmanager.measurements.SampledValue;
 import org.ogema.core.model.Resource;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.FloatResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.SingleValueResource;
 import org.ogema.core.model.simple.TimeResource;
+import org.ogema.core.recordeddata.RecordedData;
 import org.ogema.core.recordeddata.RecordedDataConfiguration;
 import org.ogema.core.recordeddata.RecordedDataConfiguration.StorageType;
 import org.ogema.core.resourcemanager.pattern.ResourcePattern;
@@ -156,6 +158,25 @@ public class LogHelper {
 		} else if(target instanceof TimeResource) {
 			((TimeResource)target).getHistoricalData().setConfiguration(powerConf);
 		}
+	}
+	
+	public static SampledValue getLastSampledValue(SingleValueResource resource) throws IllegalArgumentException {
+		RecordedData rd = LoggingUtils.getHistoricalData(resource);
+		if(rd == null)
+			return null;
+		return rd.getPreviousValue(Long.MAX_VALUE);
+	}
+	public static Long getLastWriteTime(SingleValueResource resource) throws IllegalArgumentException {
+		SampledValue sv = getLastSampledValue(resource);
+		if(sv == null)
+			return null;
+		return sv.getTimestamp();
+	}
+	public static Float getLastValue(SingleValueResource resource) throws IllegalArgumentException {
+		SampledValue sv = getLastSampledValue(resource);
+		if(sv == null)
+			return null;
+		return sv.getValue().getFloatValue();
 	}
 	
 	/** Log startup of a certain app
