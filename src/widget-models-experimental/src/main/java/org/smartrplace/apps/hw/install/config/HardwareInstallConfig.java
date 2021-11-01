@@ -116,4 +116,9 @@ public interface HardwareInstallConfig extends Data {
 	 * steps are detected.
 	 */
 	BooleanResource blockAutoResetOfDeviceIds();
+	
+	/** If resource is active and not empty then CO2 alarms will only be sent to a single user that is
+	 * identified by the value of this resource as user name.
+	 */
+	StringResource singleCO2AlarmingUser();
 }
