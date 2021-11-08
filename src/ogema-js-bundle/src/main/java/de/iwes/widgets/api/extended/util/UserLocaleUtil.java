@@ -4,20 +4,39 @@ import javax.servlet.http.HttpSession;
 
 import org.ogema.accesscontrol.Constants;
 import org.ogema.accesscontrol.SessionAuth;
+import org.ogema.core.administration.AdministrationManager;
 import org.ogema.core.administration.UserAccount;
 import org.ogema.core.administration.UserConstants;
 import org.ogema.core.application.ApplicationManager;
 
+import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
 
 public class UserLocaleUtil {
 	private static String systemDefaultLocaleString = "en";
-	public static void setSystemDefaultLocale(String localeString) {
+	private static AdministrationManager adminMan = null;
+	public static void setSystemDefaultLocale(String localeString, AdministrationManager adminMan) {
+		setUserAdmin(adminMan);
 		systemDefaultLocaleString = localeString;
 	}
 	public static String getSystemDefaultLocaleString() {
 		return systemDefaultLocaleString;
 	}
+	public static OgemaLocale getSystemDefaultLocale() {
+		OgemaLocale result = OgemaLocale.getLocale(systemDefaultLocaleString);
+		if(result != null)
+			return result;
+		return OgemaLocale.ENGLISH;
+	}
+	
+	public static void setUserAdmin(AdministrationManager adminManIn) {
+		if(adminMan == null)
+			adminMan = adminManIn;
+	}
+	public static void setUserAdmin(ApplicationManager appMan) {
+		if(appMan != null)
+			setUserAdmin(appMan.getAdministrationManager());
+	}	
 	
 	public static String getLocaleStringRaw(String userName, ApplicationManager appMan) {
 		UserAccount userAccount = appMan.getAdministrationManager().getUser(userName);
@@ -36,10 +55,20 @@ public class UserLocaleUtil {
 		return userAccount.getProperties().getOrDefault(UserConstants.PREFERRED_LOCALE, systemDefaultLocaleString).toString();
 	}
 	
+	public static OgemaLocale getLocale(String userName, ApplicationManager appMan) {
+		return OgemaLocale.getLocale(getLocaleString(userName, appMan));
+	}
+
 	public static String getLocaleString(OgemaHttpRequest req, ApplicationManager appMan) {
 		String user = getUserLoggedIn(req);
 		if (user == null) return null;
 		return getLocaleString(user, appMan);
+	}
+	
+	/** TODO: This value shall be returned by {@link OgemaHttpRequest#getLocale()} directly
+	 */
+	public static OgemaLocale getLocale(OgemaHttpRequest req) {
+		return OgemaLocale.getLocale(getLocaleString(req, null));
 	}
 	
 	public static boolean hasLocaleStringStored(String userName, ApplicationManager appMan) {
@@ -59,7 +88,8 @@ public class UserLocaleUtil {
 	}
 
 	public static void setLocaleString(String userName, String localeString, ApplicationManager appMan) {
-		UserAccount userAccount = appMan.getAdministrationManager().getUser(userName);
+		setUserAdmin(appMan);
+		UserAccount userAccount = adminMan.getUser(userName);
 		if(userAccount == null)
 			return;
 		userAccount.getProperties().put(UserConstants.PREFERRED_LOCALE, localeString);

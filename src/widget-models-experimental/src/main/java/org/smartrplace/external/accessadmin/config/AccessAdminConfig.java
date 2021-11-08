@@ -21,4 +21,6 @@ public interface AccessAdminConfig extends Configuration {
 	AccessConfigBase userStatusPermission();
 	AccessConfigBase userStatusPermissionWorkingCopy();
 	BooleanResource userStatusPermissionChanged();
+	
+	ResourceList<SubCustomerData> subCustomers();
 }

@@ -47,6 +47,18 @@ import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
  */
 public class RoomHelper {
 	
+	public static final int LIVING = 1;
+	public static final int TOILET = 5;
+	public static final int CORRIDOR = 6;
+	public static final int STORE_ROOM = 8;
+	public static final int SLEEPING = 10;
+	public static final int GARAGE = 20;
+	public static final int TECHNICAL_ROOM = 30;
+	public static final int OFFICE = 100;
+	public static final int MEETING = 101;
+	public static final int KITCHEN_COMM = 200;
+	public static final int CUSTOM = 10000;
+
 	/** Find room in resource itself or in super resource
 	 * @deprecated Use {@link ResourceUtils#getDeviceLocationRoom(PhysicalElement)} instead.
 	 * */
@@ -224,14 +236,16 @@ public class RoomHelper {
 			return "bed room";
 		case 20:
 			return "garage";
+		case 30:
+			return "technical/server room";
 		case 100:
 			return "office";
 		case 101:
 			return "meeting room";
 		case 200:
-			return "comm. kitchen";
+			return "kitchen/cafeteria";
 		case 210:
-			return "comm. dining";
+			return "dining area";
 		default:
 			if(type >= 10000) {
 				return "custom";
@@ -312,6 +326,11 @@ public class RoomHelper {
 				return "Garage";
 			if (locale == OgemaLocale.FRENCH)
 				return "garage";
+		case 30:
+			if (locale == OgemaLocale.GERMAN)
+				return "Technik-/Serverraum";
+			if (locale == OgemaLocale.FRENCH)
+				return "sale de technologie";
 		case 100:
 			if (locale == OgemaLocale.GERMAN)
 				return "Büro";
@@ -324,17 +343,17 @@ public class RoomHelper {
 				return "salle de réunion";
 		case 200:
 			if (locale == OgemaLocale.GERMAN)
-				return "Gemeinschaftsküche";
+				return "Küche/Cafeteria";
 			if (locale == OgemaLocale.FRENCH)
 				return "cuisine collective";
 		case 210:
 			if (locale == OgemaLocale.GERMAN)
-				return "Gemeinschaftsesszimmer";
+				return "Speisesaal";
 			if (locale == OgemaLocale.FRENCH)
 				return "salle communale";
 		default:
 			if(type >= 10000) {
-				return "custom";
+				return "Spezial";
 			}
 			return "??";
 		}
