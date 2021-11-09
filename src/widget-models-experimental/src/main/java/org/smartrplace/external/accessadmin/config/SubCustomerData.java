@@ -4,7 +4,7 @@ import org.ogema.core.model.array.IntegerArrayResource;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.units.TemperatureResource;
-import org.ogema.model.locations.Room;
+import org.ogema.model.locations.BuildingPropertyUnit;
 import org.ogema.model.prototypes.Data;
 
 public interface SubCustomerData extends Data {
@@ -29,7 +29,10 @@ public interface SubCustomerData extends Data {
 	
 	BooleanResource setpointCurveEditableByUsers();
 	
-	public static SubCustomerData getData(Room room) {
-		return room.getSubResource("subcustomer", SubCustomerData.class);
-	}
+	//public static SubCustomerData getData(Room room) {
+	//	return room.getSubResource("subcustomer", SubCustomerData.class);
+	//}
+	
+	AccessConfigUser userAttribute();
+	BuildingPropertyUnit roomGroup();
 }

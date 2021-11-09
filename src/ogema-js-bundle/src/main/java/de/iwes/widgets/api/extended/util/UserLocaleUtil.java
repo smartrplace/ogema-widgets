@@ -15,6 +15,7 @@ import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
 public class UserLocaleUtil {
 	private static String systemDefaultLocaleString = "en";
 	private static AdministrationManager adminMan = null;
+	private static ApplicationManager appManStatic = null;
 	public static void setSystemDefaultLocale(String localeString, AdministrationManager adminMan) {
 		setUserAdmin(adminMan);
 		systemDefaultLocaleString = localeString;
@@ -34,12 +35,16 @@ public class UserLocaleUtil {
 			adminMan = adminManIn;
 	}
 	public static void setUserAdmin(ApplicationManager appMan) {
-		if(appMan != null)
+		if(appMan != null) {
+			if(appManStatic == null)
+				appManStatic = appMan;
 			setUserAdmin(appMan.getAdministrationManager());
+		}
 	}	
 	
 	public static String getLocaleStringRaw(String userName, ApplicationManager appMan) {
-		UserAccount userAccount = appMan.getAdministrationManager().getUser(userName);
+		setUserAdmin(appMan);
+		UserAccount userAccount = adminMan.getUser(userName);
 		if(userAccount == null)
 			return null;
 		Object result = userAccount.getProperties().get(UserConstants.PREFERRED_LOCALE);
@@ -49,7 +54,8 @@ public class UserLocaleUtil {
 	}
 
 	public static String getLocaleString(String userName, ApplicationManager appMan) {
-		UserAccount userAccount = appMan.getAdministrationManager().getUser(userName);
+		setUserAdmin(appMan);		
+		UserAccount userAccount = adminMan.getUser(userName);
 		if(userAccount == null)
 			return null;
 		return userAccount.getProperties().getOrDefault(UserConstants.PREFERRED_LOCALE, systemDefaultLocaleString).toString();
@@ -72,7 +78,8 @@ public class UserLocaleUtil {
 	}
 	
 	public static boolean hasLocaleStringStored(String userName, ApplicationManager appMan) {
-		UserAccount userAccount = appMan.getAdministrationManager().getUser(userName);
+		setUserAdmin(appMan);
+		UserAccount userAccount = adminMan.getUser(userName);
 		return userAccount.getProperties().containsKey(UserConstants.PREFERRED_LOCALE);
 	}
 
