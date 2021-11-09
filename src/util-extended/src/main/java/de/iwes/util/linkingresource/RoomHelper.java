@@ -57,6 +57,7 @@ public class RoomHelper {
 	public static final int OFFICE = 100;
 	public static final int MEETING = 101;
 	public static final int KITCHEN_COMM = 200;
+	public static final int OTHER = 900;
 	public static final int CUSTOM = 10000;
 
 	/** Find room in resource itself or in super resource
@@ -246,6 +247,8 @@ public class RoomHelper {
 			return "kitchen/cafeteria";
 		case 210:
 			return "dining area";
+		case 900:
+			return "other";
 		default:
 			if(type >= 10000) {
 				return "custom";
@@ -351,6 +354,11 @@ public class RoomHelper {
 				return "Speisesaal";
 			if (locale == OgemaLocale.FRENCH)
 				return "salle communale";
+		case 900:
+			if (locale == OgemaLocale.GERMAN)
+				return "Sonstige";
+			if (locale == OgemaLocale.FRENCH)
+				return "Autres";
 		default:
 			if(type >= 10000) {
 				return "Spezial";

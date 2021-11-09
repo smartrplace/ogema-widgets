@@ -27,6 +27,8 @@ public interface SubCustomerData extends Data {
 	TemperatureResource defaultEcoTemperatureHeating();
 	TemperatureResource defaultEcoTemperatureCooling();
 	
+	BooleanResource setpointCurveEditableByUsers();
+	
 	public static SubCustomerData getData(Room room) {
 		return room.getSubResource("subcustomer", SubCustomerData.class);
 	}
