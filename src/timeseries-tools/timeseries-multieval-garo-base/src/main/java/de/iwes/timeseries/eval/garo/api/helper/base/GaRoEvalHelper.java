@@ -239,6 +239,9 @@ public class GaRoEvalHelper {
 		//if(recId.contains("valve/setting/stateFeedback")) return GaRoDataType.ValvePosition;
 		if(recId.contains("connection/powerSensor/reading")) return GaRoDataType.PowerMeter;
 		if(recId.contains("connection/energySensor/reading")) return GaRoDataType.PowerMeterEnergy;
+		if(recId.endsWith("/powerReading")) return GaRoDataType.PowerMeter;
+		if(recId.endsWith("/energyReading")) return GaRoDataType.PowerMeterEnergy;
+
 		if(recId.contains("connection/currentSensor/reading")) return GaRoDataType.PowerMeterCurrent;
 		if(recId.contains("connection/voltageSensor/reading")) return GaRoDataType.PowerMeterVoltage;
 		if(recId.contains("connection/frequencySensor/reading")) return GaRoDataType.PowerMeterFrequency;
