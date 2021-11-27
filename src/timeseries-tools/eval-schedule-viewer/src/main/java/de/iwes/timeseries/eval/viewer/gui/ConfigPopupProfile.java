@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ogema.humread.valueconversion.SchedulePresentationData;
+
 import de.iwes.timeseries.eval.viewer.api.Profile;
 import de.iwes.timeseries.eval.viewer.api.ProfileSchedulePresentationData;
 import de.iwes.widgets.api.extended.html.bricks.PageSnippet;
@@ -45,7 +47,6 @@ import de.iwes.widgets.html.multiselect.TemplateMultiselect;
 import de.iwes.widgets.html.popup.Popup;
 import de.iwes.widgets.reswidget.scheduleplot.api.ScheduleData;
 import de.iwes.widgets.reswidget.scheduleplot.api.TimeSeriesPlot;
-import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
 import de.iwes.widgets.template.DisplayTemplate;
 
 class ConfigPopupProfile extends Popup {

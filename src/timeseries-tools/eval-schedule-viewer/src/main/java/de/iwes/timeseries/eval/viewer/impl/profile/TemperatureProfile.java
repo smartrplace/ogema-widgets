@@ -22,13 +22,13 @@ import org.ogema.core.model.units.TemperatureResource;
 import org.ogema.core.recordeddata.RecordedData;
 import org.ogema.core.timeseries.InterpolationMode;
 import org.ogema.core.timeseries.ReadOnlyTimeSeries;
+import org.ogema.humread.valueconversion.SchedulePresentationData;
 import org.ogema.tools.timeseries.iterator.api.MultiTimeSeriesBuilder;
 
 import de.iwes.timeseries.eval.viewer.api.Profile;
 import de.iwes.timeseries.eval.viewer.api.ProfileSchedulePresentationData;
 import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 import de.iwes.widgets.resource.timeseries.OnlineTimeSeries;
-import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
 
 class TemperatureProfile implements Profile {
 

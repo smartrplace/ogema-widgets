@@ -15,7 +15,7 @@
  */
 package de.iwes.timeseries.eval.viewer.api;
 
-import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
+import org.ogema.humread.valueconversion.SchedulePresentationData;
 
 public interface ProfileSchedulePresentationData extends SchedulePresentationData {
 

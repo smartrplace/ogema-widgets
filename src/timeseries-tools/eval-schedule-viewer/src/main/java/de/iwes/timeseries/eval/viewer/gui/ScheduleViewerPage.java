@@ -41,6 +41,7 @@ import org.ogema.core.model.units.TemperatureResource;
 import org.ogema.core.recordeddata.RecordedData;
 import org.ogema.core.timeseries.InterpolationMode;
 import org.ogema.core.timeseries.ReadOnlyTimeSeries;
+import org.ogema.humread.valueconversion.SchedulePresentationData;
 
 import de.iwes.timeseries.aggregation.api.StandardIntervalTimeseriesBuilder;
 import de.iwes.timeseries.eval.api.DataProvider;
@@ -87,7 +88,6 @@ import de.iwes.widgets.reswidget.scheduleplot.container.PlotTypeSelector;
 import de.iwes.widgets.reswidget.scheduleplot.container.SchedulePlotWidgetSelector;
 import de.iwes.widgets.reswidget.scheduleplot.container.TimeSeriesPlotGeneric;
 import de.iwes.widgets.reswidget.scheduleviewer.DefaultSchedulePresentationData;
-import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
 import de.iwes.widgets.template.DisplayTemplate;
 
 // TODO
