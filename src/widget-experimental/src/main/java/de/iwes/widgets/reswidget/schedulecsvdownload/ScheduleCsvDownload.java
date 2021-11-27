@@ -48,15 +48,21 @@ import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 import org.ogema.core.channelmanager.measurements.SampledValue;
 import org.ogema.core.model.schedule.Schedule;
+import org.ogema.core.model.units.TemperatureResource;
 import org.ogema.core.recordeddata.RecordedData;
 import org.ogema.core.security.WebAccessManager;
 import org.ogema.core.timeseries.ReadOnlyTimeSeries;
+import org.ogema.humread.valueconversion.HumanReadableValueConverter;
+import org.ogema.humread.valueconversion.HumanReadableValueConverter.LinearTransformation;
 import org.ogema.humread.valueconversion.SchedulePresentationData;
+import org.ogema.model.chartexportconfig.ChartExportConfig;
 import org.ogema.tools.resource.util.ResourceUtils;
 import org.ogema.tools.timeseries.implementations.TreeTimeSeries;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.LoggerFactory;
 
+import de.iwes.util.timer.AbsoluteTimeHelper;
+import de.iwes.util.timer.AbsoluteTiming;
 import de.iwes.widgets.api.extended.html.bricks.PageSnippet;
 import de.iwes.widgets.api.services.NameService;
 import de.iwes.widgets.api.widgets.WidgetPage;
@@ -86,6 +92,9 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 	protected final Alert alert; 
 	// we need this, because the ScheduleCsvDonwload itself is necessarily global (why?)
 	protected final DataWidget dataWidget;
+	//may be null
+	protected final ChartExportConfig configRes;
+	
 	public final Button downloadCSVButton;
 	public final Button downloadJSONButton;
 	protected final Label nrItemsLabel;
@@ -96,17 +105,24 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 	protected File tempFolder;
 	protected static final String JSON = "JSON";
 	protected static final String CSV = "CSV";
+
+	/** Maximum samples that are chosen per minimum distance, beyound averaging is used*/
+	public static final int MAX_PER_MINDISTANCE = 3;
 	
 	public ScheduleCsvDownload(WidgetPage<?> page, String id, WebAccessManager wam) {
-		this(page, id, wam, null, true, null, null);
+		this(page, id, wam, null, true, null, null, null);
+	}
+	public ScheduleCsvDownload(WidgetPage<?> page, String id, WebAccessManager wam, ChartExportConfig configRes) {
+		this(page, id, wam, null, true, null, null, configRes);
 	}
 	
 	public ScheduleCsvDownload(WidgetPage<?> page, String id, WebAccessManager wam, Alert alert) {
-		this(page, id, wam, null, true, null, null);
+		this(page, id, wam, null, true, null, null, null);
 	}
 	
 	public ScheduleCsvDownload(WidgetPage<?> page, String id, WebAccessManager wam, Alert alert, 
-			boolean showUserInput, Datepicker startPicker, Datepicker endPicker) {
+			boolean showUserInput, Datepicker startPicker, Datepicker endPicker,
+			ChartExportConfig configRes) {
 		super(page, id, true);
 		AccessController.doPrivileged(new PrivilegedAction<Void>() {
 			@Override
@@ -127,6 +143,7 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 			}
 		});
 		this.alert = alert;
+		this.configRes = configRes;
 		this.dataWidget = new DataWidget(page, id + "_dataWidget");
 		this.showUserInput = showUserInput;
 		this.nrItemsLabel = new Label(page, id + "_nrItemsLabel") {
@@ -366,7 +383,7 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 			final long end = downloadEndPicker.getDateLong(req);
 
 			boolean exportJSON = buttonPressed.equals(ScheduleCsvDownload.JSON);
-			return exportFile(start, end, schedules, tempFolder, "schedules_", exportJSON, filters, null);
+			return exportFile(start, end, schedules, tempFolder, "schedules_", exportJSON, filters, null, master.configRes);
 		}
 
 		public void setSchedules(Collection<T> schedules, Collection<? extends TimeSeriesFilterExtended> filters) {
@@ -441,7 +458,8 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 	public static <S extends ReadOnlyTimeSeries> Path exportFile(long start, long end,
 			List<S> schedules, Path tempFolder, String zipBaseName, boolean exportJSON,
 			List<TimeSeriesFilterExtended> filters,
-			Integer schedCountReportInterval) throws IOException {
+			Integer schedCountReportInterval,
+			ChartExportConfig configRes) throws IOException {
 		if (!Files.exists(tempFolder))
 			Files.createDirectories(tempFolder);
 		final Path base = Files.createTempDirectory(tempFolder, zipBaseName);
@@ -455,7 +473,12 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
         try (final FileSystem zipfs = FileSystems.newFileSystem(uri, Collections.singletonMap("create", "true"))) {
 			int schedCount = 0;
 			int nextReportCount = (schedCountReportInterval!=null)?schedCountReportInterval:-1;
-        	for (S rd : schedules) {
+        	
+			List<String> ids = null;
+			if((!exportJSON) && (configRes != null) && configRes.performFixedStepExport().getValue()) {
+				ids = new ArrayList<>();
+			}
+			for (S rd : schedules) {
 				final String id;
 				if (rd instanceof RecordedData)
 					id = ((RecordedData) rd).getPath();
@@ -469,6 +492,11 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 					id = "TreeTimeSeries_" + i++;
 				else
 					id = "_" + new BigInteger(65, new Random()).toString(32);
+				if(ids != null) {
+					ids.add(id);
+					continue;
+				}
+			
 				String formatId = System.getProperty("org.ogema.widgets.schedulecsvdownload.formatid");
 				if(formatId != null && formatId.contains("HUMREAD")) {
 					if(id.contains("TEMPERATURE")|| id.contains("temperatureSensor") || ScheduleRowTemplate.isTemperatureSchedule(rd))
@@ -487,9 +515,9 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 				}
 				
 				if(exportJSON) {
-					writeValuesToFile(base, start, end, zipfs, rd, filename+".json", formatId);
+					writeValuesToFile(base, start, end, zipfs, rd, filename+".json", formatId, null);
 				} else {
-					writeValuesToFile(base, start, end, zipfs, rd, filename+".csv", formatId);
+					writeValuesToFile(base, start, end, zipfs, rd, filename+".csv", formatId, configRes);
 				}
 				schedCount++;
 				if(schedCountReportInterval != null && schedCount > nextReportCount) {
@@ -497,7 +525,9 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 					nextReportCount = schedCount + schedCountReportInterval;
 				}
 			}
-			
+			if(ids != null) {
+				writeMultiValuesToFile(base, start, end, zipfs, schedules, ids, "MultiRowExport.csv", configRes);				
+			}
 		}
 		FileUtils.deleteDirectory(base.toAbsolutePath().toFile());
         return zipFile;			
@@ -546,14 +576,22 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 		
 	}
 	
-	protected static <S extends ReadOnlyTimeSeries> void writeValuesToFile(final Path base, final long start, final long end, final FileSystem zipfs, S rd,
-			String filename, String formatId) throws IOException {
+	protected static <S extends ReadOnlyTimeSeries> void writeValuesToFile(final Path base, final long start, final long end,
+			final FileSystem zipfs, S rd,
+			String filename, String formatId,
+			ChartExportConfig configRes) throws IOException {
 		Path file = base.resolve(filename);
 		if(filename.endsWith(".csv")) {
-			toCsvFile(rd.iterator(start,end), file, formatId);
-		}else if(filename.endsWith(".json")) {
+			LinearTransformation trans = null;
+			if(configRes != null && (!configRes.exportOriginalOGEMAValues().getValue()) &&
+					(rd instanceof SchedulePresentationData))
+				trans = HumanReadableValueConverter.getTransformationIfNonTrivial((SchedulePresentationData) rd);
+			else if((formatId != null) && formatId.contains("CELSIUS"))
+				trans = HumanReadableValueConverter.getTransformation(TemperatureResource.class, null);
+			toCsvFile(rd.iterator(start,end), file, formatId, configRes, trans);
+		} else if(filename.endsWith(".json")) {
 			toJSONFile(rd.iterator(start,end), file, filename.replace(".json", ""));
-		}else if(filename.endsWith(".python")) {
+		} else if(filename.endsWith(".python")) {
 			//TODO: Does this option make sense?
 			return;
 		}
@@ -562,16 +600,194 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 		Files.move(file, pathInZipfile, StandardCopyOption.REPLACE_EXISTING );
 	}
 	
-	protected static void toCsvFile(Iterator<SampledValue> values, Path path, String formatId) throws IOException {
-		final Locale locale;
-		final boolean celsius = (formatId != null) && formatId.contains("CELSIUS");
-		if(formatId != null && formatId.contains("DE")) locale = Locale.GERMANY;
+	protected static class TSConvertData {
+		LinearTransformation trans;
+		Iterator<SampledValue> it;
+		SampledValue lastVal;
+		SampledValue nextVal;
+		boolean isFinished = false;
+		String nanValue;
+	}
+	/**
+	 * 
+	 * @param <S>
+	 * @param base
+	 * @param startIn
+	 * @param end
+	 * @param zipfs
+	 * @param schedules
+	 * @param ids
+	 * @param filename
+	 * @param configRes must be non-null here
+	 * @throws IOException
+	 */
+	protected static <S extends ReadOnlyTimeSeries> void writeMultiValuesToFile(Path base, long startIn, long end,
+			FileSystem zipfs, List<S> schedules,
+			List<String> ids, String filename, ChartExportConfig configRes) throws IOException {
+		Path path = base.resolve(filename);
+		List<TSConvertData> tsData = new ArrayList<>();
+
+		long start = AbsoluteTimeHelper.getIntervalStart(startIn, AbsoluteTiming.MINUTE);
+		long stepSize = (long) (configRes.fixedTimeStepSeconds().getValue()*1000);
+		long halfStep = stepSize/2;
+		if(Float.isNaN(stepSize) || stepSize <= 0)
+			stepSize = 60000;
+		long maxDistance = (long) (configRes.maxValidValueIntervalSeconds().getValue()*1000);
+		GeneralConfigCSVExport pconfig = getGeneralConfig(null, configRes);
+		
+		List<String> labels = new ArrayList<>();
+		try (final Writer writer = new BufferedWriter(new FileWriter(path.toFile()))) {
+			for(S rd: schedules) {
+				LinearTransformation trans = null;
+				if((!configRes.exportOriginalOGEMAValues().getValue()) &&
+						(rd instanceof SchedulePresentationData))
+					trans = HumanReadableValueConverter.getTransformationIfNonTrivial((SchedulePresentationData) rd);
+				TSConvertData td = new TSConvertData();
+				td.it = rd.iterator(start-stepSize/2,end);
+				td.trans = trans;
+				if(!td.it.hasNext())
+					td.isFinished = true;
+				else
+					td.lastVal = td.nextVal = td.it.next();
+				td.nanValue = configRes.naNValue().getValue();
+				tsData.add(td);
+				if(rd instanceof SchedulePresentationData)
+					labels.add(((SchedulePresentationData)rd).getLabel(null));
+			}
+			writeCSVMultiLine(writer, -1, pconfig.date, ids);
+			if(configRes.addLabels().getValue())
+				writeCSVMultiLine(writer, -1, pconfig.date, labels);
+	
+			long curTime = start;
+			long nextTime = start + stepSize;
+			long limitStart;
+			long limitEnd = curTime - halfStep;
+			while(curTime <= end) {
+				limitStart = limitEnd;
+				limitEnd = curTime + halfStep;
+				List<String> vals = new ArrayList<>();
+				for(TSConvertData td: tsData) {
+					if(td.isFinished) {
+						vals.add(td.nanValue);
+						continue;
+					}
+					float sum = 0;
+					int count = 0;
+					SampledValue closest = null;
+					long closestDist = -1;
+					while(td.lastVal.getTimestamp() < nextTime) {
+						if(td.lastVal.getTimestamp() >= limitStart && td.lastVal.getTimestamp() <= limitEnd) {
+							count++;
+							sum += td.lastVal.getValue().getFloatValue();
+						}
+						if(count <= MAX_PER_MINDISTANCE) {
+							long dist = Math.abs(td.lastVal.getTimestamp() - curTime);
+							if(closest == null || (dist < closestDist)) {
+								closest = td.lastVal;
+								closestDist = dist;
+							}
+							if(td.nextVal.getTimestamp() >= nextTime)
+								break;
+						} else if(td.nextVal.getTimestamp() > limitEnd)
+							break;
+						
+						td.lastVal = td.nextVal;
+						if(td.it.hasNext())
+							td.nextVal = td.it.next();
+						else
+							break;
+					}
+					float value;
+					if(count > MAX_PER_MINDISTANCE) {
+						value = sum / count;
+					} else if(closest != null) {
+						value = closest.getValue().getFloatValue();
+					} else if(Math.abs(td.lastVal.getTimestamp() - curTime) < maxDistance)
+						value = td.lastVal.getValue().getFloatValue();
+					else {
+						value = Float.NaN;
+					}
+					String val;
+					if(Float.isNaN(value))
+						val = td.nanValue;
+					else {
+						if(td.trans != null)
+							value = HumanReadableValueConverter.getHumanValue(value, td.trans);
+						if(pconfig.locale != null)
+								val = String.format(pconfig.locale, "%.3f", value);
+							else
+								val = String.format("%.3f", value);
+					}
+					vals.add(val);
+				}
+				writeCSVMultiLine(writer, curTime, pconfig.date, vals);
+				curTime = nextTime;
+				nextTime += stepSize;
+			}
+			writer.flush();
+		}
+		
+		Path pathInZipfile = zipfs.getPath("/" + filename);          
+		// copy a file into the zip file
+		Files.move(path, pathInZipfile, StandardCopyOption.REPLACE_EXISTING );
+	}
+
+	protected static class GeneralConfigCSVExport {
+		Locale locale = null;
+		SimpleDateFormat date = null;
+		boolean fixStepMinute;
+	}
+	protected static GeneralConfigCSVExport getGeneralConfig(String formatId,
+			ChartExportConfig configRes) {
+		GeneralConfigCSVExport result = new GeneralConfigCSVExport();
+		if(configRes != null && configRes.exportGermanExcelCSV().getValue())
+			result.locale = Locale.GERMANY;
+		else if(formatId != null && formatId.contains("DE"))
+			result.locale = Locale.GERMANY;
+		else result.locale = null;
+		//TODO: Support also other fixed steps and interpolation / averaging
+		result.fixStepMinute = (formatId != null) && formatId.contains("FIXmm");
+		
+		//SimpleDateFormat date = null;
+		if(configRes != null && configRes.timeStampFormat().getValue() != null && (!configRes.timeStampFormat().getValue().isEmpty())) {
+			if(result.locale != null)
+				result.date = new SimpleDateFormat(configRes.timeStampFormat().getValue(), result.locale);
+			else
+				result.date = new SimpleDateFormat(configRes.timeStampFormat().getValue());			
+		} else if(formatId != null && formatId.contains("#TS#")) {
+			String[] els = formatId.split("#TS#");
+			if(els.length == 3) {
+				String dateFormat = els[1];
+				if(result.locale != null)
+					result.date = new SimpleDateFormat(dateFormat, result.locale);
+				else
+					result.date = new SimpleDateFormat(dateFormat);
+			}
+		}
+		return result;
+	}
+	
+	protected static void toCsvFile(Iterator<SampledValue> values, Path path, String formatId,
+			ChartExportConfig configRes,
+			LinearTransformation trans) throws IOException {
+		GeneralConfigCSVExport pconfig = getGeneralConfig(formatId, configRes);
+		/*final Locale locale;
+		//final boolean celsius = (formatId != null) && formatId.contains("CELSIUS");
+		if(configRes != null && configRes.exportGermanExcelCSV().getValue())
+			locale = Locale.GERMANY;
+		else if(formatId != null && formatId.contains("DE"))
+			locale = Locale.GERMANY;
 		else locale = null;
 		//TODO: Support also other fixed steps and interpolation / averaging
 		final boolean fixStepMinute = (formatId != null) && formatId.contains("FIXmm");
 		
 		SimpleDateFormat date = null;
-		if(formatId != null && formatId.contains("#TS#")) {
+		if(configRes != null && configRes.timeStampFormat().getValue() != null && (!configRes.timeStampFormat().getValue().isEmpty())) {
+			if(locale != null)
+				date = new SimpleDateFormat(configRes.timeStampFormat().getValue(), locale);
+			else
+				date = new SimpleDateFormat(configRes.timeStampFormat().getValue());			
+		} else if(formatId != null && formatId.contains("#TS#")) {
 			String[] els = formatId.split("#TS#");
 			if(els.length == 3) {
 				String dateFormat = els[1];
@@ -580,7 +796,7 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 				else
 					date = new SimpleDateFormat(dateFormat);
 			}
-		}
+		}*/
 		try (final Writer writer = new BufferedWriter(new FileWriter(path.toFile()))) {
 			SampledValue sv;
 			String lastVal = null;
@@ -594,25 +810,27 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 					return;
 				}
 				final float value;
-				if(celsius) value = sv.getValue().getFloatValue() - 273.15f;
-				else value = sv.getValue().getFloatValue();
+				if(trans != null)
+					value = HumanReadableValueConverter.getHumanValue(sv.getValue().getFloatValue(), trans);
+				else
+					value = sv.getValue().getFloatValue();
 				final String val;
-				if(locale != null) val = String.format(locale, "%.3f", value);
+				if(pconfig.locale != null) val = String.format(pconfig.locale, "%.3f", value);
 				else val = String.format("%.3f", value);
 				
-				if(fixStepMinute) {
+				if(pconfig.fixStepMinute) {
 					if(writeTimeStamp == null) {
 						writeTimeStamp = sv.getTimestamp()-60000l;
 						lastVal = val;
 					}
 					nextTimeStamp = sv.getTimestamp();
 					while(writeTimeStamp < nextTimeStamp) {
-						writeCSVLine(writer, writeTimeStamp, date, lastVal);
+						writeCSVLine(writer, writeTimeStamp, pconfig.date, lastVal);
 						writeTimeStamp += 60000l;
 					}
 					lastVal = val;
 				} else {
-					writeCSVLine(writer, sv.getTimestamp(), date, val);
+					writeCSVLine(writer, sv.getTimestamp(), pconfig.date, val);
 				}
 			}
 			writer.flush();
@@ -625,6 +843,20 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 			writer.write(timeStamp + ";" + val + "\n");
 		else
 			writer.write(date.format(new Date(timeStamp)) + ";" + val + "\n");			
+	}
+	protected static void writeCSVMultiLine(Writer writer, long timeStamp, SimpleDateFormat date, List<String> vals)
+			throws IOException {
+		String line;
+		if(timeStamp < 0)
+			line = "Time";
+		else if(date == null)
+			line = ""+timeStamp;
+		else
+			line = date.format(new Date(timeStamp));
+		for(String val: vals) {
+			line += ";" + val;
+		}
+		writer.write(line+"\n");
 	}
 	
 	protected static void toJSONFile(Iterator<SampledValue> values, Path path,String name) throws IOException {
