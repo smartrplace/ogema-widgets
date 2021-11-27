@@ -20,11 +20,11 @@ import java.util.Map;
 import org.ogema.core.model.simple.SingleValueResource;
 import org.ogema.core.timeseries.ReadOnlyTimeSeries;
 import org.ogema.core.timeseries.TimeSeries;
+import org.ogema.humread.valueconversion.SchedulePresentationData;
 
 import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
 import de.iwes.widgets.html.plot.api.PlotType;
 import de.iwes.widgets.reswidget.scheduleplot.api.ScheduleData;
-import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
 
 public class GenericScheduleData extends ScheduleData<GenericDataset> {
 

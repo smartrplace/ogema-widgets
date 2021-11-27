@@ -51,6 +51,7 @@ import org.ogema.core.model.schedule.Schedule;
 import org.ogema.core.recordeddata.RecordedData;
 import org.ogema.core.security.WebAccessManager;
 import org.ogema.core.timeseries.ReadOnlyTimeSeries;
+import org.ogema.humread.valueconversion.SchedulePresentationData;
 import org.ogema.tools.resource.util.ResourceUtils;
 import org.ogema.tools.timeseries.implementations.TreeTimeSeries;
 import org.osgi.framework.FrameworkUtil;
@@ -74,7 +75,6 @@ import de.iwes.widgets.html.form.button.Button;
 import de.iwes.widgets.html.form.label.Label;
 import de.iwes.widgets.html.schedulemanipulator.ScheduleRowTemplate;
 import de.iwes.widgets.resource.timeseries.OnlineTimeSeries;
-import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
 import de.iwes.widgets.reswidget.scheduleviewer.api.TimeSeriesFilterExtended;
 
 // FIXME avoid creation of temp files?

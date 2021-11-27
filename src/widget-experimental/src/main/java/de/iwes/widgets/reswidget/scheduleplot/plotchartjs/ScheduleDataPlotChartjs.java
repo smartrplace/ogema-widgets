@@ -100,6 +100,11 @@ public class ScheduleDataPlotChartjs extends ScheduleData<ChartjsDataSet> {
 					continue;
 				try {
 					value = last.getValue().getFloatValue();
+					if (yminFilter != null && value < yminFilter)
+						continue;
+					if (ymaxFilter != null && value > ymaxFilter)
+						continue;
+					value = value * scale + offset;
 				} catch (Exception e) {  // all relevant Values can be converted to float
 					continue;
 				}

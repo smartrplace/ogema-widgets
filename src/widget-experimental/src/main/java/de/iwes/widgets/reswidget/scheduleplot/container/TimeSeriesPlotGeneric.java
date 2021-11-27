@@ -22,7 +22,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import org.ogema.humread.valueconversion.SchedulePresentationData;
 import org.ogema.tools.resource.util.ResourceUtils;
+
 import de.iwes.widgets.api.extended.html.bricks.PageSnippet;
 import de.iwes.widgets.api.widgets.OgemaWidget;
 import de.iwes.widgets.api.widgets.WidgetPage;
@@ -33,7 +35,6 @@ import de.iwes.widgets.html.plot.api.Plot2DConfiguration;
 import de.iwes.widgets.html.plot.api.Plot2DConfiguration.AxisType;
 import de.iwes.widgets.reswidget.scheduleplot.api.TimeSeriesPlot;
 import de.iwes.widgets.reswidget.scheduleplot.plotchartjs.SchedulePlotChartjs;
-import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
 
 public class TimeSeriesPlotGeneric extends PageSnippet implements TimeSeriesPlot<Plot2DConfiguration, GenericDataset, GenericScheduleData> {
 

@@ -17,6 +17,8 @@ package de.iwes.widgets.reswidget.scheduleplot.c3;
 
 import java.util.Map;
 
+import org.ogema.humread.valueconversion.SchedulePresentationData;
+
 import de.iwes.widgets.api.widgets.OgemaWidget;
 import de.iwes.widgets.api.widgets.WidgetPage;
 import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
@@ -27,7 +29,6 @@ import de.iwes.widgets.html.plotc3.PlotC3;
 import de.iwes.widgets.html.plotc3.PlotC3Options;
 import de.iwes.widgets.reswidget.scheduleplot.api.ScheduleData;
 import de.iwes.widgets.reswidget.scheduleplot.api.TimeSeriesPlot;
-import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
 
 public class SchedulePlotC3 extends PlotC3 implements TimeSeriesPlot<C3ChartConfiguration, C3DataSet, ScheduleDataC3>{
 

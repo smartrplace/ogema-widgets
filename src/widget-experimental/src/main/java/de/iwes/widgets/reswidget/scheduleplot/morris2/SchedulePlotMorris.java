@@ -17,6 +17,8 @@ package de.iwes.widgets.reswidget.scheduleplot.morris2;
 
 import java.util.Map;
 
+import org.ogema.humread.valueconversion.SchedulePresentationData;
+
 import de.iwes.widgets.api.widgets.OgemaWidget;
 import de.iwes.widgets.api.widgets.WidgetPage;
 import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
@@ -27,7 +29,6 @@ import de.iwes.widgets.html.plotmorris.PlotMorris;
 import de.iwes.widgets.html.plotmorris.PlotMorrisOptions;
 import de.iwes.widgets.reswidget.scheduleplot.api.ScheduleData;
 import de.iwes.widgets.reswidget.scheduleplot.api.TimeSeriesPlot;
-import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
 
 public class SchedulePlotMorris extends PlotMorris implements TimeSeriesPlot<MorrisChartConfiguration, MorrisDataSet, ScheduleDataMorris>{
 

@@ -18,6 +18,8 @@ package de.iwes.widgets.reswidget.scheduleplot.plotchartjs;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.ogema.humread.valueconversion.SchedulePresentationData;
+
 import com.google.common.cache.Cache;
 
 import de.iwes.widgets.api.widgets.OgemaWidget;
@@ -32,7 +34,6 @@ import de.iwes.widgets.reswidget.scheduleplot.api.DefaultMaxValuesSupplier;
 import de.iwes.widgets.reswidget.scheduleplot.api.MaxValBuffer;
 import de.iwes.widgets.reswidget.scheduleplot.api.ScheduleData;
 import de.iwes.widgets.reswidget.scheduleplot.api.TimeSeriesPlot;
-import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
 
 public class SchedulePlotChartjs extends PlotChartjs implements TimeSeriesPlot<ChartjsConfiguration, ChartjsDataSet, ScheduleDataPlotChartjs> {
 

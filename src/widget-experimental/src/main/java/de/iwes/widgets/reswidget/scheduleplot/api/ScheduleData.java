@@ -26,21 +26,20 @@ import org.ogema.core.channelmanager.measurements.Quality;
 import org.ogema.core.channelmanager.measurements.SampledValue;
 import org.ogema.core.model.schedule.Schedule;
 import org.ogema.core.model.simple.SingleValueResource;
-import org.ogema.core.model.units.PercentageResource;
-import org.ogema.core.model.units.TemperatureResource;
 import org.ogema.core.timeseries.InterpolationMode;
 import org.ogema.core.timeseries.ReadOnlyTimeSeries;
 import org.ogema.core.timeseries.TimeSeries;
+import org.ogema.humread.valueconversion.HumanReadableValueConverter;
+import org.ogema.humread.valueconversion.HumanReadableValueConverter.LinearTransformation;
+import org.ogema.humread.valueconversion.SchedulePresentationData;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
-import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
 import de.iwes.widgets.html.plot.api.Plot2DDataSet;
 import de.iwes.widgets.html.plot.api.PlotType;
 import de.iwes.widgets.reswidget.scheduleviewer.DefaultSchedulePresentationData;
-import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
 
 public abstract class ScheduleData<D extends Plot2DDataSet> {
 
@@ -281,11 +280,12 @@ public abstract class ScheduleData<D extends Plot2DDataSet> {
 //					long time = (long) result[0];
 
 			}
-			Class<?> type = schedule.getScheduleType();
-			if (type == TemperatureResource.class)
+			//Class<?> type = schedule.getScheduleType();
+			maxVal = HumanReadableValueConverter.getHumanValue(maxVal, schedule);
+			/*if (type == TemperatureResource.class)
 				maxVal = maxVal - 273.15F;
 			else if(type == PercentageResource.class)
-				maxVal = 100f*maxVal;
+				maxVal = 100f*maxVal;*/
 			maxValues.put(key, maxVal);
 			if ((overallMax < maxVal) && (!Float.isNaN(maxVal))) {
 				overallMax = maxVal;
@@ -301,7 +301,10 @@ public abstract class ScheduleData<D extends Plot2DDataSet> {
 //				ReadOnlyTimeSeries schedule = handleTemperatureSchedules(entry.getValue(), entry.getValue().getScheduleType());
 			key = entry.getKey();
 			schedule = entry.getValue();
-			if (schedule.getScheduleType() == TemperatureResource.class) {
+			LinearTransformation trans = HumanReadableValueConverter.getTransformation(schedule);
+			scale = trans.scale;
+			offset = trans.offset;
+			/*if (schedule.getScheduleType() == TemperatureResource.class) {
 				offset = -273.15F;
 				scale = 1.0F;
 			} else if (schedule.getScheduleType() == Float.class && schedule.getLabel(OgemaLocale.ENGLISH).toLowerCase().contains("temperature")) {
@@ -313,7 +316,7 @@ public abstract class ScheduleData<D extends Plot2DDataSet> {
 			} else {
 				offset = 0;
 				scale = 1;
-			}
+			}*/
 			final String id;
 			final ScheduleSettings settings = getInidividualConfigInternal(key, req);
 			if (settings != null) {
@@ -338,16 +341,20 @@ public abstract class ScheduleData<D extends Plot2DDataSet> {
 					String scaleName;
 					if(maxRatio < 100) {
 						scaleName = "x10";
-						scale = 10;
+						scale *= 10;
+						offset *= 10;
 					} else if(maxRatio < 1000) {
 						scaleName = "x100";
-						scale = 100;
+						scale *= 100;
+						offset *= 100;
 					} else if(maxRatio < 10000) {
 						scaleName = "x1000";
-						scale = 1000;
+						scale *= 1000;
+						offset *= 1000;
 					} else {
 						scaleName = "x1e4";
-						scale = 10000;
+						scale *= 10000;
+						offset *= 10000;
 					}
 					id = Utils.getValidJSName(key+scaleName);
 //						ReadOnlyTimeSeries scaledSchedule = ScheduleHelper.affineTransformation(schedule, scale, 0);

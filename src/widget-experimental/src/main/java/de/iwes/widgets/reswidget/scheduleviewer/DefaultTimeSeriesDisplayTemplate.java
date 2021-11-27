@@ -19,12 +19,12 @@ import org.ogema.core.model.Resource;
 import org.ogema.core.model.schedule.Schedule;
 import org.ogema.core.recordeddata.RecordedData;
 import org.ogema.core.timeseries.ReadOnlyTimeSeries;
+import org.ogema.humread.valueconversion.SchedulePresentationData;
 import org.ogema.tools.resource.util.ResourceUtils;
 
 import de.iwes.widgets.api.services.NameService;
 import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 import de.iwes.widgets.resource.timeseries.OnlineTimeSeries;
-import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
 import de.iwes.widgets.template.DisplayTemplate;
 import de.iwes.widgets.template.LabelledItem;
 

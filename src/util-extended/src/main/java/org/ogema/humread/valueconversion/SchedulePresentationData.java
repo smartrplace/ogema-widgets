@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.iwes.widgets.reswidget.scheduleviewer.api;
+package org.ogema.humread.valueconversion;
 
 import org.ogema.core.timeseries.ReadOnlyTimeSeries;
 
 import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
-import de.iwes.widgets.reswidget.scheduleviewer.DefaultSchedulePresentationData;
 
 /**
  * Type used for presentation of time series in a {@link ScheduleViewer} widget,

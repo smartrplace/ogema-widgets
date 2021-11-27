@@ -15,9 +15,7 @@
  */
 package de.iwes.widgets.reswidget.scheduleviewer;
 
-import java.util.Collection;
 import java.util.OptionalLong;
-import java.util.function.LongSupplier;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 

@@ -35,6 +35,7 @@ import org.ogema.core.model.schedule.AbsoluteSchedule;
 import org.ogema.core.model.simple.SingleValueResource;
 import org.ogema.core.recordeddata.RecordedData;
 import org.ogema.core.resourcemanager.AccessPriority;
+import org.ogema.humread.valueconversion.SchedulePresentationData;
 import org.ogema.model.locations.Room;
 import org.ogema.model.sensors.Sensor;
 import org.ogema.model.sensors.TemperatureSensor;
@@ -59,7 +60,6 @@ import de.iwes.widgets.pattern.widget.table.ContextPatternTable;
 import de.iwes.widgets.reswidget.scheduleplot.flot.ScheduleDataFlot;
 import de.iwes.widgets.reswidget.scheduleplot.flot.SchedulePlotFlot;
 import de.iwes.widgets.reswidget.scheduleviewer.DefaultSchedulePresentationData;
-import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
 
 public class RoomDetailsPageBuilder {
 	

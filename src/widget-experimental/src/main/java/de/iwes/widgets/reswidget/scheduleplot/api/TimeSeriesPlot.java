@@ -17,11 +17,12 @@ package de.iwes.widgets.reswidget.scheduleplot.api;
 
 import java.util.Map;
 
+import org.ogema.humread.valueconversion.SchedulePresentationData;
+
 import de.iwes.widgets.api.widgets.OgemaWidget;
 import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
 import de.iwes.widgets.html.plot.api.Plot2DConfiguration;
 import de.iwes.widgets.html.plot.api.Plot2DDataSet;
-import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
 
 public interface TimeSeriesPlot<C extends Plot2DConfiguration, D extends Plot2DDataSet,S extends ScheduleData<D>> extends OgemaWidget {
 

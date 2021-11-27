@@ -17,6 +17,7 @@ package org.ogema.model.gateway;
 
 import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.simple.StringResource;
+import org.ogema.model.chartexportconfig.ChartExportConfig;
 import org.ogema.model.prototypes.PhysicalElement;
 import org.smartrplace.apps.eval.timedjob.TimedJobConfig;
 
@@ -42,4 +43,6 @@ public interface LocalGatewayInformation extends PhysicalElement {
 	ResourceList<TimedJobConfig> timedJobs();
 	
 	StringResource initDoneStatus();
+	
+	ChartExportConfig chartExportConfig();
 }
