@@ -42,7 +42,7 @@ import de.iwes.widgets.reswidget.scheduleplot.container.SchedulePlotWidgetSelect
 import de.iwes.widgets.reswidget.scheduleplot.container.TimeSeriesPlotGeneric;
 import de.iwes.widgets.reswidget.scheduleviewer.DefaultSchedulePresentationData;
 import de.iwes.widgets.reswidget.scheduleviewer.DefaultTimeSeriesDisplayTemplate;
-import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
+import org.ogema.humread.valueconversion.SchedulePresentationData;
 
 @Component(
 		service=LazyWidgetPage.class,

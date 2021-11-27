@@ -22,6 +22,7 @@ import java.util.Map;
 import org.ogema.core.application.ApplicationManager;
 import org.ogema.core.timeseries.InterpolationMode;
 import org.ogema.core.timeseries.ReadOnlyTimeSeries;
+import org.ogema.humread.valueconversion.SchedulePresentationData;
 
 import de.iwes.timeseries.eval.api.SingleEvaluationResult;
 import de.iwes.timeseries.eval.api.SingleEvaluationResult.ArrayResult;
@@ -37,7 +38,6 @@ import de.iwes.widgets.html.plot.api.PlotType;
 import de.iwes.widgets.reswidget.scheduleviewer.DefaultSchedulePresentationData;
 import de.iwes.widgets.reswidget.scheduleviewer.DefaultTimeSeriesDisplayTemplate;
 import de.iwes.widgets.reswidget.scheduleviewer.ScheduleViewerBasic;
-import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
 import de.iwes.widgets.reswidget.scheduleviewer.api.ScheduleViewerConfiguration;
 import de.iwes.widgets.reswidget.scheduleviewer.api.ScheduleViewerConfigurationBuilder;
 import de.iwes.widgets.template.DisplayTemplate;

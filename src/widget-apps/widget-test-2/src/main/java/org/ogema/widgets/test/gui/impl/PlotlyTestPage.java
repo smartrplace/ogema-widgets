@@ -42,7 +42,7 @@ import de.iwes.widgets.html.plot.api.PlotType;
 import de.iwes.widgets.reswidget.scheduleplot.plotlyjs.SchedulePlotlyjs;
 import de.iwes.widgets.reswidget.scheduleviewer.DefaultSchedulePresentationData;
 import de.iwes.widgets.reswidget.scheduleviewer.DefaultTimeSeriesDisplayTemplate;
-import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
+import org.ogema.humread.valueconversion.SchedulePresentationData;
 import de.iwes.widgets.template.DisplayTemplate;
 
 @Component(

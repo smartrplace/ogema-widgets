@@ -46,7 +46,7 @@ import de.iwes.widgets.resource.timeseries.OnlineTimeSeriesCache;
 import de.iwes.widgets.resource.widget.autocomplete.ResourcePathAutocomplete;
 import de.iwes.widgets.reswidget.scheduleviewer.DefaultSchedulePresentationData;
 import de.iwes.widgets.reswidget.scheduleviewer.ScheduleViewerBasic;
-import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
+import org.ogema.humread.valueconversion.SchedulePresentationData;
 import de.iwes.widgets.reswidget.scheduleviewer.api.ScheduleViewerConfiguration;
 import de.iwes.widgets.reswidget.scheduleviewer.api.ScheduleViewerConfigurationBuilder;
 import de.iwes.widgets.template.DisplayTemplate;

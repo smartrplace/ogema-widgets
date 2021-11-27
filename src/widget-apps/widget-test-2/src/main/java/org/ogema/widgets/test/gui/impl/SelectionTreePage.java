@@ -55,7 +55,7 @@ import de.iwes.widgets.html.selectiontree.samples.resource.ResourceTimeSeriesOpt
 import de.iwes.widgets.html.selectiontree.samples.resource.RoomOptionResource;
 import de.iwes.widgets.reswidget.scheduleplot.flot.SchedulePlotFlot;
 import de.iwes.widgets.reswidget.scheduleviewer.DefaultSchedulePresentationData;
-import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
+import org.ogema.humread.valueconversion.SchedulePresentationData;
 
 @Component(
 		service=LazyWidgetPage.class,

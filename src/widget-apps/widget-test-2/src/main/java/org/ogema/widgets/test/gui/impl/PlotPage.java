@@ -41,7 +41,7 @@ import de.iwes.widgets.reswidget.scheduleplot.morris2.SchedulePlotMorris;
 import de.iwes.widgets.reswidget.scheduleplot.nvd3.SchedulePlotNvd3;
 import de.iwes.widgets.reswidget.scheduleplot.plotlyjs.SchedulePlotlyjs;
 import de.iwes.widgets.reswidget.scheduleviewer.DefaultSchedulePresentationData;
-import de.iwes.widgets.reswidget.scheduleviewer.api.SchedulePresentationData;
+import org.ogema.humread.valueconversion.SchedulePresentationData;
 
 @Component(
 		service=LazyWidgetPage.class,
