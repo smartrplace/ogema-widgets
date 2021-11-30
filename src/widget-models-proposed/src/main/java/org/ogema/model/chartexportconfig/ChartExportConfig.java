@@ -6,6 +6,10 @@ import org.ogema.core.model.simple.StringResource;
 import org.ogema.model.prototypes.Data;
 
 public interface ChartExportConfig extends Data {
+	/** If true in the download Section a button linking to the configuration page is shown.
+	 * If false the page has to be opened via the general configuration backend.*/
+	BooleanResource showConfigButton();
+
 	/** If true values are written with comma as decimal separator. Note that we always use semicolon as
 	 * CSV separator.*/
 	BooleanResource exportGermanExcelCSV();
@@ -41,6 +45,5 @@ public interface ChartExportConfig extends Data {
 
 	/** Value provided here is used as NaN value in the CSV export. The field can be empty then nothing will be
 	 * written between separators.*/
-	StringResource naNValue();
-	
+	StringResource naNValue();	
 }

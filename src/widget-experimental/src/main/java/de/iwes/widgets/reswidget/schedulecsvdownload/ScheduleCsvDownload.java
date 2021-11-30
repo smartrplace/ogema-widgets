@@ -78,6 +78,7 @@ import de.iwes.widgets.html.emptywidget.EmptyWidget;
 import de.iwes.widgets.html.filedownload.FileDownload;
 import de.iwes.widgets.html.filedownload.FileDownloadData;
 import de.iwes.widgets.html.form.button.Button;
+import de.iwes.widgets.html.form.button.RedirectButton;
 import de.iwes.widgets.html.form.label.Label;
 import de.iwes.widgets.html.schedulemanipulator.ScheduleRowTemplate;
 import de.iwes.widgets.resource.timeseries.OnlineTimeSeries;
@@ -97,6 +98,8 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 	
 	public final Button downloadCSVButton;
 	public final Button downloadJSONButton;
+	public final Button csvConfigButton;
+	public final Label csvConfigLabel;
 	protected final Label nrItemsLabel;
 	protected final Datepicker startPicker;
 	protected final Datepicker endPicker;
@@ -243,13 +246,41 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 	
 		};
 		this.download = new FileDownload(page, id + "_download", wam);
+		this.csvConfigButton = new RedirectButton(page, id+"csvConfigButton", "CSV Configuration",
+				"/de/iwes/tools/schedule/viewer-basic-example/chartconfigPage.html") {
+			private static final long serialVersionUID = 1502462320343388254L;
+			
+			@Override
+			public void onGET(OgemaHttpRequest req) {
+				if (!configRes.showConfigButton().getValue())
+					setWidgetVisibility(false, req);
+				else 
+					setWidgetVisibility(true, req);
+			}
+			
+			@Override
+			public void onPrePOST(String data, OgemaHttpRequest req) {
+				dataWidget.getData(req).buttonPressed = ScheduleCsvDownload.JSON;
+			}
+		};
+		this.csvConfigLabel = new Label(page, id+"csvConfigLabel", "CSV Download Configuration Page") {
+			private static final long serialVersionUID = -2738979445650418439L;
+			
+			@Override
+			public void onGET(OgemaHttpRequest req) {
+				if (!configRes.showConfigButton().getValue())
+					setWidgetVisibility(false, req);
+				else 
+					setWidgetVisibility(true, req);
+			}
+		};
 		buildWidget();
 		setDependencies();
 	}
 	
 	public void buildWidget() {
 		if(showUserInput) {
-			StaticTable tab = new StaticTable(4, 2, new int[] {3,3});
+			StaticTable tab = new StaticTable(5, 2, new int[] {3,3});
 			try {
 				AccessController.doPrivileged(new PrivilegedExceptionAction<Void>() {
 					public Void run() throws Exception {;
@@ -258,6 +289,9 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 						.setContent(2, 0, System.getProperty("org.ogema.app.timeseries.viewer.expert.gui.csvdownloadendtime", "Select end time")).setContent(2, 1, endPicker)
 						.setContent(3, 0, downloadCSVButton).setContent(3, 1, downloadJSONButton);
 					ScheduleCsvDownload.this.append(tab, null).linebreak(null).append(download, null);
+					//if(configRes.showConfigButton().getValue()) {
+					tab.setContent(4,  0, csvConfigLabel).setContent(4, 1, csvConfigButton);
+					//}
 					return null;
 					}
 				});
