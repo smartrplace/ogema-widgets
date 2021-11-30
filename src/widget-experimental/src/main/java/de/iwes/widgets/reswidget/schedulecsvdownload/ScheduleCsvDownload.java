@@ -686,11 +686,13 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 				td.nanValue = configRes.naNValue().getValue();
 				tsData.add(td);
 				if(rd instanceof SchedulePresentationData)
-					labels.add(((SchedulePresentationData)rd).getLabel(null));
+					labels.add(((SchedulePresentationData)rd).getID());
+				else
+					labels.add("");
 			}
-			writeCSVMultiLine(writer, -1, pconfig.date, ids);
-			if(configRes.addLabels().getValue())
-				writeCSVMultiLine(writer, -1, pconfig.date, labels);
+			writeCSVMultiLine(writer, "Label", pconfig.date, ids);
+			if(configRes.addIDLine().getValue())
+				writeCSVMultiLine(writer, "ID", pconfig.date, labels);
 	
 			long curTime = start;
 			long nextTime = start + stepSize;
@@ -880,13 +882,18 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 	}
 	protected static void writeCSVMultiLine(Writer writer, long timeStamp, SimpleDateFormat date, List<String> vals)
 			throws IOException {
-		String line;
+		final String line;
 		if(timeStamp < 0)
 			line = "Time";
 		else if(date == null)
 			line = ""+timeStamp;
 		else
 			line = date.format(new Date(timeStamp));
+		writeCSVMultiLine(writer, line, date, vals);
+	}
+	protected static void writeCSVMultiLine(Writer writer, String timeStamp, SimpleDateFormat date, List<String> vals)
+			throws IOException {
+		String line = timeStamp;
 		for(String val: vals) {
 			line += ";" + val;
 		}

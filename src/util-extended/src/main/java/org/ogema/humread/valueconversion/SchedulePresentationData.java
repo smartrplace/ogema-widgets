@@ -47,4 +47,5 @@ public interface SchedulePresentationData extends ReadOnlyTimeSeries {
 	 */
 	Class<?> getScheduleType();
 	
+	String getID();
 }

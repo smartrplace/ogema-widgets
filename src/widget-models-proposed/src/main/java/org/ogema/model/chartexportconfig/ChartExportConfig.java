@@ -29,7 +29,7 @@ public interface ChartExportConfig extends Data {
 	FloatResource fixedTimeStepSeconds();
 	
 	/** If true a separate line is added with labels of time series in addition to locations*/
-	BooleanResource addLabels();
+	BooleanResource addIDLine();
 	
 	/** TODO: Currently this is fixed true if less than 3 values are in the range. If more valued are in the range than averaging is performed
 	 * without interpolation. 
