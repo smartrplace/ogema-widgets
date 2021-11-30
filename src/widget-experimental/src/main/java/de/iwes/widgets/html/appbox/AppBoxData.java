@@ -30,8 +30,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.ogema.core.administration.AdminApplication;
 import org.ogema.core.administration.AdministrationManager;
+import org.ogema.core.resourcemanager.ResourceAccess;
+import org.ogema.tools.app.useradmin.config.UserAdminData;
 import org.osgi.framework.Bundle;
 
+import de.iwes.util.resource.ResourceHelper;
 import de.iwes.widgets.api.extended.WidgetData;
 import de.iwes.widgets.api.extended.util.UserLocaleUtil;
 import de.iwes.widgets.api.widgets.dynamics.TriggeredAction;
@@ -251,10 +254,16 @@ public class AppBoxData extends WidgetData {
 		
 	}
 	
-	public static String getLinkByProperties(String baseLink) {
+	public static String getLinkByProperties(String baseLink, ResourceAccess resAcc) {
 		Map<String, String> userKeys = new HashMap<>();
-		String allKey = System.getProperty("org.ogema.apps.dash.allkey");
-		if(allKey == null)
+		String allKey = null;
+		UserAdminData ud = ResourceHelper.getTopLevelResource(UserAdminData.class, resAcc);
+		if(ud != null) {
+			allKey = ud.ssik_facilityDeepLink().getValue();
+		}
+		if(allKey == null || allKey.isEmpty())
+			allKey = System.getProperty("org.ogema.apps.dash.allkey");
+		if(allKey == null || allKey.isEmpty())
 			return "/"+baseLink;
 		//TODO: Also define user-specific properties
 		userKeys.put("all", allKey);

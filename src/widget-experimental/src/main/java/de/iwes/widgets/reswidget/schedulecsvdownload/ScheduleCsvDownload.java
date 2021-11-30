@@ -252,7 +252,7 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 			
 			@Override
 			public void onGET(OgemaHttpRequest req) {
-				if (!configRes.showConfigButton().getValue())
+				if((configRes == null) || (!configRes.showConfigButton().getValue()))
 					setWidgetVisibility(false, req);
 				else 
 					setWidgetVisibility(true, req);
@@ -268,7 +268,7 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 			
 			@Override
 			public void onGET(OgemaHttpRequest req) {
-				if (!configRes.showConfigButton().getValue())
+				if((configRes == null) || (!configRes.showConfigButton().getValue()))
 					setWidgetVisibility(false, req);
 				else 
 					setWidgetVisibility(true, req);
@@ -289,9 +289,7 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 						.setContent(2, 0, System.getProperty("org.ogema.app.timeseries.viewer.expert.gui.csvdownloadendtime", "Select end time")).setContent(2, 1, endPicker)
 						.setContent(3, 0, downloadCSVButton).setContent(3, 1, downloadJSONButton);
 					ScheduleCsvDownload.this.append(tab, null).linebreak(null).append(download, null);
-					//if(configRes.showConfigButton().getValue()) {
 					tab.setContent(4,  0, csvConfigLabel).setContent(4, 1, csvConfigButton);
-					//}
 					return null;
 					}
 				});
