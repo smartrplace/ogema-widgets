@@ -665,6 +665,8 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 		if(Float.isNaN(stepSize) || stepSize <= 0)
 			stepSize = 60000;
 		long maxDistance = (long) (configRes.maxValidValueIntervalSeconds().getValue()*1000);
+		if(maxDistance == 0)
+			maxDistance = Long.MAX_VALUE;
 		GeneralConfigCSVExport pconfig = getGeneralConfig(null, configRes);
 		
 		List<String> labels = new ArrayList<>();
@@ -734,7 +736,7 @@ public class ScheduleCsvDownload<T extends ReadOnlyTimeSeries> extends PageSnipp
 					float value;
 					if(count > MAX_PER_MINDISTANCE) {
 						value = sum / count;
-					} else if(closest != null) {
+					} else if(closest != null && (Math.abs(closest.getTimestamp() - curTime) < maxDistance)) {
 						value = closest.getValue().getFloatValue();
 					} else if(Math.abs(td.lastVal.getTimestamp() - curTime) < maxDistance)
 						value = td.lastVal.getValue().getFloatValue();
