@@ -209,6 +209,8 @@ public class GaRoEvalHelper {
 	
 	@SuppressWarnings("unchecked")
 	public static GaRoDataType getDataType(String recId) {
+		if(recId.endsWith("_gap"))
+			return GaRoDataType.GAP;
 		Object recSnippetsTouse = OGEMAConfigurations.getObject(GaRoDataType.class.getName(), "%recSnippets");
 		if(recSnippetsTouse != null && recSnippetsTouse instanceof Map) {
 			for(Entry<String, RecIdVal> e: ((Map<String, RecIdVal>)recSnippetsTouse).entrySet()) {

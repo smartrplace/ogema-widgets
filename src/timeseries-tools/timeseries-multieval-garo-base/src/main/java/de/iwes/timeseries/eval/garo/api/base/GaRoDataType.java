@@ -549,6 +549,9 @@ public class GaRoDataType implements GaRoDataTypeI {
 	public static final GaRoDataType KPI_DURATION = new GaRoDataType("Duration",
 			TimeResource.class);
 	
+	public static final GaRoDataType GAP = new GaRoDataType("GapEvaluation",
+			FloatResource.class);
+
 	//General
 	public static final GaRoDataType Internal = new GaRoDataType("Internal",
 			SingleValueResource.class);
