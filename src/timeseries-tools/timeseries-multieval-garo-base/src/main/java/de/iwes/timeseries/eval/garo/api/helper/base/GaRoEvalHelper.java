@@ -266,6 +266,8 @@ public class GaRoEvalHelper {
 
 		if(recId.contains("/apparentEnergy/reading")) return GaRoDataType.ApparentEnergy;
 		if(recId.contains("/apparentPower/reading")) return GaRoDataType.ApparentPower;
+		if(recId.contains("/apparentEnergySensor/reading")) return GaRoDataType.ApparentEnergy;
+		if(recId.contains("/apparentPowerSensor/reading")) return GaRoDataType.ApparentPower;
 		
 		if(recId.contains("/powerSensor/reading")) return GaRoDataType.PowerMeterOutlet;
 		if(recId.contains("/reactivePowerSensor/reading")) return GaRoDataType.ReactivePowerMeterOutlet;
@@ -369,6 +371,7 @@ public class GaRoEvalHelper {
 		
 		if(recId.contains("/energyDaily/reading")) return GaRoDataType.EnergyDaily;
 		if(recId.contains("/energyMonthly/reading")) return GaRoDataType.EnergyMonthly;
+		if(recId.contains("/energyYearly/reading")) return GaRoDataType.EnergyYearly;
 		if(recId.contains("/energyDailyAccumulatedFull/reading")) return GaRoDataType.EnergyDailyAccumulatedFull;
 		if(recId.contains("/energyReactiveDaily/reading")) return GaRoDataType.EnergyReactiveDaily;
 		if(recId.contains("/energyAccumulatedDaily/reading")) return GaRoDataType.EnergyDailyAccumulated;
