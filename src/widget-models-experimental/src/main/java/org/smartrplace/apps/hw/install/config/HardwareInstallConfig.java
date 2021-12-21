@@ -22,6 +22,7 @@ import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.connections.ElectricityConnection;
 import org.ogema.model.extended.alarming.DevelopmentTask;
+import org.ogema.model.metering.ElectricityMeter;
 import org.ogema.model.prototypes.Configuration;
 import org.ogema.model.prototypes.Data;
 import org.ogema.model.sensors.VolumeAccumulatedSensor;
@@ -87,6 +88,7 @@ public interface HardwareInstallConfig extends Data {
 	TimeResource basicEvalInterval();
 	
 	ElectricityConnection mainMeter();
+	ElectricityMeter mainMeterAsElMeter();
 	VolumeAccumulatedSensor mainGasMeter();
 	
 	/** Note that for some changes to take effect a system restart is necessary as pages have to be added/
