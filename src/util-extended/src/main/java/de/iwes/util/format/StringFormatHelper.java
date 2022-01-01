@@ -165,9 +165,14 @@ public class StringFormatHelper {
 	/**Get standard date and time representation to be used as a file or directory name
 	 * @return representation based on current framework time*/
 	public static String getCurrentDateForPath(ApplicationManager appMan) {
-    	Date date = new Date(appMan.getFrameworkTime());
+	   	long curTime = appMan.getFrameworkTime();
+	   	return getCurrentDateForPath(curTime);
+	}
+	public static String getCurrentDateForPath(long curTime) {
+ 		Date date = new Date(curTime);
     	DateFormat formatter = new SimpleDateFormat("YYYY-MM-dd-HH-mm-ss");
     	String strDate = formatter.format(date);
+System.out.println("Converted "+curTime+" to "+strDate+" via YYYY-MM-dd-HH-mm-ss");
     	return strDate;
 	}
 	/**Get standard date and time representation to be used as a file or directory name
