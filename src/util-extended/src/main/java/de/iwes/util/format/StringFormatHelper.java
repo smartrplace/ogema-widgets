@@ -137,23 +137,23 @@ public class StringFormatHelper {
 	/**See {@link getTimeOfDayInLocalTimeZone}.*/
 	public static String getFullTimeDateInLocalTimeZone(long millisUTCSinceEpoc) {
 		//Date date = new Date(millisUTCSinceEpoc-100);
-		DateFormat formatter = new SimpleDateFormat("dd.MM.YYYY HH:mm:ss:SSS");
+		DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss:SSS");
 		return formatter.format(millisUTCSinceEpoc);
 	}
 	public static String getTimeDateInLocalTimeZone(long millisUTCSinceEpoc) {
 		//Date date = new Date(millisUTCSinceEpoc-100);
-		DateFormat formatter = new SimpleDateFormat("dd.MM.YYYY HH:mm:ss");
+		DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 		return formatter.format(millisUTCSinceEpoc);
 	}
 	/**Get string date representation for an absolute time value.
 	 * See {@link TimeUtils} for more flexible methods
 	 * to get absolute time values as Strings.
 	 * @param millisUTCSinceEpoc time to be printed
-	 * @return String representation in the format dd.MM.YYYY
+	 * @return String representation in the format dd.MM.yyyy
 	 */
 	public static String getDateInLocalTimeZone(long millisUTCSinceEpoc) {
 		//Date date = new Date(millisUTCSinceEpoc-100);
-		DateFormat formatter = new SimpleDateFormat("dd.MM.YYYY");
+		DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
 		return formatter.format(millisUTCSinceEpoc);
 	}
 	
@@ -170,16 +170,15 @@ public class StringFormatHelper {
 	}
 	public static String getCurrentDateForPath(long curTime) {
  		Date date = new Date(curTime);
-    	DateFormat formatter = new SimpleDateFormat("YYYY-MM-dd-HH-mm-ss");
+    	DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
     	String strDate = formatter.format(date);
-System.out.println("Converted "+curTime+" to "+strDate+" via YYYY-MM-dd-HH-mm-ss");
     	return strDate;
 	}
 	/**Get standard date and time representation to be used as a file or directory name
 	 * @return representation based on current framework time*/
 	public static String getDateForPath(long timeStamp) {
     	Date date = new Date(timeStamp);
-    	DateFormat formatter = new SimpleDateFormat("YYYY-MM-dd-HH-mm-ss");
+    	DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
     	String strDate = formatter.format(date);
     	return strDate;
 	}
