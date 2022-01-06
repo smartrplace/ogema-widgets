@@ -168,7 +168,7 @@ public class Datepicker extends OgemaWidgetBase<DatepickerData> {
 	public String getDefaultFormat() {
 		return defaultFormat;
 	}
-	/** Set date and time format to be used. If not set the format YYYY-MM-DD HH:mm:ss is used*/
+	/** Set date and time format to be used. If not set the format YYYY-MM-DD HH:mm:ss is used (Javascript format)*/
 	public void setDefaultFormat(String defaultFormat) {
 		this.defaultFormat = defaultFormat;
 	}
