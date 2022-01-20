@@ -36,14 +36,12 @@ import org.ogema.apps.simulation.gui.configuration.ConfigModal;
 import org.ogema.apps.simulation.gui.configuration.CreateModal;
 import org.ogema.apps.simulation.gui.configuration.PlotsModal;
 import org.ogema.apps.simulation.gui.configuration.SimQuModal;
-import org.ogema.apps.simulation.gui.plots.GrafanaServletUpdater;
 import org.ogema.apps.simulation.gui.speed.SimulationFactorListener;
 import org.ogema.apps.simulation.gui.speed.SimulationFactorPattern;
 import org.ogema.apps.simulation.gui.templates.SimulatedDeviceRowTemplate;
 import org.ogema.apps.simulation.gui.templates.SimulationAccordionItem;
 import org.ogema.core.application.Application;
 import org.ogema.core.application.ApplicationManager;
-import org.ogema.core.application.Timer;
 import org.ogema.core.logging.OgemaLogger;
 import org.ogema.core.resourcemanager.AccessPriority;
 import org.ogema.tools.grafana.base.InfluxFake;
@@ -80,7 +78,7 @@ public class SimulationsGUI implements Application {
     private long updateInterval = 5000;  // influx update interval 5s
     private long panelsUpdateInterval = 15000;
     private InfluxFake infl;
-    private Timer grafanaServletTimer;
+    //private Timer grafanaServletTimer;
     private String influxServlet;
     private Map<String,Map> individualPanels;
     private InfluxFake indInfl;
@@ -155,7 +153,7 @@ public class SimulationsGUI implements Application {
 //        System.out.println("   registered: " + indvidualInfluxServlet);
         
         
-        grafanaServletTimer = am.createTimer(panelsUpdateInterval, new GrafanaServletUpdater(providers, panels,individualPanels,am));
+       //grafanaServletTimer = am.createTimer(panelsUpdateInterval, new GrafanaServletUpdater(providers, panels,individualPanels,am));
 		infl.setPanels(panels);
 		indInfl.setPanels(individualPanels);
 		
@@ -179,9 +177,9 @@ public class SimulationsGUI implements Application {
         if (simListener != null)
         	simListener.close();
         simListener = null;
-        if (grafanaServletTimer != null)
-        	grafanaServletTimer.destroy();
-        grafanaServletTimer = null;
+        //if (grafanaServletTimer != null)
+        //	grafanaServletTimer.destroy();
+        //grafanaServletTimer = null;
         try {
         	infl.destroy();
         	infl = null;
