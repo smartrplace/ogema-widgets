@@ -3,6 +3,7 @@ package org.ogema.tools.app.useradmin.config;
 import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
+import org.ogema.model.action.Action;
 import org.ogema.model.prototypes.Data;
 import org.ogema.model.user.NaturalPerson;
 
@@ -20,4 +21,6 @@ public interface UserAdminData extends Data {
 	
 	/** Deeplink for the savings page of the gateway including ssik*/
 	StringResource ssik_facilityDeepLink();
+	
+	Action triggerUpdateFromCMS();
 }
