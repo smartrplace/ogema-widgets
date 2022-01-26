@@ -26,6 +26,7 @@ package de.iwes.util.logconfig;
 
 import java.util.List;
 
+import org.joda.time.chrono.IslamicChronology;
 import org.ogema.core.application.ApplicationManager;
 import org.ogema.core.channelmanager.measurements.SampledValue;
 import org.ogema.core.model.Resource;
@@ -40,6 +41,7 @@ import org.ogema.core.recordeddata.RecordedDataConfiguration.StorageType;
 import org.ogema.core.resourcemanager.pattern.ResourcePattern;
 import org.ogema.model.prototypes.PhysicalElement;
 import org.ogema.tools.resource.util.LoggingUtils;
+import org.ogema.tools.resource.util.ValueResourceUtils;
 import org.ogema.tools.resourcemanipulator.timer.CountDownDelayedExecutionTimer;
 import org.smartrplace.gateway.device.GatewayDevice;
 
@@ -177,6 +179,43 @@ public class LogHelper {
 		if(sv == null)
 			return null;
 		return sv.getValue().getFloatValue();
+	}
+	
+	/** Only writes to non-persistent resources that are NaN or zero.<br> 
+	 * This method stops logging before writing to avoid writing a datapoint when resetting the nonpersistent resource to
+	 * the previous value. This usually
+	 * is not intended if e.g. no data is received from the device
+	 * @param resource
+	 * @return
+	 */
+	public static Float setNonpersistentResourceWithLastLog(SingleValueResource resource) {
+		if(!resource.isNonpersistent())
+			return null;
+		float curVal = ValueResourceUtils.getFloatValue(resource);
+		if(!(Float.isNaN(curVal) || (curVal == 0)))
+			return curVal;
+		Float lastVal = getLastValue(resource);
+		if(lastVal != null && (lastVal != 0)) {
+			RecordedData rec = LoggingUtils.getHistoricalData(resource);
+			RecordedDataConfiguration config = rec.getConfiguration();
+			LoggingUtils.deactivateLogging(resource);
+			ValueResourceUtils.setValue(resource, (float)lastVal);
+			if(config != null)
+				rec.setConfiguration(config);
+		}
+		return lastVal;
+	}
+	
+	public static float getValueOrLastValue(SingleValueResource resource) {
+		float curVal = ValueResourceUtils.getFloatValue(resource);
+		if(!resource.isNonpersistent())
+			return curVal;
+		if(!(Float.isNaN(curVal) || (curVal == 0)))
+			return curVal;
+		Float lastVal = getLastValue(resource);
+		if(lastVal != null)
+			return lastVal;
+		return curVal;
 	}
 	
 	/** Log startup of a certain app
