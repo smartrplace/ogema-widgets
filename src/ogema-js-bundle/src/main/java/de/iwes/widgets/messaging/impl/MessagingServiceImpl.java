@@ -48,9 +48,12 @@ import org.slf4j.LoggerFactory;
 import de.iwes.widgets.api.messaging.Message;
 import de.iwes.widgets.api.messaging.listener.MessageListener;
 import de.iwes.widgets.api.services.MessagingService;
+import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 import de.iwes.widgets.messaging.MessageReader;
 import de.iwes.widgets.messaging.model.MessagingApp;
 import de.iwes.widgets.messaging.model.UserConfig;
+import java.io.IOException;
+import java.nio.file.Paths;
 
 @Service(Application.class) // MessagingService registered in start method
 @Component
@@ -88,11 +91,22 @@ public class MessagingServiceImpl implements MessagingService, Application {
 				"getReceivers"
 		});
 		this.readerReg = ctx.registerService(MessageReader.class, reader, props);
+		try {
+			messages.load(Paths.get("data/messages.bin"), appManager.getAppID());
+		} catch (IOException | ClassNotFoundException ex) {
+			logger.warn("reading stored messages failed", ex);
+		}
 	}
 	
 	@Override
 	public void stop(AppStopReason reason) {
 		this.appMan = null;
+		try {
+			logger.debug("storing messages...");
+			messages.write(Paths.get("data/messages.bin"), OgemaLocale.ENGLISH, OgemaLocale.GERMAN);
+		} catch (IOException ex) {
+			logger.warn("storing messages failed", ex);
+		}
 		removeService();
 	}
 	
@@ -160,13 +174,13 @@ public class MessagingServiceImpl implements MessagingService, Application {
 			throw new IllegalStateException("App has not been registered to send messages");
 		}
 		String senderId = ma.getMessagingId();
-		if (messages.unreadMessages.size() > MAX_SIZE_UNREAD)
+		if (messages.getUnreadCount() > MAX_SIZE_UNREAD)
 			throw new RejectedExecutionException("Too many unread messages.");
-		if (messages.deletedMessages.size() > MAX_SIZE_DELETED) {  // "garbage collector"; 
-			clean(messages.deletedMessages,MAX_SIZE_DELETED);
+		if (messages.getDeletedCount() > MAX_SIZE_DELETED) {  // "garbage collector"; 
+			messages.trimDeleted(MAX_SIZE_DELETED);
 		}
-		if (messages.readMessages.size() > MAX_SIZE_READ) {  // "garbage collector"; 
-			clean(messages.readMessages,MAX_SIZE_READ);
+		if (messages.getReadCount() > MAX_SIZE_READ) {  // "garbage collector"; 
+			messages.trimRead(MAX_SIZE_READ);
 		}
 		long tm = appMan.getFrameworkTime();
 		lastMessages.putIfAbsent(appId, new TreeSet<Long>());
@@ -184,7 +198,7 @@ public class MessagingServiceImpl implements MessagingService, Application {
 		}
 		String appName = ma.getMessagingId();
 		ReceivedMessageImpl msg = new ReceivedMessageImpl(message, tm, appId, appName);
-		messages.unreadMessages.put(tm, msg);
+		messages.addUnread(tm, msg);
 		// listener callbacks
 		
 		MessagingApp allApps = null;
@@ -222,7 +236,7 @@ public class MessagingServiceImpl implements MessagingService, Application {
 //			String appIdLoc = failedIt.next();
 //			messages.listeners.remove(appIdLoc);
 //		}
-		logger.info("New message registered from app {}; nr of messages: {}" , appId.getIDString(), messages.unreadMessages.size());
+		logger.info("New message registered from app {}; nr of messages: {}" , appId.getIDString(), messages.getUnreadCount());
 	}
 	
 	private void forwardMessage(ReceivedMessageImpl msg, MessagingApp app, MessagingApp allAppsConfig) {
@@ -281,19 +295,6 @@ public class MessagingServiceImpl implements MessagingService, Application {
 		
 	}
 	
-	private static void clean(Map<Long,ReceivedMessageImpl> map, int maxSize) {  // while this implementation is simple and fast, it deletes up to half of the messages marked as 'deleted'
-		Iterator<Entry<Long, ReceivedMessageImpl>> it  = map.entrySet().iterator();
-		int counter =0;
-		try {
-			while(it.hasNext() && counter++ < maxSize/2) {
-				it.next();
-				it.remove();
-			}
-		} catch (UnsupportedOperationException e) {
-			return;
-		}
-	}
-
 	@Override
 	public void registerMessagingApp(AppID appId, String humanReadableId) throws IllegalArgumentException {
 		registerMessagingApp(appId, humanReadableId, null);
