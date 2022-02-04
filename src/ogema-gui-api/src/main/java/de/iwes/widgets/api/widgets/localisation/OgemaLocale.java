@@ -15,6 +15,7 @@
  */
 package de.iwes.widgets.api.widgets.localisation;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -32,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * The supported locales are currently set/retrieved via static methods. This
  * mechanism is likely to change in the future.
  */
-public class OgemaLocale {	
+public class OgemaLocale implements Serializable {	
 	
 	public static final OgemaLocale ENGLISH = new OgemaLocale(Locale.ENGLISH);
 	public static final OgemaLocale GERMAN = new OgemaLocale(Locale.GERMAN);
@@ -42,6 +43,7 @@ public class OgemaLocale {
 	private static final String BASE_PATH = "/org/ogema/localisation/service";
 	private static final ConcurrentMap<String, OgemaLocale> locales = new ConcurrentHashMap<String, OgemaLocale>();
 	private static final Logger logger = LoggerFactory.getLogger(OgemaLocale.class);
+    private static final long serialVersionUID = 1L;
 	
 	static {
 		locales.put(Locale.ENGLISH.getLanguage(), ENGLISH);

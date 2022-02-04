@@ -17,7 +17,6 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-scr-plugin</artifactId>
-                <version>1.26.4</version>
             </plugin>
             <plugin>    
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -83,11 +82,13 @@
     <dependencies>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
+            <artifactId>osgi.core</artifactId>
+            <version>6.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
+            <artifactId>osgi.cmpn</artifactId>
+            <version>6.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>

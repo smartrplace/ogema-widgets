@@ -283,12 +283,12 @@ public class PushoverService implements Application, MessageListener {
                     JSONObject o = new JSONObject(json);
                     String receipt = o.getString("receipt");
                     storeEmergencyMessage(receipt, message, apiToken);
-                    logger.debug("Emergency message sent. Receipt={}", receipt);
+                    logger.info("Emergency message sent to user {}. Receipt={}", user, receipt);
                 } catch (IOException ex) {
                     logger.error("Message sent successfully but could not parse reponse.", ex);
                 }
             } else {
-                logger.debug("Message sent successfully. Response: {}", code);
+                logger.info("Message sent successfully to user {}. Response: {}", user, code);
             }
         }
     }
