@@ -259,6 +259,7 @@ public class GaRoEvalHelper {
 		if((recId.contains("connection/subPhaseConnections") || recId.contains("connection/L"))
 				&&recId.contains("reactiveAngleSensor/reading")) return GaRoDataType.PowerMeterReactiveAngleSubphase;
 		if(recId.contains("RexometerSerial/configs/gas_energy/value")) return GaRoDataType.GasMeter;
+		if(recId.contains("/gasMeter")) return GaRoDataType.GasMeter;
 		if(recId.contains("RexometerSerial/configs/gas_batteryVoltage/value")) return GaRoDataType.GasMeterBatteryVoltage;
 		if(recId.contains("semaLevel")) return GaRoDataType.CompetitionLevel;
 		if(recId.contains("competitionPosition")) return GaRoDataType.CompetitionPosition;

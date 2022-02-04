@@ -79,7 +79,7 @@ public class IntegerEnumHelper {
 	public static String getRoomTypeString(int type) {
 		switch(type) {
 		case 0:
-			return "outside";
+			return "undefined";
 		case 1:
 			return "living room";
 		case 2:
@@ -102,6 +102,8 @@ public class IntegerEnumHelper {
 			return "comm. kitchen";
 		case 210:
 			return "comm. dining";
+		case 500:
+			return "outside";
 		default:
 			if(type >= 10000) {
 				return "custom";

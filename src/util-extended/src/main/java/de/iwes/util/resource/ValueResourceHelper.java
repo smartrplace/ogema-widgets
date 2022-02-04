@@ -24,6 +24,8 @@
  */
 package de.iwes.util.resource;
 
+import java.util.List;
+
 import org.ogema.core.model.Resource;
 import org.ogema.core.model.array.BooleanArrayResource;
 import org.ogema.core.model.array.FloatArrayResource;
@@ -180,6 +182,19 @@ public class ValueResourceHelper {
 			return false;
 		return setCreate(fres, value);
 	}
+	/** Write only if the value has changed
+	 * 
+	 * @param fres
+	 * @param value
+	 * @return true if value was writtten, false if no change was detected
+	 */
+	public static boolean setIfChange(IntegerResource fres, int value) {
+		if(fres.getValue() == value)
+			return false;
+		fres.setValue(value);
+		return true;
+	}
+	
 	/** write into resoure and create it. If the resource does not exist prior to callling
 	 * the method it it first created, then written, then activated.
 	 * @return true if resource was created and value was written
@@ -268,6 +283,35 @@ public class ValueResourceHelper {
 		return false;
 	}
 	
+	public static boolean setIfChange(IntegerArrayResource fres, int[] values) {
+		if(fres.getValues().equals(values))
+			return false;
+		fres.setValues(values);
+		return true;
+	}
+	public static boolean setIfChange(IntegerArrayResource fres, List<Integer> floatList, int defaultVal) {
+		int[] arr = new int[floatList.size()];
+		int i= 0;
+		for (Integer f : floatList) {
+		    arr[i++] = (f != null ? f : defaultVal);
+		}
+		return setIfChange(fres, arr);
+	}
+	public static boolean setIfChange(FloatArrayResource fres, float[] values) {
+		if(fres.getValues().equals(values))
+			return false;
+		fres.setValues(values);
+		return true;
+	}
+	public static boolean setIfChange(FloatArrayResource fres, List<Float> floatList) {
+		float[] arr = new float[floatList.size()];
+		int i= 0;
+		for (Float f : floatList) {
+		    arr[i++] = (f != null ? f : Float.NaN);
+		}
+		return setIfChange(fres, arr);
+	}
+
 	/** Get Recorded data from SingleValueResource
 	 * 
 	 * @param valueResource

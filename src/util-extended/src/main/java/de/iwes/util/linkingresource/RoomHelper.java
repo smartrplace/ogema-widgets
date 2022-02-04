@@ -57,6 +57,7 @@ public class RoomHelper {
 	public static final int OFFICE = 100;
 	public static final int MEETING = 101;
 	public static final int KITCHEN_COMM = 200;
+	public static final int OUTSIDE = 500;
 	public static final int OTHER = 900;
 	public static final int CUSTOM = 10000;
 
@@ -216,7 +217,7 @@ public class RoomHelper {
 	public static String getRoomTypeString(int type) {
 		switch(type) {
 		case 0:
-			return "outside";
+			return "undefined";
 		case 1:
 			return "living room";
 		case 2:
@@ -247,6 +248,8 @@ public class RoomHelper {
 			return "kitchen/cafeteria";
 		case 210:
 			return "dining area";
+		case 500:
+			return "outside";
 		case 900:
 			return "other";
 		default:
