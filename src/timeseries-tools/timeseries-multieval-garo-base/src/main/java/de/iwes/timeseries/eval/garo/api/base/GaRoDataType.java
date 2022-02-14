@@ -270,6 +270,15 @@ public class GaRoDataType implements GaRoDataTypeI {
 			FloatResource.class);
 	public static final GaRoDataType CommunicationDisturbed = new GaRoDataType("CommunicationDisturbed",
 			BooleanResource.class);
+	public static final GaRoDataType ErrorCode = new GaRoDataType("ErrorCode",
+			IntegerResource.class);
+	public static final GaRoDataType ConfigPending = new GaRoDataType("ConfigPending",
+			BooleanResource.class);
+	public static final GaRoDataType AutoMode = new GaRoDataType("AutoMode",
+			IntegerResource.class);
+	public static final GaRoDataType AutoModeFb = new GaRoDataType("AutoModeFb",
+			IntegerResource.class);
+
 	public static final GaRoDataType ControllerOpenFiles = new GaRoDataType("OpenFiles",
 			FloatResource.class);
 	public static final GaRoDataType ConnectedStatus = new GaRoDataType("ConnectedStatus",

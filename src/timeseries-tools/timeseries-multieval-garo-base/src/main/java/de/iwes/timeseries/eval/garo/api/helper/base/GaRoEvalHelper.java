@@ -333,6 +333,11 @@ public class GaRoEvalHelper {
 		if(recId.contains("/CARBON_DIOXIDE_RECEIVER_")) return GaRoDataType.CO2Concentration;
 		//if(recId.contains("NetworkState/mainNetworkOk")) return GaRoDataType.InternetConnection;
 		if(recId.contains("/communicationStatus/communicationDisturbed")) return GaRoDataType.CommunicationDisturbed;
+		if(recId.contains("/errorCode")) return GaRoDataType.ErrorCode;
+		if(recId.contains("/configPending")) return GaRoDataType.ConfigPending;
+		if(recId.endsWith("/controlMode") || recId.contains("/controlMode/")) return GaRoDataType.AutoMode;
+		if(recId.contains("/controlModeFeedback")) return GaRoDataType.AutoModeFb;
+		
 		if(recId.contains("/lightSensor/reading")) return GaRoDataType.LightSensor;
 		if(recId.contains("BRIGHTNESS/reading")) return GaRoDataType.LightSensor;
 		if(recId.contains("/sensors/BRIGHTNESS/rawValue")) return GaRoDataType.LightSensorRaw;
@@ -341,7 +346,6 @@ public class GaRoEvalHelper {
 		if(recId.contains("/dutyCycle/")) return GaRoDataType.DutyCycle;
 		if(recId.contains("/dutyCycleLevel/")) return GaRoDataType.DutyCycleLevel;
 		if(recId.contains("/carrierSensLevel/")) return GaRoDataType.CarrierSensLevel;
-		if(recId.contains("/communicationStatus/communicationDisturbed")) return GaRoDataType.CommunicationDisturbed;
 
 		if(recId.contains("/openFiles/reading")) return GaRoDataType.ControllerOpenFiles;
 		if(recId.contains("/totalWritePerHour")) return GaRoDataType.SetpointPerHour;
