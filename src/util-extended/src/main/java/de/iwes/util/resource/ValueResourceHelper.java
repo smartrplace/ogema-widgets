@@ -298,9 +298,19 @@ public class ValueResourceHelper {
 		return setIfChange(fres, arr);
 	}
 	public static boolean setIfChange(FloatArrayResource fres, float[] values) {
-		if(fres.getValues().equals(values))
+		float[] curVals = fres.getValues();
+		if(floatArrayEquals(curVals, values)) //if(curVals.equals(values))
 			return false;
 		fres.setValues(values);
+		return true;
+	}
+	public static boolean floatArrayEquals(float[] arr1, float[] arr2) {
+		if(arr1.length != arr2.length)
+			return false;
+		for(int idx=0; idx<arr1.length; idx++ ) {
+			if(Math.abs(arr1[idx]-arr2[idx]) > 0.000001f)
+				return false;
+		}
 		return true;
 	}
 	public static boolean setIfChange(FloatArrayResource fres, List<Float> floatList) {
