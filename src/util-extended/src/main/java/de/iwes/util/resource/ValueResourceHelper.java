@@ -284,7 +284,8 @@ public class ValueResourceHelper {
 	}
 	
 	public static boolean setIfChange(IntegerArrayResource fres, int[] values) {
-		if(fres.getValues().equals(values))
+		int[] curVals = fres.getValues();
+		if(intArrayEquals(curVals, values)) //curVals.equals(values))
 			return false;
 		fres.setValues(values);
 		return true;
@@ -309,6 +310,15 @@ public class ValueResourceHelper {
 			return false;
 		for(int idx=0; idx<arr1.length; idx++ ) {
 			if(Math.abs(arr1[idx]-arr2[idx]) > 0.000001f)
+				return false;
+		}
+		return true;
+	}
+	public static boolean intArrayEquals(int[] arr1, int[] arr2) {
+		if(arr1.length != arr2.length)
+			return false;
+		for(int idx=0; idx<arr1.length; idx++ ) {
+			if(arr1[idx] != arr2[idx])
 				return false;
 		}
 		return true;
