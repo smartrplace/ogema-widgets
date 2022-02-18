@@ -123,4 +123,10 @@ public interface HardwareInstallConfig extends Data {
 	 * identified by the value of this resource as user name.
 	 */
 	StringResource singleCO2AlarmingUser();
+	
+	/** 0: Let page decide itself e.g. based on number of devices and properties set<br>
+	 *  1: Force pages to allow ALL<br>
+	 *  2: Force pages to deny selection of ALL
+	 */
+	IntegerResource allowAllDevicesInTablePagesMode();
 }
