@@ -35,4 +35,9 @@ public interface SubCustomerData extends Data {
 	
 	AccessConfigUser userAttribute();
 	BuildingPropertyUnit roomGroup();
+	
+	/** 0 = standard<br>
+	 *  1 = entire building representation
+	 */
+	IntegerResource aggregationType();
 }
