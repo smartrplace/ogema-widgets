@@ -129,4 +129,12 @@ public interface HardwareInstallConfig extends Data {
 	 *  2: Force pages to deny selection of ALL
 	 */
 	IntegerResource allowAllDevicesInTablePagesMode();
+	
+	/** The following settings apply for all rooms that are not in manual, eco-mode or booking mode 
+	 *  0: If configPending to thermostat then auto-mode shall be disabled. May be overwritten by thermostat-specific indication<br>
+	 *  1: Auto-mode shall be enabled for all thermostats, a valid config has been sent. May be overwritten by thermostat-specific indication<br>
+	 *  2: Auto-mode shall be disabled for all thermostats (e.g. because auto settings are unclear due to previous special settings). May be overwritten by thermostat-specific indication<br>
+	 *  3: Auto-mode shall be disabled for all thermostats. No overwriting possible (to make sure e.g. for testing)
+	 */
+	IntegerResource autoThermostatMode();
 }
