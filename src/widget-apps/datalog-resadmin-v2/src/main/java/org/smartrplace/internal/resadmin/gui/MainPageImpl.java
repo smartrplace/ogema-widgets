@@ -727,23 +727,6 @@ public class MainPageImpl { // extends WidgetPage<LocaleDictionary> {
 				};
 				delBtn.registerDependentWidget(tableResources);
 				row.addCell(delBtn, 3);
-//				if (refList.isEmpty()) {
-//					row.addCell(new Button(tableResources, "delrefbut_" + lineId, "Delete", req) {
-//						private static final long serialVersionUID = 1L;
-//
-//						public void onPOSTComplete(String data, OgemaHttpRequest req) {
-//							elRes.delete();
-//						};
-//					}, 3);
-//				} else {
-//					row.addCell(new Button(tableResources, "delrefbut_" + lineId, "Get references", req) {
-//						private static final long serialVersionUID = 1L;
-//
-//						public void onPOSTComplete(String data, OgemaHttpRequest req) {
-//							// System.out.println(refList);
-//						};
-//					}, 3);
-//				}
 				return row;
 			}
 

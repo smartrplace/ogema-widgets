@@ -280,8 +280,11 @@ public class ResAdminController {
     }
 
 	private class UpdateTypeListData {
+		/** Main result, used in ResourceType dropDown*/
 		List<TopLevelResTypePattern> newList = new ArrayList<>();
+		/** Only used in addResourceType*/
 		List<Class<? extends Resource>> classList= new ArrayList<>();
+		/** Only used in addResourceType*/
 		List<String> simpleNames = new ArrayList<>();
 	}
 	
@@ -316,6 +319,10 @@ public class ResAdminController {
 		}
 		for(Resource topRes: appMan.getResourceAccess().getToplevelResources(null)) {
 			addResourceType(topRes.getResourceType(), data);
+		}
+		if(!Boolean.getBoolean("org.smartrplace.internal.resadmin.show_also_resourcelistelements")) {
+			typePatterns = data.newList;
+			return;
 		}
 		List<ResourceList> lrl = appMan.getResourceAccess().getResources(ResourceList.class);
 		for(ResourceList rl: lrl) {
