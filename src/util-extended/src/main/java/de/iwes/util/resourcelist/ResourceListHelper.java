@@ -131,6 +131,10 @@ public class ResourceListHelper {
 	}
 	public static <T extends Resource> T getOrCreateNamedElementFlex(String elementName, ResourceList<T> list,
 			boolean activateNew) {
+		return getOrCreateNamedElementFlex(elementName, list, activateNew,true);
+	}
+	public static <T extends Resource> T getOrCreateNamedElementFlex(String elementName, ResourceList<T> list,
+			boolean activateNew, boolean addNameIfNotInName) {
 		list.create();
 		T result = getNamedElementFlex(elementName, list);
 		if(result != null)
@@ -139,9 +143,11 @@ public class ResourceListHelper {
 			result = list.addDecorator(elementName, list.getElementType());
 		else {
 			result = list.add();
-			StringResource name = result.getSubResource("name", StringResource.class);
-			name.create();
-			name.setValue(elementName);
+			if(addNameIfNotInName) {
+				StringResource name = result.getSubResource("name", StringResource.class);
+				name.create();
+				name.setValue(elementName);
+			}
 		}
 		if(activateNew)
 			result.activate(true);
