@@ -43,24 +43,34 @@ public class ValueResourceTextField<V extends SingleValueResource> extends Resou
 
 	private static final long serialVersionUID = 1L;
 	private volatile int nrDecimals = 2;
+	protected final Float defaultValue;
 
 	public ValueResourceTextField(WidgetPage<?> page, String id) {
 		this(page, id, null);
 	}
 	
 	public ValueResourceTextField(WidgetPage<?> page, String id, V valueResource) {
+		this(page, id, valueResource, (Float)null);
+	}
+	public ValueResourceTextField(WidgetPage<?> page, String id, V valueResource, Float defaultValue) {
 		super(page, id, valueResource);
+		this.defaultValue = defaultValue;
 	}
 	
 	public ValueResourceTextField(OgemaWidget parent, String id, V valueResource, OgemaHttpRequest req) {
+		this(parent, id, valueResource, null, req);
+	}
+	public ValueResourceTextField(OgemaWidget parent, String id, V valueResource, Float defaultValue, OgemaHttpRequest req) {
 		super(parent, id, req);
 		selectDefaultItem(valueResource);
+		this.defaultValue = defaultValue;
 	}
 	
 	@Deprecated
 	public ValueResourceTextField(WidgetPage<?> page, String id, V valueResource, OgemaHttpRequest req) {
 		super(page, id, req);
 		selectDefaultItem(valueResource);
+		this.defaultValue = null;
 	}
 
 	@Override
@@ -71,7 +81,14 @@ public class ValueResourceTextField<V extends SingleValueResource> extends Resou
 	@Override
 	protected String format(V resource, Locale locale) {
 		final String output;
-		if (resource instanceof FloatResource) {
+		if((!resource.exists()) && (defaultValue != null)) {
+			final int nrDecimals = this.nrDecimals;
+			if (nrDecimals < 0)
+				output = String.format(Locale.ENGLISH, "%f", defaultValue);
+			else
+				output = ValueResourceUtils.getValue(defaultValue, nrDecimals); // default; override in derived class, if necessary // FIXME or use parameter?
+			
+		} else if (resource instanceof FloatResource) {
 			final int nrDecimals = this.nrDecimals;
 			if (nrDecimals < 0)
 				output = String.format(Locale.ENGLISH, "%f", ((FloatResource) resource).getValue());

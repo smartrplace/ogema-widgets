@@ -16,8 +16,8 @@
 package org.smartrplace.apps.hw.install.config;
 
 import org.ogema.core.model.ResourceList;
-import org.ogema.core.model.array.StringArrayResource;
 import org.ogema.core.model.simple.BooleanResource;
+import org.ogema.core.model.simple.FloatResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
@@ -141,4 +141,7 @@ public interface HardwareInstallConfig extends Data {
 	
 	/** Data of devices that will connect later and will be created by the respective driver then*/
 	ResourceList<PreKnownDeviceData> preKnownDevices();
+	
+	/** Duration of teachInMode in minutes*/
+	FloatResource techInModeDuration();
 }
