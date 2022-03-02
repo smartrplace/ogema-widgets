@@ -2,6 +2,7 @@ package org.smartrplace.apps.hw.install.config;
 
 import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.simple.BooleanResource;
+import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.model.extended.alarming.AlarmConfiguration;
 import org.ogema.model.extended.alarming.AlarmGroupData;
@@ -34,6 +35,11 @@ public interface InstallAppDeviceBase extends Data {
 	 * processed anymore.
 	 */
 	BooleanResource isTrash();
+	
+	/** 0 = do not delete automatically<br>
+	 *  1 = delete device on next trash cleating (usually only relevant if isTrash=true)
+	 */
+	IntegerResource trashStatus();
 	
 	/** Templates are used for general configurations per device type, e.g. for alarming.
 	 * Contains the DatapointGroup location for which it is template

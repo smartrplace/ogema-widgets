@@ -144,4 +144,8 @@ public interface HardwareInstallConfig extends Data {
 	
 	/** Duration of teachInMode in minutes*/
 	FloatResource techInModeDuration();
+	
+	/** Devices marked for automated deletion after some time will be deleted at this time. This is usually the next midnight after the
+	 * last marking operation. It is recommended to perform this manually when cleaning up and testing is finished.*/
+	TimeResource nextTimeToDeleteMarkedDevices();
 }
