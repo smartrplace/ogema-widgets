@@ -355,6 +355,11 @@ public class ValueResourceHelper {
 		return setIfChange(fres, arr);
 	}
 
+	public static boolean isAlmostEqual(float temp1, float temp2) {
+		if (Math.abs(temp1-temp2) < 0.0001f) return true;
+		else return false;
+	}
+
 	/** Get Recorded data from SingleValueResource
 	 * 
 	 * @param valueResource
