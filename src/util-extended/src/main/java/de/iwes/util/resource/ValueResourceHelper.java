@@ -24,6 +24,7 @@
  */
 package de.iwes.util.resource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ogema.core.model.Resource;
@@ -290,12 +291,23 @@ public class ValueResourceHelper {
 		fres.setValues(values);
 		return true;
 	}
-	public static boolean setIfChange(IntegerArrayResource fres, List<Integer> floatList, int defaultVal) {
+	public static int[] list2arrInt(List<Integer> floatList, int defaultVal) {
 		int[] arr = new int[floatList.size()];
 		int i= 0;
 		for (Integer f : floatList) {
 		    arr[i++] = (f != null ? f : defaultVal);
 		}
+		return arr;
+	}
+	public static List<Integer> arr2listInt(int[] arr) {
+		List<Integer> result = new ArrayList<>();
+		for (int f : arr) {
+		    result.add(f);
+		}
+		return result;
+	}
+	public static boolean setIfChange(IntegerArrayResource fres, List<Integer> floatList, int defaultVal) {
+		int[] arr = list2arrInt(floatList, defaultVal);
 		return setIfChange(fres, arr);
 	}
 	public static boolean setIfChange(FloatArrayResource fres, float[] values) {
@@ -323,12 +335,23 @@ public class ValueResourceHelper {
 		}
 		return true;
 	}
-	public static boolean setIfChange(FloatArrayResource fres, List<Float> floatList) {
+	public static float[] list2arrFloat(List<Float> floatList) {
 		float[] arr = new float[floatList.size()];
 		int i= 0;
 		for (Float f : floatList) {
 		    arr[i++] = (f != null ? f : Float.NaN);
 		}
+		return arr;
+	}
+	public static List<Float> arr2listFloat(float[] arr) {
+		List<Float> result = new ArrayList<>();
+		for (float f : arr) {
+		    result.add(f);
+		}
+		return result;
+	}
+	public static boolean setIfChange(FloatArrayResource fres, List<Float> floatList) {
+		float[] arr = list2arrFloat(floatList);
 		return setIfChange(fres, arr);
 	}
 
