@@ -105,6 +105,14 @@ public class SensorResourceListHelper {
 			return "waiting"; // XXX waiting?
 		}
 	}
+	public static String printTempValStd(float tempVal) {
+		float val = tempVal - 273.15f;
+		if(val > -200) {
+			return String.format("%.1f", val);
+		} else {
+			return "waiting"; // XXX waiting?
+		}
+	}
 	public static String printRelativeTempVal(float tempVal) {
 		float val = tempVal;
 		return String.format("%.1f K", val);				

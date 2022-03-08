@@ -376,4 +376,15 @@ public class ValueResourceHelper {
 			return ((BooleanResource)valueResource).getHistoricalData();
 		return null;
 	}
+	
+	public static float getFloatProperty(String propertyName, float defaultVal) {
+		String prop = System.getProperty(propertyName);
+		if(prop == null)
+			return defaultVal;
+		try {
+			return Float.parseFloat(prop);
+		} catch(NumberFormatException e) {
+			return defaultVal;
+		}
+	}
 }

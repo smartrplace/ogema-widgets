@@ -1,5 +1,6 @@
 package org.smartrplace.apps.hw.install.config;
 
+import org.ogema.core.model.Resource;
 import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.IntegerResource;
@@ -18,6 +19,8 @@ import org.ogema.model.prototypes.PhysicalElement;
 public interface InstallAppDeviceBase extends Data {
 	/** Reference to the device, usually provided by driver*/
 	public PhysicalElement device();
+	/** Reference to be set if real device-like source is not a PhysicalElement*/
+	public Resource realDevice();
 	
 	/** The resource contains the devHandlerId*/
 	public StringResource devHandlerInfo();
