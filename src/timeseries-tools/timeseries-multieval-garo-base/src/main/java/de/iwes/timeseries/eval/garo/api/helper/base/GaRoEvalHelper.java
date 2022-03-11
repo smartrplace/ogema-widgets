@@ -138,7 +138,7 @@ public class GaRoEvalHelper {
 		addRecId(GaRoDataType.TemperatureSetpointFeedback, new String[] {"temperatureSensor/deviceFeedback/setpoint",
 				"/temperatureSensor/deviceSettings/setpoint"}, recIdSnippets,
 				"Temperature Setpoint Thermostat", "Temperatursollwert real");
-		addRecId(GaRoDataType.TemperatureSetpointSet, new String[] {"temperatureSensor/settings/setpoint"}, recIdSnippets,
+		addRecId(GaRoDataType.TemperatureSetpointSet, new String[] {"temperatureSensor/settings/setpoint", "/roomSetpoint"}, recIdSnippets,
 				"Temperature Setpoint Requested", "Temperatursollwert angefordert");
 		addRecId(GaRoDataType.TemperatureMeasurementThermostat, new String[] {"temperatureSensor/reading"}, recIdSnippets,
 				"Temperature measured at thermostat", "Temperaturmesswert Thermostat");
