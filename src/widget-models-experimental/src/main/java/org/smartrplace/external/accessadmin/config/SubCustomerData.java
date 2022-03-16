@@ -13,7 +13,15 @@ public interface SubCustomerData extends Data {
 	//ResourceList<Room> rooms();
 	
 	/** Building / usage type. If the building has only a single subCustomer the type is relevant
-	 * for the entire building
+	 * for the entire building. The following types are defined:<br>
+	 * 	 CUSTOMER_TYPE_OFFICE = 10<br>
+	 *   CUSTOMER_TYPE_LIVING = 20<br>
+	 *   CUSTOMER_TYPE_COWORKING = 30<br>
+	 *   CUSTOMER_TYPE_CHURCH = 40<br>
+	 *   CUSTOMER_TYPE_SALES = 50<br>
+	 *   CUSTOMER_TYPE_SCHOOL = 60<br>
+	 *   CUSTOMER_TYPE_COMMUNTIY_BUILDING = 70<br>
+	 *   CUSTOMER_TYPE_PRODUCTION = 80<br>
 	 */
 	IntegerResource subCustomerType();
 	
