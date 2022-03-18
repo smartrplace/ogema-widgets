@@ -1,5 +1,6 @@
 package org.ogema.model.extended.alarming;
 
+import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.FloatResource;
 import org.ogema.core.model.simple.IntegerResource;
@@ -67,4 +68,12 @@ public interface AlarmGroupData extends Data {
 	 * Note that the entire device is set to forRelease when new data is obtained and it is not checked if all missing data
 	 * is returned. TODO: This may be the next step.*/
 	IntegerResource forRelease();
+	
+	/** Last email messages sent. Can be used for escalation.*/
+	StringResource lastMessage();
+	
+	/** Escalation data could be stored per AlarmGroupData and provider or just per provider.
+	 * We may not use this in the first step. This can be used directly by the provider, is not
+	 * used by the framework.*/
+	ResourceList<EscalationData> escalationData();
 }

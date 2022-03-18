@@ -245,6 +245,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 			FlowResource.class);
 	public static final GaRoDataType HeatFlowPressure = new GaRoDataType("HeatFlowPressure",
 			FlowResource.class);	
+	public static final GaRoDataType StorageTemperature = new GaRoDataType("StorageTemperature",
+			TemperatureResource.class);
 	
 	public static final GaRoDataType WaterPHValue = new GaRoDataType("WaterPHValue",
 			FloatResource.class);

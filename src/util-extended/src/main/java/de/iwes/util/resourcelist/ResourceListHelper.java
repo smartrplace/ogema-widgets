@@ -34,6 +34,7 @@ import org.ogema.core.model.simple.StringResource;
 import org.ogema.tools.resource.util.ResourceUtils;
 
 import de.iwes.util.resource.ResourceHelper;
+import de.iwes.util.resource.ValueResourceHelper;
 
 public class ResourceListHelper {
 	
@@ -226,6 +227,31 @@ public class ResourceListHelper {
 		}
 		return listNamePlus+String.format("%04d", maxExist+1);
 	}
+	
+	public static <T extends Resource> String getUniqueHumanReadableNameForNewElement(ResourceList<T> resList, String baseName) {
+		if(getNamedElementFlex(baseName, resList) == null)
+			return baseName;
+		String baseNamePlus = baseName+"(";
+		int maxExist = 1;
+		for(T r: resList.getAllElements()) {
+			if(!r.getName().startsWith(baseNamePlus))
+				continue;
+			if(!r.getName().endsWith(")"))
+				continue;
+			try  {
+				int val = Integer.parseInt(r.getName().substring(baseNamePlus.length(), r.getName().length()-1));
+				if(val > maxExist)
+					maxExist = val;
+			} catch(NumberFormatException e) {}
+		}
+		return baseNamePlus+String.format("%d", maxExist+1)+")";
+	}
+	public static <T extends Resource> T createAndSetUniqueHumanReadableNameForNewElement(ResourceList<T> resList, String baseName) {
+		String name = getUniqueHumanReadableNameForNewElement(resList, baseName);
+		T newEl = resList.add();
+		ValueResourceHelper.setCreate(newEl.getSubResource("name", StringResource.class), name);
+		return newEl;
+	}
 
 	public static <T extends Resource> T addWithOrderedName(ResourceList<T> resList) {
 		String name = getUniqueNameForNewElement(resList);
@@ -252,6 +278,30 @@ public class ResourceListHelper {
 		if(isNew)
 			resList.activate(true);
 		return result;
+	}
+	
+	/** Set a ResourceList of references to a list of references
+	 * 
+	 * @param <T>
+	 * @param resList
+	 * @param objects
+	 * @param deleteNonReferences if true non-reference objects not found in objects argument
+	 * 		are deleted (which means totally removed from the database), otherwise these are maintained
+	 * @return
+	 */
+	public static <T extends Resource> int setListToReferences(ResourceList<T> resList, List<T> objects,
+			boolean deleteNonReferences) {
+		int count = 0;
+		for(T existing: resList.getAllElements()) {
+			if((existing.isReference(false) || deleteNonReferences)
+					&& (!ResourceHelper.containsLocation(objects, existing)))
+				existing.delete();
+		}
+		for(T object: objects) {
+			if(addReferenceUnique(resList, object) != null)
+				count++;
+		}
+		return count;
 	}
 	
 	/** Get element in resource list that has sub resource with name referenceName that is a reference

@@ -319,6 +319,7 @@ public class GaRoEvalHelper {
 		if(recId.contains("/inputTemperature/")) return GaRoDataType.HeatSupplyTemperatur;
 		if(recId.contains("/RETURN_TEMPERATURE_")) return GaRoDataType.HeatReturnTemperatur;
 		if(recId.contains("/outputTemperature/")) return GaRoDataType.HeatReturnTemperatur;
+		if(recId.contains("/storageTemperature")) return GaRoDataType.StorageTemperature;
 
 		if(recId.startsWith("vpFlowScope/") && recId.contains("/flow/reading")) return GaRoDataType.HeatFlow;
 		if(recId.startsWith("vpFlowScope/") && recId.contains("/flowInLpmin/reading")) return GaRoDataType.HeatFlowInLpmin;

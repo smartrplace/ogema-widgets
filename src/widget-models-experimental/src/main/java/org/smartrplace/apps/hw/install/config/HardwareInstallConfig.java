@@ -27,6 +27,7 @@ import org.ogema.model.metering.ElectricityMeter;
 import org.ogema.model.prototypes.Configuration;
 import org.ogema.model.prototypes.Data;
 import org.ogema.model.sensors.VolumeAccumulatedSensor;
+import org.smartrplace.alarming.escalation.model.AlarmingEscalationSettings;
 
 /** 
  * The global configuration resource type for this app.
@@ -85,6 +86,8 @@ public interface HardwareInstallConfig extends Data {
 	TimeResource bulkMessageIntervalDuration();
 	
 	ResourceList<Configuration> alarmingConfig();
+	AlarmingEscalationSettings escalation();
+	
 	/** Duration for which alarming events are given in the overview*/
 	TimeResource basicEvalInterval();
 	

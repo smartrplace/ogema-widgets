@@ -79,9 +79,11 @@ public interface AlarmConfiguration extends Data {
 	 * If this is not available then no mediumPriorityMessages are generated.<br>
 	 * Note that {@link #alarmLevel()} must be set correctly for each configuration variant
 	 */
+	@Deprecated //Curently not implemented
 	AlarmConfiguration mediumPriorityConfig();
 	/** See {@link #mediumPriorityConfig()}
 	 */
+	@Deprecated //Curently not implemented
 	AlarmConfiguration lowPriorityConfig();
 	
 	/** Set a reference to the alarming configuration below a DevelopmentTask if this shall be relevant for
