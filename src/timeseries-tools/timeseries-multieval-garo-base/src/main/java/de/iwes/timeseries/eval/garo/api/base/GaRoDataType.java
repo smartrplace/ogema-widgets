@@ -425,6 +425,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 			IntegerResource.class);
 	public static final GaRoDataType UsedDiskSpace = new GaRoDataType("UsedDiskSpace",
 			FloatResource.class);
+	public static final GaRoDataType FaultMessage = new GaRoDataType("Fault",
+			BooleanResource.class);
 	
 	public static final GaRoDataType TemperatureGradient = new GaRoDataType("TemperatureGradient",
 			FloatResource.class);

@@ -296,6 +296,8 @@ public class GaRoEvalHelper {
 		if(recId.contains("/dimmer/setting/stateControl")) return GaRoDataType.DimmerStateControl;
 		if(recId.contains("/dimmer/setting/stateFeedback")) return GaRoDataType.DimmerStateFb;
 		
+		if(recId.toLowerCase().contains("störung") || recId.toLowerCase().contains("störmeldung"))
+			return GaRoDataType.FaultMessage;
 		if(recId.contains("/operationMode/stateFeedback")) return GaRoDataType.OperationModeFb; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/fan/setting/stateFeedback")) return GaRoDataType.FanFb; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/setting/stateFeedback")) return GaRoDataType.MultiSwitchStateFeedback; //"onOffSwitch/stateFeedback"
