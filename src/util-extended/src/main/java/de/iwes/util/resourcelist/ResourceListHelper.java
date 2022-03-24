@@ -292,6 +292,11 @@ public class ResourceListHelper {
 	public static <T extends Resource> int setListToReferences(ResourceList<T> resList, List<T> objects,
 			boolean deleteNonReferences) {
 		int count = 0;
+		boolean isNew = false;
+		if((!resList.exists()) && (!objects.isEmpty())) {
+			resList.create();
+			isNew = true;
+		}
 		for(T existing: resList.getAllElements()) {
 			if((existing.isReference(false) || deleteNonReferences)
 					&& (!ResourceHelper.containsLocation(objects, existing)))
@@ -301,6 +306,8 @@ public class ResourceListHelper {
 			if(addReferenceUnique(resList, object) != null)
 				count++;
 		}
+		if(isNew)
+			resList.activate(true);
 		return count;
 	}
 	

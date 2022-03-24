@@ -377,7 +377,13 @@ public class ValueResourceHelper {
 		return null;
 	}
 	
+	public static Float getFloatProperty(String propertyName) {
+		return getFloatPropertyInternal(propertyName, null);
+	}
 	public static float getFloatProperty(String propertyName, float defaultVal) {
+		return getFloatPropertyInternal(propertyName, defaultVal);
+	}
+	private static Float getFloatPropertyInternal(String propertyName, Float defaultVal) {
 		String prop = System.getProperty(propertyName);
 		if(prop == null)
 			return defaultVal;
