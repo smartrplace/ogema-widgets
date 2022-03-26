@@ -134,6 +134,14 @@ public class ValueResourceHelper {
 		}
 		return false;
 	}
+	public static boolean setIfNew(FloatArrayResource fres, float[] values) {
+		if(!fres.exists()) {
+			fres.create();
+			fres.setValues(values);
+			return true;
+		}
+		return false;
+	}
 	/** If resource does not exist yet, create it as reference, otherwise do nothing. So if
 	 * the resource exists as reference or as direct sub resource it remains
 	 * unchanged.
