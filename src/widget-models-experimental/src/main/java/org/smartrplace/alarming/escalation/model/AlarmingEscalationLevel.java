@@ -8,7 +8,7 @@ import org.ogema.model.prototypes.Data;
 import org.smartrplace.apps.eval.timedjob.TimedJobConfig;
 
 public interface AlarmingEscalationLevel extends Data {
-	BooleanResource isProviderActive();
+	//BooleanResource isProviderActive();
 	
 	/** Alarming apps by which the configuration is sent. Together with {@link #alarmLevel()} this
 	 * determines which receivers get high, medium and low priority alarms. Each alarming level must
