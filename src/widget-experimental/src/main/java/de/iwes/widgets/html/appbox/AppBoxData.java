@@ -55,6 +55,15 @@ public class AppBoxData extends WidgetData {
 		return new TriggeredAction("filterApps", args);
 	}
 	
+	public static interface LinkProvider {
+		String id();
+		String getLink(String userName);
+	}
+	private final static Map<String, LinkProvider> linkProviders = new HashMap<>();
+	public static LinkProvider addLinkProvider(LinkProvider linkProvider) {
+		return linkProviders.put(linkProvider.id(), linkProvider);
+	}
+	
 	protected final Map<String, String> descriptions = new HashMap<>();
  	protected final AdministrationManager am;
 	protected String backgroundColor = null;
@@ -204,18 +213,26 @@ public class AppBoxData extends WidgetData {
 						JSONObject json = new JSONObject(jsonstr);
 						String user = UserLocaleUtil.getUserLoggedInBase(req.getSession());
 						String allUrl = null;
+						String providerUrl = null;
 						boolean found = false;
 						for(String key: json.keySet()) {
 							String optUrl = json.getString(key);
 							if(key.equals("all"))
 								allUrl = optUrl;
-							else if(key.equals(user)) {
+							else if(key.equals("linkprovider")) {
+								String providerId = optUrl;
+								LinkProvider prov = linkProviders.get(providerId);
+								if(prov != null)
+									providerUrl = prov.getLink(user);
+							} else if(key.equals(user)) {
 								url = optUrl;
 								found = true;
 								break;
 							}
 						}
-						if(!found && allUrl != null)
+						if(!found && providerUrl != null)
+							url = providerUrl;
+						else if(!found && allUrl != null)
 							url = allUrl;
 					}
 					startPage = "https://"+url;
@@ -256,6 +273,27 @@ public class AppBoxData extends WidgetData {
 	
 	public static String getLinkByProperties(String baseLink, ResourceAccess resAcc) {
 		Map<String, String> userKeys = new HashMap<>();
+		String allKey = getGatewaySSIK(resAcc); //null;
+		/*UserAdminData ud = ResourceHelper.getTopLevelResource(UserAdminData.class, resAcc);
+		if(ud != null) {
+			allKey = ud.ssik_facilityDeepLink().getValue();
+		}
+		if(allKey == null || allKey.isEmpty())
+			allKey = System.getProperty("org.ogema.apps.dash.allkey");*/
+		if(allKey == null || allKey.isEmpty())
+			return "/"+baseLink;
+		//TODO: Also define user-specific properties
+		userKeys.put("all", allKey);
+		return getLink(baseLink, userKeys);		
+	}
+	
+	public static String getLinkForLinkProvider(String providerId) {
+		Map<String, String> userKeys = new HashMap<>();
+		userKeys.put("linkprovider", providerId);
+		return getLink("", userKeys);		
+	}
+
+	public static String getGatewaySSIK(ResourceAccess resAcc) {
 		String allKey = null;
 		UserAdminData ud = ResourceHelper.getTopLevelResource(UserAdminData.class, resAcc);
 		if(ud != null) {
@@ -263,10 +301,7 @@ public class AppBoxData extends WidgetData {
 		}
 		if(allKey == null || allKey.isEmpty())
 			allKey = System.getProperty("org.ogema.apps.dash.allkey");
-		if(allKey == null || allKey.isEmpty())
-			return "/"+baseLink;
-		//TODO: Also define user-specific properties
-		userKeys.put("all", allKey);
-		return getLink(baseLink, userKeys);		
+		return allKey;
 	}
+
 }
