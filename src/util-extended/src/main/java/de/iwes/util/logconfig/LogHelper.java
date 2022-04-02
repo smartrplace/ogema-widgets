@@ -87,6 +87,8 @@ public class LogHelper {
 		} else {
 			name = ResourceHelper.getToplevelResource(hmDevice).getName();
 		}
+		if(name.length() < 4)
+			return name;
 		String deviceId = name.substring(name.length()-4);
 		return deviceId;
     }
