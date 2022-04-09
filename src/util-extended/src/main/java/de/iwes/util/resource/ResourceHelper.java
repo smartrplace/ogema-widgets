@@ -71,7 +71,14 @@ public class ResourceHelper {
 	 * method equals r.getLocationResource().getParent().
 	 */
 	public static Resource getParentLevelsAbove(Resource r, int levelUp) {
-		Resource res = r.getLocationResource();
+		return getParentLevelsAbove(r, levelUp, true);
+	}
+	public static Resource getParentLevelsAbove(Resource r, int levelUp, boolean useLocationResouce) {
+		Resource res;
+		if(useLocationResouce)
+			res = r.getLocationResource();
+		else
+			res = r;
 		for(int i=0; i<levelUp; i++) {
 			res = res.getParent();
 			if(res == null) return null;
@@ -131,7 +138,15 @@ public class ResourceHelper {
 	 * is found. Otherwise returns a negative number
 	 */
 	public static int hasParentAboveType(Resource r, Class<? extends Resource> type, boolean typeMustMatchExactly) {
-		Resource res = r.getLocationResource();
+		return hasParentAboveType(r, type, typeMustMatchExactly, true);
+	}
+	public static int hasParentAboveType(Resource r, Class<? extends Resource> type, boolean typeMustMatchExactly,
+			boolean useLocationResource) {
+		Resource res;
+		if(useLocationResource)
+			res = r.getLocationResource();
+		else
+			res = r;
 		for(int i=1; i<100; i++) {
 			res = res.getParent();
 			if(res == null) return -1;
@@ -164,7 +179,6 @@ public class ResourceHelper {
 		return -2;
 	}
 	
-	@SuppressWarnings("unchecked")
 	/** Checks whether the resource has a parent, grant-parent etc. of the type
 	 * given and returns it.
 	 * @param r resource for which location hierarchy shall be checked
@@ -176,9 +190,14 @@ public class ResourceHelper {
 	 * not equal to.
 	 */
 	public static <R extends Resource> R getFirstParentOfType(Resource r, Class<? extends R> type) {
-		int lvl = hasParentAboveType(r, type);
+		return getFirstParentOfType(r, type, true);
+	}
+	@SuppressWarnings("unchecked")
+	public static <R extends Resource> R getFirstParentOfType(Resource r, Class<? extends R> type,
+			boolean useLocationResource) {
+		int lvl = hasParentAboveType(r, type, false, useLocationResource);
 		if(lvl < 0) return null;
-		return (R) getParentLevelsAbove(r, lvl);
+		return (R) getParentLevelsAbove(r, lvl, useLocationResource);
 	}
 
 	/** Checks whether the resource has a parent, grant-parent etc. of the type
