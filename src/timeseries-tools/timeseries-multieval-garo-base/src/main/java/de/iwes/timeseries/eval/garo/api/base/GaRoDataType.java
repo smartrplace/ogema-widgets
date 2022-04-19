@@ -276,9 +276,9 @@ public class GaRoDataType implements GaRoDataTypeI {
 			IntegerResource.class);
 	public static final GaRoDataType ConfigPending = new GaRoDataType("ConfigPending",
 			BooleanResource.class);
-	public static final GaRoDataType AutoMode = new GaRoDataType("AutoMode",
+	public static final GaRoDataType ManuMode = new GaRoDataType("ManuMode",
 			IntegerResource.class);
-	public static final GaRoDataType AutoModeFb = new GaRoDataType("AutoModeFb",
+	public static final GaRoDataType ManuModeFb = new GaRoDataType("ManuModeFb",
 			IntegerResource.class);
 
 	public static final GaRoDataType ControllerOpenFiles = new GaRoDataType("OpenFiles",

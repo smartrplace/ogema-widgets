@@ -340,8 +340,8 @@ public class GaRoEvalHelper {
 		if(recId.contains("/communicationStatus/communicationDisturbed")) return GaRoDataType.CommunicationDisturbed;
 		if(recId.contains("/errorCode")) return GaRoDataType.ErrorCode;
 		if(recId.contains("/configPending")) return GaRoDataType.ConfigPending;
-		if(recId.endsWith("/controlMode") || recId.contains("/controlMode/")) return GaRoDataType.AutoMode;
-		if(recId.contains("/controlModeFeedback")) return GaRoDataType.AutoModeFb;
+		if(recId.endsWith("/controlMode") || recId.contains("/controlMode/")) return GaRoDataType.ManuMode;
+		if(recId.contains("/controlModeFeedback")) return GaRoDataType.ManuModeFb;
 		
 		if(recId.contains("/lightSensor/reading")) return GaRoDataType.LightSensor;
 		if(recId.contains("BRIGHTNESS/reading")) return GaRoDataType.LightSensor;
