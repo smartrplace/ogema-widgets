@@ -261,4 +261,9 @@ public class LogHelper {
         ValueResourceHelper.setCreate(gw.systemRestart(), 0);
 	}
 
+	public static boolean isStartupComplete(ApplicationManager appManager) {
+		GatewayDevice gw = ResourceHelper.getLocalDevice(appManager);
+	    int curVal = gw.systemRestart().getValue();
+        return curVal >= 1020;
+	}	
 }
