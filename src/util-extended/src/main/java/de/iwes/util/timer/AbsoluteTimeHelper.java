@@ -258,6 +258,24 @@ public class AbsoluteTimeHelper {
 		return getUTCMillis(current);
 	}
 	
+	/** Get aligned interval end based on local default time zone for a certain time after the beginning
+	 * of the aligned interval
+	 * 
+	 * @param baseInstant time that is in interval of which the end is returned. If you want to make sure
+	 * 		the event is executed after a reboot set to 5 minutes before current time.
+	 * @param timeIntervalLengthType use option provided by {@link AbsoluteTiming}, e.g. AbsoluteTiming.DAY
+	 * @param stepOffsetTime time the step shall be executed after the beginning of the interval
+	 * @param now current time
+	 * @return interval end time (which is the same as the beginning of the next interval)
+	 */
+	public static long getNextStepTime(long baseInstant, int timeIntervalLengthType, long stepOffsetTime) {
+		long currentIntervalStart = getIntervalStart(baseInstant, timeIntervalLengthType);
+		long currentIntervalEventTime = currentIntervalStart + stepOffsetTime;
+		if(currentIntervalEventTime >= baseInstant)
+			return currentIntervalEventTime;
+		return addIntervalsFromAlignedTime(currentIntervalStart, 1, timeIntervalLengthType)+stepOffsetTime;
+	}
+
 	/** Get aligned interval start
 	 * 
 	 * @param baseInstant time that is in interval of which the start is returned

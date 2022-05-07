@@ -364,7 +364,7 @@ public class ValueResourceHelper {
 	}
 
 	public static boolean isAlmostEqual(float temp1, float temp2) {
-		if (Math.abs(temp1-temp2) < 0.0001f) return true;
+		if (Math.abs(temp1-temp2) < 0.001f) return true;
 		else return false;
 	}
 
