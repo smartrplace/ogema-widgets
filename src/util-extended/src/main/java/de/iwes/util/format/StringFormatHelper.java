@@ -231,4 +231,22 @@ public class StringFormatHelper {
 		}
 		return result;
 	}
+	
+	/** The property identified by propertyName shall be chunked by commas then the
+	 * stringForCheck shall be checked if it contains any of the chunks
+	 * @param stringForCheck
+	 * @param propertyName
+	 * @return
+	 */
+	public static boolean doesPropertyIdentifyString(String stringForCheck, String propertyName) {
+		String propStr = System.getProperty(propertyName);
+		if(propStr == null)
+			return false;
+		List<String> els = StringFormatHelper.getListFromString(propStr);
+		for(String el: els) {
+			if(stringForCheck.contains(el))
+				return true;
+		}
+		return false;
+	}
 }
