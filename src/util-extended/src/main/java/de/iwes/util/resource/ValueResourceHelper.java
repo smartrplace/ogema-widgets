@@ -401,4 +401,9 @@ public class ValueResourceHelper {
 			return defaultVal;
 		}
 	}
+	public static double getFloatAsDouble(float value) {
+		//Float result = new Float(value);
+		//return new FloatingDecimal(result.floatValue()).doubleValue();
+		return Double.valueOf(Float.valueOf(value).toString()).doubleValue();
+	}
 }
