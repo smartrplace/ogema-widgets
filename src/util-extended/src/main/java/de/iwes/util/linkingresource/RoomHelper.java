@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.ogema.core.application.ApplicationManager;
 import org.ogema.core.model.Resource;
+import org.ogema.core.model.ResourceList;
 import org.ogema.core.resourcemanager.ResourceAccess;
 import org.ogema.core.resourcemanager.pattern.PatternChangeListener;
 import org.ogema.core.resourcemanager.pattern.ResourcePattern;
@@ -38,6 +39,7 @@ import org.ogema.model.locations.Room;
 import org.ogema.model.prototypes.PhysicalElement;
 import org.ogema.tools.resource.util.ResourceUtils;
 
+import de.iwes.util.resource.ResourceHelper;
 import de.iwes.util.resourcelist.SensorResourceListHelper;
 import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 
@@ -46,6 +48,7 @@ import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
  *
  */
 public class RoomHelper {
+	public static final String ROOM_TOPLELVEL_NAME = "rooms";
 	
 	public static final int LIVING = 1;
 	public static final int TOILET = 5;
@@ -391,5 +394,16 @@ public class RoomHelper {
 				result.add(dev);
 		}
 		return result ;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static ResourceList<Room> getRoomToplevelResource(ApplicationManager appMan) {
+		ResourceList<Room> result = ResourceHelper.getTopLevelResource(ROOM_TOPLELVEL_NAME, ResourceList.class, appMan.getResourceAccess());
+		if(result != null && result.isActive())
+			return result;
+		result = appMan.getResourceManagement().createResource(ROOM_TOPLELVEL_NAME, ResourceList.class);
+		result.setElementType(Room.class);
+		result.activate(false);
+		return result;
 	}
 }

@@ -26,6 +26,7 @@ import org.ogema.apps.roomlink.localisation.mainpage.RoomLinkDictionary;
 import org.ogema.apps.roomlink.utils.RoomLinkUtils;
 import org.ogema.core.application.ApplicationManager;
 import org.ogema.core.model.Resource;
+import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.resourcemanager.ResourceAccess;
@@ -279,14 +280,17 @@ public class NewRoomPopupBuilder {
 	};
 	
 	private static Room createRoom(String name, Integer type, ApplicationManager am) {
-		String path = ResourceUtils.getValidResourceName(name);
 		ResourceAccess ra = am.getResourceAccess();
+		ResourceList<Room> rooms = RoomHelper.getRoomToplevelResource(am);
+		
+		String path = ResourceUtils.getValidResourceName(name);
 		Resource res = ra.getResource(path);
 		while (res != null) {
 			path += "_1";
 			res = ra.getResource(path);
 		}
-		Room room = am.getResourceManagement().createResource(path, Room.class);
+		//Room room = am.getResourceManagement().createResource(path, Room.class);
+		Room room = rooms.addDecorator(path, Room.class);
 		room.name().create();
 		room.name().setValue(name);
 		if (type != null) 
