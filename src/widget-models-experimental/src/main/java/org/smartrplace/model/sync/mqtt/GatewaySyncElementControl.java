@@ -4,8 +4,9 @@ import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.model.prototypes.Data;
 
 /** Such a resource may be placed as decorator into any resource in a gateway-synch resource (e.g. _19170) of type
- * {@link GatewaySyncElementControl}
+ * {@link GatewaySyncData}
  */
+@Deprecated
 public interface GatewaySyncElementControl extends Data {
 	/** 0: normal (as if decorator was not present)
 	 *  1: without resource lists: skip any resource lists that are direct sibblings of the decorator.

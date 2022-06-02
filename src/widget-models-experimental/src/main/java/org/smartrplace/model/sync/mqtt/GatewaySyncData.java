@@ -33,22 +33,22 @@ public interface GatewaySyncData extends Data {
 	
 	
 	/***********************
-	 * Default Paylode data: Application-specific models may be added as decorators
+	 * Default Payload data: Application-specific models may be added as decorators
 	 * e.g. for room control.
 	 ***********************/
 	
 	/** This list usually has a decorator {@link GatewaySyncElementControl#syncMode()}=2
 	 */
-	ResourceList<Room> rooms();
+	//ResourceList<Room> rooms();
 	
 	/** This list usually has a decorator {@link GatewaySyncElementControl#syncMode()}=1 .
 	 *  So it contains the global device configuration data.
 	 */	
-	HardwareInstallConfig hardwareInstallConfig();
+	//HardwareInstallConfig hardwareInstallConfig();
 	
 	/** This list usually has a decorator {@link GatewaySyncElementControl#syncMode()}=2 .
 	 * Contains the relevant device configuration data. On the subgateway the toplevel
 	 * resource created by this shall be linked into hardwareInstallConfig.
 	 */
-	ResourceList<InstallAppDevice> hardwareInstallConfig_knownDevices();
+	//ResourceList<InstallAppDevice> hardwareInstallConfig_knownDevices();
 }
