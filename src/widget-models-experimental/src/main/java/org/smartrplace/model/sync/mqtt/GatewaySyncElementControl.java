@@ -3,8 +3,8 @@ package org.smartrplace.model.sync.mqtt;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.model.prototypes.Data;
 
-/** Such a resource may be placed as decorator into any resource in a gateway-synch resource (e.g. _19170) or into the
- * gatewaySyncData below.
+/** Such a resource may be placed as decorator into any resource in a gateway-synch resource (e.g. _19170) of type
+ * {@link GatewaySyncElementControl}
  */
 public interface GatewaySyncElementControl extends Data {
 	/** 0: normal (as if decorator was not present)
