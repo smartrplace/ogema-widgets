@@ -1,5 +1,6 @@
 package org.smartrplace.external.accessadmin.config;
 
+import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.array.IntegerArrayResource;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.IntegerResource;
@@ -32,8 +33,8 @@ public interface SubCustomerData extends Data {
 	IntegerArrayResource workingDays();
 	
 	/** The default lower temperature is applied to all rooms as a default*/
-	TemperatureResource defaultEcoTemperatureHeating();
-	TemperatureResource defaultEcoTemperatureCooling();
+	//TemperatureResource defaultEcoTemperatureHeating();
+	//TemperatureResource defaultEcoTemperatureCooling();
 	
 	BooleanResource setpointCurveEditableByUsers();
 	
@@ -48,4 +49,8 @@ public interface SubCustomerData extends Data {
 	 *  1 = entire building representation
 	 */
 	IntegerResource aggregationType();
+	
+	/** Standard settings saved if not acquired from rooms*/
+	ResourceList<TemperatureControlSettings> roomTypeSettingsHeating();
+	ResourceList<TemperatureControlSettings> roomTypeSettingsCooling();
 }

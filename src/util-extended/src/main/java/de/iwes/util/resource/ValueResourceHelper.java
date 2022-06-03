@@ -32,6 +32,7 @@ import org.ogema.core.model.array.BooleanArrayResource;
 import org.ogema.core.model.array.FloatArrayResource;
 import org.ogema.core.model.array.IntegerArrayResource;
 import org.ogema.core.model.array.StringArrayResource;
+import org.ogema.core.model.array.TimeArrayResource;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.FloatResource;
 import org.ogema.core.model.simple.IntegerResource;
@@ -271,6 +272,16 @@ public class ValueResourceHelper {
 		fres.setValues(values);
 		return false;
 	}
+	public static boolean setCreate(TimeArrayResource fres, long[] values) {
+		if(!fres.exists()) {
+			fres.create();
+			fres.setValues(values);
+			fres.activate(false);
+			return true;
+		}
+		fres.setValues(values);
+		return false;
+	}
 	public static boolean setCreate(FloatArrayResource fres, float[] values) {
 		if(!fres.exists()) {
 			fres.create();
@@ -307,9 +318,24 @@ public class ValueResourceHelper {
 		}
 		return arr;
 	}
+	public static long[] list2arrLong(List<Long> floatList, long defaultVal) {
+		long[] arr = new long[floatList.size()];
+		int i= 0;
+		for (Long f : floatList) {
+		    arr[i++] = (f != null ? f : defaultVal);
+		}
+		return arr;
+	}
 	public static List<Integer> arr2listInt(int[] arr) {
 		List<Integer> result = new ArrayList<>();
 		for (int f : arr) {
+		    result.add(f);
+		}
+		return result;
+	}
+	public static List<Long> arr2listLong(long[] arr) {
+		List<Long> result = new ArrayList<>();
+		for (long f : arr) {
 		    result.add(f);
 		}
 		return result;
