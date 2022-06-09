@@ -80,6 +80,9 @@ public class LogHelper {
     }
     /**Get last four digits of homematic device id to be added to a log label*/
 	public static String getDeviceId(Resource hmDevice) {
+		return getDeviceId(hmDevice, 4);
+	}
+	public static String getDeviceId(Resource hmDevice, int length) {
 		Resource hmParent = ResourceHelper.getFirstParentOfType(hmDevice, "HmDevice");
 		String name;
 		if(hmParent != null) {
@@ -87,9 +90,9 @@ public class LogHelper {
 		} else {
 			name = ResourceHelper.getToplevelResource(hmDevice).getName();
 		}
-		if(name.length() < 4)
+		if(name.length() < length)
 			return name;
-		String deviceId = name.substring(name.length()-4);
+		String deviceId = name.substring(name.length()-length);
 		return deviceId;
     }
 	

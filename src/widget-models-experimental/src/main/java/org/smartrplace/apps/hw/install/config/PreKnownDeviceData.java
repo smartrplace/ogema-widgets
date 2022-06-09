@@ -16,7 +16,7 @@ public interface PreKnownDeviceData extends Data {
 	StringResource comment();
 	
 	/** DeviceHandler for which the PreknownData is foreseen.
-	 * If not existing then the data is primarily foreseen for thermostats.
+	 * If not existing or empty then the data is primarily foreseen for thermostats but can also be used for other devices if fitting.
 	 * TODO: In the future also data provided for other device handlers may be used that
 	 * could just be provided at the wrong place, but this needs further investigation and may
 	 * also cause unintended behaviour*/
