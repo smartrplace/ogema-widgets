@@ -28,6 +28,8 @@ public class ExecutionTimeLogger {
 	
 	private long tstart;
 	private long intermediateStart;
+	
+	public boolean logAlwaysToConsole = false;
 
 	public ExecutionTimeLogger(String label, ApplicationManager appMan) {
 		this(label, LogLevel.INFO, appMan);
@@ -48,10 +50,10 @@ public class ExecutionTimeLogger {
 	
 	public void finish() {
 		long duration = appMan.getFrameworkTime()-tstart;
-		log(duration, "");
+		log(duration, "END");
 	}
 	
 	private void log(long duration, String interLabel) {
-		LoggerUtil.log(appMan.getLogger(), label+"."+interLabel+" took "+duration+" ms to execute.", logLevel);		
+		LoggerUtil.log(appMan.getLogger(), label+"."+interLabel+" took "+duration+" ms to execute.", logLevel, logAlwaysToConsole);		
 	}
 }

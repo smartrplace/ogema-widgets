@@ -19,30 +19,54 @@ import org.ogema.core.logging.LogLevel;
 import org.slf4j.Logger;
 
 /**
- * @deprecated use logger directly instead in productive apps... this util class requires
- * expensive string operations even when the result is not logged in the end. 
+ * WARNING: If the String operations required to provide the message are expensive and the log level
+ * 		is deactivated in normal operation, do first check if log level is enabled (see examples below).
+ *      You may also use logger directly instead in productive apps... otherise this util class requires
+ *    	expensive string operations even when the result is not logged in the end. 
  */
-@Deprecated
+//@Deprecated
 public class LoggerUtil {
 	public static void log(Logger log, String message, LogLevel level) {
+		log(log, message, level, false);
+	}
+	public static void log(Logger log, String message, LogLevel level, boolean writeToConsoleAlways) {
+		boolean isWrittenToConsole = false;
 		switch(level) {
 		case ERROR:
-			log.error(message);
+			if(log.isErrorEnabled()) {
+				isWrittenToConsole = true;
+				log.error(message);
+			}
 			break;
 		case WARNING:
-			log.warn(message);
+			if(log.isWarnEnabled()) {
+				isWrittenToConsole = true;
+				log.warn(message);
+			}
 			break;
 		case INFO:
-			log.info(message);
+			if(log.isInfoEnabled()) {
+				isWrittenToConsole = true;
+				log.info(message);
+			}
 			break;
 		case DEBUG:
-			log.debug(message);
+			if(log.isDebugEnabled()) {
+				isWrittenToConsole = true;
+				log.debug(message);
+			}
 			break;
 		case TRACE:
-			log.trace(message);
+			if(log.isTraceEnabled()) {
+				isWrittenToConsole = true;
+				log.trace(message);
+			}
 			break;
 		default:
 			throw new IllegalStateException("unknown loglevel:"+level);
+		}
+		if(writeToConsoleAlways && (!isWrittenToConsole)) {
+			System.out.println(log.getName()+" :: "+message);
 		}
 	}
 
