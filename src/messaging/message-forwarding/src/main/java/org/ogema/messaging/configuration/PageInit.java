@@ -1,9 +1,13 @@
 package org.ogema.messaging.configuration;
 
 import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -216,6 +220,27 @@ public class PageInit {
 			this.users = listeners.entrySet().stream()
 				.flatMap(entry -> entry.getValue().stream().map(user -> new SimpleEntry<>(user, entry.getKey())))
 				.collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+			repairUsers();
+		}
+		
+		private void repairUsers() {
+			//Check for double entries
+			for(Entry<String, List<MessageListener>> entry: users.entrySet()) {
+				Set<MessageListener> knownListeners = new HashSet<>();
+				List<MessageListener> listLoc = entry.getValue();
+				List<Integer> indexesToRemove = new ArrayList<>();
+				for(int idx=0; idx<listLoc.size(); idx++) {
+					MessageListener ml = listLoc.get(idx);
+					if(knownListeners.contains(ml))
+						indexesToRemove.add(idx);
+					else
+						knownListeners.add(ml);
+				}
+				for(int i=indexesToRemove.size()-1; i>=0; i--) {
+					int idxr = indexesToRemove.get(i);
+					listLoc.remove(idxr);
+				}
+			}			
 		}
 		
 		public static Map<String, List<MessageListener>> setUsersStatic(Map<MessageListener, List<String>> listeners) {
