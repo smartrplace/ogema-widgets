@@ -26,7 +26,6 @@ package de.iwes.util.logconfig;
 
 import java.util.List;
 
-import org.joda.time.chrono.IslamicChronology;
 import org.ogema.core.application.ApplicationManager;
 import org.ogema.core.channelmanager.measurements.SampledValue;
 import org.ogema.core.model.Resource;
@@ -39,10 +38,12 @@ import org.ogema.core.recordeddata.RecordedData;
 import org.ogema.core.recordeddata.RecordedDataConfiguration;
 import org.ogema.core.recordeddata.RecordedDataConfiguration.StorageType;
 import org.ogema.core.resourcemanager.pattern.ResourcePattern;
+import org.ogema.drivers.homematic.xmlrpc.hl.types.HmDevice;
 import org.ogema.model.prototypes.PhysicalElement;
 import org.ogema.tools.resource.util.LoggingUtils;
 import org.ogema.tools.resource.util.ValueResourceUtils;
 import org.ogema.tools.resourcemanipulator.timer.CountDownDelayedExecutionTimer;
+import org.smartrplace.apps.hw.install.config.PreKnownDeviceData;
 import org.smartrplace.gateway.device.GatewayDevice;
 
 import de.iwes.util.resource.ResourceHelper;
@@ -95,7 +96,46 @@ public class LogHelper {
 		String deviceId = name.substring(name.length()-length);
 		return deviceId;
     }
+	public static String getDeviceId(HmDevice hmDevice, int length) {
+		String name = hmDevice.getName();
+		return getDeviceId(name, length);
+	}
+	public static String getDeviceId(String name, int length) {
+		if(name.length() < length)
+			return name;
+		String deviceId = name.substring(name.length()-length);
+		return deviceId;
+    }
 	
+	public enum MustFitLevel {
+		IGNORE_TYPE,
+		ANY_TYPE_ALLOWED,
+		MUST_FIT
+	}
+	public static boolean doesDeviceFitPreKnownData(HmDevice hmDevice, PreKnownDeviceData pre,
+			String devHandIdOfDevice, MustFitLevel mustFitDeviceHandler, String hmIdPreChecked) {
+		String name = hmDevice.getName();
+		return doesDeviceFitPreKnownData(name, pre, devHandIdOfDevice, mustFitDeviceHandler, hmIdPreChecked);		
+	}
+	public static boolean doesDeviceFitPreKnownData(String name, PreKnownDeviceData pre,
+			String devHandIdOfDevice, MustFitLevel mustFitDeviceHandler, String hmIdPreChecked) {
+		if((mustFitDeviceHandler == MustFitLevel.MUST_FIT) && 
+				((!pre.deviceHandlerId().isActive()) || (pre.deviceHandlerId().getValue().isEmpty())))
+			return false;
+		if((mustFitDeviceHandler != MustFitLevel.IGNORE_TYPE) && pre.deviceHandlerId().isActive()) {
+			String val = pre.deviceHandlerId().getValue();
+			if((!val.isEmpty()) && (!val.equals(devHandIdOfDevice)))
+				return false;
+		}
+		String endCode = pre.deviceEndCode().getValue();
+		String hmIdLoc;
+		if((hmIdPreChecked == null) || (endCode.length() != 4))
+			hmIdLoc = getDeviceId(name, endCode.length());
+		else
+			hmIdLoc = hmIdPreChecked;
+		return hmIdLoc.equals(endCode);
+	}
+
 	/** Get resource of device to be used as primary device for the input resource
 	 * for user interaction etc.
 	 * @param subResource resource for which the primary device resource shall be returned

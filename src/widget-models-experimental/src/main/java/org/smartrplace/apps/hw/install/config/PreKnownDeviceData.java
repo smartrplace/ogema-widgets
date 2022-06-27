@@ -21,4 +21,10 @@ public interface PreKnownDeviceData extends Data {
 	 * could just be provided at the wrong place, but this needs further investigation and may
 	 * also cause unintended behaviour*/
 	StringResource deviceHandlerId();
+	
+	/** Each entry may be assigned to a CCU manually or the CCU by which the entry is used will
+	 * be set automatically. If the entry is used then a reference to the CCU will be set
+	 * overwriting any manual setting that may be made earlier.
+	 */
+	InstallAppDevice ccu();
 }
