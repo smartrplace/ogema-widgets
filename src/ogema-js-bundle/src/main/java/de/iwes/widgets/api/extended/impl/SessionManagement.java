@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -35,7 +36,8 @@ import de.iwes.widgets.api.widgets.WidgetPage;
 public class SessionManagement extends TimerTask {
 	
 	// Map<Session Id, Session object>
-	private final Cache<String, Session> sessions = CacheBuilder.newBuilder().softValues().build();
+	//private final Cache<String, Session> sessions = CacheBuilder.newBuilder().softValues().build();
+	private final Cache<String, Session> sessions = CacheBuilder.newBuilder().maximumSize(5).expireAfterAccess(60, TimeUnit.MINUTES).build();
 
 	SessionManagement() {}
 	
@@ -50,7 +52,9 @@ public class SessionManagement extends TimerTask {
 	}
 	
 	public final Session getSession(String sessionId) {
-		return sessions.getIfPresent(sessionId);
+		synchronized (sessions) {
+			return sessions.getIfPresent(sessionId);
+		}
 	}
 	
 	void setExpiryTime(String sessionId, long expiryTime) {

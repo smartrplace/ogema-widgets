@@ -55,6 +55,7 @@ public class ResAdminApp implements BundleActivator, Application {
 	
 	public static final String urlPath = "/org/smartrplace/external/datalogresadminv2";
 	private final static String cleanStateMarker = "clean";
+	private static final long MAXIMUM_STARTUP_MINUTES = Long.getLong("org.smartrplace.internal.resadmin.maxstartup", 5);
 	
     private OgemaLogger log;
     private ApplicationManager appMan;
@@ -166,8 +167,8 @@ public class ResAdminApp implements BundleActivator, Application {
 			this.sreg = ctx.registerService(Application.class, this, null);
 			// block the startup process until all resources from the replay directory have been parsed
 			final CountDownLatch startLatch = this.startLatch;
-			if (startLatch != null && !startLatch.await(5, TimeUnit.MINUTES))
-				 LoggerFactory.getLogger(ResAdminApp.class).error("ResAdmin app failed to start within 5 minutes");
+			if (startLatch != null && !startLatch.await(MAXIMUM_STARTUP_MINUTES, TimeUnit.MINUTES))
+				 LoggerFactory.getLogger(ResAdminApp.class).error("ResAdmin app failed to start within "+MAXIMUM_STARTUP_MINUTES+" minutes");
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		} 

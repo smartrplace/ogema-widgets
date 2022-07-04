@@ -1,5 +1,6 @@
 package org.smartrplace.apps.hw.install.config;
 
+import org.ogema.core.model.array.TimeArrayResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
 
@@ -73,4 +74,9 @@ public interface InstallAppDevice extends InstallAppDeviceBase {
 	
 	/** Used for internal status supervision of some device types*/
 	//public TimeResource supervisionStatus();
+	
+	/** For each ExternalEscalationProvider the escalation time is given here according to index.
+	 *  If not used then a negative value shall be set.
+	 */
+	public TimeArrayResource externalEscalationProviderIds();
 }
