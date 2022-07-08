@@ -9,4 +9,10 @@ public interface VirtualThermostatConfig extends Data {
 	
 	/** Reference to RoomTemperatureSetting#heatingCoolingMode() if relevant*/
 	IntegerResource heatingCoolingMode();
+	
+	/** If non-zero then the state of the OnOffSwitches may be forced
+	 * positve: force on
+	 * negative: force off
+	 */
+	IntegerResource forceOnOff();
 }
