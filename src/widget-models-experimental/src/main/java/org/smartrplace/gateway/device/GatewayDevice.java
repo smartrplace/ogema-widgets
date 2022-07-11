@@ -105,6 +105,13 @@ public interface GatewayDevice extends PhysicalElement {
     /** Traffic counted by heartbeat*/
     FloatResource heartbeatTraffic();
     
+    /** Write to this resource to trigger an alarm indicating that the log files should be
+     * checked for further analysis<br>
+     * 1: Check for notes regarding Faulty timestamp
+     * ...
+     */
+    FloatResource logFileCheckNotification();
+    
     /** Memore timeseries supervision*/
     @Deprecated
     FloatResource pstMultiToSingleEvents();
