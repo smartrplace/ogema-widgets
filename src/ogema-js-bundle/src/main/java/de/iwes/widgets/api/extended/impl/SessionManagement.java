@@ -37,7 +37,7 @@ public class SessionManagement extends TimerTask {
 	
 	// Map<Session Id, Session object>
 	//private final Cache<String, Session> sessions = CacheBuilder.newBuilder().softValues().build();
-	private final Cache<String, Session> sessions = CacheBuilder.newBuilder().maximumSize(5).expireAfterAccess(60, TimeUnit.MINUTES).build();
+	private final Cache<String, Session> sessions = CacheBuilder.newBuilder().maximumSize(100).expireAfterAccess(60, TimeUnit.MINUTES).build();
 
 	SessionManagement() {}
 	
