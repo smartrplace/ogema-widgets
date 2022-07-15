@@ -606,6 +606,16 @@ public class ResourceHelper {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
+	public static <T extends Resource> T getResource(String path, Class<T> type, ResourceAccess ra) {
+		Resource res = ra.getResource(path);
+		if(res == null)
+			return null;
+		if(type.isAssignableFrom(res.getResourceType()))
+			return (T) res;
+		return null;
+	}
+
 	public static String getUniqueNameForNewSubResource(Resource resList, String baseName) {
 		int maxExist = -1;
 		Resource exact = resList.getSubResource(baseName);

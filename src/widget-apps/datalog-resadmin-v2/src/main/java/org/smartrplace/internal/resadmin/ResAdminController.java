@@ -28,11 +28,9 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -84,7 +82,7 @@ import org.smartrplace.resadmin.config.ResAdminConfig;
 import de.iwes.util.format.StringFormatHelper;
 import de.iwes.util.logconfig.LogHelper;
 import de.iwes.util.performanceeval.ExecutionTimeLogger;
-import de.iwes.util.resource.ValueResourceHelper;
+import de.iwes.util.resource.ResourceHelper;
 import de.iwes.util.resourcelist.ResourceListHelper;
 
 // here the controller logic is implemented
@@ -100,6 +98,15 @@ public class ResAdminController {
     private final ResourcePatternAccess advAcc;
 
 	public final ResAdminConfig appConfigData;
+	//private final ResourceList<?> specialDeviceList;
+	private ResourceList<?> specialDeviceList() {
+		String resListSpecial = System.getProperty("org.smartrplace.internal.resadmin.show_special_resourcelistelements");
+		if(resListSpecial != null)
+			return ResourceHelper.getResource(resListSpecial,
+				ResourceList.class, appMan.getResourceAccess());
+		else
+			return null;		
+	}
 	// FIXME global variables are accessed from multiple session threads, synchronization missing
 	public List<TopLevelResTypePattern> typePatterns = new ArrayList<>(); 
 	public TopLevelResTypePattern patternForResource = null;
@@ -121,6 +128,14 @@ public class ResAdminController {
 		final String replayDir = getPropertySecure("org.ogema.app.resadmin.replay_oncleanstart_path", null);
 //		String replayDir = System.getProperty("org.ogema.app.resadmin.replay_oncleanstart_path");
 		final ResAdminConfig appConfigData = appMan.getResourceAccess().getResource(name);
+		
+		/*String resListSpecial = System.getProperty("org.smartrplace.internal.resadmin.show_special_resourcelistelements");
+		if(resListSpecial != null)
+			specialDeviceList = ResourceHelper.getResource(resListSpecial,
+				ResourceList.class, appMan.getResourceAccess());
+		else
+			specialDeviceList = null;*/
+		
 		if (replayDir != null) {
 			if (appConfigData == null) {
 				log.info("Replay after clean start from directory {}",replayDir);
@@ -320,11 +335,15 @@ public class ResAdminController {
 		for(Resource topRes: appMan.getResourceAccess().getToplevelResources(null)) {
 			addResourceType(topRes.getResourceType(), data);
 		}
-		if(!Boolean.getBoolean("org.smartrplace.internal.resadmin.show_also_resourcelistelements")) {
+		List<ResourceList> lrl;
+		if(specialDeviceList() != null) {
+			lrl = new ArrayList<>();
+			lrl.add(specialDeviceList());
+		} else if(!Boolean.getBoolean("org.smartrplace.internal.resadmin.show_also_resourcelistelements")) {
 			typePatterns = data.newList;
 			return;
-		}
-		List<ResourceList> lrl = appMan.getResourceAccess().getResources(ResourceList.class);
+		} else
+			lrl = appMan.getResourceAccess().getResources(ResourceList.class);
 		for(ResourceList rl: lrl) {
 			if(rl.size() <= 0) continue;
 			TopLevelResTypePattern pattern = addResourceType(rl.getElementType(), data);
@@ -695,6 +714,10 @@ if(resType == null) {
 					}
 				}
 			}
+			if(!res.isTopLevel()) {
+				plusPrefix = "SR";
+				found = true;				
+			}
 			if(!found) {
 				for(Resource r: res.getSubResources(false)) {
 					if(arrayContains(r.getName(), data.subRefNames)) {
@@ -786,13 +809,18 @@ if(resType == null) {
 		    	boolean xml = isXmlFile(fileEntry);
 		    	boolean json = isJsonFile(fileEntry);
 		    	//TODO add ogx and ogj
+		    	boolean isSubResource = json && (specialDeviceList() !=null) &&
+		    			(fileEntry.getName().startsWith("SR"));
 		        if (!fileEntry.isDirectory() && (xml || json) ){
 		        	log.debug("Replay of file {}",fileEntry.getPath());
 		    		try {
 		    			final Resource result;
-		    			if (json) 
-		    				result = installJson(fileEntry.toPath());
-		    			else 
+		    			if (json) {
+		    				if(isSubResource)
+		    					result = installJsonSubResource(fileEntry.toPath(), specialDeviceList());
+		    				else
+		    					result = installJson(fileEntry.toPath());
+		    			} else 
 		    				result = installXml(fileEntry.toPath());
 		    			if (result != null) {
 		    				imported.add(result);
@@ -924,6 +952,17 @@ if(resType == null) {
         }
     }
 
+    private Resource installJsonSubResource(Path file, Resource parent) throws Exception {
+    	try (BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
+    		log.debug("importing JSON file {}",file);
+    		return appMan.getSerializationManager().createFromJson(reader, parent);
+    	} catch(InvalidResourceTypeException e) {
+    		log.warn("Resource type in file {} not found",file);
+    		return null;
+    	}
+  }
+
+    
     private Resource installXml(Path file) throws Exception {
     	try (BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
 //        try (FileInputStream fis = new FileInputStream(file); InputStreamReader in = new InputStreamReader(fis, Charset.forName("UTF-8"))) {
