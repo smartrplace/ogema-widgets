@@ -365,6 +365,7 @@ public class GaRoEvalHelper {
 		if(recId.contains("Gateway_Device/gitUpdateStatus")) return GaRoDataType.SystemUpdateStatus;
 		if(recId.contains("Gateway_Device/systemRestartCounterLastHours")) return GaRoDataType.SystemRestartsLast2h;
 		if(recId.contains("Gateway_Device/systemRestart")) return GaRoDataType.SystemRestartLog;
+		if(recId.contains("Gateway_Device/logFileCheckNotification")) return GaRoDataType.LogFileCheckNotification;
 		if(recId.contains("numberIP4AddressesHM")) return GaRoDataType.RouterIPv4HM;
 		if(recId.contains("numberIP4AddressesSSH")) return GaRoDataType.RouterIPv4SSH;
 		if(recId.contains("numberIP6PlusAddressesHM")) return GaRoDataType.RouterIPv6HM;

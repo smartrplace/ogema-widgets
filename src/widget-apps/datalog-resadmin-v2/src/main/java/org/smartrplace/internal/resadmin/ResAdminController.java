@@ -83,6 +83,7 @@ import de.iwes.util.format.StringFormatHelper;
 import de.iwes.util.logconfig.LogHelper;
 import de.iwes.util.performanceeval.ExecutionTimeLogger;
 import de.iwes.util.resource.ResourceHelper;
+import de.iwes.util.resource.ValueResourceHelper;
 import de.iwes.util.resourcelist.ResourceListHelper;
 
 // here the controller logic is implemented
@@ -99,12 +100,17 @@ public class ResAdminController {
 
 	public final ResAdminConfig appConfigData;
 	//private final ResourceList<?> specialDeviceList;
-	private ResourceList<?> specialDeviceList() {
+	private List<ResourceList<?>> specialDeviceList() {
 		String resListSpecial = System.getProperty("org.smartrplace.internal.resadmin.show_special_resourcelistelements");
-		if(resListSpecial != null)
-			return ResourceHelper.getResource(resListSpecial,
-				ResourceList.class, appMan.getResourceAccess());
-		else
+		if(resListSpecial != null) {
+			String[] resListSpecials = resListSpecial.split(",");
+			List<ResourceList<?>> result = new ArrayList<>();
+			for(String resString: resListSpecials) {
+				result.add(ResourceHelper.getResource(resString.trim(),
+						ResourceList.class, appMan.getResourceAccess()));
+			}
+			return result ;
+		} else
 			return null;		
 	}
 	// FIXME global variables are accessed from multiple session threads, synchronization missing
@@ -336,9 +342,10 @@ public class ResAdminController {
 			addResourceType(topRes.getResourceType(), data);
 		}
 		List<ResourceList> lrl;
-		if(specialDeviceList() != null) {
-			lrl = new ArrayList<>();
-			lrl.add(specialDeviceList());
+		List<ResourceList<?>> specialDevList = specialDeviceList();
+		lrl = new ArrayList<>();
+		if(specialDevList != null) for(ResourceList<?> resList: specialDevList) {
+			lrl.add(resList);
 		} else if(!Boolean.getBoolean("org.smartrplace.internal.resadmin.show_also_resourcelistelements")) {
 			typePatterns = data.newList;
 			return;
@@ -715,7 +722,16 @@ if(resType == null) {
 				}
 			}
 			if(!res.isTopLevel()) {
-				plusPrefix = "SR";
+				int resListIndex = 0;
+				List<ResourceList<?>> specialDevList = specialDeviceList();
+				Resource parent = res.getParent();
+				for(;resListIndex<specialDevList.size(); resListIndex++) {
+					if(parent.equalsLocation(specialDevList.get(resListIndex)))
+						break;
+				}
+				if(resListIndex >= specialDevList.size())
+					resListIndex = 0;
+				plusPrefix = "SR"+String.format("%02d_", resListIndex);
 				found = true;				
 			}
 			if(!found) {
@@ -809,16 +825,38 @@ if(resType == null) {
 		    	boolean xml = isXmlFile(fileEntry);
 		    	boolean json = isJsonFile(fileEntry);
 		    	//TODO add ogx and ogj
-		    	boolean isSubResource = json && (specialDeviceList() !=null) &&
+		    	boolean isSubResource = json && 
 		    			(fileEntry.getName().startsWith("SR"));
+		    	int resListIdx = -1;
+		    	List<ResourceList<?>> specialDevList = null;
+		    	if(isSubResource) {
+					specialDevList = specialDeviceList();
+		    		try {
+		    			resListIdx = Integer.parseInt(fileEntry.getName().substring(2, 4));
+		    		} catch(NumberFormatException e) {
+		    			if(specialDevList.size() == 1)
+		    				resListIdx = 0;
+		    			else {
+		    				log.error("SR<index> required if more than one replay-on-clean parent-list specified!");
+		    				continue;
+		    			}
+		    		}
+		    		if(resListIdx >= specialDevList.size()) {
+	    				log.error("The following SR-file has invalid index:"+fileEntry.getName());		    			
+		    		}
+		    	}
 		        if (!fileEntry.isDirectory() && (xml || json) ){
 		        	log.debug("Replay of file {}",fileEntry.getPath());
 		    		try {
 		    			final Resource result;
 		    			if (json) {
-		    				if(isSubResource)
-		    					result = installJsonSubResource(fileEntry.toPath(), specialDeviceList());
-		    				else
+		    				if(isSubResource) {
+		    					ResourceList<?> resList = specialDevList.get(resListIdx);
+		    					if(resList != null)
+		    						result = installJsonSubResource(fileEntry.toPath(), resList);
+		    					else
+		    						continue;
+		    				} else
 		    					result = installJson(fileEntry.toPath());
 		    			} else 
 		    				result = installXml(fileEntry.toPath());

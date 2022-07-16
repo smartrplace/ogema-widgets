@@ -329,6 +329,9 @@ public class GaRoDataType implements GaRoDataTypeI {
 			IntegerResource.class);
 	public static final GaRoDataType SystemRestartsLast2h = new GaRoDataType("SystemRestartsLast2h",
 			IntegerResource.class);
+	public static final GaRoDataType LogFileCheckNotification = new GaRoDataType("LogFileCheck",
+			IntegerResource.class);	
+	
 	public static final GaRoDataType RouterIPv4HM = new GaRoDataType("IPv4_HM",
 			IntegerResource.class);
 	public static final GaRoDataType RouterIPv4SSH = new GaRoDataType("IPv4_SSH",
