@@ -180,6 +180,9 @@ public class ResAdminController {
 			this.appConfigData = appConfigData;
 		else
 			this.appConfigData = initConfigurationResource(name);
+		
+		resourceCleanups();
+		
 		String delayProp = System.getProperty("org.ogema.sim.simulationdelay");
 		if(delayProp == null)
 			setInit();
@@ -239,7 +242,7 @@ public class ResAdminController {
 		});
 	}
     
-    private void setInit() {
+	private void setInit() {
 		InitStatus init = appMan.getResourceManagement().createResource("initStatus", InitStatus.class);
 		BooleanResource replayDone = init.replayOnClean().create();
 		replayDone.setValue(true);
@@ -1089,4 +1092,20 @@ if(resType == null) {
     	
     }
     
+    private void resourceCleanups() {
+		List<Room> topRooms = appMan.getResourceAccess().getToplevelResources(Room.class);
+		ResourceList<Room> newRooms = appMan.getResourceAccess().getResource("rooms");
+		if(newRooms == null)
+			return;
+		for(Room topRoom: topRooms) {
+			Room newRoom = ResourceListHelper.getNamedElementFlex(topRoom.name().getValue(), newRooms);
+			if(newRoom == null)
+				continue;
+			List<Resource> refs = topRoom.getReferencingNodes(false);
+			for(Resource ref: refs) {
+				ref.setAsReference(newRoom);
+			}
+			topRoom.delete();
+		}
+	}
 }
