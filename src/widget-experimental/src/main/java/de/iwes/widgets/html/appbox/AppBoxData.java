@@ -202,7 +202,8 @@ public class AppBoxData extends WidgetData {
 			}
 			singleApp.put("metainfo",metainfo);
 			
-			String startPage = entry.getWebAccess().getStartUrl();
+			String startPage = getAppStartUrl(entry, req);
+			/*String startPage = entry.getWebAccess().getStartUrl();
 			if (startPage != null) {
 				if(startPage.startsWith("/linkonly/")) {
 					String url = startPage.substring("/linkonly/".length());
@@ -236,7 +237,8 @@ public class AppBoxData extends WidgetData {
 							url = allUrl;
 					}
 					startPage = "https://"+url;
-				}
+				}*/
+			if(startPage != null) {
 				singleApp.put("startPage", startPage);
 			}
 			String descr = ((AppBox) widget).getDescription(entry);
@@ -304,4 +306,58 @@ public class AppBoxData extends WidgetData {
 		return allKey;
 	}
 
+	public static String getAppStartUrl(AdminApplication entry, String user) {
+		return getAppStartUrl(entry, null, user);
+	}
+	public static String getAppStartUrl(AdminApplication entry, HttpServletRequest req) {
+		return getAppStartUrl(entry, req, null);
+	}
+	/** Get URL to open app web UI
+	 * 
+	 * @param entry
+	 * @param req if null then user must be provided
+	 * @param user
+	 * @return
+	 */
+	public static String getAppStartUrl(AdminApplication entry, HttpServletRequest req, String user) {
+		String startPage = entry.getWebAccess().getStartUrl();
+		if (startPage != null) {
+			if(startPage.startsWith("/linkonly/")) {
+				String url = startPage.substring("/linkonly/".length());
+				if(url.endsWith("/index.html"))
+					url = url.substring(0, url.length()-"/index.html".length());
+				if(url.startsWith("$")) {
+					String jsonstr = "{"+url.replaceAll("\\$", "\"")+"}";
+					JSONObject json = new JSONObject(jsonstr);
+					if(req != null)
+						user = UserLocaleUtil.getUserLoggedInBase(req.getSession());
+					String allUrl = null;
+					String providerUrl = null;
+					boolean found = false;
+					for(String key: json.keySet()) {
+						String optUrl = json.getString(key);
+						if(key.equals("all"))
+							allUrl = optUrl;
+						else if(key.equals("linkprovider")) {
+							String providerId = optUrl;
+							LinkProvider prov = linkProviders.get(providerId);
+							if(prov != null)
+								providerUrl = prov.getLink(user);
+						} else if(key.equals(user)) {
+							url = optUrl;
+							found = true;
+							break;
+						}
+					}
+					if(!found && providerUrl != null)
+						url = providerUrl;
+					else if(!found && allUrl != null)
+						url = allUrl;
+				}
+				startPage = "https://"+url;
+			}
+			return startPage;
+		}
+		return null;
+	}
 }
