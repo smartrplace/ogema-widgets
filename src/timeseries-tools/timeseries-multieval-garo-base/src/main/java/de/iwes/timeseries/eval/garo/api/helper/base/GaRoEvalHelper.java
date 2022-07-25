@@ -323,6 +323,9 @@ public class GaRoEvalHelper {
 		if(recId.contains("/outputTemperature/")) return GaRoDataType.HeatReturnTemperatur;
 		if(recId.contains("/storageTemperature")) return GaRoDataType.StorageTemperature;
 
+		if(recId.contains("/hcaEnergy/")) return GaRoDataType.HeatCostAllocatorPoints;
+		
+		
 		if(recId.startsWith("vpFlowScope/") && recId.contains("/flow/reading")) return GaRoDataType.HeatFlow;
 		if(recId.startsWith("vpFlowScope/") && recId.contains("/flowInLpmin/reading")) return GaRoDataType.HeatFlowInLpmin;
 		if(recId.startsWith("vpFlowScope/") && recId.contains("/pressure/reading")) return GaRoDataType.HeatFlowPressure;
@@ -333,6 +336,8 @@ public class GaRoEvalHelper {
 		if(recId.contains("/Redox_1/sensor/reading")) return GaRoDataType.WaterRedoxValue;
 		if(recId.contains("/Sauerstoff_1/sensor/reading")) return GaRoDataType.WaterOxygenConcentrationValue;
 		if(recId.contains("/Temperatur_1/sensor/reading")) return GaRoDataType.WaterTemperatureValue;
+		if(recId.contains("MBusReadings/BUS_SYSTEM_COMPONENT_") && recId.contains("/USER_DEFINED_0_0")) return GaRoDataType.Internal;
+		if(recId.contains("MBusReadings/BUS_SYSTEM_COMPONENT_") && recId.contains("/batteryCharge/reading")) return GaRoDataType.StateOfCharge;
 		if(recId.contains("/USER_DEFINED_0_0")) return GaRoDataType.CO2Concentration;
 		if(recId.contains("/co2/reading")) return GaRoDataType.CO2Concentration;
 		if(recId.contains("/CARBON_DIOXIDE_RECEIVER_")) return GaRoDataType.CO2Concentration;
