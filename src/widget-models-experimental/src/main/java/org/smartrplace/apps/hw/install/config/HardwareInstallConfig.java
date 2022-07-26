@@ -151,4 +151,10 @@ public interface HardwareInstallConfig extends Data {
 	/** Devices marked for automated deletion after some time will be deleted at this time. This is usually the next midnight after the
 	 * last marking operation. It is recommended to perform this manually when cleaning up and testing is finished.*/
 	TimeResource nextTimeToDeleteMarkedDevices();
+	
+	/** Determines the level of escalation alarming messages (potentially also base alarming messages)
+	 *  0: normal
+	 *  -10: summer mode for mainly heating systems / winter mode for mainly cooling systems
+	 */
+	IntegerResource alarmingReductionLevel();
 }
