@@ -154,6 +154,8 @@ public class GaRoEvalHelper {
 				"MaxValveLimitRequested", "Maximale Ventilstellung (Request)");
 		addRecId(GaRoDataType.ValveErrorState, new String[] {"/valve/eq3state"}, recIdSnippets,
 				"ValveErrorState", "VentilFehlerStatus");
+		addRecId(GaRoDataType.ValveAdaptionStart, new String[] {"/valve/startAdaption"}, recIdSnippets,
+				"ValveAdaptionStart", "VentilAdaptionStart");
 		addRecId(GaRoDataType.ValveErrorPositionCt, new String[] {"/valve/errorRunPosition/stateControl"}, recIdSnippets,
 				"ValveErrorPosCt", "VentilFehlerPosition");
 		addRecId(GaRoDataType.ValveErrorPositionFb, new String[] {"/valve/errorRunPosition/stateFeedback"}, recIdSnippets,
