@@ -1,7 +1,6 @@
 package de.smartrplace.iee.bms.models;
 
 import org.ogema.core.model.simple.FloatResource;
-import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.model.actors.MultiSwitch;
 import org.ogema.model.actors.OnOffSwitch;
 import org.ogema.model.prototypes.PhysicalElement;
@@ -19,8 +18,6 @@ public interface KnxLightingControls extends PhysicalElement {
     OnOffSwitch sunblindUpDown();
     
     OnOffSwitch sunblindSlatsStep();
-    
-    IntegerResource dimmerStep();
     
     default void sunblindMove(boolean up) {
         sunblindUpDown().stateControl().setValue(up);
@@ -48,12 +45,6 @@ public interface KnxLightingControls extends PhysicalElement {
     
     default float getLightPercentage() {
         return lightingPercentage().stateFeedback().getValue();
-    }
-    
-    default void dimLights(boolean increase, int step) {
-        dimmerStep().create();
-        dimmerStep().setValue(step | (increase ? 8 : 0));
-        dimmerStep().activate(false);
     }
     
     /**Provided by roomcontrol logic*/
