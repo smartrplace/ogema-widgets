@@ -353,6 +353,8 @@ public class AppBoxData extends WidgetData {
 						url = providerUrl;
 					else if(!found && allUrl != null)
 						url = allUrl;
+					else if(providerUrl == null)
+						return null;
 				}
 				startPage = "https://"+url;
 			}
