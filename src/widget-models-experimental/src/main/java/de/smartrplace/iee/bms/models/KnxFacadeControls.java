@@ -13,8 +13,16 @@ public interface KnxFacadeControls extends PhysicalElement {
 	
 	OnOffSwitch shutterCleaning();
 	
+	/**
+	 * Used as sensor, read feedback for wind alert as reported by the
+	 * weather stations.
+	 * 
+	 * @return wind alert sensor, only read feedback.
+	 */
 	OnOffSwitch windAlert();
 	
 	OnOffSwitch windClearance();
+	
+	OnOffSwitch shutterAutomation();
 	
 }
