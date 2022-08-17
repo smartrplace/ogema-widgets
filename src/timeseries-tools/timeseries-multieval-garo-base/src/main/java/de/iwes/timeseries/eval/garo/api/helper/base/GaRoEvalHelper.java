@@ -144,10 +144,12 @@ public class GaRoEvalHelper {
 				"Temperature measured at thermostat", "Temperaturmesswert Thermostat");
 		addRecId(GaRoDataType.TemperatureMeasurementRoomSensor, new String[] {"TEMPERATURE/reading", "EXTERNAL_TEMPERATURE_0_0", "/sensors/temperature"}, recIdSnippets,
 				"Room Sensor Temperature", "Raumsensor Temperatur");
-		addRecId(GaRoDataType.OutsideTemperatureGw, new String[] {"/sensors/TEMPERATURE"}, recIdSnippets,
+		addRecId(GaRoDataType.OutsideTemperatureGw, new String[] {"/sensors/TEMPERATURE", "_Temperaturwert_"}, recIdSnippets,
 				"Outside Sensor Temperature", "Außensensor Temperatur");
 		addRecId(GaRoDataType.ValvePosition, new String[] {"valve/setting/stateFeedback"}, recIdSnippets,
 				"Valve Position", "Ventilstellung");
+		addRecId(GaRoDataType.ValvePositionControl, new String[] {"valve/setting/stateControl"}, recIdSnippets,
+				"Valve Position Control", "Ventilstellung-Vorgabe");
 		addRecId(GaRoDataType.ValvePositionLimit, new String[] {"/maximumValvePosition", "/VALVE_MAXIMUM_POSITION_FEEDBACK"}, recIdSnippets,
 				"MaxValveLimit", "Maximale Ventilstellung");
 		addRecId(GaRoDataType.ValvePositionLimitRequested, new String[] {"/VALVE_MAXIMUM_POSITION"}, recIdSnippets,
@@ -323,10 +325,26 @@ public class GaRoEvalHelper {
 		if(recId.contains("/flowSensor/reading")) return GaRoDataType.HeatFlow;
 		if(recId.contains("/VOLUME")) return GaRoDataType.HeatVolumeIntegral;
 		if(recId.contains("/volumeSensor/reading")) return GaRoDataType.HeatVolumeIntegral;
+		
+		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_TFl_")) return GaRoDataType.HeatFlowTemperatur;
+		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_TRt_")) return GaRoDataType.HeatReturnTemperatur;
+		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_Pu_Cmd_")
+				&& recId.contains("/stateControl")) return GaRoDataType.SwitchStateControl;
+		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_Pu_Cmd_")
+				&& recId.contains("/stateFeedback")) return GaRoDataType.SwitchStateFeedback;
+		if(recId.contains("/malfunction") ||
+				(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_Pu_ThOvrld_"))) return GaRoDataType.ErrorStatus;
+
+		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_Vlv_")
+				&& recId.contains("/stateControl")) return GaRoDataType.ValvePositionControl;
+		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_Vlv_")
+				&& recId.contains("/stateFeedback")) return GaRoDataType.ValvePosition;
+
 		if(recId.contains("/FLOW_TEMPERATURE_")) return GaRoDataType.HeatSupplyTemperatur;
 		if(recId.contains("/inputTemperature/")) return GaRoDataType.HeatSupplyTemperatur;
 		if(recId.contains("/RETURN_TEMPERATURE_")) return GaRoDataType.HeatReturnTemperatur;
 		if(recId.contains("/outputTemperature/")) return GaRoDataType.HeatReturnTemperatur;
+		if(recId.contains("/returnTemperature/")) return GaRoDataType.HeatReturnTemperatur;
 		if(recId.contains("/storageTemperature")) return GaRoDataType.StorageTemperature;
 
 		if(recId.contains("/hcaEnergy/")) return GaRoDataType.HeatCostAllocatorPoints;
@@ -356,6 +374,7 @@ public class GaRoEvalHelper {
 		
 		if(recId.contains("/lightSensor/reading")) return GaRoDataType.LightSensor;
 		if(recId.contains("BRIGHTNESS/reading")) return GaRoDataType.LightSensor;
+		if(recId.contains("_Helligkeitswert_")) return GaRoDataType.LightSensor;
 		if(recId.contains("/sensors/BRIGHTNESS/rawValue")) return GaRoDataType.LightSensorRaw;
 
 		if(recId.contains("/connected/")) return GaRoDataType.ConnectedStatus;
@@ -416,7 +435,8 @@ public class GaRoEvalHelper {
 
 		if(recId.contains("/sensors/RAIN_COUNTER")) return GaRoDataType.RainCounter; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/sensors/RAINING")) return GaRoDataType.RainStatus; //"onOffSwitch/stateFeedback"
-		if(recId.contains("/sensors/WIND_SPEED") || recId.contains("/sensors/wind/speed")) return GaRoDataType.WindSpeed; //"onOffSwitch/stateFeedback"
+		if(recId.contains("/sensors/WIND_SPEED") || recId.contains("/sensors/wind/speed") 
+				|| recId.contains("_Windwert_")) return GaRoDataType.WindSpeed; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/sensors/WIND_DIRECTION") || recId.contains("/sensors/wind/direction")) return GaRoDataType.WindDirection; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/sensors/solarIrradiation")) return GaRoDataType.SolarIrradiation; //"onOffSwitch/stateFeedback"
 		

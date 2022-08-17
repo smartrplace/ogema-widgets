@@ -137,6 +137,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 			TemperatureResource.class);
 	public static final GaRoDataType ValvePosition = new GaRoDataType("ValvePosition", 
 			FloatResource.class);
+	public static final GaRoDataType ValvePositionControl = new GaRoDataType("ValvePositionControl", 
+			FloatResource.class);
 	public static final GaRoDataType ValvePositionLimit = new GaRoDataType("ValvePositionLimit", 
 			FloatResource.class);
 	public static final GaRoDataType ValvePositionLimitRequested = new GaRoDataType("ValvePositionLimitRequested", 
@@ -248,6 +250,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 			TemperatureResource.class);
 	public static final GaRoDataType HeatReturnTemperatur = new GaRoDataType("HeatReturnTemperatur",
 			TemperatureResource.class);
+	public static final GaRoDataType HeatFlowTemperatur = new GaRoDataType("HeatFlowTemperatur",
+			TemperatureResource.class);
 	public static final GaRoDataType HeatFlowInLpmin = new GaRoDataType("HeatFlowInLpmin",
 			FlowResource.class);
 	public static final GaRoDataType HeatFlowPressure = new GaRoDataType("HeatFlowPressure",
@@ -284,6 +288,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 			BooleanResource.class);
 	public static final GaRoDataType ErrorCode = new GaRoDataType("ErrorCode",
 			IntegerResource.class);
+	public static final GaRoDataType ErrorStatus = new GaRoDataType("ErrorStatus",
+			BooleanResource.class);
 	public static final GaRoDataType ConfigPending = new GaRoDataType("ConfigPending",
 			BooleanResource.class);
 	public static final GaRoDataType ManuMode = new GaRoDataType("ManuMode",

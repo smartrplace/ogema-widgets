@@ -45,6 +45,11 @@ public class ValueResourceLabel<T extends SingleValueResource> extends ResourceL
 		super(page, id);
 	}
 	
+	public ValueResourceLabel(WidgetPage<?> page, String id, T defaultRes) {
+		super(page, id);
+		selectDefaultItem(defaultRes);
+	}
+
 	public ValueResourceLabel(OgemaWidget parent, String id, OgemaHttpRequest req) {
 		super(parent, id, req);
 	}
