@@ -36,6 +36,13 @@ public interface LocalGatewayInformation extends PhysicalElement {
 	/** Base URL of gateway to connect to via internet, e.g. https://customer.manufacturer.de:2000*/
 	StringResource gatewayBaseUrl();
 	
+	/** Url to gateway installation and operation documentation*/
+	StringResource gatewayOperationDatabaseUrl();
+	
+	/** Url to overview on gateway documentation sources. If this is existing then the {@link #gatewayOperationDatabaseUrl()} may 
+	 * not be used as the link overview should usually contain this.*/
+	StringResource gatewayLinkOverviewUrl();
+
 	/** ID of system default locale (obtained by OgemaLocale.getLocale().getLanguage() ), which can
 	 * be used to obtain OgemaLocale object by OgemaLocale#getLocale*/
 	StringResource systemLocale();

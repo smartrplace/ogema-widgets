@@ -837,7 +837,7 @@ if(resType == null) {
 		    		try {
 		    			resListIdx = Integer.parseInt(fileEntry.getName().substring(2, 4));
 		    		} catch(NumberFormatException e) {
-		    			if(specialDevList.size() == 1)
+		    			if(specialDevList != null && specialDevList.size() == 1)
 		    				resListIdx = 0;
 		    			else {
 		    				log.error("SR<index> required if more than one replay-on-clean parent-list specified!");
