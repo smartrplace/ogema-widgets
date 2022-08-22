@@ -328,12 +328,19 @@ public class GaRoEvalHelper {
 		
 		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_TFl_")) return GaRoDataType.HeatFlowTemperatur;
 		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_TRt_")) return GaRoDataType.HeatReturnTemperatur;
-		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_Pu_Cmd_")
-				&& recId.contains("/stateControl")) return GaRoDataType.SwitchStateControl;
-		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_Pu_Cmd_")
-				&& recId.contains("/stateFeedback")) return GaRoDataType.SwitchStateFeedback;
+		if(recId.endsWith("/operating/reading") ||
+				(recId.startsWith("BACnet/remoteDevices/") &&
+				recId.contains("_RfMch_OpSta_"))) return GaRoDataType.OperatingStatus;
+		if(recId.contains("/malfunctionGas") ||
+				(recId.startsWith("BACnet/remoteDevices/") &&
+				recId.contains("_RfMch_Dstb_"))) return GaRoDataType.ErrorStatusFluid;
 		if(recId.contains("/malfunction") ||
-				(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_Pu_ThOvrld_"))) return GaRoDataType.ErrorStatus;
+				(recId.startsWith("BACnet/remoteDevices/") &&
+				(recId.contains("_Pu_ThOvrld_") || recId.contains("_Dstb_") || recId.contains("_Dstb1_")))) return GaRoDataType.ErrorStatus;
+		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_Cmd_")
+				&& recId.contains("/stateControl")) return GaRoDataType.SwitchStateControl;
+		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_Cmd_")
+				&& recId.contains("/stateFeedback")) return GaRoDataType.SwitchStateFeedback;
 
 		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_Vlv_")
 				&& recId.contains("/stateControl")) return GaRoDataType.ValvePositionControl;

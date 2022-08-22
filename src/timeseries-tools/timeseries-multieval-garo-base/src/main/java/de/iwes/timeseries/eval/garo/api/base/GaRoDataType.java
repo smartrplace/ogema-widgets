@@ -290,6 +290,10 @@ public class GaRoDataType implements GaRoDataTypeI {
 			IntegerResource.class);
 	public static final GaRoDataType ErrorStatus = new GaRoDataType("ErrorStatus",
 			BooleanResource.class);
+	public static final GaRoDataType ErrorStatusFluid = new GaRoDataType("ErrorStatusFluid",
+			BooleanResource.class);
+	public static final GaRoDataType OperatingStatus = new GaRoDataType("OperatingStatus",
+			BooleanResource.class);
 	public static final GaRoDataType ConfigPending = new GaRoDataType("ConfigPending",
 			BooleanResource.class);
 	public static final GaRoDataType ManuMode = new GaRoDataType("ManuMode",
