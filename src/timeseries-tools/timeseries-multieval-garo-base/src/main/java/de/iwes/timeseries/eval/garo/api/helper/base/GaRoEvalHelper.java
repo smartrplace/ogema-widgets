@@ -341,6 +341,10 @@ public class GaRoEvalHelper {
 				&& recId.contains("/stateControl")) return GaRoDataType.SwitchStateControl;
 		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_Cmd_")
 				&& recId.contains("/stateFeedback")) return GaRoDataType.SwitchStateFeedback;
+		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_ReC_Mdlt_")
+				&& recId.contains("/stateControl")) return GaRoDataType.MultiSwitchStateControl;
+		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_ReC_Mdlt_")
+				&& recId.contains("/stateFeedback")) return GaRoDataType.MultiSwitchStateFeedback;
 
 		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_Vlv_")
 				&& recId.contains("/stateControl")) return GaRoDataType.ValvePositionControl;
