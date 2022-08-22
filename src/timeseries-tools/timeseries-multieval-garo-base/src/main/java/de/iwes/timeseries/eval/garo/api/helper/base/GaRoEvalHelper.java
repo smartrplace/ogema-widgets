@@ -314,7 +314,7 @@ public class GaRoEvalHelper {
 		if(recId.contains("/setting/stateControl")) return GaRoDataType.MultiSwitchStateControl; //"onOffSwitch/stateFeedback"		
 		if(recId.contains("/stateFeedback")) return GaRoDataType.SwitchStateFeedback; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/stateControl")) return GaRoDataType.SwitchStateControl; //"onOffSwitch/stateFeedback"
-
+		if(recId.contains("occupancySensor/reading")) return GaRoDataType.Occupancy; //"onOffSwitch/stateFeedback"
 		
 		if(recId.contains("/powerSensor/settings/setpoint")) return GaRoDataType.DevicePowerControl;
 		if(recId.contains("/reactivePowerSensor/settings/setpoint")) return GaRoDataType.DeviceReactivePowerControl;
@@ -351,6 +351,16 @@ public class GaRoEvalHelper {
 		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_Vlv_")
 				&& recId.contains("/stateFeedback")) return GaRoDataType.ValvePosition;
 
+		if(recId.startsWith("knxcontrols/") && recId.contains("_Jalo_Stop_")
+				&& recId.contains("/stateControl")) return GaRoDataType.ShutterStopCt;
+		if(recId.startsWith("knxcontrols/") && recId.contains("_Jalo_Stop_")
+				&& recId.contains("/stateControl")) return GaRoDataType.ShutterStopFb;
+		if(recId.startsWith("knxcontrols/") && recId.contains("_Jalo_Fahr_")
+				&& recId.contains("/stateControl")) return GaRoDataType.ShutterUpDownCt;
+		if(recId.startsWith("knxcontrols/") && recId.contains("_Jalo_Fahr_")
+				&& recId.contains("/stateFeedback")) return GaRoDataType.ShutterUpDownFb;
+		
+		
 		if(recId.contains("/FLOW_TEMPERATURE_")) return GaRoDataType.HeatSupplyTemperatur;
 		if(recId.contains("/inputTemperature/")) return GaRoDataType.HeatSupplyTemperatur;
 		if(recId.contains("/RETURN_TEMPERATURE_")) return GaRoDataType.HeatReturnTemperatur;

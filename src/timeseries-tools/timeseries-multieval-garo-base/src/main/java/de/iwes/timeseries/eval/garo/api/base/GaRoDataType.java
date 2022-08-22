@@ -300,6 +300,18 @@ public class GaRoDataType implements GaRoDataTypeI {
 			IntegerResource.class);
 	public static final GaRoDataType ManuModeFb = new GaRoDataType("ManuModeFb",
 			IntegerResource.class);
+	
+	public static final GaRoDataType ShutterStopCt = new GaRoDataType("ShutterStopCt",
+			BooleanResource.class);
+	public static final GaRoDataType ShutterStopFb = new GaRoDataType("ShutterStopFb",
+			BooleanResource.class);
+	public static final GaRoDataType ShutterUpDownCt = new GaRoDataType("ShutterUpDownCt",
+			BooleanResource.class);
+	public static final GaRoDataType ShutterUpDownFb = new GaRoDataType("ShutterUpDownFb",
+			BooleanResource.class);
+	public static final GaRoDataType Occupancy = new GaRoDataType("Occupancy",
+			BooleanResource.class);	
+	
 
 	public static final GaRoDataType ControllerOpenFiles = new GaRoDataType("OpenFiles",
 			FloatResource.class);
