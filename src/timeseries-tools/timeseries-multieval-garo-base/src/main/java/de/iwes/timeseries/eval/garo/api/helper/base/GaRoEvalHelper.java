@@ -357,6 +357,9 @@ public class GaRoEvalHelper {
 				&& recId.contains("/stateControl"))) return GaRoDataType.ShutterUpDownCt;
 		if(recId.endsWith("/sunblindUpDown/stateFeedback") || (recId.startsWith("knx_devices/") && recId.contains("_Jalo_Fahr_")
 				&& recId.contains("/stateFeedback"))) return GaRoDataType.ShutterUpDownFb;
+		if(recId.contains("/sunblindEstimatedPosition")) return GaRoDataType.ShutterPosition; //"onOffSwitch/stateFeedback"
+		if(recId.contains("/sunblindBottom")) return GaRoDataType.ShutterBottomPosition; //"onOffSwitch/stateFeedback"
+		if(recId.contains("/sunblindTop")) return GaRoDataType.ShutterTopPosition; //"onOffSwitch/stateFeedback"
 		
 		if(recId.contains("/stateFeedback")) return GaRoDataType.SwitchStateFeedback; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/stateControl")) return GaRoDataType.SwitchStateControl; //"onOffSwitch/stateFeedback"

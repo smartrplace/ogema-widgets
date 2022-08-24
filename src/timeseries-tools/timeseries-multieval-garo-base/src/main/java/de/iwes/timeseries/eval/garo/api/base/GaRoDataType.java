@@ -309,6 +309,12 @@ public class GaRoDataType implements GaRoDataTypeI {
 			BooleanResource.class);
 	public static final GaRoDataType ShutterUpDownFb = new GaRoDataType("ShutterUpDownFb",
 			BooleanResource.class);
+	public static final GaRoDataType ShutterBottomPosition = new GaRoDataType("ShutterBottom",
+			BooleanResource.class);
+	public static final GaRoDataType ShutterTopPosition = new GaRoDataType("ShutterTop",
+			BooleanResource.class);
+	public static final GaRoDataType ShutterPosition = new GaRoDataType("ShutterPosition",
+			FloatResource.class);
 	public static final GaRoDataType Occupancy = new GaRoDataType("Occupancy",
 			BooleanResource.class);	
 	
