@@ -353,10 +353,10 @@ public class GaRoEvalHelper {
 				&& recId.contains("/stateControl")) return GaRoDataType.ShutterStopCt;
 		if(recId.startsWith("knx_devices/") && recId.contains("_Jalo_Stop_")
 				&& recId.contains("/stateControl")) return GaRoDataType.ShutterStopFb;
-		if(recId.startsWith("knx_devices/") && recId.contains("_Jalo_Fahr_")
-				&& recId.contains("/stateControl")) return GaRoDataType.ShutterUpDownCt;
-		if(recId.startsWith("knx_devices/") && recId.contains("_Jalo_Fahr_")
-				&& recId.contains("/stateFeedback")) return GaRoDataType.ShutterUpDownFb;
+		if(recId.endsWith("/sunblindUpDown/stateControl") || (recId.startsWith("knx_devices/") && recId.contains("_Jalo_Fahr_")
+				&& recId.contains("/stateControl"))) return GaRoDataType.ShutterUpDownCt;
+		if(recId.endsWith("/sunblindUpDown/stateFeedback") || (recId.startsWith("knx_devices/") && recId.contains("_Jalo_Fahr_")
+				&& recId.contains("/stateFeedback"))) return GaRoDataType.ShutterUpDownFb;
 		
 		if(recId.contains("/stateFeedback")) return GaRoDataType.SwitchStateFeedback; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/stateControl")) return GaRoDataType.SwitchStateControl; //"onOffSwitch/stateFeedback"
