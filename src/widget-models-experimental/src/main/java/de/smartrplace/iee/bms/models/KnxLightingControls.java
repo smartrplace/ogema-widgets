@@ -1,5 +1,6 @@
 package de.smartrplace.iee.bms.models;
 
+import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.FloatResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.model.actors.MultiSwitch;
@@ -17,6 +18,10 @@ public interface KnxLightingControls extends PhysicalElement {
     MultiSwitch lightingPercentage();
     
     OnOffSwitch sunblindUpDown();
+	
+	BooleanResource sunblindTop();
+	
+	BooleanResource sunblindBottom();
     
     OnOffSwitch sunblindSlatsStep();
     
