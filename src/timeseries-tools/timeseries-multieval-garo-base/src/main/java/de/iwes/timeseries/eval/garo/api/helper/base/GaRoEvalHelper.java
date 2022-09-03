@@ -328,7 +328,7 @@ public class GaRoEvalHelper {
 		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_TRt_")) return GaRoDataType.HeatReturnTemperatur;
 		if(recId.endsWith("/operating/reading") ||
 				(recId.startsWith("BACnet/remoteDevices/") &&
-				recId.contains("_RfMch_OpSta_"))) return GaRoDataType.OperatingStatus;
+				(recId.contains("_RfMch_OpSta_") || recId.contains("_ReC_OpSta_")))) return GaRoDataType.OperatingStatus;
 		if(recId.contains("/malfunctionGas") ||
 				(recId.startsWith("BACnet/remoteDevices/") &&
 				recId.contains("_RfMch_Dstb_"))) return GaRoDataType.ErrorStatusFluid;
