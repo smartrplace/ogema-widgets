@@ -378,7 +378,7 @@ public class GaRoEvalHelper {
 		if(recId.contains("/storageTemperature")) return GaRoDataType.StorageTemperature;
 
 		if(recId.contains("/hcaEnergy/")) return GaRoDataType.HeatCostAllocatorPoints;
-		
+		if(recId.contains("/cop/reading")) return GaRoDataType.HeatpumpCOP;
 		
 		if(recId.startsWith("vpFlowScope/") && recId.contains("/flow/reading")) return GaRoDataType.HeatFlow;
 		if(recId.startsWith("vpFlowScope/") && recId.contains("/flowInLpmin/reading")) return GaRoDataType.HeatFlowInLpmin;
