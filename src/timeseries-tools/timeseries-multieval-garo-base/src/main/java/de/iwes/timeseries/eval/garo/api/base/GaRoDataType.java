@@ -238,6 +238,11 @@ public class GaRoDataType implements GaRoDataTypeI {
 	public static final GaRoDataType DeviceReactivePowerControl = new GaRoDataType("DeviceReactivePowerControl",
 			PowerResource.class);
 
+	public static final GaRoDataType PluggedInStatus = new GaRoDataType("PluggedInStatus",
+			BooleanResource.class);
+	public static final GaRoDataType ChargingStatus = new GaRoDataType("ChargingStatus",
+			BooleanResource.class);
+
 	public static final GaRoDataType Heatpower = new GaRoDataType("Heatpower",
 			PowerResource.class);
 	public static final GaRoDataType HeatEnergyIntegral = new GaRoDataType("HeatEnergyIntegral",
@@ -477,6 +482,9 @@ public class GaRoDataType implements GaRoDataTypeI {
 			PowerResource.class, Level.GATEWAY);
 	public static final GaRoDataType PowerMeterEnergy = new GaRoDataType("PowerMeterEnergy",
 			EnergyResource.class, Level.GATEWAY);
+	/** For meters mainly focussing on consumption a separate field for export may exist*/
+	public static final GaRoDataType PowerMeterEnergyExported = new GaRoDataType("PowerMeterEnergyExported",
+			EnergyResource.class, Level.GATEWAY);
 	public static final GaRoDataType PowerMeterCurrent = new GaRoDataType("PowerMeterCurrent",
 			ElectricCurrentResource.class, Level.GATEWAY);
 	public static final GaRoDataType PowerMeterVoltage = new GaRoDataType("PowerMeterVoltage",
@@ -548,6 +556,13 @@ public class GaRoDataType implements GaRoDataTypeI {
 			return Arrays.asList(new GenericAttribute[] {GenericAttributeImpl.OUTSIDE});
 		}		
 	};
+	public static final GaRoDataType CloudCoverageExt = new GaRoDataType("CloudCoverageExt",
+			FloatResource.class, Level.GATEWAY) {
+		@Override
+		public List<GenericAttribute> attributes() {
+			return Arrays.asList(new GenericAttribute[] {GenericAttributeImpl.OUTSIDE});
+		}		
+	};
 	
 	public static final GaRoDataType OutsideTemperaturePerForcecast= new GaRoDataType("OutsideTemperaturePerForcecast",
 			TemperatureResource.class, Level.GATEWAY) {
@@ -587,6 +602,13 @@ public class GaRoDataType implements GaRoDataTypeI {
 	};
 	public static final GaRoDataType WindDirectionPerForcecast= new GaRoDataType("WindDirection",
 			AngleResource.class, Level.GATEWAY) {
+		@Override
+		public List<GenericAttribute> attributes() {
+			return Arrays.asList(new GenericAttribute[] {GenericAttributeImpl.OUTSIDE});
+		}		
+	};
+	public static final GaRoDataType CloudCoverageForecast = new GaRoDataType("CloudCoverage",
+			FloatResource.class, Level.GATEWAY) {
 		@Override
 		public List<GenericAttribute> attributes() {
 			return Arrays.asList(new GenericAttribute[] {GenericAttributeImpl.OUTSIDE});

@@ -108,6 +108,9 @@ public class GaRoEvalHelper {
 				"Wind Speed(FC)", "Windgeschwindigkeit(vorhergesagt)");
 		addRecId(GaRoDataType.WindDirectionPerForcecast, new String[] {"OpenWeatherMapData/windSensor/direction/reading/forecast"}, recIdSnippets,
 				"Wind Direction(FC)", "Windrichtung(vorhergesagt)");
+		addRecId(GaRoDataType.CloudCoverageForecast, new String[] {"BigBlueRoom/sensors/cloudCoverage/reading/forecast",
+				"WeatherData/sensors/cloudCoverage/reading/forecast", "OpenWeatherMapData/cloudCoverage/reading/forecast"}, recIdSnippets,
+				"Cloud Coverage(FC)", "Wolken-Bedeckungsgrad(FC)");
 		
 		addRecId(GaRoDataType.OutsideTemperatureExt, new String[] {"BigBlueRoom/sensors/temperature", "WeatherData/sensors/temperature",
 				"OpenWeatherMapData/temperatureSensor"}, recIdSnippets,
@@ -124,6 +127,9 @@ public class GaRoEvalHelper {
 		addRecId(GaRoDataType.WindDirectionExt, new String[] {"BigBlueRoom/sensors/wind/direction",
 				"WeatherData/sensors/wind/direction", "OpenWeatherMapData/windSensor/direction"}, recIdSnippets,
 				"Wind Direction(Ext)", "Windrichtung(ext)");
+		addRecId(GaRoDataType.CloudCoverageExt, new String[] {"BigBlueRoom/sensors/cloudCoverage",
+				"WeatherData/sensors/cloudCoverage", "OpenWeatherMapData/cloudCoverage"}, recIdSnippets,
+				"Cloud Coverage(Ext)", "Wolken-Bedeckungsgrad(ext)");
 
 		addRecId(GaRoDataType.StateOfCharge, new String[] {"/chargeSensor/reading"}, recIdSnippets,
 				"SOC", "SOC");
@@ -251,6 +257,7 @@ public class GaRoEvalHelper {
 		//if(recId.contains("valve/setting/stateFeedback")) return GaRoDataType.ValvePosition;
 		if(recId.contains("connection/powerSensor/reading")) return GaRoDataType.PowerMeter;
 		if(recId.contains("connection/energySensor/reading")) return GaRoDataType.PowerMeterEnergy;
+		if(recId.contains("connection/energyExportedSensor/reading")) return GaRoDataType.PowerMeterEnergyExported;
 		if(recId.endsWith("/powerReading")) return GaRoDataType.PowerMeter;
 		if(recId.endsWith("/energyReading")) return GaRoDataType.PowerMeterEnergy;
 
@@ -268,12 +275,6 @@ public class GaRoEvalHelper {
 				&&recId.contains("voltageSensor/reading")) return GaRoDataType.PowerMeterVoltageSubphase;
 		if((recId.contains("connection/subPhaseConnections") || recId.contains("connection/L"))
 				&&recId.contains("reactiveAngleSensor/reading")) return GaRoDataType.PowerMeterReactiveAngleSubphase;
-		if(recId.contains("RexometerSerial/configs/gas_energy/value")) return GaRoDataType.GasMeter;
-		if(recId.contains("/gasMeter")) return GaRoDataType.GasMeter;
-		if(recId.contains("RexometerSerial/configs/gas_batteryVoltage/value")) return GaRoDataType.GasMeterBatteryVoltage;
-		if(recId.contains("semaLevel")) return GaRoDataType.CompetitionLevel;
-		if(recId.contains("competitionPosition")) return GaRoDataType.CompetitionPosition;
-		if(recId.contains("Points")) return GaRoDataType.CompetitionPoints;
 
 		if(recId.contains("/apparentEnergy/reading")) return GaRoDataType.ApparentEnergy;
 		if(recId.contains("/apparentPower/reading")) return GaRoDataType.ApparentPower;
@@ -316,7 +317,10 @@ public class GaRoEvalHelper {
 		
 		if(recId.contains("/powerSensor/settings/setpoint")) return GaRoDataType.DevicePowerControl;
 		if(recId.contains("/reactivePowerSensor/settings/setpoint")) return GaRoDataType.DeviceReactivePowerControl;
-		
+
+		if(recId.contains("/isPlugged")) return GaRoDataType.PluggedInStatus;
+		if(recId.contains("/isCharging")) return GaRoDataType.ChargingStatus;
+
 		if(recId.contains("/POWER_")) return GaRoDataType.Heatpower;
 		if(recId.contains("/ENERGY_")) return GaRoDataType.HeatEnergyIntegral;
 		if(recId.contains("/VOLUME_FLOW_")) return GaRoDataType.HeatFlow;
@@ -483,6 +487,13 @@ public class GaRoEvalHelper {
 		if(recId.endsWith("/ecoMode")||recId.endsWith("/ecoModeActive")) return GaRoDataType.EcoMode;
 		if(recId.endsWith("/seasonMode")) return GaRoDataType.SeasonMode;
 		if(recId.contains("Gateway_Device/usedSpace")) return GaRoDataType.UsedDiskSpace;
+
+		if(recId.contains("RexometerSerial/configs/gas_energy/value")) return GaRoDataType.GasMeter;
+		if(recId.contains("/gasMeter")) return GaRoDataType.GasMeter;
+		if(recId.contains("RexometerSerial/configs/gas_batteryVoltage/value")) return GaRoDataType.GasMeterBatteryVoltage;
+		if(recId.contains("semaLevel")) return GaRoDataType.CompetitionLevel;
+		if(recId.contains("competitionPosition")) return GaRoDataType.CompetitionPosition;
+		if(recId.contains("Points")) return GaRoDataType.CompetitionPoints;
 
 		if(recId.contains("$$")) return GaRoDataType.Internal;
 		return GaRoDataType.Unknown;
