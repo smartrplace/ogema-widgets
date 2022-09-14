@@ -2,6 +2,7 @@ package org.smartrplace.system.guiappstore.config;
 
 import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.simple.IntegerResource;
+import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.prototypes.Configuration;
 
 /** 
@@ -32,4 +33,13 @@ public interface AppstoreConfig extends Configuration {
 	 */
 	@Deprecated
 	IntegerResource currentLastVersionPart();
+	
+	/** Last time a new version was created locally based on the existing bundles or a resore of a local
+	 * version was triggered
+	 */
+	TimeResource lastVersionCreationOrRestore();
+	
+	/** For local appstore here a head version entry should exist representing a software setup
+	 * not represented by a local backup*/
+	SystemUpdate headVersion();
 }

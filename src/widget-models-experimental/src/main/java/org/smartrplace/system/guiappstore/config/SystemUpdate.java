@@ -29,6 +29,11 @@ public interface SystemUpdate extends Data {
 	StringArrayResource version();
 	
 	//Dynamic data
+	/** 0 : unknown
+	** 1 : Untested
+	** 2 : Approved for Test Group
+	** 3 : Approved for Main Group
+	** 4 : In Long-term operation*/
 	IntegerResource approvalStatus();
 	StringResource comment();
 	
