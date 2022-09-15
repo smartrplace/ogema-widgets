@@ -17,7 +17,7 @@ public interface KnxLightingControls extends PhysicalElement {
     
     MultiSwitch lightingPercentage();
     
-    /** Write true to start shutter going down, false to start going up*/
+    /** Write true to start shutter going up, false to start going down*/
     OnOffSwitch sunblindUpDown();
 	
     /** True: shutter reached top-most position*/
@@ -26,14 +26,14 @@ public interface KnxLightingControls extends PhysicalElement {
     /** True: shutter reached bottom-most position*/
 	BooleanResource sunblindBottom();
     
-	/** Short button press (control: emulation). True: short down, false: short up*/
+	/** Short button press (control: emulation). True: short up, false: short down*/
     OnOffSwitch sunblindSlatsStep();
     
 	@Deprecated
     IntegerResource dimmerStep();
     
-    default void sunblindMove(boolean down) {
-        sunblindUpDown().stateControl().setValue(down);
+    default void sunblindMove(boolean up) {
+        sunblindUpDown().stateControl().setValue(up);
     }
     
     default void sunblindStop() {
