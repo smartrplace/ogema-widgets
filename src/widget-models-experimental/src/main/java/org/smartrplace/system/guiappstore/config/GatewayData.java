@@ -16,6 +16,9 @@ public interface GatewayData extends PhysicalElement {
 	
 	BooleanResource expectedOnHeartbeat();
 	
+	/** If true the gateway shall ONLY be shown on config page and shall not be included into the summary calculation*/
+	BooleanResource excludeFromStandardView();
+	
 	StringResource customer();
 	//StringResource comment();
 	StringResource guiLink();
