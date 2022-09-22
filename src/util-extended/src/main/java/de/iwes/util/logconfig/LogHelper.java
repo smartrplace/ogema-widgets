@@ -117,10 +117,10 @@ public class LogHelper {
 	public static boolean doesDeviceFitPreKnownData(HmDevice hmDevice, PreKnownDeviceData pre,
 			String devHandIdOfDevice, MustFitLevel mustFitDeviceHandler, String hmIdPreChecked) {
 		String name = hmDevice.getName();
-		return doesDeviceFitPreKnownData(name, pre, devHandIdOfDevice, mustFitDeviceHandler, hmIdPreChecked);		
+		return doesDeviceFitPreKnownData(name, pre, devHandIdOfDevice, mustFitDeviceHandler);		
 	}
-	public static boolean doesDeviceFitPreKnownData(String name, PreKnownDeviceData pre,
-			String devHandIdOfDevice, MustFitLevel mustFitDeviceHandler, String hmIdPreChecked) {
+	public static boolean doesDeviceFitPreKnownData(String hmName, PreKnownDeviceData pre,
+			String devHandIdOfDevice, MustFitLevel mustFitDeviceHandler) {
 		if((mustFitDeviceHandler == MustFitLevel.MUST_FIT) && 
 				((!pre.deviceHandlerId().isActive()) || (pre.deviceHandlerId().getValue().isEmpty())))
 			return false;
@@ -130,11 +130,11 @@ public class LogHelper {
 				return false;
 		}
 		String endCode = pre.deviceEndCode().getValue();
-		if(hmIdPreChecked == null) {
-			String hmIdLoc = getDeviceId(name, endCode.length());
-			return hmIdLoc.equals(endCode);
-		}
-		return hmIdPreChecked.endsWith(endCode);
+		//if(hmName == null) {
+		//	String hmIdLoc = getDeviceId(name, endCode.length());
+		//	return hmIdLoc.equals(endCode);
+		//}
+		return hmName.endsWith(endCode);
 		
 		/*String hmIdLoc;
 		if((hmIdPreChecked == null) || (endCode.length() != 4))
