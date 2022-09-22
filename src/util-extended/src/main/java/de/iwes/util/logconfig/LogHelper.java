@@ -91,6 +91,8 @@ public class LogHelper {
 		} else {
 			name = ResourceHelper.getToplevelResource(hmDevice).getName();
 		}
+		//if(name.endsWith("_ip") || name.endsWith("_cc"))
+		//	length += 3;
 		if(name.length() < length)
 			return name;
 		String deviceId = name.substring(name.length()-length);
@@ -128,12 +130,18 @@ public class LogHelper {
 				return false;
 		}
 		String endCode = pre.deviceEndCode().getValue();
-		String hmIdLoc;
+		if(hmIdPreChecked == null) {
+			String hmIdLoc = getDeviceId(name, endCode.length());
+			return hmIdLoc.equals(endCode);
+		}
+		return hmIdPreChecked.endsWith(endCode);
+		
+		/*String hmIdLoc;
 		if((hmIdPreChecked == null) || (endCode.length() != 4))
 			hmIdLoc = getDeviceId(name, endCode.length());
 		else
 			hmIdLoc = hmIdPreChecked;
-		return hmIdLoc.equals(endCode);
+		return hmIdLoc.equals(endCode);*/
 	}
 
 	/** Get resource of device to be used as primary device for the input resource
