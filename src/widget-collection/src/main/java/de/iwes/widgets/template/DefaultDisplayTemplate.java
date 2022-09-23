@@ -24,6 +24,11 @@ public class DefaultDisplayTemplate<T> implements DisplayTemplate<T> {
 	
 	@Override
 	public String getLabel(T object, OgemaLocale locale) {
+		if(object == null) try {
+			return "Null: "+getId(object);
+		} catch(NullPointerException e) {
+			return "Null: Id: null";			
+		}
 		if (object instanceof LabelledItem) {
 			final String label = ((LabelledItem) object).label(locale);
 			if (label != null) // should not return null, but we never know...
