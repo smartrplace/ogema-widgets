@@ -10,8 +10,7 @@ import org.ogema.model.prototypes.Data;
 
 public interface AlarmConfiguration extends Data {
 
-	/** TODO: Change this to SingleValueResource in the future! Currently no alarming is possible e.g.
-	 * for input from drivers not providing as sensors like JMBUS
+	/** Reference to the resource containing the values to be supervised by the alarming configuration.
 	 * @return
 	 */
 	//Sensor supervisedSensor();
@@ -48,7 +47,7 @@ public interface AlarmConfiguration extends Data {
 	 */
 	IntegerResource alarmLevel();
 	
-	/** Maximum time between new values (minutes)*/
+	/** Maximum time between new values (minutes). A negative value indicates that no alarm shall be generated if no more values are received.*/
 	FloatResource maxIntervalBetweenNewValues();
 	
 	/** If false or not set the alarm will not send messages. If both sendAlarm and 
