@@ -344,11 +344,10 @@ ogema.widgetLoader.loadWidgets = function() {
                 //for each call includeJs()
                 var scriptMap = [];
                 scriptMap.script = [];
-
                 //check if this iteration processes backup scripts and make sure
                 //you are not iterating eternally
                 if (ogema.widgetLoader.backupScripts.length > 0) {
-                    widgetScripts = ogema.widgetLoader.backupScripts;
+                    //widgetScripts = ogema.widgetLoader.backupScripts;
                     ogema.widgetLoader.backupScripts = [];
                     if (ogema.widgetLoader.failCounter === 0)
                     	ogema.widgetLoader.runAgainLoadWidgets = true;
@@ -361,6 +360,8 @@ ogema.widgetLoader.loadWidgets = function() {
                         ogema.widgetLoader.failCounter = 0;
                         if (ogema.widgetLoader.runAgainLoadWidgets) {
                         	ogema.widgetLoader.loadWidgets();
+                        } else {
+                       	        console.log("loadWidgets failed; were these widgets added to the page?", widgetScripts.map(function(arr) { return arr[0];}));
                         }
                         return;
                     }
