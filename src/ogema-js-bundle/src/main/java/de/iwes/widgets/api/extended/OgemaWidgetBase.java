@@ -90,6 +90,7 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
     private boolean forceUpdate = false;
     private boolean defaultWaitForPendingRequest = false;
     private boolean postponeLoading = false;
+    private boolean preloadGroup = false;
     /**
      * Use {@link #getGroups()} to initialize this on demand
      */
@@ -214,6 +215,8 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
         this.globalWidget = false;
         this.isSessionSpecific = true;
     	this.sessionManagement = par.page.registerNew(this, req);
+    	if (par.preloadGroup)
+    		par.getData(req).addPreloadWidget(this.id);
     	this.registerJsDependencies();
     }  
     
@@ -283,6 +286,8 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
 	    		if (!opt.initialized) {	// need to recheck within synchronized block
 	        		opt.initialRequest = req; //new HistoricHttpRequest(req);
 	        		setDefaultValues(opt);
+	        		if (this.preloadGroup)
+	        			opt.preloadWidgets = new ArrayList<>(64); 
 	        		opt.initialized = true;
 //	        		opt.widget = this;
 	        	}
@@ -648,6 +653,19 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
 		return postponeLoading;
 	}
 
+	@Override
+	public void preloadSubwidgets() {
+		this.preloadGroup = true;
+	}
+	
+	public boolean isPreloadSubwidgets() {
+		return this.preloadGroup;
+	}
+	
+	public List<String> getPreloadWidgets(OgemaHttpRequest req) {
+		return this.preloadGroup ? getData(req).getPreloadWidgets() : null;
+	}
+	
 	// FIXME still needed?
     /**
      * Set widget to be the init widget of the page. This widget should make
