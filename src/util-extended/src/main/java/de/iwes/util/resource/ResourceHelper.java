@@ -288,6 +288,33 @@ public class ResourceHelper {
 	/**Works like {@link Resource#getSubResource(String, Class<? extends Resource>)}, but
 	 * allows to specify a subPath over several sub resources. This resource preserves
 	 * path information of the parent
+	 * @param parent if null the path starts top-level
+	 * @param subPath path using separator '/'
+	 * @param type type requested. If null then an existing resource of any type is returned, but no virtual resource
+	 * @return resource of requested type (also virtual resource) or null if the path specified
+	 * 		does not exist on the intermediate elements 
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T extends Resource> T getResourceAlsoVirtual(String subPath, Class<T> type,
+			ResourceAccess resAcc) {
+		String[] els = subPath.split("/");
+		Resource parent = resAcc.getResource(els[0]);
+		if(els.length == 1) {
+			if(type.isAssignableFrom(parent.getClass()))
+				return (T) parent;
+			else
+				return null;
+		}
+		String newSubPath = els[1];
+		for(int idx=2; idx<els.length; idx++)
+			newSubPath += "/"+els[idx];
+		return getSubResource(parent, newSubPath, type);
+	}
+	
+	/**Works like {@link Resource#getSubResource(String, Class<? extends Resource>)}, but
+	 * allows to specify a subPath over several sub resources. This resource preserves
+	 * path information of the parent
+	 * @param parent may not be null
 	 * @param subPath path using separator '/'
 	 * @param type type requested. If null then an existing resource of any type is returned, but no virtual resource
 	 * @return resource of requested type (also virtual resource) or null if the path specified
