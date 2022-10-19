@@ -30,12 +30,15 @@
  * loadUniqueWidgetData()
  *		--> getUniqueTypeUrls(), once
  *		--> extractScripts(), once per missing widget html file
- *		--> createWidgets(), once, as soon as all extractScripts calls have returned
+ *		--> preloadInitGroups(), once, as soon as all extractScripts calls have returned
  * extractScripts()
  *		--> createScript(), once per missing javascript file
  *		--> callback to loadUniqueWidgetData().checkLoadingFinished() for each html file that has all scripts loaded
  * createScript()
  *		--> callback to extractScripts().checkScriptsFinished() for each javascript file that has been loaded
+ * preloadInitGroups()
+ *      --> load widgets init data for widgets that are not part of the initial preloading but shall be loaded together
+ *		--> createWidgets(), once all groups have been loaded
  * createWidgets()
  *		--> restarts loadWidgets() if required
  */
@@ -58,6 +61,10 @@ ogema.widgetLoader.htmlObj = {};  // keys: widgetIDs; values: widget HTML
 ogema.widgetLoader.isLoadWidgetsRunning = false;
 ogema.widgetLoader.runAgainLoadWidgets = false;
 ogema.widgetLoader.initialWidgetInformation = {};
+// this array of group ids is filled by widgets registering a group of subwidgets which shall be preloaded together
+// these are different groups from the WidgetGroups
+ogema.widgetLoader.groupsToBePreloaded = undefined; // Array<string>|undefined
+
 ogema.pageInstance = '';
 ogema.widgetLoader.pollingStopped = false;
 //ogema.configId = ''; // what is this?
@@ -188,11 +195,43 @@ ogema.widgetLoader.extractScripts = function(html, callbackFct) {	// FIXME not r
 	loadNext();
 }
 
+ogema.widgetLoader.preloadInitGroups = function(widgetScripts) {
+	var groups = ogema.widgetLoader.groupsToBePreloaded;
+	ogema.widgetLoader.groupsToBePreloaded = undefined;
+	if (groups !== undefined && groups.length > 0) {
+		var promises = [];
+		for (var group of groups) {
+			var promise = $.ajax({
+		        type: "GET",
+		         url: "/ogema/widget/servlet?initialWidgetInformation=" + window.location.toString().replace("#","") + "&initGroup=" + group +
+		         	 "&pageInstance=" + ogema.pageInstance + "&user=" + otusr + "&pw=" + otpwd,
+		        contentType: "text/plain"
+	        });
+	        promises.push(promise.done(function(response) {
+				Object.assign(ogema.widgetLoader.initialWidgetInformation, response);
+				scripts = [];
+				// remove response widgets from widget scripts
+				for (var widgetId of Object.keys(response)) {
+					var idx = widgetScripts.findIndex(script => script[0] === widgetId);
+					if (idx >= 0)
+						scripts.push(widgetScripts.splice(idx, 1)[0]);
+				}
+				ogema.widgetLoader.createWidgets(scripts, true);
+			}));
+		}
+		$.when(...promises).done(function() {
+			ogema.widgetLoader.createWidgets(widgetScripts, false);
+		});
+	} else {
+		ogema.widgetLoader.createWidgets(widgetScripts, false);
+	}
+}
+
 /**
 * creates widgets, assuming that the required div tag is available (otherwise widget is stored in backupScripts),
 * and html and js have been loaded
 */
-ogema.widgetLoader.createWidgets = function(widgetScripts) {
+ogema.widgetLoader.createWidgets = function(widgetScripts, skipFinish) {
 	for (var i=0;i<widgetScripts.length;i++) {
 		var widgetID = widgetScripts[i][0];
 		var type = widgetScripts[i][1];
@@ -215,29 +254,31 @@ ogema.widgetLoader.createWidgets = function(widgetScripts) {
 			}
 		}
 		widgetHtmlElement.style.visibility = "hidden";
-        widgetHtmlElement.innerHTML = ogema.widgetLoader.htmlObj[type];
-        try { // Browser support: http://caniuse.com/#search=classlist
-	        var classes = widgetHtmlElement.classList;
-	        if (!classes.contains("ogema-widget"))
-	        	classes.add("ogema-widget");
-        } catch (e) {}
-		try {
-			var servletPath = window.location.pathname.replace('.html', '').replace('.htm', '') + '/' + widgetID;
-            var widget = new window[type](servletPath, widgetID);
-            ogema.widgets[widgetID] = widget;
-        } catch (exception) {
-            console.log("There was an error creating an instance for widgetID: " + widgetID + " of type " + type + " on servletPath: " + servletPath);
-            console.error(exception);
-        }
+		widgetHtmlElement.innerHTML = ogema.widgetLoader.htmlObj[type];
+		try { // Browser support: http://caniuse.com/#search=classlist
+			var classes = widgetHtmlElement.classList;
+			if (!classes.contains("ogema-widget"))
+				classes.add("ogema-widget");
+		} catch (e) {}
+			try {
+				var servletPath = window.location.pathname.replace('.html', '').replace('.htm', '') + '/' + widgetID;
+		    var widget = new window[type](servletPath, widgetID);
+		    ogema.widgets[widgetID] = widget;
+		} catch (exception) {
+		    console.log("There was an error creating an instance for widgetID: " + widgetID + " of type " + type + " on servletPath: " + servletPath);
+		    console.error(exception);
+		}
 	}
-	// finished!
-	if (ogema.widgetLoader.runAgainLoadWidgets || ogema.widgetLoader.backupScripts.length > 0) {
-		ogema.widgetLoader.loadWidgets();
-	}
-	else {
-		ogema.widgetLoader.isLoadWidgetsRunning = false;
-		ogema.widgetLoader.failCounter = 0;
-		ogema.widgetLoader.iterationCounter = 0;
+	if (!skipFinish) {
+		// finished!
+		if (ogema.widgetLoader.runAgainLoadWidgets || ogema.widgetLoader.backupScripts.length > 0) {
+			ogema.widgetLoader.loadWidgets();
+		}
+		else {
+			ogema.widgetLoader.isLoadWidgetsRunning = false;
+			ogema.widgetLoader.failCounter = 0;
+			ogema.widgetLoader.iterationCounter = 0;
+		}
 	}
 }
 
@@ -252,7 +293,7 @@ ogema.widgetLoader.loadUniqueWidgetData = function(widgetScripts) {
 		//console.log("loadUniqueWidgetData counter =",counter);
 		if (counter === 0) {
 			//console.log("loadUniqueWidgetData done");
-			ogema.widgetLoader.createWidgets(widgetScripts);
+			ogema.widgetLoader.preloadInitGroups(widgetScripts);
 		}
 	}
 	if (counter === 0) {	// if all html and js has been loaded already
@@ -344,11 +385,10 @@ ogema.widgetLoader.loadWidgets = function() {
                 //for each call includeJs()
                 var scriptMap = [];
                 scriptMap.script = [];
-
                 //check if this iteration processes backup scripts and make sure
                 //you are not iterating eternally
                 if (ogema.widgetLoader.backupScripts.length > 0) {
-                    widgetScripts = ogema.widgetLoader.backupScripts;
+                    //widgetScripts = ogema.widgetLoader.backupScripts;
                     ogema.widgetLoader.backupScripts = [];
                     if (ogema.widgetLoader.failCounter === 0)
                     	ogema.widgetLoader.runAgainLoadWidgets = true;
@@ -361,6 +401,8 @@ ogema.widgetLoader.loadWidgets = function() {
                         ogema.widgetLoader.failCounter = 0;
                         if (ogema.widgetLoader.runAgainLoadWidgets) {
                         	ogema.widgetLoader.loadWidgets();
+                        } else {
+                       	        console.log("loadWidgets failed; were these widgets added to the page?", widgetScripts.map(function(arr) { return arr[0];}));
                         }
                         return;
                     }

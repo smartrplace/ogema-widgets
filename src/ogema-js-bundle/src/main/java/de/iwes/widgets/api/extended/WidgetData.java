@@ -55,6 +55,7 @@ public abstract class WidgetData {
 	private final List<Map<String,Object>> connectElements;
 	private final List<Map<String,Object>> connectGroups;
 	protected final OgemaWidgetBase<?> widget;
+	protected List<String> preloadWidgets = null;
 	private final Map<String, Map<String, String>> cssMap;
     // Note: dependencies listed here are only relevant for POST requests
     private boolean disabled = false;
@@ -809,7 +810,9 @@ public abstract class WidgetData {
 	       if (waitForPendingRequest) {
 	    	   results.put("waitForPendingRequest", waitForPendingRequest);
 	       }
-	       
+	       if (preloadWidgets != null) {
+	    	   results.put("preloadGroup", true);
+	       }
 	       results.put("dynamicWidget", dynamicWidget);
 	/*       boolean setBool;
 	       if(req.widgetAttribute.containsKey("disabled")) {
@@ -918,6 +921,18 @@ public abstract class WidgetData {
        }
    }
 
+   /**
+    * @return null or a list of widget ids
+    */
+   public List<String> getPreloadWidgets() {
+	   return this.preloadWidgets;
+   }
+   
+   protected void addPreloadWidget(String id) {
+	   if (this.preloadWidgets != null)
+		   this.preloadWidgets.add(id);
+   }
+   
    // FIXME can we get rid of this?
    protected OgemaHttpRequest getInitialRequest() {
 	   readLock();

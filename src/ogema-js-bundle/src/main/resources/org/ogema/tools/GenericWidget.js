@@ -41,6 +41,7 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
     var styles = {};
     var requestPending = false;
     var waitForPendingRequest = false;
+    var initialGroupUpdateSet = false;
     this.isDynamicWidget = false;
     this.initialUpdated = false;        // is used to see how the widgets should be updated (through bundled information or own its own via ajax request)
     this.lastGetRequest = {};		  // used to decide whether subwidgets need to be reloaded; only relevant if this.isDynamicWidget == true
@@ -79,7 +80,13 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
     		gw.groups = result.widgetGroups;
     	} else {
     		gw.groups = [];
-    	}    	
+    	}
+    	if (result.hasOwnProperty("preloadGroup") && result.preloadGroup && !initialGroupUpdateSet) {
+			initialGroupUpdateSet = true;
+			if (ogema.widgetLoader.groupsToBePreloaded === undefined)
+				ogema.widgetLoader.groupsToBePreloaded = [];
+			ogema.widgetLoader.groupsToBePreloaded.push(this.widgetID);	
+		}
     	// clean up
     	Object.keys(gw.customEventListeners).forEach(function(key) {
     		var arr = gw.customEventListeners[key];

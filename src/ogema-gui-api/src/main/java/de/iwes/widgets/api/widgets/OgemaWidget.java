@@ -695,6 +695,14 @@ public interface OgemaWidget {
      */
     void postponeLoading();
     
+    /**
+     * Call this on widgets that have an excessive number of (session-specific) subwidgets, causing 
+     * a lot of HTTP requests for initial data loading. It will cause a common preloading request for 
+     * those widgets that gathers all the init data for them in a single call.
+     * The method must be called before the subwidgets have been created.
+     */
+    void preloadSubwidgets();
+    
 	static enum SendValue {
 		TRUE,
 		FALSE

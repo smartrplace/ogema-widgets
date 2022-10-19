@@ -378,10 +378,39 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
             	zerothParam = initalWidgetInformation.substring(j+1);
             	params = getPageParameters(boundPagePath,sessionId,zerothParam,req);
             }
+            final String initGroup = req.getParameter("initGroup");
+            if (initGroup != null) {
+            	final ConfiguredWidget<?> w = page.getConfiguredWidget(initGroup, sessionId);
+            	if (w == null) {
+        	       resp.setStatus(404);
+                   resp.setContentType("text/plain");
+                   resp.getWriter().write("Widget " + initGroup + " not found");
+            	} else {
+            		final List<String> preloadWidgets = w.getSessionData(ogReq).getPreloadWidgets();
+            		if (preloadWidgets != null) {
+            			for (ConfiguredWidget<?> confWidget: page.getWidgets(sessionId)) {
+                        	try {
+                        		OgemaWidgetBase<?> widget = confWidget.getWidget();
+                        		final String id = widget.getId();	
+                        		if (!preloadWidgets.contains(id))
+                        			continue;
+                        		if (widget instanceof InitWidget) 
+                        			((InitWidget) widget).init(ogReq);
+                        		widget.appendWidgetInformation(ogReq,result);
+                        		widget.updateDependentWidgets(ogReq);
+                           	} catch (Exception e) {
+                            	LoggerFactory.getLogger(JsBundleApp.class).error("Error retrieving widget data ",e);
+                           	}
+                        }
+            		}
+                    resp.setContentType("application/json");
+                    resp.getWriter().write(result.toString());
+                    resp.setStatus(200);
+            	}
+            	return;
+            }
         	pageReg0.increaseAccessCount(params);
-            
 			sessionManagement.createNewSession(sessionId, page, params);
-			
             if (expiryTimes.containsKey(boundPagePath)) {
             	sessionManagement.setExpiryTime(sessionId, expiryTimes.get(boundPagePath));
             }
