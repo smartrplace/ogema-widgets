@@ -27,7 +27,13 @@ public interface GatewaySyncData extends Data {
 	TimeResource connectionLostInterval();
 	
 	/** Locations of top-level resources to be included into the synchronization from subgateway perspective.
-	 * The resource gatewaySyncData of type GatawaySyncData shall be added by the superior instance
+	 * The resource gatewaySyncData of type GatawaySyncData shall be added by the superior instance. Each entry shall have the following format:<br>
+	 * <listname> : <gwId> : <resourcepath> [, <resourcepath>]* : <targetpath>
+	 * with the following elements:
+	 *     * listname : A unique, but arbitrary name for each entry
+	 *     * gwId : Id of gateway to which connection is made (must be ID of subgateaway if applied there)
+	 *     * resourcepath: Path of resource on subgateway
+	 *     * targetpath: usually is '/', but could be applied as a subresource on the collecting gateway
 	 */
 	StringArrayResource toplevelResourcesToBeSynchronized();
 	
