@@ -1,14 +1,10 @@
 package org.smartrplace.model.sync.mqtt;
 
-import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.array.StringArrayResource;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.TimeResource;
-import org.ogema.model.locations.Room;
 import org.ogema.model.prototypes.Data;
-import org.smartrplace.apps.hw.install.config.HardwareInstallConfig;
-import org.smartrplace.apps.hw.install.config.InstallAppDevice;
 
 /** Resource model to be created as top-level resource on superior instances for MQTT resource synching.
  * The name shall be _<gatewayId>.*/
@@ -33,7 +29,7 @@ public interface GatewaySyncData extends Data {
 	 *     * listname : A unique, but arbitrary name for each entry
 	 *     * gwId : Id of gateway to which connection is made (must be ID of subgateaway if applied there)
 	 *     * resourcepath: Path of resource on subgateway
-	 *     * targetpath: usually is '/', but could be applied as a subresource on the collecting gateway
+	 *     * targetpath: usually is gw<gatewayId>, but could be applied as a subresource on the collecting gateway
 	 */
 	StringArrayResource toplevelResourcesToBeSynchronized();
 	

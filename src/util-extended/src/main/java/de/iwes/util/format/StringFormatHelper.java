@@ -184,11 +184,17 @@ public class StringFormatHelper {
 	}
 
 	public static String getListToPrint(Collection<String> list) {
+		return getListAsString(list, ", ");
+	}
+	public static String getListToSerialize(Collection<String> list) {
+		return getListAsString(list, ",");		
+	}
+	public static String getListAsString(Collection<String> list, String delimiter) {
 		if(list == null || list.isEmpty()) return "";
 		String result = null;
 		for(String s: list) {
 			if(result == null) result = s;
-			else result += ", "+s;
+			else result += delimiter+s;
 		}
 		return result;
 	}
