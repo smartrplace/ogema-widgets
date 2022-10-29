@@ -1,6 +1,7 @@
 package org.ogema.tools.app.useradmin.config;
 
 import org.ogema.core.model.ResourceList;
+import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.model.action.Action;
@@ -23,7 +24,7 @@ public interface UserAdminData extends Data {
 	StringResource ssik_facilityDeepLink();
 	
 	/** Comma-separated list of email addresses that shall be used for customer maintenance requests in
-	 * addition to the admin email addresses received from CMS
+	 * addition to the admin email addresses received from CMS (or customer addresses directly created on the gateway)
 	 */
 	StringResource additionalAdminEmailAddresses();
 	
@@ -32,5 +33,9 @@ public interface UserAdminData extends Data {
 	 * received from CMS.
 	 */
 	StringResource personalSalutations();
+	
+	/** If true then no user addresses will be evaluated*/
+	BooleanResource useOnlyAdditionalAddresses();
+	
 	Action triggerUpdateFromCMS();
 }
