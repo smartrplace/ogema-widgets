@@ -323,10 +323,10 @@ public class GaRoEvalHelper {
 
 		if(recId.contains("/POWER_")) return GaRoDataType.Heatpower;
 		if(recId.contains("/ENERGY_")) return GaRoDataType.HeatEnergyIntegral;
-		if(recId.contains("/VOLUME_FLOW_")) return GaRoDataType.HeatFlow;
-		if(recId.contains("/flowSensor/reading")) return GaRoDataType.HeatFlow;
-		if(recId.contains("/VOLUME")) return GaRoDataType.HeatVolumeIntegral;
-		if(recId.contains("/volumeSensor/reading")) return GaRoDataType.HeatVolumeIntegral;
+		if(recId.contains("/VOLUME_FLOW_")) return GaRoDataType.VolumeFlow;
+		if(recId.contains("/flowSensor/reading")) return GaRoDataType.VolumeFlow;
+		if(recId.contains("/VOLUME")) return GaRoDataType.VolumeIntegral;
+		if(recId.contains("/volumeSensor/reading")) return GaRoDataType.VolumeIntegral;
 		
 		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_TFl_")) return GaRoDataType.HeatFlowTemperatur;
 		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_TRt_")) return GaRoDataType.HeatReturnTemperatur;
@@ -380,7 +380,7 @@ public class GaRoEvalHelper {
 		if(recId.contains("/hcaEnergy/")) return GaRoDataType.HeatCostAllocatorPoints;
 		if(recId.contains("/cop/reading")) return GaRoDataType.HeatpumpCOP;
 		
-		if(recId.startsWith("vpFlowScope/") && recId.contains("/flow/reading")) return GaRoDataType.HeatFlow;
+		if(recId.startsWith("vpFlowScope/") && recId.contains("/flow/reading")) return GaRoDataType.VolumeFlow;
 		if(recId.startsWith("vpFlowScope/") && recId.contains("/flowInLpmin/reading")) return GaRoDataType.HeatFlowInLpmin;
 		if(recId.startsWith("vpFlowScope/") && recId.contains("/pressure/reading")) return GaRoDataType.HeatFlowPressure;
 		if(recId.startsWith("vpFlowScope/") && recId.contains("/temperature/reading")) return GaRoDataType.HeatSupplyTemperatur;

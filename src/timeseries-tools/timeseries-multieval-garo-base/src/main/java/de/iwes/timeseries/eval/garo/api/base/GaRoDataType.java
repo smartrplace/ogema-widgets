@@ -247,9 +247,15 @@ public class GaRoDataType implements GaRoDataTypeI {
 			PowerResource.class);
 	public static final GaRoDataType HeatEnergyIntegral = new GaRoDataType("HeatEnergyIntegral",
 			EnergyResource.class);
-	public static final GaRoDataType HeatFlow = new GaRoDataType("HeatFlow",
+	@Deprecated //use VolumenFlow instead
+	public static final GaRoDataType HeatFlow = new GaRoDataType("VolumeFlow",
 			FlowResource.class);
+	public static final GaRoDataType VolumeFlow = new GaRoDataType("VolumeFlow",
+			FlowResource.class);
+	@Deprecated //use VolumeIntegral instead
 	public static final GaRoDataType HeatVolumeIntegral = new GaRoDataType("HeatVolumeIntegral",
+			VolumeResource.class);
+	public static final GaRoDataType VolumeIntegral = new GaRoDataType("VolumeIntegral",
 			VolumeResource.class);
 	public static final GaRoDataType HeatSupplyTemperatur = new GaRoDataType("HeatSupplyTemperatur",
 			TemperatureResource.class);
@@ -478,6 +484,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 	
 	public static final GaRoDataType TemperatureGradient = new GaRoDataType("TemperatureGradient",
 			FloatResource.class);
+	public static final GaRoDataType TemperatureDifference = new GaRoDataType("TemperatureDifference",
+			FloatResource.class);
 
 	//The following options are per-gateway
 	public static final GaRoDataType PowerMeter = new GaRoDataType("PowerMeter",
@@ -670,7 +678,7 @@ public class GaRoDataType implements GaRoDataTypeI {
 			HumidityMeasurement, MotionDetection, WindowOpen, ChargeSensor, ChargeVoltage,
 			PowerMeter, PowerMeterSubphase, PowerMeterOutlet,
 			PowerMeterEnergy, PowerMeterEnergySubphase,
-			Heatpower, HeatEnergyIntegral, HeatFlow, HeatVolumeIntegral, HeatSupplyTemperatur, HeatReturnTemperatur,
+			Heatpower, HeatEnergyIntegral, VolumeFlow, VolumeIntegral, HeatSupplyTemperatur, HeatReturnTemperatur,
 			SwitchStateFeedback, WaterPHValue, WaterConductivityValue, WaterRedoxValue, WaterOxygenConcentrationValue,
 			WaterTemperatureValue,
 			FreshWaterFlow, FreshWaterVolume,
@@ -679,7 +687,7 @@ public class GaRoDataType implements GaRoDataTypeI {
 	
 	public static List<GaRoDataType> volumeTypes = Arrays.asList(new GaRoDataType[] {
 			PowerMeterEnergy, PowerMeterEnergySubphase, EnergyIntegralOutlet,
-			HeatEnergyIntegral, HeatVolumeIntegral,
+			HeatEnergyIntegral, VolumeIntegral,
 			FreshWaterVolume
 	});
 	public static List<GaRoDataType> volumeStepTypes = Arrays.asList(new GaRoDataType[] {
@@ -687,7 +695,7 @@ public class GaRoDataType implements GaRoDataTypeI {
 	});
 	public static List<GaRoDataType> powerTypes = Arrays.asList(new GaRoDataType[] {
 			PowerMeter, PowerMeterSubphase, PowerMeterOutlet,
-			Heatpower, HeatFlow,
+			Heatpower, VolumeFlow,
 			FreshWaterFlow
 	});
 
