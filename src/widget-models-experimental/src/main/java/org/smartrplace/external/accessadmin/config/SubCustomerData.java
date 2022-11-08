@@ -4,6 +4,7 @@ import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.array.IntegerArrayResource;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.IntegerResource;
+import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.units.TemperatureResource;
 import org.ogema.model.locations.BuildingPropertyUnit;
 import org.ogema.model.prototypes.Data;
@@ -53,4 +54,26 @@ public interface SubCustomerData extends Data {
 	/** Standard settings saved if not acquired from rooms*/
 	ResourceList<TemperatureControlSettings> roomTypeSettingsHeating();
 	ResourceList<TemperatureControlSettings> roomTypeSettingsCooling();
+	
+	/** Comma-separated list of email addresses that shall be used for customer maintenance requests in
+	 * addition to the admin email addresses received from CMS (or customer addresses directly created on the gateway)
+	 */
+	StringResource additionalAdminEmailAddresses();
+	
+	/** Salutations for email. Shall contain entries like "Frau Müller" or "Herr Maier". The rest of the template shall
+	 * be filled automatically. The first entries are for additionalAdminEmailAddresses followed by salutations for addresses
+	 * received from CMS.
+	 */
+	StringResource personalSalutations();
+	
+	/** If true then no user addresses will be evaluated*/
+	BooleanResource useOnlyAdditionalAddresses();
+
+	/** Comma-separated list of email addresses that shall be used for IT maintenance requests
+	 */
+	StringResource emailAddressesIT();
+	
+	/** Salutations for IT email addresses
+	 */
+	StringResource personalSalutationsIT();
 }

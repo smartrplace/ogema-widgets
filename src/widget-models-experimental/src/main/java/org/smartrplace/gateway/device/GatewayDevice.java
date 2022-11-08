@@ -106,8 +106,14 @@ public interface GatewayDevice extends PhysicalElement {
     FloatResource heartbeatTraffic();
     
     /** Write to this resource to trigger an alarm indicating that the log files should be
-     * checked for further analysis<br>
+     * checked for further analysis.<br>
      * 1: Check for notes regarding Faulty timestamp
+     * 2: unspecified API exception in POST method (write or pre-processing of POST-read)
+     * 3: unspecified API exception in Read method (GET-read or POST-read)
+     * 4: unspecified API exception during getProviders
+     * 5: page not found requested on API (SC_METHOD_NOT_ALLOWED)
+     * 6: objectId not found requested on API (SC_NO_CONTENT)
+     * 49: other unspecified API exception
      * ...
      */
     FloatResource logFileCheckNotification();
