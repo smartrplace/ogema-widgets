@@ -188,8 +188,14 @@ public class AbsolutePersistentTimer implements TimerListener {
 		long currentTime = appMan.getFrameworkTime();
 		long firstInterval = nextCallbackIdealized - currentTime;
 		//perform callbacks that have been missed due to an interruption of the system operation
-		while(firstInterval <= 200) {
-			callListeners();
+		//while(firstInterval <= 200) {
+			//callListeners();
+		if(firstInterval <= 200) {	
+			if(interval != null) {
+				nextCallbackIdealized = AbsoluteTimeHelper.getNextStepTime(currentTime+300, interval);
+			} else {
+				nextCallbackIdealized = AbsoluteTimeHelper.getNextStepTime(currentTime+300, intervalType);				
+			}
 			firstInterval = nextCallbackIdealized - currentTime;
 		}
 //System.out.println("Starting abs-timer "+(nextCallbackIdealized-appMan.getFrameworkTime())+" ms ahead for "+interval.getLocation());
