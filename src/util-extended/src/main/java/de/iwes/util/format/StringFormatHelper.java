@@ -45,9 +45,15 @@ public class StringFormatHelper {
 	 * @return a one or two digit value plus the time unit chosen by the method
 	 */
 	public static String getFormattedValue(long deltaT) {
+		return getFormattedValue(deltaT, false);
+	}
+	public static String getFormattedValue(long deltaT, boolean allowMSec) {
     	if(deltaT < 0) {
     		return "--";
     	}
+		if(allowMSec && (deltaT < 1000)) {
+			return String.format("%d ms", deltaT);
+		}
 		deltaT = deltaT / 1000;
 		if(deltaT < 100) {
 			return String.format("%d sec", deltaT);
