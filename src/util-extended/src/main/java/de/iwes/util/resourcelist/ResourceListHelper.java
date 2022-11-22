@@ -266,6 +266,14 @@ public class ResourceListHelper {
 		return result ;
 	}
 
+	/** Check if element is already referenced in resource list and add if not so.<br>
+	 * Create and activate resource list if element is added and resource list did not exist before
+	 * 
+	 * @param <T>
+	 * @param resList
+	 * @param object element to be included as reference in resList
+	 * @return reference resource if added
+	 */
 	public static <T extends Resource> T addReferenceUnique(ResourceList<T> resList, T object) {
 		if(ResourceHelper.containsLocation(resList.getAllElements(), object))
 			return null;

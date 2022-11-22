@@ -39,6 +39,11 @@ public interface GatewaySyncData extends Data {
 	 * e.g. for room control.
 	 ***********************/
 	
+	/** Each entry shall hold a device room location and a room name or location separated by a comma
+	 * The device room location shall be the location gateway side
+	 */
+	StringArrayResource deviceNames();
+	
 	/** This list usually has a decorator {@link GatewaySyncElementControl#syncMode()}=2
 	 */
 	//ResourceList<Room> rooms();
