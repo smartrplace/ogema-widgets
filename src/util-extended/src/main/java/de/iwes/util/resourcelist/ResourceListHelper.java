@@ -287,6 +287,20 @@ public class ResourceListHelper {
 			resList.activate(true);
 		return result;
 	}
+	public static <T extends Resource> T addReferenceUniqueGeneric(Resource resList, T object) {
+		if(ResourceHelper.containsLocation(resList.getSubResources(false), object))
+			return null;
+		boolean isNew = false;
+		if(!resList.exists()) {
+			isNew = true;
+			resList.create();
+		}
+		String name = ResourceHelper.getUniqueNameForNewSubResource(resList, object.getName());
+		T result = resList.addDecorator(name, object);
+		if(isNew)
+			resList.activate(true);
+		return result;
+	}
 	
 	/** Set a ResourceList of references to a list of references
 	 * 
