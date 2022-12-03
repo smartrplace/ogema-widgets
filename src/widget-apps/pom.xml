@@ -17,7 +17,7 @@
     <!-- Sub-projects: OGEMA Applications (in alphabetical order) -->
     <modules>
 		<module>app-collections</module>
-		<module>BatteryStateMonitoring</module>
+	<!--	<module>BatteryStateMonitoring</module> -->
 		<module>basic-room-link</module>
 		<module>device-configuration</module>
 	    <module>datalog-resadmin-v2</module>

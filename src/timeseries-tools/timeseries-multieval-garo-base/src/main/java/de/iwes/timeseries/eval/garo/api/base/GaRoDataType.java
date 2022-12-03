@@ -272,6 +272,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 	
 	public static final GaRoDataType HeatCostAllocatorPoints = new GaRoDataType("HeatCostAllocatorPoints",
 			FloatResource.class);
+	public static final GaRoDataType LocationGenericFactor = new GaRoDataType("LocationFactor",
+			FloatResource.class);
 	public static final GaRoDataType HeatpumpCOP = new GaRoDataType("COP",
 			FloatResource.class);
 
