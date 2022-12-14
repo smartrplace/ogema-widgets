@@ -28,12 +28,14 @@ import org.ogema.core.model.simple.SingleValueResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.core.model.units.AngleResource;
 import org.ogema.core.model.units.BrightnessResource;
+import org.ogema.core.model.units.ConcentrationResource;
 import org.ogema.core.model.units.ElectricCurrentResource;
 import org.ogema.core.model.units.EnergyPerAreaResource;
 import org.ogema.core.model.units.EnergyResource;
 import org.ogema.core.model.units.FlowResource;
 import org.ogema.core.model.units.FrequencyResource;
 import org.ogema.core.model.units.PercentageResource;
+import org.ogema.core.model.units.PhysicalUnitResource;
 import org.ogema.core.model.units.PowerResource;
 import org.ogema.core.model.units.TemperatureResource;
 import org.ogema.core.model.units.VelocityResource;
@@ -81,9 +83,45 @@ public class GaRoDataType implements GaRoDataTypeI {
 
 	@Override
 	public String label(OgemaLocale locale) {
-		return label;
+		return provideLabelWithUnit(label, representingResourceType, true, unit);
+		/*if(Boolean.getBoolean("org.smartrplace.driverhandler.devices.garowithunits")) {
+			String unitLoc;
+			if(unit != null)
+				unitLoc = unit;
+			else if(representingResourceType != null && (PhysicalUnitResource.class.isAssignableFrom(representingResourceType))) {
+				unitLoc = getUnitString((Class<? extends PhysicalUnitResource>)representingResourceType, true);
+				if(unitLoc == null)
+					return label;
+			} else
+				return label;
+			return label + " ("+unitLoc+")";
+		}
+		return label;*/
 	}
 
+	public static String provideLabelWithUnit(String baseLabel, GaRoDataType gaRoType,
+			boolean isChart) {
+		return provideLabelWithUnit(baseLabel, gaRoType.representingResourceType, isChart, gaRoType.unit);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static String provideLabelWithUnit(String baseLabel, Class<? extends Resource> representingResourceType,
+			boolean isChart, String unit) {
+		if(Boolean.getBoolean("org.smartrplace.driverhandler.devices.garowithunits")) {
+			String unitLoc;
+			if(unit != null)
+				unitLoc = unit;
+			else if(representingResourceType != null && (PhysicalUnitResource.class.isAssignableFrom(representingResourceType))) {
+				unitLoc = getUnitString((Class<? extends PhysicalUnitResource>)representingResourceType, isChart);
+				if(unitLoc == null)
+					return baseLabel;
+			} else
+				return baseLabel;
+			return baseLabel + " ("+unitLoc+")";
+		}
+		return baseLabel;
+	}
+	
 	@Override
 	public Class<? extends Resource> representingResourceType() {
 		return representingResourceType;
@@ -288,7 +326,7 @@ public class GaRoDataType implements GaRoDataTypeI {
 	public static final GaRoDataType WaterTemperatureValue = new GaRoDataType("WaterTemperatureValue",
 			TemperatureResource.class);
 	public static final GaRoDataType CO2Concentration = new GaRoDataType("CO2Concentration",
-			FloatResource.class);
+			ConcentrationResource.class);
 	public static final GaRoDataType InternetConnection = new GaRoDataType("InternetConnection",
 			BooleanResource.class);
 	public static final GaRoDataType RSSIDevice = new GaRoDataType("RSSIDevice",
@@ -767,4 +805,34 @@ public class GaRoDataType implements GaRoDataTypeI {
 	 * for all evaluations or can be room-specific
 	 */
 	/*PreEvaluated*/
+	
+	public static String getUnitString(Class<? extends PhysicalUnitResource> type, boolean isChart) {
+		if(TemperatureResource.class.isAssignableFrom(type)) {
+			if(isChart)
+				return "°C";
+			else
+				return "K";
+		}
+		if(EnergyResource.class.isAssignableFrom(type))
+			return "kWh";
+		if(PowerResource.class.isAssignableFrom(type))
+			return "W";
+		if(VolumeResource.class.isAssignableFrom(type))
+			return "m3";
+		if(FlowResource.class.isAssignableFrom(type))
+			return "m3/s";
+		if(EnergyPerAreaResource.class.isAssignableFrom(type))
+			return "W/m2";
+		if(VelocityResource.class.isAssignableFrom(type))
+			return "m/s";
+		if(VoltageResource.class.isAssignableFrom(type))
+			return "V";
+		if(ElectricCurrentResource.class.isAssignableFrom(type))
+			return "A";
+		if(FrequencyResource.class.isAssignableFrom(type))
+			return "Hz";
+		if(ConcentrationResource.class.isAssignableFrom(type))
+			return "ppm";
+		return null;
+	}
 }

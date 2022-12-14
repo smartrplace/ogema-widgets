@@ -81,18 +81,30 @@ public class GaRoEvalHelper {
 			this.type = type;
 			this.snippets = Arrays.asList(snippets);
 			this.label = label;
+			addUnitToLabels(label, type);
 		}		
 		public RecIdVal(GaRoDataType type, List<String> snippets, Map<OgemaLocale, String> label) {
 			this.type = type;
 			this.snippets = snippets;
 			this.label = label;
+			addUnitToLabels(label, type);
 		}		
 		public RecIdVal(GaRoDataType type, TypeChecker typeChecker, Map<OgemaLocale, String> label) {
 			this.type = type;
 			this.snippets = null;
 			this.typeChecker = typeChecker;
 			this.label = label;
-		}		
+			addUnitToLabels(label, type);
+		}
+		
+		private void addUnitToLabels(Map<OgemaLocale, String> label, GaRoDataType type) {
+			if(!Boolean.getBoolean("org.smartrplace.driverhandler.devices.garowithunits"))
+				return;
+			for(Entry<OgemaLocale, String> e: label.entrySet()) {
+				String labelNew = GaRoDataType.provideLabelWithUnit(e.getValue(), type, true);
+				label.put(e.getKey(), labelNew);
+			}
+		}
 	}
 	/** <time series name> -> type/snippet info
 	 */
@@ -133,7 +145,7 @@ public class GaRoEvalHelper {
 
 		addRecId(GaRoDataType.StateOfCharge, new String[] {"/chargeSensor/reading"}, recIdSnippets,
 				"SOC", "SOC");
-		addRecId(GaRoDataType.ChargeVoltage, new String[] {"chargeSensor", "internalVoltage"}, recIdSnippets,
+		addRecId(GaRoDataType.ChargeVoltage, new String[] {"chargeSensor", "internalVoltage", "VOLTAGE_0"}, recIdSnippets,
 				"Battery Voltage", "Batteriespannung");
 		addRecId(GaRoDataType.ChargeSensor, new String[] {"batteryLow", "battery_low"}, recIdSnippets,
 				"Battery Status", "Batterie Status");
