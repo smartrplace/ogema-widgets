@@ -59,6 +59,7 @@ public class RoomHelper {
 	public static final int TECHNICAL_ROOM = 30;
 	public static final int OFFICE = 100;
 	public static final int MEETING = 101;
+	public static final int LARGE_OFFICE = 102;
 	public static final int KITCHEN_COMM = 200;
 	public static final int OUTSIDE = 500;
 	public static final int OTHER = 900;
@@ -247,6 +248,8 @@ public class RoomHelper {
 			return "office";
 		case 101:
 			return "meeting room";
+		case 102:
+			return "open-plan office";
 		case 200:
 			return "kitchen/cafeteria";
 		case 210:
@@ -350,6 +353,11 @@ public class RoomHelper {
 				return "Besprechungsraum";
 			if (locale == OgemaLocale.FRENCH)
 				return "salle de réunion";
+		case 102:
+			if (locale == OgemaLocale.GERMAN)
+				return "Großraumbüro";
+			if (locale == OgemaLocale.FRENCH)
+				return "bureau paysager";
 		case 200:
 			if (locale == OgemaLocale.GERMAN)
 				return "Küche/Cafeteria";
