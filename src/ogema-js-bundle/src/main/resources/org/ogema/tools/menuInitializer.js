@@ -24,7 +24,7 @@ $(document).ajaxComplete(function (e, jqXHR, options) {
     // console.log("open ajax requests " + xhrPool.length);
 });
 var abortAjax = function () {
-    console.log("logout, aborting ajax requests: " + xhrPool.length);
+    console.log("logged out, aborting ajax requests: " + xhrPool.length);
     $.each(xhrPool, function (idx, jqXHR) {
         jqXHR.abort();
     });
@@ -246,9 +246,12 @@ var abortAjax = function () {
 		var pollInterval = 3000;
 		var pollForMessage = function() {
 			var interval = pollInterval; // this way interval is final, whereas pollInterval is not
-			if (!interval || interval <= 0)
+			if (loggedOut || !interval || interval <= 0)
 				return;
 			setTimeout(function(){
+                if (loggedOut) {
+                    return;
+                }
 				var loc;
 				if (ogema.locale)
 					loc = ogema.locale;
@@ -300,7 +303,9 @@ var abortAjax = function () {
 			    		}
 			    	} catch (e) {}
 			    	messageText[0].value=crMessageForDisplay.title + (crMessageForDisplay.app ? "\n" + crMessageForDisplay.app : "");
-			    	pollForMessage();
+                    if (!loggedOut) {
+                        pollForMessage();
+                    }
 			    });
 
 			}, interval);
@@ -317,12 +322,31 @@ var abortAjax = function () {
             }
 		};
 	}
+    
+    var bc = new BroadcastChannel('widget_session');
+    
+    bc.onmessage = function (ev) {
+        //console.log(ev);
+        //console.log("message data: " + ev.data);
+        if (ev.data === 'logout') {
+            loggedOut = true;
+            console.log("logged out...: " + loggedOut);
+            abortAjax();
+        }
+    };
+    
 	ogema.logout = function() {
-        var onLogoutSuccess = function(data){ 
-              loggedOut = true;
-              if (ogema.stopMessagePolling) { ogema.stopMessagePolling(); }
-              abortAjax();
-              window.location.assign(data);
+        var onLogoutSuccess = function (data) {
+            if (loggedOut) {
+                return;
+            }
+            loggedOut = true;
+            bc.postMessage('logout');
+            if (ogema.stopMessagePolling) {
+                ogema.stopMessagePolling();
+            }
+            abortAjax();
+            window.location.assign(data);
         };
         // logout should happen synchronously, otherwise abortAjax() does not catch all requests(?)  
         $.ajax({
@@ -332,5 +356,6 @@ var abortAjax = function () {
             dataType: "text",
             async: false
         });        
-	};
+	};    
+    
 })();
