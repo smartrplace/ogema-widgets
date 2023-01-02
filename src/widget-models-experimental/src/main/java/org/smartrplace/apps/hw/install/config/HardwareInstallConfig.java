@@ -157,4 +157,7 @@ public interface HardwareInstallConfig extends Data {
 	 *  -10: summer mode for mainly heating systems / winter mode for mainly cooling systems
 	 */
 	IntegerResource alarmingReductionLevel();
+	
+	/** History of configuration changes via GUI (for now roomcontrol only)*/
+	ResourceList<StringResource> actionHistory();
 }
