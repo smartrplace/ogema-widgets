@@ -142,6 +142,10 @@ public interface HardwareInstallConfig extends Data {
 	 */
 	IntegerResource autoThermostatMode();
 	
+	/** 0: Only perform if property is set, 1: off, 2: on*/ 
+	IntegerResource weeklyPostponeMode();
+	
+	
 	/** Data of devices that will connect later and will be created by the respective driver then*/
 	ResourceList<PreKnownDeviceData> preKnownDevices();
 	

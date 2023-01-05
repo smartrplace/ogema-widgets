@@ -244,6 +244,23 @@ public class StringFormatHelper {
 		return result;
 	}
 	
+	public static List<String> getListFromString(String serialized, String separator) {
+		List<String> result = new ArrayList<String>();
+		if(serialized == null) return result;
+		int idx = 0;
+		while(idx >= 0) {
+			int newIdx = serialized.indexOf(separator, idx);
+			if(newIdx < 0) {
+				result.add(serialized.substring(idx).trim());
+				idx = -1;
+				break;
+			}
+			result.add(serialized.substring(idx, newIdx).trim());
+			idx = newIdx+separator.length();
+		}
+		return result;
+	}
+
 	/** The property identified by propertyName shall be chunked by commas then the
 	 * stringForCheck shall be checked if it contains any of the chunks
 	 * @param stringForCheck
