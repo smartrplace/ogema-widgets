@@ -116,5 +116,13 @@ public class TextArea extends OgemaWidgetBase<TextAreaData>  {
  	public void setRows(int rows, OgemaHttpRequest req) {
  		getData(req).setRows(rows);
  	}
+ 	
+ 	public boolean isSelected(OgemaHttpRequest req) {
+ 		return getData(req).isSelected();
+ 	}
+ 	
+ 	public void setSelected(boolean selected, OgemaHttpRequest req) {
+ 		getData(req).setSelected(selected);
+ 	}
     
 }
