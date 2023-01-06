@@ -35,6 +35,7 @@ import org.ogema.core.resourcemanager.pattern.PatternChangeListener;
 import org.ogema.core.resourcemanager.pattern.ResourcePattern;
 import org.ogema.model.locations.Building;
 import org.ogema.model.locations.BuildingPropertyUnit;
+import org.ogema.model.locations.Location;
 import org.ogema.model.locations.Room;
 import org.ogema.model.prototypes.PhysicalElement;
 import org.ogema.tools.resource.util.ResourceUtils;
@@ -404,6 +405,19 @@ public class RoomHelper {
 		return result ;
 	}
 	
+	public static List<PhysicalElement> getAllDevicesInRoom(Room room, ResourceAccess ra) {
+		List<PhysicalElement> result = new ArrayList<>();
+		List<Location> locs = room.getReferencingResources(Location.class);
+		for(Location loc: locs) {
+			Resource devraw = loc.getParent();
+			if(!(devraw instanceof PhysicalElement))
+				continue;
+			PhysicalElement dev = (PhysicalElement) devraw;
+			result.add(dev);
+		}
+		return result ;
+	}
+
 	@SuppressWarnings("unchecked")
 	public static ResourceList<Room> getRoomToplevelResource(ApplicationManager appMan) {
 		ResourceList<Room> result = ResourceHelper.getTopLevelResource(ROOM_TOPLELVEL_NAME, ResourceList.class, appMan.getResourceAccess());
