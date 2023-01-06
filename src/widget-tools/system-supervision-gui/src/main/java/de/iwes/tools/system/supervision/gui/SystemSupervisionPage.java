@@ -24,11 +24,13 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 import org.ogema.core.application.ApplicationManager;
@@ -39,6 +41,7 @@ import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.SingleValueResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.core.recordeddata.RecordedData;
+import org.ogema.core.resourcemanager.ResourceAccess;
 import org.ogema.tools.resource.util.LoggingUtils;
 import org.ogema.tools.resource.util.ResourceUtils;
 import org.ogema.tools.resource.util.ValueResourceUtils;
@@ -143,6 +146,12 @@ public class SystemSupervisionPage {
 	private final Button threadDumpButton;
 	private final Button threadDumpFocused;
 	private final TextArea threadDump;
+	
+	private final Label basicLockInfo;
+	private final Button basicLockUpdate;
+	private final Button lockWaitingThreadsButton;
+	private final Button lockDataFocused;
+	private final TextArea lockData;
 	
 	
 	public SystemSupervisionPage(final WidgetPage<?> page, final ApplicationManager am) {
@@ -430,6 +439,93 @@ public class SystemSupervisionPage {
 		};
 		threadDumpFocused.setDefaultText("Select text");
 		
+		basicLockInfo = new Label(page, "basicLockInfo") {
+			
+			@Override
+			public void onGET(OgemaHttpRequest req) {
+				try {
+					final ResourceAccess ra = am.getResourceAccess();
+					final java.lang.reflect.Method m = ra.getClass().getDeclaredMethod("getDatabaseManager");
+					m.setAccessible(true);
+					final /*ResourceDBManager*/ Object dbManager = m.invoke(ra);
+					final java.lang.reflect.Field f = dbManager.getClass().getDeclaredField("commitLock");
+					f.setAccessible(true);
+					final ReentrantReadWriteLock lock = (ReentrantReadWriteLock) f.get(dbManager);
+					final int readHolds = lock.getReadHoldCount();
+					final int writeHolds = lock.getWriteHoldCount();
+					final int queueLength = lock.getQueueLength();
+					setText("Resource lock queue length: " + queueLength + ", read locks held: " + readHolds + ", write locks held: " + writeHolds, req);
+				} catch (Exception e) {
+					setText("An error occured " + e, req);
+				}
+			}
+			
+		};
+		basicLockUpdate = new Button(page, "basicLockUpdate");
+		basicLockUpdate.setDefaultText("Update");
+		basicLockUpdate.setDefaultToolTip("Update basic resource lock information");
+		lockData = new TextArea(page, "lockData");
+		lockWaitingThreadsButton = new Button(page, "lockWaitingThreadsButton") {
+			
+			@Override
+			public void onPOSTComplete(String data, OgemaHttpRequest req) {
+				try {
+					final ResourceAccess ra = am.getResourceAccess();
+					final java.lang.reflect.Method m = ra.getClass().getDeclaredMethod("getDatabaseManager");
+					m.setAccessible(true);
+					final /*ResourceDBManager*/ Object dbManager = m.invoke(ra);
+					final java.lang.reflect.Field f = dbManager.getClass().getDeclaredField("commitLock");
+					f.setAccessible(true);
+					final ReentrantReadWriteLock lock = (ReentrantReadWriteLock) f.get(dbManager);
+					final java.lang.reflect.Method m2 = ReentrantReadWriteLock.class.getDeclaredMethod("getQueuedThreads");
+					m2.setAccessible(true);
+					/*final*/ Collection<Thread> threads = (Collection<Thread>) m2.invoke(lock);
+					final java.lang.reflect.Method m3 = ReentrantReadWriteLock.class.getDeclaredMethod("getOwner");
+					m3.setAccessible(true);
+					final Thread owner = (Thread) m3.invoke(lock);
+					if (owner != null) {
+						final List<Thread> threads2 = new ArrayList<>();
+						threads2.add(owner);
+						if (!threads.isEmpty())
+							threads2.addAll(threads);
+						threads = threads2;
+					}
+					final int sz = threads.size();
+					final String stackTrace = threads.stream().map(Thread::getStackTrace).map((StackTraceElement[] arr) -> Arrays.stream(arr).map(Object::toString).collect(Collectors.joining("\n"))).collect(Collectors.joining("\n\n")); 
+					lockData.setText(sz == 0 ? "None waiting" : stackTrace, req);
+					lockData.setRows(sz == 0 ? 5 : sz > 4 ? 50 : 25, req);
+					lockData.setCols(sz == 0 ? 20 : 125, req);
+					lockData.setSelected(sz > 0, req);
+					if (sz > 0)
+						lockDataFocused.enable(req);
+					else
+						lockDataFocused.disable(req);
+				} catch (Exception e) {
+					lockData.setText(e.toString(), req);
+					lockData.setRows(10, req);
+					lockData.setCols(125, req);
+				}
+			}
+			
+		};
+		lockWaitingThreadsButton.setDefaultText("Get threads waiting for resource lock");
+		lockWaitingThreadsButton.setDefaultToolTip("Retrieve stack traces for all threads currently waiting to acquire the resource lock, including the owner of the write lock at first position, if any");
+		lockDataFocused = new Button(page, "lockDataFocused") {
+			
+			@Override
+			protected void setDefaultValues(ButtonData opt) {
+				super.setDefaultValues(opt);
+				opt.disable();
+			}
+			
+			@Override
+			public void onPOSTComplete(String data, OgemaHttpRequest req) {
+				lockData.setSelected(true, req);
+			}
+			
+		};
+		lockDataFocused.setDefaultText("Select text");
+		
 		buildPage();
 		setDependencies();
 	}
@@ -480,13 +576,21 @@ public class SystemSupervisionPage {
 		acc.addItem("Plots", plotSnippet, null);
 		
 		final PageSnippet threads = new PageSnippet(page, "threadSnippet", true);
-
 		final Flexbox flex = new Flexbox(page, "threadDumpButtons", true);
 		flex.addItem(threadDumpButton, null).addItem(threadDumpFocused, null);
 		flex.setColumnGap("1em", null);
 		threads.append(flex, null).linebreak(null);
 		threads.append(threadDump, null);
 		acc.addItem("Threads", threads, null);
+		
+		final PageSnippet locks = new PageSnippet(page, "locksSnippet", true);
+		final Flexbox locksFlex = new Flexbox(page, "locksButtons", true);
+		locksFlex.setAlignItems(AlignItems.BASELINE, null);
+		locksFlex.addItem(basicLockInfo, null).addItem(basicLockUpdate, null).addItem(lockWaitingThreadsButton, null).addItem(lockDataFocused, null);
+		locksFlex.setColumnGap("1em", null);
+		locks.append(locksFlex, null).linebreak(null);
+		locks.append(lockData, null);
+		acc.addItem("Resource lock", locks, null);
 		
 		page.append(acc);
 		
@@ -510,6 +614,11 @@ public class SystemSupervisionPage {
 		threadDumpButton.triggerAction(threadDump, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		threadDumpButton.triggerAction(threadDumpFocused, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		threadDumpFocused.triggerAction(threadDump, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		basicLockUpdate.triggerAction(basicLockInfo, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		lockWaitingThreadsButton.triggerAction(lockData, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		lockWaitingThreadsButton.triggerAction(lockDataFocused, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		lockDataFocused.triggerAction(lockData, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+
 		resetView(configSelector);
 		resetView(updateBtn);
 		resetView(createConfigResource);
