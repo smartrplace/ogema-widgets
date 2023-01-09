@@ -67,6 +67,16 @@ ogema.widgetLoader.groupsToBePreloaded = undefined; // Array<string>|undefined
 
 ogema.pageInstance = '';
 ogema.widgetLoader.pollingStopped = false;
+(function() {
+	var search = new URLSearchParams(window.location.search);
+	var pollingParam = search.get("polling");
+	if (pollingParam) {
+		pollingParam = pollingParam.toLowerCase();
+		if (pollingParam == "false" || pollingParam <= 0)
+			ogema.widgetLoader.pollingStopped = true;			
+	}
+})();
+
 //ogema.configId = ''; // what is this?
 //ogema.widgetLoader.allscripts;
 if (typeof ogema.widgetLoader.scriptsLoadedInit === "undefined")

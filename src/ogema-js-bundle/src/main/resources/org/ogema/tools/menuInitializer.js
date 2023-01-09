@@ -244,6 +244,19 @@ var abortAjax = function () {
 			 }
 		};
 		var pollInterval = 3000;
+		var search = new URLSearchParams(window.location.search);
+		var pollingParam = search.get("polling");
+		if (pollingParam)
+			pollingParam = pollingParam.toLowerCase();
+		if (pollingParam == "false" || pollingParam <= 0)
+			pollInterval = 0;
+		else {
+			var messagePollingParam = parseInt(search.get("messagePolling") || search.get("messagepolling"));
+			if (messagePollingParam <= 0)
+				pollInterval = 0;
+			else if (messagePollingParam > 0)
+				pollInterval = messagePollingInterval;
+		}
 		var pollForMessage = function() {
 			var interval = pollInterval; // this way interval is final, whereas pollInterval is not
 			if (loggedOut || !interval || interval <= 0)

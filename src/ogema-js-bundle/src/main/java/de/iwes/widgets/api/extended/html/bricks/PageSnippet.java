@@ -16,6 +16,7 @@
 package de.iwes.widgets.api.extended.html.bricks;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -89,6 +90,31 @@ public class PageSnippet extends OgemaWidgetBase<PageSnippetData> implements Pag
 	@Override
 	public PageSnippet append (OgemaWidget widget,OgemaHttpRequest req) {
 		getData(req).append(widget);
+		return this;
+	}
+
+	/*
+	@Override
+	public PageSnippet remove(String html,OgemaHttpRequest req) {
+		getData(req).remove(html);
+		return this;
+	}
+	*/
+	
+	@Override
+	public PageSnippet remove(HtmlItem item,OgemaHttpRequest req) {
+		getData(req).remove(item);
+		return this;
+	}
+	
+	@Override
+	public PageSnippet remove(OgemaWidget widget,OgemaHttpRequest req) {
+		getData(req).remove(widget);
+		return this;
+	}
+	
+	public PageSnippet removeWidgets(Collection<OgemaWidget> widgets,OgemaHttpRequest req) {
+		getData(req).removeWidgets(widgets);
 		return this;
 	}
 	

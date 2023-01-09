@@ -58,6 +58,13 @@ public interface PageSnippetI extends OgemaWidget {
 	 * 		this
 	 */
 	public PageSnippetI append (OgemaWidget widget,OgemaHttpRequest req);
+	//public PageSnippetI remove(String text,OgemaHttpRequest req);
+	default PageSnippetI remove(HtmlItem item,OgemaHttpRequest req) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+	default PageSnippetI remove(OgemaWidget widget,OgemaHttpRequest req) {
+		throw new UnsupportedOperationException("not implemented");
+	}
 	
 	/**
 	 * Append a line break to the snippet.

@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.List;
 
 import de.iwes.widgets.api.extended.OgemaWidgetBase;
+import de.iwes.widgets.api.extended.html.bricks.PageSnippet;
 import de.iwes.widgets.api.widgets.OgemaWidget;
 import de.iwes.widgets.api.widgets.WidgetPage;
 import de.iwes.widgets.api.widgets.html.HtmlItem;
@@ -102,6 +103,18 @@ public class FragmentWidget extends OgemaWidgetBase<FragmentData> implements Pag
 	
 	public List<OgemaWidget> getSubwidgets(OgemaHttpRequest req) {
 		return getData(req).getSubwidgets();
+	}
+	
+	@Override
+	public PageSnippetI remove(HtmlItem item,OgemaHttpRequest req) {
+		getData(req).removeItem(item);
+		return this;
+	}
+	
+	@Override
+	public PageSnippetI remove(OgemaWidget widget,OgemaHttpRequest req) {
+		getData(req).removeItem(widget);
+		return this;
 	}
 
 }

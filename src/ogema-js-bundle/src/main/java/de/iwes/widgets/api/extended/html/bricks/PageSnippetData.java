@@ -17,12 +17,15 @@ package de.iwes.widgets.api.extended.html.bricks;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.json.JSONObject;
 
@@ -36,9 +39,9 @@ import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
 public class PageSnippetData extends WidgetData {
 	
 	private int counter = 0;
-	private final Map<Integer,String> str;
-	private final Map<Integer,OgemaWidgetBase<?>> subwidgets;
-	private final Map<Integer,HtmlItem> htmlItems;
+	protected final Map<Integer,String> str;
+	protected final Map<Integer,OgemaWidgetBase<?>> subwidgets;
+	protected final Map<Integer,HtmlItem> htmlItems;
 	private String backgroundImg = null;
 
 	/*********** Constructor **********/
@@ -162,6 +165,80 @@ public class PageSnippetData extends WidgetData {
 			writeUnlock();
 		}
 	}
+	
+	private static <T> void itemsRemoved(List<Integer> positions, Map<Integer, T> map) {
+		final Map<Integer, T> newItems = new HashMap<>();
+		final List<Integer> forRemoval = new ArrayList<>();
+		for (Map.Entry<Integer, T> entry: map.entrySet()) {
+			final int key = entry.getKey();
+			final int smaller = (int) positions.stream().filter(pos -> pos < key).count();
+			if (smaller > 0) {
+				forRemoval.add(key);
+				newItems.put(key - smaller, entry.getValue());
+			}
+		}
+		forRemoval.stream().forEach(i -> map.remove(i));
+		newItems.entrySet().forEach(entry -> map.put(entry.getKey(), entry.getValue()));
+	}
+	
+	private void itemsRemoved(List<Integer> positions) {
+		PageSnippetData.itemsRemoved(positions, htmlItems);
+		PageSnippetData.itemsRemoved(positions, subwidgets);
+		PageSnippetData.itemsRemoved(positions, str);
+		counter = counter - positions.size();
+	}
+	
+	public void remove(HtmlItem item) {
+		if(item == null)
+			throw new NullPointerException("HtmlItem cannot be null!");
+		writeLock(); 
+		try {
+			final List<Integer> forRemoval = new ArrayList<>();
+			for (Map.Entry<Integer, HtmlItem> entry: htmlItems.entrySet()) {
+				if (entry.getValue().equals(item)) {
+					forRemoval.add(entry.getKey());
+				}
+			}
+			if (!forRemoval.isEmpty()) {
+				forRemoval.stream().map(i -> htmlItems.remove(i)).forEach(item2 -> item2.getSubWidgets().forEach(w -> w.destroyWidget()));
+				this.itemsRemoved(forRemoval);
+			}
+		} finally {
+			writeUnlock();
+		}
+	}
+	
+	public void remove(OgemaWidget widget) {
+		this.removeWidgets(Collections.singletonList(widget));
+	}
+	
+	public void removeWidgets(Collection<OgemaWidget> items) {
+		if(items == null)
+			throw new NullPointerException("array cannot be null");
+		if (items.size() == 0)
+			return;
+		writeLock(); 
+		try {
+			final List<Integer> forRemoval = new ArrayList<>();
+			for (Map.Entry<Integer, OgemaWidgetBase<?>> entry: subwidgets.entrySet()) {
+				final String id = entry.getValue().getId();
+				final boolean contained = items.stream().filter(item -> item.getId().equals(id)).findAny().isPresent();
+				if (contained) {
+					forRemoval.add(entry.getKey());
+				}
+			}
+			if (!forRemoval.isEmpty()) {
+				forRemoval.stream().forEach(i -> {
+					final OgemaWidgetBase<?> widget = subwidgets.remove(i);
+					widget.destroy();
+				});
+				this.itemsRemoved(forRemoval);
+			}
+		} finally {
+			writeUnlock();
+		}
+	}
+	
 	
 	public String getBackgroundImg() {
 		return backgroundImg;
