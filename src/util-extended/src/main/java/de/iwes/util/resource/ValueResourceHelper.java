@@ -42,6 +42,8 @@ import org.ogema.core.model.simple.TimeResource;
 import org.ogema.core.model.units.TemperatureResource;
 import org.ogema.core.recordeddata.RecordedData;
 
+import de.iwes.util.format.StringFormatHelper;
+
 public class ValueResourceHelper {
 	/** create resource if it does not yet exist. If the resource is newly created write
 	 * value into it, otherwise do nothing. Note that the activation status is not changed,
@@ -431,5 +433,22 @@ public class ValueResourceHelper {
 		//Float result = new Float(value);
 		//return new FloatingDecimal(result.floatValue()).doubleValue();
 		return Double.valueOf(Float.valueOf(value).toString()).doubleValue();
+	}
+	
+	public static List<Float> getFloatListFromProperty(String propertyName) {
+		String prop = System.getProperty(propertyName);
+		if(prop == null)
+			return null;
+		List<String> els = StringFormatHelper.getListFromString(prop);
+		List<Float> result = new ArrayList<>();
+		for(String el: els) {
+			try {
+				float newVal = Float.parseFloat(el);
+				result.add(newVal);
+			} catch(NumberFormatException e) {
+				//return defaultVal;
+			}			
+		}
+		return result;
 	}
 }
