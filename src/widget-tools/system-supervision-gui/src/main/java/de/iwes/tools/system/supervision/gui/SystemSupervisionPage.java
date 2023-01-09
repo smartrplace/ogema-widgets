@@ -15,11 +15,23 @@
  */
 package de.iwes.tools.system.supervision.gui;
 
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 
 import org.ogema.core.application.ApplicationManager;
 import org.ogema.core.model.Resource;
@@ -29,6 +41,7 @@ import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.SingleValueResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.core.recordeddata.RecordedData;
+import org.ogema.core.resourcemanager.ResourceAccess;
 import org.ogema.tools.resource.util.LoggingUtils;
 import org.ogema.tools.resource.util.ResourceUtils;
 import org.ogema.tools.resource.util.ValueResourceUtils;
@@ -63,6 +76,7 @@ import de.iwes.widgets.html.html5.flexbox.AlignContent;
 import de.iwes.widgets.html.html5.flexbox.AlignItems;
 import de.iwes.widgets.html.html5.flexbox.JustifyContent;
 import de.iwes.widgets.html.plot.api.PlotType;
+import de.iwes.widgets.html.textarea.TextArea;
 import de.iwes.widgets.resource.widget.dropdown.ResourceDropdown;
 import de.iwes.widgets.reswidget.scheduleviewer.ScheduleViewerBasic;
 import de.iwes.widgets.reswidget.scheduleviewer.api.ScheduleViewerConfiguration;
@@ -129,6 +143,16 @@ public class SystemSupervisionPage {
 	private final ValueInputField<Long> resWarnThresholdHigh;
 	
 	private final ScheduleViewerBasic<RecordedData> plots;
+	private final Button threadDumpButton;
+	private final Button threadDumpFocused;
+	private final TextArea threadDump;
+	
+	private final Label basicLockInfo;
+	private final Button basicLockUpdate;
+	private final Button lockWaitingThreadsButton;
+	private final Button lockDataFocused;
+	private final TextArea lockData;
+	
 	
 	public SystemSupervisionPage(final WidgetPage<?> page, final ApplicationManager am) {
 		this.page = page;
@@ -211,11 +235,55 @@ public class SystemSupervisionPage {
 			
 		};
 		
-		this.dataFolderSize = new MbLabel(page, "dataFolderSize", "dataFolderSize");
-		this.rundirFolderSize = new MbLabel(page, "rundirFolderSize", "rundirFolderSize");
-		this.freeDiskSpace = new MbLabel(page, "freeDiskSpace", "freeDiskSpace");
-		this.ramUsage = new MbLabel(page, "ramUsage", "usedMemorySize");
-		this.maxRamAvailable = new MbLabel(page, "maxAvailableMemorySize", "maxAvailableMemorySize");
+		this.dataFolderSize = new MbLabel(page, "dataFolderSize", "dataFolderSize") {
+			
+			String getDefault() {
+				final long dataSize = size(Paths.get("./data"));
+				return (dataSize/mb) + " MB";
+			}
+			
+		};
+		this.rundirFolderSize = new MbLabel(page, "rundirFolderSize", "rundirFolderSize") {
+			
+			String getDefault() {
+				final long rundirSize = size(Paths.get("."));
+				return (rundirSize/mb) + " MB";
+			}
+			
+		};
+		this.freeDiskSpace = new MbLabel(page, "freeDiskSpace", "freeDiskSpace") {
+			
+			String getDefault() {
+				try {
+					final long free = Files.getFileStore(Paths.get("/")).getUsableSpace();
+					return (free/mb) + " MB";
+				} catch (IOException e) {
+					return "Error determining free disk space: " + e;
+				}
+			}
+			
+		};
+		this.ramUsage = new MbLabel(page, "ramUsage", "usedMemorySize") {
+			
+			String getDefault() {
+				final Runtime runtime = Runtime.getRuntime();
+				runtime.gc();
+				final long used = ( runtime.totalMemory() - runtime.freeMemory());
+				return (used/mb) + "  MB";
+			}
+			
+		};
+		this.maxRamAvailable = new MbLabel(page, "maxAvailableMemorySize", "maxAvailableMemorySize") {
+			
+			String getDefault() {
+				final Runtime runtime = Runtime.getRuntime();
+				runtime.gc();
+				//final long used = ( runtime.totalMemory() - runtime.freeMemory());
+				final long memMax = runtime.maxMemory();
+				return (memMax/mb) + "  MB";
+			}
+			
+		};
 		this.resourceUsage = new Label(page, "nrResources") {
 			
 			private static final long serialVersionUID = 1L;
@@ -224,11 +292,9 @@ public class SystemSupervisionPage {
 			public void onGET(OgemaHttpRequest req) {
 				final SystemSupervisionConfig config = configSelector.getSelectedItem(req);
 				final IntegerResource resource = config == null ? null : config.results().nrResources();
-				if (resource == null || !resource.isActive()) {
-					setText("", req);
-					return;
-				}
-				setText(String.valueOf(resource.getValue()), req);
+				final int numResources = resource != null && resource.isActive() ? resource.getValue() : 
+						am.getResourceAccess().getResources(Resource.class).size();  
+				setText(String.valueOf(numResources), req);
 			}
 			
 		};
@@ -340,6 +406,126 @@ public class SystemSupervisionPage {
 		plots.getSchedulePlot().getDefaultConfiguration().doScale(false);
 		plots.getSchedulePlot().getDefaultConfiguration().setPlotType(PlotType.LINE_WITH_POINTS);
 		
+		threadDump = new TextArea(page, "threadDump");
+		threadDumpButton = new Button(page, "createThreadDump") {
+			
+			@Override
+			public void onPOSTComplete(String data, OgemaHttpRequest req) {
+				java.lang.management.ThreadMXBean bean = java.lang.management.ManagementFactory.getThreadMXBean();
+				java.lang.management.ThreadInfo[] infos = bean.dumpAllThreads(true, true);
+				
+				threadDump.setText(Arrays.stream(infos).map(Object::toString).collect(Collectors.joining()), req);
+				threadDump.setRows(50, req);
+				threadDump.setCols(125, req);
+				threadDump.setSelected(true, req);
+				threadDumpFocused.enable(req);
+			}
+			
+		};
+		threadDumpButton.setDefaultText("Get a thread dump");
+		threadDumpFocused = new Button(page, "threadDumpFocused") {
+			
+			@Override
+			protected void setDefaultValues(ButtonData opt) {
+				super.setDefaultValues(opt);
+				opt.disable();
+			}
+			
+			@Override
+			public void onPOSTComplete(String data, OgemaHttpRequest req) {
+				threadDump.setSelected(true, req);
+			}
+			
+		};
+		threadDumpFocused.setDefaultText("Select text");
+		
+		basicLockInfo = new Label(page, "basicLockInfo") {
+			
+			@Override
+			public void onGET(OgemaHttpRequest req) {
+				try {
+					final ResourceAccess ra = am.getResourceAccess();
+					final java.lang.reflect.Method m = ra.getClass().getDeclaredMethod("getDatabaseManager");
+					m.setAccessible(true);
+					final /*ResourceDBManager*/ Object dbManager = m.invoke(ra);
+					final java.lang.reflect.Field f = dbManager.getClass().getDeclaredField("commitLock");
+					f.setAccessible(true);
+					final ReentrantReadWriteLock lock = (ReentrantReadWriteLock) f.get(dbManager);
+					final int readHolds = lock.getReadHoldCount();
+					final int writeHolds = lock.getWriteHoldCount();
+					final int queueLength = lock.getQueueLength();
+					setText("Resource lock queue length: " + queueLength + ", read locks held: " + readHolds + ", write locks held: " + writeHolds, req);
+				} catch (Exception e) {
+					setText("An error occured " + e, req);
+				}
+			}
+			
+		};
+		basicLockUpdate = new Button(page, "basicLockUpdate");
+		basicLockUpdate.setDefaultText("Update");
+		basicLockUpdate.setDefaultToolTip("Update basic resource lock information");
+		lockData = new TextArea(page, "lockData");
+		lockWaitingThreadsButton = new Button(page, "lockWaitingThreadsButton") {
+			
+			@Override
+			public void onPOSTComplete(String data, OgemaHttpRequest req) {
+				try {
+					final ResourceAccess ra = am.getResourceAccess();
+					final java.lang.reflect.Method m = ra.getClass().getDeclaredMethod("getDatabaseManager");
+					m.setAccessible(true);
+					final /*ResourceDBManager*/ Object dbManager = m.invoke(ra);
+					final java.lang.reflect.Field f = dbManager.getClass().getDeclaredField("commitLock");
+					f.setAccessible(true);
+					final ReentrantReadWriteLock lock = (ReentrantReadWriteLock) f.get(dbManager);
+					final java.lang.reflect.Method m2 = ReentrantReadWriteLock.class.getDeclaredMethod("getQueuedThreads");
+					m2.setAccessible(true);
+					/*final*/ Collection<Thread> threads = (Collection<Thread>) m2.invoke(lock);
+					final java.lang.reflect.Method m3 = ReentrantReadWriteLock.class.getDeclaredMethod("getOwner");
+					m3.setAccessible(true);
+					final Thread owner = (Thread) m3.invoke(lock);
+					if (owner != null) {
+						final List<Thread> threads2 = new ArrayList<>();
+						threads2.add(owner);
+						if (!threads.isEmpty())
+							threads2.addAll(threads);
+						threads = threads2;
+					}
+					final int sz = threads.size();
+					final String stackTrace = threads.stream().map(Thread::getStackTrace).map((StackTraceElement[] arr) -> Arrays.stream(arr).map(Object::toString).collect(Collectors.joining("\n"))).collect(Collectors.joining("\n\n")); 
+					lockData.setText(sz == 0 ? "None waiting" : stackTrace, req);
+					lockData.setRows(sz == 0 ? 5 : sz > 4 ? 50 : 25, req);
+					lockData.setCols(sz == 0 ? 20 : 125, req);
+					lockData.setSelected(sz > 0, req);
+					if (sz > 0)
+						lockDataFocused.enable(req);
+					else
+						lockDataFocused.disable(req);
+				} catch (Exception e) {
+					lockData.setText(e.toString(), req);
+					lockData.setRows(10, req);
+					lockData.setCols(125, req);
+				}
+			}
+			
+		};
+		lockWaitingThreadsButton.setDefaultText("Get threads waiting for resource lock");
+		lockWaitingThreadsButton.setDefaultToolTip("Retrieve stack traces for all threads currently waiting to acquire the resource lock, including the owner of the write lock at first position, if any");
+		lockDataFocused = new Button(page, "lockDataFocused") {
+			
+			@Override
+			protected void setDefaultValues(ButtonData opt) {
+				super.setDefaultValues(opt);
+				opt.disable();
+			}
+			
+			@Override
+			public void onPOSTComplete(String data, OgemaHttpRequest req) {
+				lockData.setSelected(true, req);
+			}
+			
+		};
+		lockDataFocused.setDefaultText("Select text");
+		
 		buildPage();
 		setDependencies();
 	}
@@ -388,6 +574,24 @@ public class SystemSupervisionPage {
 		final PageSnippet plotSnippet = new PageSnippet(page, "plotSnippet", true);
 		plotSnippet.append(plots, null);
 		acc.addItem("Plots", plotSnippet, null);
+		
+		final PageSnippet threads = new PageSnippet(page, "threadSnippet", true);
+		final Flexbox flex = new Flexbox(page, "threadDumpButtons", true);
+		flex.addItem(threadDumpButton, null).addItem(threadDumpFocused, null);
+		flex.setColumnGap("1em", null);
+		threads.append(flex, null).linebreak(null);
+		threads.append(threadDump, null);
+		acc.addItem("Threads", threads, null);
+		
+		final PageSnippet locks = new PageSnippet(page, "locksSnippet", true);
+		final Flexbox locksFlex = new Flexbox(page, "locksButtons", true);
+		locksFlex.setAlignItems(AlignItems.BASELINE, null);
+		locksFlex.addItem(basicLockInfo, null).addItem(basicLockUpdate, null).addItem(lockWaitingThreadsButton, null).addItem(lockDataFocused, null);
+		locksFlex.setColumnGap("1em", null);
+		locks.append(locksFlex, null).linebreak(null);
+		locks.append(lockData, null);
+		acc.addItem("Resource lock", locks, null);
+		
 		page.append(acc);
 		
 	}
@@ -407,6 +611,14 @@ public class SystemSupervisionPage {
 		triggerRamCalc.triggerAction(ramUsage, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		triggerRamCalc.triggerAction(maxRamAvailable, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
 		triggerResCalc.triggerAction(resourceUsage, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		threadDumpButton.triggerAction(threadDump, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		threadDumpButton.triggerAction(threadDumpFocused, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		threadDumpFocused.triggerAction(threadDump, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		basicLockUpdate.triggerAction(basicLockInfo, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		lockWaitingThreadsButton.triggerAction(lockData, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		lockWaitingThreadsButton.triggerAction(lockDataFocused, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+		lockDataFocused.triggerAction(lockData, TriggeringAction.POST_REQUEST, TriggeredAction.GET_REQUEST);
+
 		resetView(configSelector);
 		resetView(updateBtn);
 		resetView(createConfigResource);
@@ -624,11 +836,13 @@ public class SystemSupervisionPage {
 			final SystemSupervisionConfig config = configSelector.getSelectedItem(req);
 			final TimeResource resource = config == null ? null : config.results().<TimeResource> getSubResource(relativePath);
 			if (resource == null || !resource.isActive()) {
-				setText("", req);
+				setText(getDefault(), req);
 				return;
 			}
 			setText((resource.getValue()/mb) + " MB", req);
 		}
+		
+		String getDefault() { return ""; }
 		
 	}
 
@@ -672,6 +886,45 @@ public class SystemSupervisionPage {
 			}
 		}
 		
+	}
+	
+	/*
+	 * http://stackoverflow.com/questions/2149785/get-size-of-folder-or-file/19877372#19877372
+	 */
+	private static long size(Path path) {
+
+	    final AtomicLong size = new AtomicLong(0);
+
+	    try {
+	        Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+	            @Override
+	            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+	                size.addAndGet(attrs.size());
+	                return FileVisitResult.CONTINUE;
+	            }
+
+	            @Override
+	            public FileVisitResult visitFileFailed(Path file, IOException exc) {
+
+	                System.out.println("skipped: " + file + " (" + exc + ")");
+	                // Skip folders that can't be traversed
+	                return FileVisitResult.CONTINUE;
+	            }
+
+	            @Override
+	            public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
+
+	                if (exc != null)
+	                    System.out.println("had trouble traversing: " + dir + " (" + exc + ")");
+	                // Ignore errors traversing a folder
+	                return FileVisitResult.CONTINUE;
+	            }
+	        });
+	    } catch (IOException e) {
+	        throw new AssertionError("walkFileTree will not throw IOException if the FileVisitor does not");
+	    }
+
+	    return size.get();
 	}
 	
 }

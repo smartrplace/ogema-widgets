@@ -26,6 +26,7 @@ public class TextAreaData extends WidgetData {
     private String text;
     private int cols;
     private int rows;
+    private boolean selected;
 
 
 /*********** Constructor **********/
@@ -40,8 +41,10 @@ public class TextAreaData extends WidgetData {
     public JSONObject retrieveGETData(OgemaHttpRequest req) {
     	JSONObject result = new JSONObject();	
    		result.put("text", text);
-   		result.put("row", rows);
+   		result.put("rows", rows);
    		result.put("cols", cols);
+   		if (selected)
+   			result.put("selected", selected);
         return result;
     }
 
@@ -84,7 +87,13 @@ public class TextAreaData extends WidgetData {
 		if (rows <= 0) throw new IllegalArgumentException("Number of rows must be positive");
  		this.rows = rows;
  	}
-
-    
-    
+ 	
+ 	public boolean isSelected() {
+ 		return selected;
+ 	}
+ 	
+ 	public void setSelected(boolean selected) {
+ 		this.selected = selected;
+ 	}
+ 	
 }

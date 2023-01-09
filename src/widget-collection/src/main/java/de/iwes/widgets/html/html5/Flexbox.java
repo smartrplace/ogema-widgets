@@ -216,6 +216,14 @@ public class Flexbox extends OgemaWidgetBase<FlexboxData> {
 		getData(req).setAlignContent(alignContent);
 	}
 	
+	public String getColumnGap(OgemaHttpRequest req) {
+		return getData(req).getColumnGap();
+	}
+	
+	public void setColumnGap(String columnGap, OgemaHttpRequest req) {
+		getData(req).setColumnGap(columnGap);
+	}
+	
 	/**
 	 * Set a minimum margin for one of the items.
 	 * 

@@ -45,6 +45,7 @@ public class FlexboxData extends WidgetData {
 	private FlexWrap flexWrap = null;
 	private AlignItems alignItems = null;
 	private AlignContent alignContent = null;
+	private String columnGap = null;
 	private boolean addEmptyItem = false;
 
 	public FlexboxData(Flexbox flexbox) {
@@ -66,6 +67,8 @@ public class FlexboxData extends WidgetData {
 			css.put("align-items", alignItems.getIdentifier());
 		if (alignContent != null)
 			css.put("align-content", alignContent.getIdentifier());
+		if (columnGap != null)
+			css.put("column-gap", columnGap);
 		addCssItem(">div", css);		
 		JSONObject obj = new JSONObject();
 		JSONArray items = new JSONArray();
@@ -174,6 +177,14 @@ public class FlexboxData extends WidgetData {
 
 	public void setAlignContent(AlignContent alignContent) {
 		this.alignContent = alignContent;
+	}
+	
+	public String getColumnGap() {
+		return columnGap;
+	}
+	
+	public void setColumnGap(String columnGap) {
+		this.columnGap = columnGap;
 	}
 	
 	protected void setAddEmptyOption(boolean addEmptyItem) {
