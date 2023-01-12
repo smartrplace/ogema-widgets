@@ -116,6 +116,7 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
      */
     @Deprecated
     private volatile Cache<String, OgemaWidgetBase<T>> parents;
+    protected volatile boolean compositeWidget = false;
     
     
 //    protected Set<OgemaWidgetBase<?>> parents = new HashSet<OgemaWidgetBase<?>>();
@@ -338,6 +339,10 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
     	String className = clazz.getSimpleName();
     	String guessUrl = "/ogema/widget/" + className.toLowerCase() + "/" + className + ".js";
     	this.registerLibrary(true, className, guessUrl);
+    }
+    
+    protected void setComposite() {
+    	this.compositeWidget = true;
     }
     
     /*
@@ -653,6 +658,7 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
 		return postponeLoading;
 	}
 
+	@Deprecated // ?
 	@Override
 	public void preloadSubwidgets() {
 		this.preloadGroup = true;

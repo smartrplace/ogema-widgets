@@ -146,6 +146,11 @@ public class DynamicTable<T> extends OgemaWidgetBase<DynamicTableData<T>> implem
 		this.header = header;
 	 }
 	
+ 	 @Override // make visible 
+	 public void setComposite() {
+		 super.setComposite();
+	 }
+	
 	 /**
 	  * Use with row template only.
 	  * @param req

@@ -205,7 +205,8 @@ ogema.widgetLoader.extractScripts = function(html, callbackFct) {	// FIXME not r
 	loadNext();
 }
 
-ogema.widgetLoader.preloadInitGroups = function(widgetScripts) {
+ogema.widgetLoader.preloadInitGroups = function(widgetScripts, skipFinish) {
+	skipFinish = skipFinish !== undefined ? skipFinish : false;
 	var groups = ogema.widgetLoader.groupsToBePreloaded;
 	ogema.widgetLoader.groupsToBePreloaded = undefined;
 	if (groups !== undefined && groups.length > 0) {
@@ -230,10 +231,10 @@ ogema.widgetLoader.preloadInitGroups = function(widgetScripts) {
 			}));
 		}
 		$.when(...promises).done(function() {
-			ogema.widgetLoader.createWidgets(widgetScripts, false);
+			ogema.widgetLoader.createWidgets(widgetScripts, skipFinish);
 		});
 	} else {
-		ogema.widgetLoader.createWidgets(widgetScripts, false);
+		ogema.widgetLoader.createWidgets(widgetScripts, skipFinish);
 	}
 }
 
@@ -295,7 +296,7 @@ ogema.widgetLoader.createWidgets = function(widgetScripts, skipFinish) {
 /**
 * ensures that all required html and javascript is loaded, then creates widgets
 */
-ogema.widgetLoader.loadUniqueWidgetData = function(widgetScripts) {
+ogema.widgetLoader.loadUniqueWidgetData = function(widgetScripts, skipFinish) {
 	var urls = ogema.widgetLoader.getUniqueTypeUrls(widgetScripts);
 	var counter = Object.keys(urls).length;
 	var checkLoadingFinished = function() {
@@ -303,7 +304,7 @@ ogema.widgetLoader.loadUniqueWidgetData = function(widgetScripts) {
 		//console.log("loadUniqueWidgetData counter =",counter);
 		if (counter === 0) {
 			//console.log("loadUniqueWidgetData done");
-			ogema.widgetLoader.preloadInitGroups(widgetScripts);
+			ogema.widgetLoader.preloadInitGroups(widgetScripts, skipFinish);
 		}
 	}
 	if (counter === 0) {	// if all html and js has been loaded already

@@ -285,8 +285,17 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
         }
 
 //        if (gw.isDynamicWidget && gw.dataChanged(result)) {  
+	      if (result.composition && result.composition.init) {
+			  const comp = result.composition;
+			  const initData  = comp.init.filter(data => !ogema.widgets[data[0]]);
+			  // TODO make sure this data is not appended to initialWidgetData requests?
+			  Object.assign(ogema.widgetLoader.initialWidgetInformation, comp.sub);
+			  // FIXME there is a potential race condition here if the loader is already running
+			  // this is not so easy to overcome without a migration to a promise based widget loader impl
+			  ogema.widgetLoader.loadUniqueWidgetData(initData, true);
+		  }
 		  if (gw.isDynamicWidget) {
-		   	var nrDeleteWidgets = subwidgetsToBeRemoved.length; 	
+		   	var nrDeleteWidgets = subwidgetsToBeRemoved.length;
 		   	
             var interval = 0; //Initial waiting-time
             var attemptCount = 0;
@@ -307,14 +316,16 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
 	                        if (result.hasOwnProperty("subWidgets")) {		
 	        				    gw.subWidgets = result.subWidgets;
 	     				    }
-	                        if (updateSubwidgets) ogema.reloadWidgets();
+	                        if (updateSubwidgets && !gw.composition) 
+	                        	ogema.reloadWidgets();
 	                        clearInterval(waitForLoading);
 	                    }
 	                }
 	
 	            }, interval);
 	       } else if (updateSubwidgets) {    // if no widgets are deleted, but new ones to be loaded
-	       		ogema.reloadWidgets(); 
+	       		if (!gw.composition)
+	       			ogema.reloadWidgets(); 
 	       		if (result.hasOwnProperty("subWidgets")) {		
 				    gw.subWidgets = result.subWidgets;
 			    }	

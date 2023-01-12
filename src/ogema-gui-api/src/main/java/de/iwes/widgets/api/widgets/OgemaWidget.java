@@ -700,7 +700,9 @@ public interface OgemaWidget {
      * a lot of HTTP requests for initial data loading. It will cause a common preloading request for 
      * those widgets that gathers all the init data for them in a single call.
      * The method must be called before the subwidgets have been created.
+     * @deprecated: use setComposite() instead(?)
      */
+    @Deprecated
     void preloadSubwidgets();
     
 	static enum SendValue {
