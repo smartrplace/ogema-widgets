@@ -150,6 +150,11 @@ public class DynamicTable<T> extends OgemaWidgetBase<DynamicTableData<T>> implem
 	 public void setComposite() {
 		 super.setComposite();
 	 }
+ 	 
+	 @Override // make visible 
+	 public void setComposite(long subwidgetPollingRateMs) {
+		 super.setComposite(subwidgetPollingRateMs);
+	 }
 	
 	 /**
 	  * Use with row template only.

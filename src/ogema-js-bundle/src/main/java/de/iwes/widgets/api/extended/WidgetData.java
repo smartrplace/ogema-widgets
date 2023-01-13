@@ -797,12 +797,15 @@ public abstract class WidgetData {
 	    			   final String widgetSystemPath = w.getWidgetClass().getPackage().getName().replaceAll("\\.", "/");
 	    			   final String widgetWebResourcePath = ("/ogema/widget"  + widgetSystemPath.substring(widgetSystemPath.lastIndexOf("/"))).replaceAll("/+", "/");;
 	    			   initData.put(new JSONArray(new String[]{ w.getId(), className, widgetWebResourcePath + "/" + className +".html" }));
+	    			   w.setControlledByComposite();
 	    		   });
 	    		   final JSONObject subData = new JSONObject();
 	    		   subwidgets.stream()
 	    		   		.forEach(w -> w.appendWidgetInformation(req, subData));
 	    		   comp.put("init", initData);
 	    		   comp.put("sub", subData);
+	    		   if (widget.compositeSubwidgetPolling > 0)
+	    			   comp.put("subpolling", widget.compositeSubwidgetPolling);
 	    	   }
 	    	   
 	       }
@@ -941,6 +944,16 @@ public abstract class WidgetData {
        } finally {
     	   readUnlock();
        }
+   }
+   
+   protected JSONObject collectSubwidgetData(OgemaHttpRequest req) {
+	   final JSONObject result = new JSONObject();
+	   final Collection<OgemaWidgetBase<?>> subwidgets = (Collection<OgemaWidgetBase<?>>) (Object) this.getSubWidgets();
+	   subwidgets.forEach(w -> {
+		   w.appendWidgetInformation(req,result);
+   		   w.updateDependentWidgets(req);
+	   });
+	   return result;
    }
 
    /**

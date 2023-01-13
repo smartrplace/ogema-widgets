@@ -26,6 +26,8 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
     this.element = $("#" + widgetID + ".ogema-widget")[0];
     this.groups = [];
     this.pollingInterval = -1;
+    this.subpollingInterval = -1;
+    var subpollingTimer = undefined;
     var triggeredActionGET = {};    // use widgetID as key, object with keys 'id': function to be executed as value (function name), 'args': arguments (object) 
     var triggeredActionPOST = {};
     this.governingWidget = false;
@@ -290,9 +292,34 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
 			  const initData  = comp.init.filter(data => !ogema.widgets[data[0]]);
 			  // TODO make sure this data is not appended to initialWidgetData requests?
 			  Object.assign(ogema.widgetLoader.initialWidgetInformation, comp.sub);
+    		  window.clearTimeout(this.subpollingTimer);    		  
 			  // FIXME there is a potential race condition here if the loader is already running
 			  // this is not so easy to overcome without a migration to a promise based widget loader impl
 			  ogema.widgetLoader.loadUniqueWidgetData(initData, true);
+			  if (comp.subpolling > 0 && !ogema.widgetLoader.pollingStopped) {
+				  this.subpollingInterval = comp.subpolling;
+			      function subpoll() {
+					 var servletPath = gw.servletPath + ogema.getParameters() + "&subpolling=true" ;
+		             $.ajax({
+		                type: "GET",
+		                url: servletPath,
+		                headers: { Accept: "application/json" }
+		             }).done(function(result) {
+		                Object.entries(result) // TODO test
+		                    .map(([id, data]) => [ogema.widgets[id], data])
+		                    .filter(arr => arr[0])
+		                 	.forEach(([subwidget, data]) => subwidget.handleWidgetGET(data));
+		             }).always(function() {
+						if (gw.subpollingInterval > 0 && !ogema.widgetLoader.pollingStopped)
+					 		gw.subpollingTimer = setTimeout(subpoll, gw.subpollingInterval);
+		             }).fail(function(jqXHR, textStatus, errorThrown) {
+		            	console.error(gw.widgetID, "failed to poll subwidgets", errorThrown);
+		             });
+			      }
+			      gw.subpollingTimer = setTimeout(subpoll, this.subpollingInterval);
+			  } else {
+				  this.subpollingInterval = -1;
+			  }
 		  }
 		  if (gw.isDynamicWidget) {
 		   	var nrDeleteWidgets = subwidgetsToBeRemoved.length;

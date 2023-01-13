@@ -67,6 +67,11 @@ public class OgemaHttpRequest {
 //		pageInstanceId = configId;
 	}
 	
+	/**
+	 * @return
+	 * @deprecated this is not reliable, the information whether this is a polling request is not passed from the client to the backend
+	 */
+	@Deprecated
 	public boolean isPolling() {
 		return isPolling;
 	}

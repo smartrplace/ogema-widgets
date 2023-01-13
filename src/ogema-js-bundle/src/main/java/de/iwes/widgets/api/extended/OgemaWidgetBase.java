@@ -91,6 +91,7 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
     private boolean defaultWaitForPendingRequest = false;
     private boolean postponeLoading = false;
     private boolean preloadGroup = false;
+    private volatile boolean controlledByComposite = false;
     /**
      * Use {@link #getGroups()} to initialize this on demand
      */
@@ -117,6 +118,7 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
     @Deprecated
     private volatile Cache<String, OgemaWidgetBase<T>> parents;
     protected volatile boolean compositeWidget = false;
+    protected volatile long compositeSubwidgetPolling = -1;
     
     
 //    protected Set<OgemaWidgetBase<?>> parents = new HashSet<OgemaWidgetBase<?>>();
@@ -342,7 +344,12 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
     }
     
     protected void setComposite() {
+    	this.setComposite(-1);
+    }
+    
+    protected void setComposite(long subwidgetPollingRateMillis) {
     	this.compositeWidget = true;
+    	this.compositeSubwidgetPolling = subwidgetPollingRateMillis;
     }
     
     /*
@@ -656,6 +663,14 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
 	
 	public boolean isPostponeLoading() {
 		return postponeLoading;
+	}
+	
+	protected void setControlledByComposite() {
+		this.controlledByComposite = true;
+	}
+	
+	public boolean isControlledByComposite() {
+		return controlledByComposite;
 	}
 
 	@Deprecated // ?
@@ -1276,7 +1291,18 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
     		OgemaHttpRequest ogReq = new OgemaHttpRequest(req, true);
 	        WidgetData opt = getData(ogReq);
 	        setLastInteractionTime(ogReq);
-	        
+	        if (this.compositeWidget) {
+	        	final String subpolling = req.getParameter("subpolling");
+	        	final boolean isSubpolling = subpolling != null && !subpolling.equalsIgnoreCase("false");
+	        	if (isSubpolling) {
+	        		final JSONObject result = opt.collectSubwidgetData(ogReq);  // TODO implement on client side
+	        		resp.setContentType("application/json");
+	    	        resp.setCharacterEncoding("UTF-8");
+	    	        resp.getWriter().write(result.toString());
+	    	        resp.setStatus(200);
+	        		return;
+	        	}
+	        }
         	onGET(ogReq); // set values of this widget
         	JSONObject results = opt.getWidgetInformation(ogReq);
         	updateDependentWidgets(ogReq); // set values in other widgets

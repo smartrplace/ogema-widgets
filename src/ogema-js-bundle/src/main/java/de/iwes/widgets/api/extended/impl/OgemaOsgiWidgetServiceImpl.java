@@ -418,8 +418,7 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
             for (ConfiguredWidget<?> confWidget: page.getWidgets(sessionId)) {
             	try {
             		OgemaWidgetBase<?> widget = confWidget.getWidget();
-            		//only used rarely by apps
-            		if (widget.isPostponeLoading())
+            		if (widget.isControlledByComposite() || widget.isPostponeLoading())
             			continue;
             		if (widget instanceof InitWidget) 
             			((InitWidget) widget).init(ogReq);
@@ -538,6 +537,9 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
             	//FIXME: Should not be necessary here anymore as it is done in the initialWidgetInformationRequest
             	pr.initialize();
                 for(ConfiguredWidget<?> w : pr.getWidgets(sessionId)){
+                	OgemaWidgetBase<?> widget = w.getWidget();
+            		if (widget.isControlledByComposite())
+            			continue;
                     final String className = w.getWidget().getWidgetClass().getSimpleName();
                     jsonConf.addScriptResourcePath(w.getWidget().getId(), className, 
                             w.getWebResourcePath()+"/"+className+".html");
@@ -550,7 +552,7 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
         }
     } catch(Throwable e) {
     	e.printStackTrace();
-        resp.setContentType("text/plain"); // correct?
+        resp.setContentType("text/plain");
         e.printStackTrace(resp.getWriter());
         resp.setStatus(500);
     }
