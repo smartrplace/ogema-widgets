@@ -287,12 +287,13 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
         }
 
 //        if (gw.isDynamicWidget && gw.dataChanged(result)) {  
+		  if (result.composition)
+		  	  window.clearTimeout(this.subpollingTimer);
 	      if (result.composition && result.composition.init) {
 			  const comp = result.composition;
 			  const initData  = comp.init.filter(data => !ogema.widgets[data[0]]);
 			  // TODO make sure this data is not appended to initialWidgetData requests?
-			  Object.assign(ogema.widgetLoader.initialWidgetInformation, comp.sub);
-    		  window.clearTimeout(this.subpollingTimer);    		  
+			  Object.assign(ogema.widgetLoader.initialWidgetInformation, comp.sub);    		  
 			  // FIXME there is a potential race condition here if the loader is already running
 			  // this is not so easy to overcome without a migration to a promise based widget loader impl
 			  ogema.widgetLoader.loadUniqueWidgetData(initData, true);
@@ -306,11 +307,10 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
 		                headers: { Accept: "application/json" }
 		             }).done(function(result) {
 		                Object.entries(result) // TODO test
-		                    .map(([id, data]) => [ogema.widgets[id], data])
+		                    .map(([id, data]) => [ogema.widgets[id], data instanceof Array ? data[0] : data])
 		                    .filter(arr => arr[0])
 		                 	.forEach(([subwidget, data]) => subwidget.handleWidgetGET(data));
-		             }).always(function() {
-						if (gw.subpollingInterval > 0 && !ogema.widgetLoader.pollingStopped)
+		                 if (gw.subpollingInterval > 0 && !ogema.widgetLoader.pollingStopped)
 					 		gw.subpollingTimer = setTimeout(subpoll, gw.subpollingInterval);
 		             }).fail(function(jqXHR, textStatus, errorThrown) {
 		            	console.error(gw.widgetID, "failed to poll subwidgets", errorThrown);

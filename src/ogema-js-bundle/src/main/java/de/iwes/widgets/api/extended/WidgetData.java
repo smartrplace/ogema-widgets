@@ -827,7 +827,7 @@ public abstract class WidgetData {
 	/*       if(req.widgetAttribute.containsKey("pollingInterval")) {
 	       		results.put("pollingInterval", req.widgetAttribute.get("pollingInterval"));
 	       } else { */
-	       		results.put("pollingInterval", pollingInterval);
+	       results.put("pollingInterval", widget.isControlledByComposite() ? -1 : pollingInterval);
 	//       }
 	       if (!sendValueOnChange) {
 	           results.put("sendValueOnChange", sendValueOnChange);
@@ -949,7 +949,9 @@ public abstract class WidgetData {
    protected JSONObject collectSubwidgetData(OgemaHttpRequest req) {
 	   final JSONObject result = new JSONObject();
 	   final Collection<OgemaWidgetBase<?>> subwidgets = (Collection<OgemaWidgetBase<?>>) (Object) this.getSubWidgets();
-	   subwidgets.forEach(w -> {
+	   subwidgets.stream()
+	   	.filter(w -> w.getPollingInterval(req) > 0)
+	   	.forEach(w -> {
 		   w.appendWidgetInformation(req,result);
    		   w.updateDependentWidgets(req);
 	   });
