@@ -47,7 +47,7 @@ public class ReferenceDropdownData extends DropdownData {
 	
 	@Override
 	public JSONObject retrieveGETData(OgemaHttpRequest req) {
-		setOptions(getDDOptions());
+		setOptions(getDDOptions(), req);
 		return super.retrieveGETData(req);
 	}
 	

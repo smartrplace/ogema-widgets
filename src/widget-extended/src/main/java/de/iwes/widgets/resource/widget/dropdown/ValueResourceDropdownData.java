@@ -21,6 +21,7 @@ import java.util.Locale;
 import org.json.JSONObject;
 import org.ogema.core.model.simple.SingleValueResource;
 
+import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
 import de.iwes.widgets.html.form.dropdown.TemplateDropdownData;
 
@@ -56,19 +57,24 @@ public class ValueResourceDropdownData<V extends SingleValueResource> extends Te
 	
 	@Override
 	public JSONObject retrieveGETData(OgemaHttpRequest req) {
-		updateOnGET(req.getLocale().getLocale());
+		updateOnGET(req, null);
 		return super.retrieveGETData(req);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@Deprecated
 	protected void updateOnGET(Locale locale) {
-		update(displayedValues);
+		this.updateOnGET(null, locale);
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected void updateOnGET(OgemaHttpRequest req, Locale locale) {
+		update(displayedValues, null, req);
 		String newValue;
 		if (selectedResource == null) {
-			update(ValueResourceDropdown.naList);
+			update(ValueResourceDropdown.naList, null, req);
 			newValue = "n.a."; // TODO configurable
 		} else
-			newValue = ((ValueResourceDropdown<V>) widget).getSelection(selectedResource, locale, displayedValues);
+			newValue = ((ValueResourceDropdown<V>) widget).getSelection(selectedResource, locale != null ? locale : req.getLocale().getLocale(), displayedValues);
 		selectSingleOption(newValue);
 	}
 

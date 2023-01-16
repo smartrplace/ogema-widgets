@@ -76,7 +76,7 @@ public class ResourceTypeDropdownData extends DropdownData {
 	@Override
 	public JSONObject retrieveGETData(OgemaHttpRequest req) {  
 		updateOptions();
-		setOptions(opts.values());
+		setOptions(opts.values(), req);
 		setSelectedType();
 		return super.retrieveGETData(req);
 	}

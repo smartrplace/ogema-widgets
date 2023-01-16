@@ -108,7 +108,7 @@ public class TypeSelectorDropdown<R extends Resource> extends Dropdown {
 					options.add(opt);
 					firstOption = false;
 				}
-				setOptions(options);
+				setOptions(options, req);
 			} finally {
 				writeUnlock();
 			}

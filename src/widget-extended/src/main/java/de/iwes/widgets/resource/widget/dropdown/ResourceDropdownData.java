@@ -44,7 +44,7 @@ public class ResourceDropdownData<R extends Resource> extends TemplateDropdownDa
 		if (updateMode == UpdateMode.AUTO_ON_GET) {
 			writeLock();
 			try {
-				updateOnGet();
+				updateOnGet(req);
 			} finally {
 				writeUnlock();
 			}
@@ -52,23 +52,32 @@ public class ResourceDropdownData<R extends Resource> extends TemplateDropdownDa
 		return super.retrieveGETData(req);
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Deprecated
 	protected void updateOnGet() {
+		this.updateOnGet(null);
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected void updateOnGet(OgemaHttpRequest req) {
 		List<R> resources;
 		if (type == null)
 			resources = Collections.emptyList();
 		else
 			resources = (List) ra.getResources(type);
-		update(resources);
+		update(resources, null, req);
 	}
-
+	
 	@Override
 	public void setType(Class<? extends R> type) {
+		this.setType(type, null);
+	}
+	
+	public void setType(Class<? extends R> type, OgemaHttpRequest req) {
 		writeLock();
 		try {
 			this.type = type;
 			if (updateMode != UpdateMode.MANUAL) {
-				updateOnGet();
+				updateOnGet(req);
 			}
 		} finally {
 			writeUnlock();

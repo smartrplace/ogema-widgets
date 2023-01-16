@@ -121,7 +121,7 @@ public class TemplateDropdown<T> extends Dropdown implements TemplateWidget<T>, 
 	}
 	
 	public void update(Collection<? extends T> items, OgemaHttpRequest req) {
-		getData(req).update(items);
+		getData(req).update(items, null, req);
 	}
 	
     /**
@@ -135,7 +135,7 @@ public class TemplateDropdown<T> extends Dropdown implements TemplateWidget<T>, 
      * @param req
      */
      public void update(Collection<? extends T> items, T select, OgemaHttpRequest req) {
-     	 getData(req).update(items, select);
+     	 getData(req).update(items, select, req);
      }
 	
 	/**

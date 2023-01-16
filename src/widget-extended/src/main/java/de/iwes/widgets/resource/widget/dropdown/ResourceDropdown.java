@@ -113,7 +113,7 @@ public class ResourceDropdown<R extends Resource> extends TemplateDropdown<R> im
 
 	@Override
 	public void setType(Class<? extends R> type, OgemaHttpRequest req) {
-		getData(req).setType(type);
+		getData(req).setType(type, req);
 	}
 
 	@Override

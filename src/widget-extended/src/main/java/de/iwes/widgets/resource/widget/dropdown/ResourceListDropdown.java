@@ -79,7 +79,7 @@ public class ResourceListDropdown<R extends Resource> extends ResourceDropdown<R
 	}
 
 	public void setList(ResourceList<R> list, OgemaHttpRequest req) {
-		getData(req).setList(list);
+		getData(req).setList(list, req);
 	}
 
 	/**

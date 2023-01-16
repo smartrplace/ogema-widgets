@@ -46,7 +46,7 @@ public class PatternDropdownData<P extends ResourcePattern<?>> extends TemplateD
 		if (getUpdateMode() == UpdateMode.AUTO_ON_GET) {
 			writeLock();
 			try {
-				updateOnGet();
+				updateOnGet(req);
 			} finally {
 				writeUnlock();
 			}
@@ -75,12 +75,16 @@ public class PatternDropdownData<P extends ResourcePattern<?>> extends TemplateD
 	}
 	
 	protected void updateOnGet(){
+		this.updateOnGet(null);
+	}
+	
+	protected void updateOnGet(OgemaHttpRequest req){
 		List<? extends P> patterns;
 		if (type == null)
 			patterns = Collections.emptyList();
 		else
 			patterns = rpa.getPatterns(type, AccessPriority.PRIO_LOWEST);
-		update(patterns);
+		update(patterns, null, req);
 	}
 	
 	

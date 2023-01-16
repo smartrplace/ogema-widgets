@@ -44,6 +44,9 @@ public class Dropdown extends OgemaWidgetBase<DropdownData> implements SubmitWid
     private Collection<DropdownOption> defaultOptions = null;
 	private boolean defaultAddEmptyOption = false; 
 	private String defaultEmptyOptLabel = null;
+	protected String defaultUrlParam = null;
+	protected boolean defaultUrlParamCaseSensitive = false;
+	protected boolean defaultUrlParamSynchronized = false;
 	
     Comparator<DropdownOption> comparator = new Comparator<DropdownOption>() {
 		
@@ -120,6 +123,8 @@ public class Dropdown extends OgemaWidgetBase<DropdownData> implements SubmitWid
 		if (defaultOptions != null) {
 			opt.setOptions(defaultOptions);
 		}
+		if (defaultUrlParam != null)
+			opt.setSelectByUrlParam(defaultUrlParam, defaultUrlParamCaseSensitive, defaultUrlParamSynchronized);
 		super.setDefaultValues(opt);
 	}
 
@@ -142,7 +147,7 @@ public class Dropdown extends OgemaWidgetBase<DropdownData> implements SubmitWid
     }
 
     public void setOptions(Collection<DropdownOption> options,OgemaHttpRequest req) {
-    	getData(req).setOptions(options);
+    	getData(req).setOptions(options, req);
     }
 
     public void addOption(String label, String value, boolean selected,OgemaHttpRequest req) {
@@ -208,7 +213,7 @@ public class Dropdown extends OgemaWidgetBase<DropdownData> implements SubmitWid
      * @param req
      */
      public void update(Map<String,String> values, OgemaHttpRequest req) {
-     	 getData(req).update(values);
+     	 getData(req).update(values, null, req);
      }
      
      /**
@@ -222,7 +227,7 @@ public class Dropdown extends OgemaWidgetBase<DropdownData> implements SubmitWid
       * @param req
       */
       public void update(Map<String,String> values, String selected, OgemaHttpRequest req) {
-      	 getData(req).update(values, selected);
+      	 getData(req).update(values, selected, req);
       }
  	
      /**
@@ -284,6 +289,20 @@ public class Dropdown extends OgemaWidgetBase<DropdownData> implements SubmitWid
 	@Override
 	public void removeWidget(OgemaWidget widget) {
 		util.registerWidget(this);
+	}
+	
+	public void setDefaultSelectByUrlParam(String param, boolean caseSensitive, boolean synchronize) {
+		defaultUrlParam = param;
+		defaultUrlParamCaseSensitive = caseSensitive;
+		defaultUrlParamSynchronized = synchronize;
+	}
+	
+	public void setSelectByUrlParam(String param, boolean caseSensitive, boolean synchronize, OgemaHttpRequest req) {
+		getData(req).setSelectByUrlParam(param, caseSensitive, synchronize);
+	}
+	
+	public String getSelectByUrlParam(OgemaHttpRequest req) {
+		return getData(req).getSelectByUrlParam();
 	}
  	
     /**

@@ -160,8 +160,14 @@ public class TemplateDropdownData<T> extends DropdownData implements TemplateDat
 		return null;
 	}
 	
+	@Deprecated
 	public void update(Collection<? extends T> items) {
 		update(items, null);
+	}
+	
+	@Deprecated
+	public void update(Collection<? extends T> items, T select) {
+		this.update(items, select, null);
 	}
 	
 	/**
@@ -170,7 +176,7 @@ public class TemplateDropdownData<T> extends DropdownData implements TemplateDat
 	 * @param items
 	 * @param select see {@link DropdownData#update(Map, String)}
 	 */
-	public void update(Collection<? extends T> items, T select) {
+	public void update(Collection<? extends T> items, T select, OgemaHttpRequest req) {
 		Map<String,String> map = new LinkedHashMap<>();
 		String sel = null;
 		for (T item: items) {
@@ -181,7 +187,7 @@ public class TemplateDropdownData<T> extends DropdownData implements TemplateDat
 		}
 		writeLock();
 		try {
-			super.update(map, sel); // FIXME -> adds non-LabelledItem elements!
+			super.update(map, sel, req); // FIXME -> adds non-LabelledItem elements!
 			String selected = getSelectedValue();
 			if (selected == null && (!map.isEmpty() || addEmptyOpt)) {
 				LoggerFactory.getLogger(getClass()).error("Error in dropdown widget: no item selected although items should be available");

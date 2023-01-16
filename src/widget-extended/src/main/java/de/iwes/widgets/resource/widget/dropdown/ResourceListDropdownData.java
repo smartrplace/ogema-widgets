@@ -23,6 +23,7 @@ import org.ogema.core.model.ResourceList;
 import org.ogema.core.resourcemanager.ResourceAccess;
 
 import de.iwes.widgets.api.extended.mode.UpdateMode;
+import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
 
 public class ResourceListDropdownData<R extends Resource> extends ResourceDropdownData<R> {
 	
@@ -32,22 +33,33 @@ public class ResourceListDropdownData<R extends Resource> extends ResourceDropdo
 		super(dropdown,updateMode,ra);
 	}
 	
+	@Deprecated
 	protected void updateOnGet() {
+		this.updateOnGet(null);
+	}
+	
+	protected void updateOnGet(OgemaHttpRequest req) {
 		List<R> resources;
 		if (list == null)
 			resources = Collections.emptyList();
 		else  
 			resources = list.getAllElements();
-		update(resources);
+		update(resources, null, req);
 	}
 
 	public ResourceList<R> getList() {
 		return list;
 	}
 
+	@Deprecated
 	public void setList(ResourceList<R> list) {
+		this.setList(list, null);
+	}
+
+	
+	public void setList(ResourceList<R> list, OgemaHttpRequest req) {
 		this.list = list;
-		updateOnGet();
+		updateOnGet(req);
 	}
 
 }

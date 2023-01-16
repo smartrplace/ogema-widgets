@@ -16,6 +16,7 @@
 package de.iwes.widgets.html.form.dropdown;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -23,6 +24,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -41,6 +43,12 @@ public class DropdownData extends WidgetData {
     public final static String EMPTY_OPT_ID = "___EMPTY_OPT___";
     protected boolean addEmptyOpt = false;
     protected String emptyOptLabel = "";
+	protected String urlParam = null;
+	protected boolean urlParamCaseSensitive = false;
+	protected boolean urlParamSynchronized = false;
+	// this is a workaround to account for the problem that many methods do not pass the request arguments 
+	// and hence do not allow us to retrieve page parameters 
+	protected boolean urlParamUninitialized = false;
     
 	/*********** Constructor **********/
 	
@@ -57,6 +65,10 @@ public class DropdownData extends WidgetData {
         JSONArray array = new JSONArray();
         writeLock(); // sorting... FIXME
         try {
+        	if (urlParamUninitialized && urlParam != null) {
+        		urlParamUninitialized = false;
+        		this.selectPreferred(req, true);
+        	}
         	final Comparator<DropdownOption> comparator = ((Dropdown) widget).comparator;
         	if (comparator != null)
         		Collections.sort(options, comparator);
@@ -69,6 +81,8 @@ public class DropdownData extends WidgetData {
 	        for (DropdownOption o : optionLoc) {
 	            array.put(o.getJSON(req.getLocale()));
 	        }
+	        if (urlParam != null && urlParamSynchronized)
+	        	result.put("syncParam", urlParam);
         } finally {
         	writeUnlock();
         }
@@ -119,8 +133,19 @@ public class DropdownData extends WidgetData {
     		readUnlock();
     	}
     }
+    
 
-    public void setOptions(Collection<DropdownOption> options) {
+    /**
+     *
+     * @param options
+     * @deprecated use #setOptions(Collection, OgemaHttpRequest) instead
+     */
+    @Deprecated
+    public void  setOptions(Collection<DropdownOption> options) {
+    	this.setOptions(options, null);
+    }
+
+    public void setOptions(Collection<DropdownOption> options, OgemaHttpRequest req /* may be null */) {
     	boolean selectedFound = false;
 //   		boolean emptyFound = false;
 //    		for (DropdownOption opt: options) {
@@ -157,15 +182,52 @@ public class DropdownData extends WidgetData {
 					throw new RuntimeException(e);
 				}
 			}
+			if (!selectedFound)
+				selectedFound = selectPreferred(req);
 			if (!emptyFound && addEmptyOpt) {
 				this.options.add(new DropdownOption(EMPTY_OPT_ID, emptyOptLabel, !selectedFound));
 				selectedFound = true;
 			}
-			if (!selectedFound && !options.isEmpty()) 
+			if (!selectedFound && !options.isEmpty()) {
 				this.options.get(0).select(true);
+			}
 		} finally {
 			writeUnlock();
 		}
+    }
+    
+    private boolean selectPreferred(OgemaHttpRequest req) {
+    	return this.selectPreferred(req, false);
+    }
+    
+    private boolean selectPreferred(OgemaHttpRequest req, boolean unselectOthers) {
+    	final String[] preferredSelected = getPreferredSelected(req);
+    	if (preferredSelected == null || preferredSelected.length == 0)
+    		return false;
+		final Optional<DropdownOption> newSelected = this.options.stream()
+			.filter(opt -> Arrays.stream(preferredSelected).filter(pref -> pref.equals(opt.id())).findAny().isPresent())
+			.findAny();
+		// for multiselect we'd select all, here only one
+		newSelected.ifPresent(opt -> opt.select(true));
+		if (unselectOthers && newSelected.isPresent()) {
+			final String newValue = newSelected.get().id();
+			this.options.stream().filter(opt -> opt.id() != newValue).forEach(opt -> opt.select(false));
+		}
+		return newSelected.isPresent();
+    }
+    
+    private String[] getPreferredSelected(OgemaHttpRequest req) {
+    	if (urlParam == null || req == null)
+    		return null;
+		final Map<String,String[]> params = widget.getPage().getPageParameters(req);
+		if (params != null && params.containsKey(urlParam))
+			return params.get(urlParam);
+		if (params != null && !urlParamCaseSensitive) {
+			return params.entrySet().stream()
+				.filter(entry -> entry.getKey().equalsIgnoreCase(urlParam)).map(Map.Entry::getValue)
+				.findAny().orElse(null);
+		}
+		return null;
     }
 
     public void addOption(String label, String value, boolean selected) {
@@ -273,6 +335,17 @@ public class DropdownData extends WidgetData {
     }
     
     /**
+     * 
+     * @param values
+     * @param select
+     * @deprecated use #update(Map, String, OgemaHttpRequest)
+     */
+    @Deprecated
+    public void update(Map<String,String> values, String select) {
+    	this.update(values, select, null);
+    }
+    
+    /**
      * Update the items, and select a specific one, in case the old
      * selected item is no longer included
      * @param values
@@ -282,7 +355,7 @@ public class DropdownData extends WidgetData {
      * 		If the previously selected option is till available, the parameter select
      * 		is not relevant. 
      */
-    public void update(Map<String,String> values, String select) {
+    public void update(Map<String,String> values, String select, OgemaHttpRequest req /* may be null */) {
     	if (addEmptyOpt && !values.keySet().contains(EMPTY_OPT_ID))
     		values.put(EMPTY_OPT_ID, emptyOptLabel);
     	writeLock();
@@ -311,9 +384,15 @@ public class DropdownData extends WidgetData {
 	    			options.add(new DropdownOption(newVal, entry.getValue(), false));
 	    		}
 	    	}
-	    	if (!selectedFound) {
-	    		if (select != null)
+			if (!selectedFound) {
+				if (select != null) {
 	    			selectSingleOption(select);
+	    			selectedFound = getSelected() == null;
+				}
+				if (!selectedFound)
+					selectedFound = selectPreferred(req);
+			}
+	    	if (!selectedFound) {
 	    		if (select == null || getSelected()==null) {
 		    		if (addEmptyOpt) {
 		    			selectSingleOption(EMPTY_OPT_ID,false);
@@ -323,6 +402,9 @@ public class DropdownData extends WidgetData {
 			    			options.get(0).select(true);
 			    		}
 		    		}
+	    		}
+	    		if (req == null && urlParam != null) { // a legacy method has been used to set the selection, without passing access to the req parameter
+	    			urlParamUninitialized = true;
 	    		}
 	    	}
     	} finally {
@@ -407,7 +489,16 @@ public class DropdownData extends WidgetData {
 		this.addEmptyOpt = addEmptyOpt;
 		this.emptyOptLabel = emptyOptLabel;
 	}
-
+	
+	public void setSelectByUrlParam(String param, boolean caseSensitive, boolean synchronize) {
+		this.urlParam = param;
+		this.urlParamCaseSensitive = caseSensitive;
+		this.urlParamSynchronized = synchronize;
+	}
+	
+	public String getSelectByUrlParam() {
+		return this.urlParam;
+	}
     
-    
+ 
 }

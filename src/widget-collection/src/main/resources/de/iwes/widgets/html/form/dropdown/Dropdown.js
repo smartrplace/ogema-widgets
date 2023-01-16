@@ -7,13 +7,24 @@ function Dropdown(servletPath, widgetID) {
     GenericWidget.call(this, servletPath, widgetID);
     this.dropdown = $("#" + widgetID + ".ogema-widget").find(">#dropdown");
     this.dropdownOptions = this.dropdown.find(">#list");
-    
     this.sendValueOnChange = true;
     var tmp = this;
-    this.dropdownOptions.change(function () {
+    this.syncParam = undefined;
+    this.dropdownOptions.change(function (evt) {
     	if(tmp.sendValueOnChange) {
     		tmp.sendPOST();
     	}
+    	if (tmp.syncParam) {
+			const val = evt.currentTarget.value;
+			const url = new URL(window.location.href);
+			const params = url.searchParams;
+			if (!val || val === "___EMPTY_OPT___") {
+				params.delete(tmp.syncParam);
+			} else {
+				params.set(tmp.syncParam, val);
+			}
+			window.history.pushState(/*{ path: newURL.href }*/ null, "", url.href);
+		}
     });
     this.sendGET();  
 }
@@ -29,6 +40,7 @@ Dropdown.prototype.update = function (data) {
     }
     var disabled = data.hasOwnProperty("disabled") && data.disabled;
    	this.dropdownOptions.attr("disabled",disabled);
+   	this.syncParam = data.syncParam || undefined;
 
     if (data.hasOwnProperty("options")) {
         var options = data.options;
