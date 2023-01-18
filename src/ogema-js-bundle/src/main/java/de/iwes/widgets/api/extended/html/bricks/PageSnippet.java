@@ -36,6 +36,7 @@ import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
 public class PageSnippet extends OgemaWidgetBase<PageSnippetData> implements PageSnippetI {
 
 	private static final long serialVersionUID = 1L;
+	private int defaultUpdateMode = 0;
 
     /*********** Constructor **********/
 	
@@ -57,6 +58,13 @@ public class PageSnippet extends OgemaWidgetBase<PageSnippetData> implements Pag
 	}
 	
     /******* Inherited methods *****/
+	
+	@Override
+	protected void setDefaultValues(PageSnippetData data) {
+		super.setDefaultValues(data);
+		data.setUpdateMode(this.defaultUpdateMode);
+		
+	}
 	    
     @Override
     public Class<? extends OgemaWidgetBase<?>> getWidgetClass() {  // must be overridden by derived class
@@ -139,6 +147,30 @@ public class PageSnippet extends OgemaWidgetBase<PageSnippetData> implements Pag
 	
 	public void clear(OgemaHttpRequest req) {
 		getData(req).removeSubWidgets();
+	}
+	
+	public int getUpdateMode(OgemaHttpRequest req) {
+		return getData(req).getUpdateMode();
+	}
+	
+	/**
+	 * 
+	 * @param mode 0: default legacy mode; 1: sub-content preserving mode; try not to destroy subwidgets and other content on update
+	 * @param req
+	 */
+	public void setUpdateMode(int mode, OgemaHttpRequest req) {
+		getData(req).setUpdateMode(mode);
+	}
+	
+	/**
+	 * 
+	 * @param mode 0: default legacy mode; 1: sub-content preserving mode; try not to destroy subwidgets and other content on update
+	 * @param req
+	 */
+	public void setDefaultUpdateMode(int mode) {
+		if (mode != 0 && mode != 1)
+			throw new IllegalArgumentException("Invalid update mode " + mode + ", expecting 0 or 1.");
+		this.defaultUpdateMode = mode;
 	}
 
 	/******* Internal methods ********/

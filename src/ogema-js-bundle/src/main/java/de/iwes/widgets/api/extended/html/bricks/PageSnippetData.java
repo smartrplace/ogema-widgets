@@ -43,6 +43,11 @@ public class PageSnippetData extends WidgetData {
 	protected final Map<Integer,OgemaWidgetBase<?>> subwidgets;
 	protected final Map<Integer,HtmlItem> htmlItems;
 	private String backgroundImg = null;
+	/**
+	 * 0: legacy default mode
+	 * 1: sub-content preserving mode; try not to destroy subwidgets and other content on update
+	 */
+	private int updateMode = 0;
 
 	/*********** Constructor **********/
 
@@ -60,9 +65,17 @@ public class PageSnippetData extends WidgetData {
 		JSONObject obj = new JSONObject();
 		readLock();
 		try {
-			String html = getHtml();
-			obj.put("html", html);
-	//		obj.put("subWidgets", getSubWidgetIds());
+			switch (updateMode) {
+			case 0:
+				String html = getHtml();
+				obj.put("html", html);
+				break;
+			case 1:
+				// acutal type: List<[int|string, int, string]>
+				List<Object[]> items = getItems();
+				obj.put("items", items);
+				break;
+			}
 			if (backgroundImg != null) obj.put("background-img", backgroundImg);
 		} finally {
 			readUnlock();
@@ -230,7 +243,7 @@ public class PageSnippetData extends WidgetData {
 			if (!forRemoval.isEmpty()) {
 				forRemoval.stream().forEach(i -> {
 					final OgemaWidgetBase<?> widget = subwidgets.remove(i);
-					widget.destroy();
+					widget.destroyWidget();
 				});
 				this.itemsRemoved(forRemoval);
 			}
@@ -251,6 +264,16 @@ public class PageSnippetData extends WidgetData {
 		} finally {
 			writeUnlock();
 		}
+	}
+	
+	public int getUpdateMode() {
+		return this.updateMode;
+	}
+	
+	public void setUpdateMode(int mode) {
+		if (mode != 0 && mode != 1)
+			throw new IllegalArgumentException("Invalid update mode " + mode + ", expecting 0 or 1.");
+		this.updateMode = mode;
 	}
 	
 	/********* Internal methods ********/
@@ -277,6 +300,29 @@ public class PageSnippetData extends WidgetData {
 			} // if entry has been deleted, simply ignore it
 		}
 		return html.toString();
+	}
+	
+	// Array<[int|string, int, string>, 
+	//   where [object hash code or string value, type (0=widget, 1=html, 2=string), HTML/string value/widget id] 
+	protected List<Object[]> getItems() {
+		final List<Object[]> items = new ArrayList<Object[]>(counter);
+		for (int i=0;i<counter;i++) {
+			if (subwidgets.containsKey(i)) {
+				final OgemaWidgetBase<?> w = subwidgets.get(i); 
+				items.add(new Object[]{System.identityHashCode(w), 0, w.getId()});
+			} else if (htmlItems.containsKey(i)) {
+				final HtmlItem item = htmlItems.get(i); 
+				items.add(new Object[]{System.identityHashCode(i), 1, item.getHtml()});
+			} else {
+				if (str.containsKey(i)) {
+					final String content = str.get(i);
+					items.add(new Object[]{content, 2, content});	
+				} // if it has been deleted, simply continue
+				
+			}
+			 
+		}
+		return items;
 	}
 
 	private void clear() {
