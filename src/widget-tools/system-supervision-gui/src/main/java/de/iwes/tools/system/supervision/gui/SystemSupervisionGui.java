@@ -28,6 +28,8 @@ import org.ogema.core.resourcemanager.ResourceDemandListener;
 import de.iwes.tools.system.supervision.gui.model.SupervisionMessageSettings;
 import de.iwes.widgets.api.OgemaGuiService;
 import de.iwes.widgets.api.widgets.WidgetApp;
+import de.iwes.widgets.api.widgets.WidgetPage;
+import de.iwes.widgets.api.widgets.navigation.NavigationMenu;
 
 // TODO send message when ram or disk usage exceeds allowed level? (append own config to supervision config)
 @Component(specVersion = "1.2")
@@ -47,7 +49,21 @@ public class SystemSupervisionGui implements Application, ResourceDemandListener
 		this.am = appManager;
 		this.wapp = widgetService.createWidgetApp(URL_BASE, appManager);
 		appManager.getResourceAccess().addResourceDemand(SupervisionMessageSettings.class, this);
-		new SystemSupervisionPage(wapp.createStartPage(), appManager);
+		
+		final WidgetPage<?> startPage = wapp.createStartPage();
+		final WidgetPage<?> threadPage = wapp.createWidgetPage("threads.html");
+		
+		new SystemSupervisionPage(startPage, appManager);
+		new ThreadSupervisionPage(threadPage, appManager);
+		/* Set navigation menu */
+
+		NavigationMenu customMenu = new NavigationMenu(" Select page");
+		customMenu.addEntry("Main page", startPage);
+		customMenu.addEntry("Threads", threadPage);
+		
+		startPage.getMenuConfiguration().setCustomNavigation(customMenu);
+		threadPage.getMenuConfiguration().setCustomNavigation(customMenu);
+
 		widgetService.getMessagingService().registerMessagingApp(am.getAppID(), "System supervision");
 	}
 

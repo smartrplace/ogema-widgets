@@ -234,7 +234,7 @@ public class RoomHelper {
 		case 5:
 			return "toilet";
 		case 6:
-			return "hall or corridor";
+			return "corridor";
 		case 7:
 			return "staircase area";
 		case 8:

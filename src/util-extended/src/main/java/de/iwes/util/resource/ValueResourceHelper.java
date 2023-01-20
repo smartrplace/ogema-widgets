@@ -451,4 +451,12 @@ public class ValueResourceHelper {
 		}
 		return result;
 	}
+	
+	public static List<String> getStringListFromProperty(String propertyName) {
+		String prop = System.getProperty(propertyName);
+		if(prop == null)
+			return null;
+		return StringFormatHelper.getListFromString(prop);
+	}
+
 }
