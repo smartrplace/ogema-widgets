@@ -38,6 +38,7 @@ public class MultiselectData extends WidgetData {
 	
     protected final Set<DropdownOption> options = new LinkedHashSet<DropdownOption>();
     private String width = null;
+    protected String urlParam = null;
     
 	/*********** Constructor **********/
 	
@@ -59,6 +60,8 @@ public class MultiselectData extends WidgetData {
 	        if (width != null) {
 	        	result.put("width", width);
 	        }
+	        if (urlParam != null)
+	        	result.put("syncParam", urlParam);
         } finally {
         	readUnlock();
         }
@@ -328,5 +331,13 @@ public class MultiselectData extends WidgetData {
     	}
     	
     }
+    
+	public void setSelectByUrlParam(String param) {
+		this.urlParam = param;
+	}
+
+	public String getSelectByUrlParam() {
+		return this.urlParam;
+	}
 
 }

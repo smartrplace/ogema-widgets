@@ -61,7 +61,7 @@ Dropdown.prototype.update = function (data) {
 
         this.dropdownOptions.html(html);
         if (!hasSelected && this.syncParam) {
-			var params = new URLSearchParams(window.location.search)
+			var params = new URLSearchParams(window.location.search);
 			var value = params.get(this.syncParam);
 			if (value !== null) {
 				value = value.toLowerCase();

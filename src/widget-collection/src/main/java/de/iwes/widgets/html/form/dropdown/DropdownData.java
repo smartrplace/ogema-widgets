@@ -41,7 +41,7 @@ public class DropdownData extends WidgetData {
     public final static String EMPTY_OPT_ID = "___EMPTY_OPT___";
     protected boolean addEmptyOpt = false;
     protected String emptyOptLabel = "";
-    protected String urlParam = null; // TODO ensure that no default is selected if set
+    protected String urlParam = null;
     
 	/*********** Constructor **********/
 	

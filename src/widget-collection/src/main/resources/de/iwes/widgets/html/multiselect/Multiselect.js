@@ -7,6 +7,8 @@ function Multiselect(servletPath, widgetID) {
     GenericWidget.call(this, servletPath, widgetID);
     this.dropdown = $("#" + widgetID).find("#multiselect");
     this.dropdownOptions = this.dropdown.find("#list");
+    this.initialSelectionDone = false;
+    this.syncParam = undefined;
     this.sendValueOnChange = true;
     this.sendGET();    
 }
@@ -19,11 +21,15 @@ Multiselect.prototype.update = function (data) {
     if (data.hasOwnProperty("sendValueOnChange")) {
     	this.sendValueOnChange = data.sendValueOnChange;
     }
+    this.syncParam = data.syncParam;
     var html = "<select class=\"chosen-select\"  multiple=\"\" id=\"list\">";
+    var hasSelected = false;
     if (data.hasOwnProperty("options")) {
         var options = data.options;
         for (var i = 0; i < options.length; i++) {
             var selected = options[i].selected;
+            if (selected)
+            	hasSelected = true;
             var value = options[i].value;
             var label = options[i].label;
             html += "<option ";
@@ -39,6 +45,32 @@ Multiselect.prototype.update = function (data) {
     html += "</select>";
     this.dropdown.html(html);
     this.dropdownOptions = this.dropdown.find("#list");
+    if (hasSelected)
+    	this.initialSelectionDone = true;
+    else if (data.syncParam && !this.initialSelectionDone) {
+		var params = new URLSearchParams(window.location.search);	
+		var values = params.getAll(this.syncParam);
+		values = values.map(function(v) { return v.toLowerCase(); })
+		var found = false;
+		Array.from(this.dropdown[0].querySelectorAll("option")).forEach(function(opt) {
+			if (values.indexOf(opt.value.toLowerCase()) >= 0) {
+				opt.selected = "selected";
+				found = true;
+			}
+		});
+		if (!found) {
+			Array.from(this.dropdown[0].querySelectorAll("option")).forEach(function(opt) {
+			if (values.indexOf(opt.label.toLowerCase()) >= 0) {
+				opt.selected = "selected";
+				found = true;
+			}
+		});
+		}
+		if (found) { // TODO later?
+			this.initialSelectionDone = true;
+			this.sendPOST();
+		}
+	}
     var disabled = data.hasOwnProperty("disabled") && data.disabled;
     this.dropdownOptions.prop("disabled", disabled);
     this.dropdownOptions.trigger("chosen:updated");
@@ -55,7 +87,10 @@ Multiselect.prototype.update = function (data) {
     }
     if (this.sendValueOnChange) {
         var multi = this;
-		chosenObj.change(function() {multi.sendPOST();});
+		chosenObj.change(function() {
+			multi.initialSelectionDone = true;
+			multi.sendPOST();
+		});
     }
 };
 
@@ -66,6 +101,13 @@ Multiselect.prototype.getSubmitData = function () {
       //  data = "" + $(this).attr("value");
       data.push($(this)[0].value);
     });
+    if (this.syncParam) {
+		var tmp = this;
+		var url = new URL(window.location);
+		url.searchParams.delete(this.syncParam);
+		data.forEach(function(d) {url.searchParams.append(tmp.syncParam, d)});
+		window.history.pushState(null, "", url);
+	}
 //	console.log("Multiselect POST response",data);
     return data;
 };
