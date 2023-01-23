@@ -66,8 +66,8 @@ Multiselect.prototype.update = function (data) {
 			}
 		});
 		}
-		if (found) { // TODO later?
-			this.initialSelectionDone = true;
+		if (found) {
+			//this.initialSelectionDone = true; // this is problematic if there is a chain of multiple dependent widgets
 			this.sendPOST();
 		}
 	}
