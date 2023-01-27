@@ -83,8 +83,8 @@ import de.iwes.util.format.StringFormatHelper;
 import de.iwes.util.logconfig.LogHelper;
 import de.iwes.util.performanceeval.ExecutionTimeLogger;
 import de.iwes.util.resource.ResourceHelper;
-import de.iwes.util.resource.ValueResourceHelper;
 import de.iwes.util.resourcelist.ResourceListHelper;
+import java.io.Writer;
 
 // here the controller logic is implemented
 public class ResAdminController {
@@ -964,7 +964,7 @@ if(resType == null) {
 		//System.out.println("Parent:"+parentDir+" prefix:"+namePrefix);
 		File ownFile = new File(parentDir, namePrefix+"_"+res.getName()+JSON_EXTENSION1);
 		//System.out.println("File:"+ namePrefix+"_"+res.getName()+JSON_EXTENSION);
-		try (PrintWriter out = new PrintWriter(ownFile, "UTF-8")) {
+		try (Writer out = Files.newBufferedWriter(ownFile.toPath(), StandardCharsets.UTF_8)) {
 			appMan.getSerializationManager(20, false, true).writeJson(out, res);
 		} catch (IOException e) {
 			log.error("serialization failed for resource {}", res.getPath(), e);
@@ -975,7 +975,7 @@ if(resType == null) {
 		//System.out.println("Parent:"+parentDir+" prefix:"+namePrefix);
 		File ownFile = new File(parentDir, namePrefix+"_"+res.getName()+XML_EXTENSION1);
 		//System.out.println("File:"+ namePrefix+"_"+res.getName()+XML_EXTENSION);
-		try (PrintWriter out = new PrintWriter(ownFile, "UTF-8")) {
+		try (Writer out = Files.newBufferedWriter(ownFile.toPath(), StandardCharsets.UTF_8)) {
             appMan.getSerializationManager(20, false, true).writeXml(out, res);
 		} catch (IOException e) {
             log.error("serialization failed for resource {}", res.getPath(), e);
