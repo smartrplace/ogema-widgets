@@ -242,7 +242,8 @@ ogema.widgetLoader.preloadInitGroups = function(widgetScripts, skipFinish) {
 * creates widgets, assuming that the required div tag is available (otherwise widget is stored in backupScripts),
 * and html and js have been loaded
 */
-ogema.widgetLoader.createWidgets = function(widgetScripts, skipFinish) {
+ogema.widgetLoader.createWidgets = function(widgetScripts, skipFinish, iteration) {
+	var errored = [];
 	for (var i=0;i<widgetScripts.length;i++) {
 		var widgetID = widgetScripts[i][0];
 		var type = widgetScripts[i][1];
@@ -276,9 +277,20 @@ ogema.widgetLoader.createWidgets = function(widgetScripts, skipFinish) {
 		    var widget = new window[type](servletPath, widgetID);
 		    ogema.widgets[widgetID] = widget;
 		} catch (exception) {
-		    console.log("There was an error creating an instance for widgetID: " + widgetID + " of type " + type + " on servletPath: " + servletPath);
-		    console.error(exception);
+			if (iteration > 10) {
+		    	console.log("There was an error creating an instance for widgetID: " + widgetID + " of type " + type + " on servletPath: " + servletPath);
+		    	console.error(exception);
+		    }
+		    errored.push(widgetScripts[i]);
 		}
+	}
+	if (errored.length > 0) {
+		if (iteration === undefined)
+			iteration = 1;
+		else if (iteration > 10)
+			throw new Error("Failed to create widgets", errored);
+		setTimeout(function() {ogema.widgetLoader.createWidgets(errored, skipFinish, iteration+1);}, 50 * iteration);
+		return;
 	}
 	if (!skipFinish) {
 		// finished!
@@ -301,9 +313,7 @@ ogema.widgetLoader.loadUniqueWidgetData = function(widgetScripts, skipFinish) {
 	var counter = Object.keys(urls).length;
 	var checkLoadingFinished = function() {
 		counter = counter - 1;
-		//console.log("loadUniqueWidgetData counter =",counter);
 		if (counter === 0) {
-			//console.log("loadUniqueWidgetData done");
 			ogema.widgetLoader.preloadInitGroups(widgetScripts, skipFinish);
 		}
 	}
@@ -319,7 +329,7 @@ ogema.widgetLoader.loadUniqueWidgetData = function(widgetScripts, skipFinish) {
 	        contentType: "text/html"
 	    })
 	    	.done(function(htmlText) {
-	    		// console.log("  Initial loader for",widgetType);
+				// console.log("  Initial loader for",widgetType);
 	    		ogema.widgetLoader.htmlObj[widgetType] = htmlText;
 	    		ogema.widgetLoader.extractScripts(htmlText, checkLoadingFinished);
 	    	});

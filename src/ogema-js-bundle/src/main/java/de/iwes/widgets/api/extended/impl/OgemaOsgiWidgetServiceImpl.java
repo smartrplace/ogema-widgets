@@ -538,7 +538,7 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
             	pr.initialize();
                 for(ConfiguredWidget<?> w : pr.getWidgets(sessionId)){
                 	OgemaWidgetBase<?> widget = w.getWidget();
-            		if (widget.isControlledByComposite())
+            		if (widget.isControlledByComposite() || widget.inZombieMode(ogReq))
             			continue;
                     final String className = w.getWidget().getWidgetClass().getSimpleName();
                     jsonConf.addScriptResourcePath(w.getWidget().getId(), className, 

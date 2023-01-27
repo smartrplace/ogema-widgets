@@ -371,6 +371,15 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
     public void updateDependentWidgets(OgemaHttpRequest req) {};
     
     /**
+     * Override to prevent widget from loading
+     * @param req
+     * @return
+     */
+    public boolean inZombieMode(OgemaHttpRequest req) {
+    	return false;
+    }
+    
+    /**
      * ******** public methods  *************
      */
     

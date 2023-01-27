@@ -294,7 +294,7 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
 			  const initData  = comp.init.filter(data => !ogema.widgets[data[0]]);
 			  // TODO make sure this data is not appended to initialWidgetData requests?
 			  Object.assign(ogema.widgetLoader.initialWidgetInformation, comp.sub);    		  
-			  // FIXME there is a potential race condition here if the loader is already running
+			  // FIXME there is a potential race condition here if the loader is already running; or if multiple widgets try to load subwidgets of the same type
 			  // this is not so easy to overcome without a migration to a promise based widget loader impl
 			  ogema.widgetLoader.loadUniqueWidgetData(initData, true);
 			  if (comp.subpolling > 0 && !ogema.widgetLoader.pollingStopped) {
