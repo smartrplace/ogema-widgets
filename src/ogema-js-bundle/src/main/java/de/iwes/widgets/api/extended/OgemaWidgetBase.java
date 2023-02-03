@@ -1346,7 +1346,8 @@ public abstract class OgemaWidgetBase<T extends WidgetData>  extends HttpServlet
     	gatherTransitiveDependencies(this, dependencies, true, req);
     	getPage().app.getWidgetService().sortWidgets(dependencies);
     	for (OgemaWidgetBase<?> dependency: dependencies) {
-    		dependency.appendWidgetInformation(req, result);
+    		if (!dependency.inZombieMode(req))
+    			dependency.appendWidgetInformation(req, result);
     	}
     }
 

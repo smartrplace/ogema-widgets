@@ -291,6 +291,12 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
 		  	  window.clearTimeout(this.subpollingTimer);
 	      if (result.composition && result.composition.init) {
 			  const comp = result.composition;
+			  const existing  = comp.init.filter(data => ogema.widgets[data[0]]);
+			  for (let idx=0; idx<existing.length; idx++) {  // clean up widgets that do not really exist any more
+				  const existingWidget = ogema.widgets[existing[idx][0]];
+				  if (!existingWidget.element || !existingWidget.element.isConnected)
+				  	  delete ogema.widgets[existing[idx][0]];
+			  }
 			  const initData  = comp.init.filter(data => !ogema.widgets[data[0]]);
 			  // TODO make sure this data is not appended to initialWidgetData requests?
 			  Object.assign(ogema.widgetLoader.initialWidgetInformation, comp.sub);    		  
