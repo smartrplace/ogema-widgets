@@ -519,6 +519,10 @@ public class GaRoDataType implements GaRoDataTypeI {
 			IntegerResource.class);
 	public static final GaRoDataType UsedDiskSpace = new GaRoDataType("UsedDiskSpace",
 			FloatResource.class);
+	public static final GaRoDataType JavaLoad = new GaRoDataType("JavaLoad",
+			FloatResource.class);
+	public static final GaRoDataType SystemLoad = new GaRoDataType("SystemLoad",
+			FloatResource.class);
 	public static final GaRoDataType FaultMessage = new GaRoDataType("Fault",
 			BooleanResource.class);
 	

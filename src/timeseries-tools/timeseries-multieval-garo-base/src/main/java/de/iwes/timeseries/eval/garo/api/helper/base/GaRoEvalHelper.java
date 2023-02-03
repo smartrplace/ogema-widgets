@@ -500,6 +500,8 @@ public class GaRoEvalHelper {
 		if(recId.endsWith("/ecoMode")||recId.endsWith("/ecoModeActive")) return GaRoDataType.EcoMode;
 		if(recId.endsWith("/seasonMode")) return GaRoDataType.SeasonMode;
 		if(recId.contains("Gateway_Device/usedSpace")) return GaRoDataType.UsedDiskSpace;
+		if(recId.contains("Gateway_Device/javaCpuPercentageTotal")) return GaRoDataType.JavaLoad;
+		if(recId.contains("Gateway_Device/systemLoadAvg1")) return GaRoDataType.SystemLoad;
 
 		if(recId.contains("RexometerSerial/configs/gas_energy/value")) return GaRoDataType.GasMeter;
 		if(recId.contains("/gasMeter")) return GaRoDataType.GasMeter;
