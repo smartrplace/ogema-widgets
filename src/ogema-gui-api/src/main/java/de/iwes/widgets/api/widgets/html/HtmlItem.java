@@ -51,7 +51,7 @@ public class HtmlItem {
 	 * @param type
 	 * @param text
 	 */
-	protected HtmlItem(String type, String text) {
+	public HtmlItem(String type, String text) {
 		this.type = type;
 		if (text != null) { 
 			this.innerHtml = Collections.singletonMap(0, text);
