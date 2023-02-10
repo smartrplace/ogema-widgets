@@ -134,7 +134,7 @@ public class LogHelper {
 		//	String hmIdLoc = getDeviceId(name, endCode.length());
 		//	return hmIdLoc.equals(endCode);
 		//}
-		return hmName.endsWith(endCode);
+		return hmName.toUpperCase().endsWith(endCode.toUpperCase());
 		
 		/*String hmIdLoc;
 		if((hmIdPreChecked == null) || (endCode.length() != 4))
