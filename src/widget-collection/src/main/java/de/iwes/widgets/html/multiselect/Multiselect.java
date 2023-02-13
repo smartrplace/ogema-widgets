@@ -41,7 +41,6 @@ public class Multiselect extends OgemaWidgetBase<MultiselectData> {
 
     private static final long serialVersionUID = -7033410423559705108L;
     private Collection<DropdownOption> defaultOptions = null;
-    protected String defaultUrlParam = null;
 
 
 	/*********** Constructors **********/
@@ -106,8 +105,6 @@ public class Multiselect extends OgemaWidgetBase<MultiselectData> {
 		if (defaultOptions != null) {
 			opt.setOptions(defaultOptions);
 		}
-		if (defaultUrlParam != null)
-			opt.setSelectByUrlParam(defaultUrlParam);
 //		if (defaultWidth != null)
 //			opt.setWidth(defaultWidth);
 		super.setDefaultValues(opt);
@@ -213,17 +210,4 @@ public class Multiselect extends OgemaWidgetBase<MultiselectData> {
 		getData(req).clear();
 	}
     
-
-	public void setDefaultSelectByUrlParam(String param) {
-		defaultUrlParam = param;
-	}
-
-	public void setSelectByUrlParam(String param, OgemaHttpRequest req) {
-		getData(req).setSelectByUrlParam(param);
-	}
-
-	public String getSelectByUrlParam(OgemaHttpRequest req) {
-		return getData(req).getSelectByUrlParam();
-	}
-	
 }

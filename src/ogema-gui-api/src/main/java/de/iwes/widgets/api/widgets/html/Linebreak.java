@@ -19,18 +19,13 @@ package de.iwes.widgets.api.widgets.html;
  * Add a line break to an Html page. 
  */
 public class Linebreak extends HtmlItem {
-
+	
 	private volatile static Linebreak instance;
 
-	public Linebreak() {
+	private Linebreak() {
 		super("br", null);
 	}
 
-	/**
-	 * Returns a single global linebreak instance. If it is necessary to selectively
-	 * remove individual line breaks it is better to construct new instances via the constructor
-	 * @return
-	 */
 	public static Linebreak getInstance() {
 		if (instance == null) {
 			instance = new Linebreak();

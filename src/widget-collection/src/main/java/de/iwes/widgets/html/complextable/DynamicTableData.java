@@ -29,7 +29,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
@@ -39,7 +38,6 @@ import org.slf4j.LoggerFactory;
 import de.iwes.widgets.api.extended.OgemaWidgetBase;
 import de.iwes.widgets.api.extended.WidgetData;
 import de.iwes.widgets.api.extended.plus.TemplateData;
-import de.iwes.widgets.api.widgets.OgemaWidget;
 import de.iwes.widgets.api.widgets.WidgetStyle;
 import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
 import de.iwes.widgets.html.complextable.RowTemplate.Row;
@@ -205,20 +203,6 @@ public class DynamicTableData<T> extends WidgetData implements TemplateData<T> {
     @Override
     protected void removeSubWidgets() {
     	clear();
-    }
-    
-    @Override
-    public List<OgemaWidget> getSubWidgets() {
-		readLock();
-		try {
-			return content.values().stream()
-				.flatMap(row -> row.values().stream())
-				.filter(obj -> obj instanceof OgemaWidget)
-				.map(obj -> (OgemaWidget) obj)
-				.collect(Collectors.toList());
-		} finally {
-			readUnlock();
-		}
     }
     
     public boolean removeRow(String rowId) {

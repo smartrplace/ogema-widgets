@@ -41,7 +41,6 @@ public class DropdownData extends WidgetData {
     public final static String EMPTY_OPT_ID = "___EMPTY_OPT___";
     protected boolean addEmptyOpt = false;
     protected String emptyOptLabel = "";
-    protected String urlParam = null;
     
 	/*********** Constructor **********/
 	
@@ -70,8 +69,6 @@ public class DropdownData extends WidgetData {
 	        for (DropdownOption o : optionLoc) {
 	            array.put(o.getJSON(req.getLocale()));
 	        }
-	        if (urlParam != null)
-	        	result.put("syncParam", urlParam);
         } finally {
         	writeUnlock();
         }
@@ -161,11 +158,10 @@ public class DropdownData extends WidgetData {
 				}
 			}
 			if (!emptyFound && addEmptyOpt) {
-				final boolean selectEmpty = !selectedFound && this.urlParam == null;
-				this.options.add(new DropdownOption(EMPTY_OPT_ID, emptyOptLabel, selectEmpty));
-				selectedFound = selectedFound || selectEmpty;
+				this.options.add(new DropdownOption(EMPTY_OPT_ID, emptyOptLabel, !selectedFound));
+				selectedFound = true;
 			}
-			if (!selectedFound && !options.isEmpty() && this.urlParam == null) 
+			if (!selectedFound && !options.isEmpty()) 
 				this.options.get(0).select(true);
 		} finally {
 			writeUnlock();
@@ -175,7 +171,7 @@ public class DropdownData extends WidgetData {
     public void addOption(String label, String value, boolean selected) {
     	writeLock();
     	try {
-    		if (options.isEmpty() && this.urlParam == null)
+    		if (options.isEmpty())
     			selected = true;
     		options.add(new DropdownOption(value, label, selected));
     	} finally {
@@ -186,7 +182,7 @@ public class DropdownData extends WidgetData {
     protected void addOption(LabelledItem item, boolean selected) {
     	writeLock();
     	try {
-    		if (options.isEmpty() && this.urlParam == null)
+    		if (options.isEmpty())
     			selected = true;
     		options.add(new ProxyDropdownOption(item, selected));
     	} finally {
@@ -319,11 +315,11 @@ public class DropdownData extends WidgetData {
 	    		if (select != null)
 	    			selectSingleOption(select);
 	    		if (select == null || getSelected()==null) {
-		    		if (addEmptyOpt && this.urlParam == null) {
+		    		if (addEmptyOpt) {
 		    			selectSingleOption(EMPTY_OPT_ID,false);
 		    		}
 		    		else {
-			    		if (!options.isEmpty() && this.urlParam == null) {
+			    		if (!options.isEmpty()) {
 			    			options.get(0).select(true);
 			    		}
 		    		}
@@ -375,7 +371,7 @@ public class DropdownData extends WidgetData {
 	            }
 	        }
 	    	DropdownOption selected = getSelected();
-	    	if (selected == null && !options.isEmpty() && this.urlParam == null) {
+	    	if (selected == null && !options.isEmpty()) {
 	    		options.get(0).select(true);
 	    	}
     	} finally {
@@ -412,13 +408,6 @@ public class DropdownData extends WidgetData {
 		this.emptyOptLabel = emptyOptLabel;
 	}
 
-	public void setSelectByUrlParam(String param) {
-		this.urlParam = param;
-	}
-
-	public String getSelectByUrlParam() {
-		return this.urlParam;
-	}
     
     
 }
