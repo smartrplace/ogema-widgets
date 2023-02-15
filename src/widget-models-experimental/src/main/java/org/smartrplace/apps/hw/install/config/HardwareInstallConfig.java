@@ -123,6 +123,13 @@ public interface HardwareInstallConfig extends Data {
 	 */
 	BooleanResource blockAutoResetOfDeviceIds();
 	
+	/** Allows to disable confirmation requests on the Hardware-Install-Expert page for some time
+	 *	Options:<br>
+	 *  0: not allowed (default)<br>
+	 *  positive: disable confirmations until the time represented by the resource*/
+	TimeResource disableConfirmationUntil();
+	
+	
 	/** If resource is active and not empty then CO2 alarms will only be sent to a single user that is
 	 * identified by the value of this resource as user name.
 	 */

@@ -632,6 +632,16 @@ public class ResourceHelper {
 		}
 		return null;
 	}
+	public static <T extends Resource> T getResourceByNameOrLocation(String name, Class<T> type, ResourceAccess ra) {
+		List<T> all = ra.getResources(type);
+		for(T res: all) {
+			if(res.getLocation().equals(name))
+				return res;
+			if(ResourceUtils.getHumanReadableShortName(res).equals(name))
+				return res;
+		}
+		return null;
+	}
 
 	@SuppressWarnings("unchecked")
 	public static <T extends Resource> T getResource(String path, Class<T> type, ResourceAccess ra) {
