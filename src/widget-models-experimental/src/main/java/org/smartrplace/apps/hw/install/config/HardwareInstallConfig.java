@@ -149,7 +149,7 @@ public interface HardwareInstallConfig extends Data {
 	 */
 	IntegerResource autoThermostatMode();
 	
-	/** 0: Only perform if property is set, 1: off, 2: on*/ 
+	/** 0: Only perform if property is set, 1: off, 2: weekly postpone, 3: daily decalc*/ 
 	IntegerResource weeklyPostponeMode();
 	
 	
