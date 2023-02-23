@@ -20,6 +20,11 @@ public interface SystemUpdate extends Data {
 	 * was not received, e.g. because of a restart of the appstore instance*/
 	TimeResource generationFinishTime();
 	
+	/** Only relevant for local appstore. In this case bundles are used that are built earlier, so
+	 * this information shall be stored separately
+	 */
+	TimeResource buildTime();
+	
 	/** Last part of version of bundles in update, which shall be a unique index*/
 	IntegerResource updateIndex();
 	

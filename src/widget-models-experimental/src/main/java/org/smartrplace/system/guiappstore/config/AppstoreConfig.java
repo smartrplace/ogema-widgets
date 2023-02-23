@@ -39,6 +39,9 @@ public interface AppstoreConfig extends Configuration {
 	 */
 	TimeResource lastVersionCreationOrRestore();
 	
+	/** Last time a restore of a local version was triggered */
+	TimeResource lastVersionRestore();
+
 	/** For local appstore here a head version entry should exist representing a software setup
 	 * not represented by a local backup*/
 	SystemUpdate headVersion();
