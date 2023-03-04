@@ -131,9 +131,9 @@ public class AbsolutePersistentTimer implements TimerListener {
 			registered.add(lastCallbackIdealized);
 		}
 		if(interval != null) {
-			appMan.getLogger().info("Started AbsoluteTimer on "+lastCallbackIdealized.getLocation()+" for "+interval.getLocation());
+			appMan.getLogger().debug("Started AbsoluteTimer on "+lastCallbackIdealized.getLocation()+" for "+interval.getLocation());
 		} else {
-			appMan.getLogger().info("Started AbsoluteTimer on "+lastCallbackIdealized.getLocation()+" for "+intervalType);
+			appMan.getLogger().debug("Started AbsoluteTimer on "+lastCallbackIdealized.getLocation()+" for "+intervalType);
 		}
 		startNewTimer();
 	}
