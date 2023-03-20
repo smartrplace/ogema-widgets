@@ -29,7 +29,7 @@ public interface AlarmConfiguration extends Data {
 	 */
 	FloatResource maxViolationTimeWithoutAlarm();
 	
-	/** If the all is restarted usually all alarms are resent if the current value is still
+	/** If the alarming logic is restarted usually all alarms are resent if the current value is still
 	 * outside the limits. After sending/writing the alarm once
 	 * the system shall wait for the duration specified here before sending/writing the alarm
 	 * again if the value is outside the limits. If the alarmStatus is reset manually and the
