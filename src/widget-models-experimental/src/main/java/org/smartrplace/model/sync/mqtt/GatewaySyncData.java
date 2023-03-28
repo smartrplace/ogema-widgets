@@ -1,11 +1,9 @@
 package org.smartrplace.model.sync.mqtt;
 
-import org.ogema.core.model.ModelModifiers.NonPersistent;
 import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.array.StringArrayResource;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.IntegerResource;
-import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.extended.alarming.AlarmGroupData;
 import org.ogema.model.prototypes.Data;
@@ -40,31 +38,27 @@ public interface GatewaySyncData extends Data {
 	/*************************
 	 * Commands as draft
 	 *************************/
-	@NonPersistent
-	/** A command given here shall be a command that can be executed on the OSGi console of the server.
-	 * Several commands may be given in a comma-separated list. If the command contains a comma it must be surrounded by
+	/** Several commands may be given in a comma-separated list. If the command contains a comma it must be surrounded by
 	 * quotes. Quotes may be escaped. After each command an entry containing a time-stamp must be given that is used
 	 * to identify the response. Entries is this list are deleted only by the gateway that writes the
 	 * entries.
 	 */
-	StringResource commandsGwToServer();
+	StringArrayResource commandsGwToServer();
 	
-	@NonPersistent
 	/** Responses of the server to the requests sent by the gateway in commandsGwToServer.
 	 * Also after each entry a timestamp shall be given that indicates the response. Entries must
 	 * also be cleaned up the gateway, the resource is only written by the server.*/
-	StringResource responseOnGwToServer();
+	StringArrayResource responseOnGwToServer();
 	
-	@NonPersistent
 	/** Counterpart to commandsGwToServer for writing commands from the server that are
 	 * executed on the gateway console.
 	 */
-	StringResource commandsServerToGw();
-	@NonPersistent
+	StringArrayResource commandsServerToGw();
+
 	/** Counterpart to responseOnGwToServer for writing commands from the server that are
 	 * executed on the gateway console.
 	 */
-	StringResource responseOnServerToGw();
+	StringArrayResource responseOnServerToGw();
 
 	/*************************************************
 	 * Only relevant for synchronization to superior
