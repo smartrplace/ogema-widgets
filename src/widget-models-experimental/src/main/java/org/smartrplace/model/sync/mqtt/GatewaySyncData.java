@@ -38,8 +38,10 @@ public interface GatewaySyncData extends Data {
 	/*************************
 	 * Commands as draft
 	 *************************/
-	/** Several commands may be given in a comma-separated list. If the command contains a comma it must be surrounded by
-	 * quotes. Quotes may be escaped. After each command an entry containing a time-stamp must be given that is used
+	
+	/** Several commands may be given in each element of the array. These commands shall be processed by
+	 * an application on the server side.
+	 * After each command an entry containing a time-stamp must be given that is used
 	 * to identify the response. Entries is this list are deleted only by the gateway that writes the
 	 * entries.
 	 */
