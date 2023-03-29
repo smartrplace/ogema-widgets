@@ -399,6 +399,10 @@ public class GaRoDataType implements GaRoDataTypeI {
 			FloatResource.class);
 	public static final GaRoDataType RouterLoadEff = new GaRoDataType("RouterLoadEff",
 			FloatResource.class);
+	public static final GaRoDataType RouterInstallationModeCt = new GaRoDataType("InstallationModeCt",
+			BooleanResource.class);
+	public static final GaRoDataType RouterInstallationModeFb = new GaRoDataType("InstallationModeFb",
+			BooleanResource.class);
 	
 	/** Food amount added at a certain time*/
 	public static final GaRoDataType FoodAmount = new GaRoDataType("FoodAmount",
