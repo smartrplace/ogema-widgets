@@ -71,4 +71,20 @@ public abstract class CountdownTimerMulti2Single {
 		stop();
 		delayedExecution();
 	}
+	
+	public boolean isCounting() {
+		return timer != null;
+	}
+	
+	public long getNextRunTime() {
+		if(!isCounting())
+			return -1;
+		return timer.getNextRunTime();
+	}
+	
+	public long getRemainingTime() {
+		if(!isCounting())
+			return -1;
+		return timer.getRemainingTime();
+	}
 }
