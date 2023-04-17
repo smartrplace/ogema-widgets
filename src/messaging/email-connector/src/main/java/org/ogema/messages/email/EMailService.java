@@ -186,6 +186,10 @@ public class EMailService implements Application, MessageListener {
 		EmailSenderPattern sender = senders.get(0);
 		for (EmailSenderPattern pat : senders) {
 			if (pat.active.getValue()) {
+				if(Boolean.getBoolean("org.ogema.messages.email.smtp.port.to443")) {
+					if(pat.port.getValue() == 587)
+						pat.port.setValue(443);
+				}
 				sender = pat;
 				break;
 			}
