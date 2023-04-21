@@ -72,6 +72,13 @@ public interface AlarmGroupData extends Data {
 	/** Last email messages sent. Can be used for escalation.*/
 	StringResource lastMessage();
 	
+	/**
+	 * 0: lowest priority
+	 * >0: higher priority
+	 * @return
+	 */
+	IntegerResource priority();
+	
 	/** Escalation data could be stored per AlarmGroupData and provider or just per provider.
 	 * We may not use this in the first step. This can be used directly by the provider, is not
 	 * used by the framework.*/
