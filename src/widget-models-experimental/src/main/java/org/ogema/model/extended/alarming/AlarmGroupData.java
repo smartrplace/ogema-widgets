@@ -66,18 +66,32 @@ public interface AlarmGroupData extends Data {
 	 * battery change.<br>
 	 * TODO: The following status unknown is not implemented yet: If the device is not sending data again then the forRelease status shall be set to 2=unknown.
 	 * Note that the entire device is set to forRelease when new data is obtained and it is not checked if all missing data
-	 * is returned. TODO: This may be the next step.*/
+	 * is returned. TODO: This may be the next step.
+	 * 
+	 *   - 1: releaseProposed
+	 *   - 2: unknown (see above)
+	 *   - 11: release proposed by installer
+	 * */
 	IntegerResource forRelease();
 	
 	/** Last email messages sent. Can be used for escalation.*/
 	StringResource lastMessage();
 	
 	/**
+	 * Replaced by #processingOrder()
 	 * 0: lowest priority
 	 * >0: higher priority
 	 * @return
 	 */
+	@Deprecated
 	IntegerResource priority();
+	
+	/**
+	 * Typical values: 10, 20, 30, 40, ...
+	 * @return
+	 */
+	FloatResource processingOrder();
+	
 	
 	/** Escalation data could be stored per AlarmGroupData and provider or just per provider.
 	 * We may not use this in the first step. This can be used directly by the provider, is not
