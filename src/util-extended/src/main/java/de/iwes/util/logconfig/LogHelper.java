@@ -219,7 +219,11 @@ public class LogHelper {
 		RecordedData rd = LoggingUtils.getHistoricalData(resource);
 		if(rd == null)
 			return null;
-		return rd.getPreviousValue(Long.MAX_VALUE);
+		try  {
+			return rd.getPreviousValue(Long.MAX_VALUE);
+		} catch(NullPointerException e) {
+			return null;
+		}
 	}
 	public static Long getLastWriteTime(SingleValueResource resource) throws IllegalArgumentException {
 		SampledValue sv = getLastSampledValue(resource);
