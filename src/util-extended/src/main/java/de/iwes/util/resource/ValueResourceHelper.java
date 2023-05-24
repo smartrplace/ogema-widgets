@@ -459,4 +459,10 @@ public class ValueResourceHelper {
 		return StringFormatHelper.getListFromString(prop);
 	}
 
+	public static boolean isInPropertyStringList(String searchString, String propertyName) {
+		String prop = System.getProperty(propertyName);
+		if(prop == null)
+			return false;
+		return StringFormatHelper.getListFromString(prop).contains(searchString);
+	}	
 }
