@@ -8,6 +8,7 @@ import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.locations.Room;
 import org.ogema.model.prototypes.Data;
+import org.ogema.model.user.NaturalPerson;
 
 /** If the resource exists then an ongoing alarm is active*/
 public interface AlarmGroupData extends Data {
@@ -97,4 +98,12 @@ public interface AlarmGroupData extends Data {
 	 * We may not use this in the first step. This can be used directly by the provider, is not
 	 * used by the framework.*/
 	ResourceList<EscalationData> escalationData();
+	
+	/** Person/Email contact responsible for next step. This is the email address/name of the UserData. Note that we cannot
+	 * set a reference here as this information is synchronized with superior.*/
+	StringResource responsibility();
+	
+	/** When this time is reached then a reminder to the email in the assignment shall be sent*/
+	TimeResource dueDateForResponsibility();
+
 }
