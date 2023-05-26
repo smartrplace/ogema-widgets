@@ -13,6 +13,11 @@ public interface AlarmGroupDataMajor extends AlarmGroupData {
 	/** If active and value > 0, then the known issue is released */
 	TimeResource releaseTime();
 	
+	/** If active and positive the element has been moved to trash.
+	 * It can be deleted automatically after the time set is expired
+	 */
+	TimeResource keepAsTrashUntil();
+	
 	/** TODO: Should this be a string?
 	 * Code for final diagnosis
 	 */

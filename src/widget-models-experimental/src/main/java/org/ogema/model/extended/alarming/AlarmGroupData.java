@@ -106,4 +106,12 @@ public interface AlarmGroupData extends Data {
 	/** When this time is reached then a reminder to the email in the assignment shall be sent*/
 	TimeResource dueDateForResponsibility();
 
+	/** Gateway-wide unique ID of all known issues ever occured.
+	 * TODO: Make this integer?*/
+	StringResource knownIssueId();
+	
+	/** If active and non-empty the issue shall be assigned "Dependent"
+	 * *In this case the issue is released and analysed together with its parent.
+	 * Note that we cannot set a reference here as this is synchronized with superior.*/
+	StringResource knownIssueParent();
 }
