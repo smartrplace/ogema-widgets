@@ -2,6 +2,7 @@ package org.ogema.model.extended.alarming;
 
 import org.ogema.core.model.array.StringArrayResource;
 import org.ogema.core.model.simple.IntegerResource;
+import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.smartrplace.apps.hw.install.config.InstallAppDevice;
 import org.smartrplace.apps.hw.install.config.InstallAppDeviceBase;
@@ -21,7 +22,7 @@ public interface AlarmGroupDataMajor extends AlarmGroupData {
 	/** TODO: Should this be a string?
 	 * Code for final diagnosis
 	 */
-	IntegerResource finalDiagnosis();
+	StringResource finalDiagnosis();
 	
 	/** A major known fault may be related to more than one device. The deviceId of each device
 	 * shall be listed here.<br>
