@@ -33,7 +33,7 @@ public interface InstallAppDeviceBase extends Data {
 	public DevelopmentTask devTask();
 	
 	/** If active and positive then each relevant {@link AlarmConfiguration#maxIntervalBetweenNewValues()} will be checked if shorter than
-	 * this value. If so the effective interval will be extended to this value.
+	 * this value. If so the effective interval will be extended to this value. Interval in minutes.
 	 */
 	public FloatResource minimumIntervalBetweenNewValues();
 	

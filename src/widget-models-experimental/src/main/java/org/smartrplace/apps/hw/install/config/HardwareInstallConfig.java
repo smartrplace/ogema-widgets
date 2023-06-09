@@ -152,6 +152,14 @@ public interface HardwareInstallConfig extends Data {
 	/** 0: Only perform if property is set, 1: off, 2: weekly postpone, 3: daily decalc*/ 
 	IntegerResource weeklyPostponeMode();
 	
+	/** 0: Let thermostats and other devices send in default rate, typically 1/20
+	 *  1: Force thermostats to default rate, even if thermostat has other special setting
+	 *  2: Summer mode confirmed: Disable cyclic messaging / reduce to one message per day if possible
+	 *  3: Force disabling cyclic messaging even if thermstat has other special setting
+	 *  4: Reduced cyclic messaging for energy-saving mode during winter
+	 *  5: Force reduced cyclic messaging even if thermostat has other special setting
+	 */
+	IntegerResource sendIntervalMode();
 	
 	/** Data of devices that will connect later and will be created by the respective driver then*/
 	ResourceList<PreKnownDeviceData> preKnownDevices();
