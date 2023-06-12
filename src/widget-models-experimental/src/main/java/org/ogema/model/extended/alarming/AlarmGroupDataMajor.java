@@ -26,13 +26,15 @@ public interface AlarmGroupDataMajor extends AlarmGroupData {
 	
 	/** A major known fault may be related to more than one device. The deviceId of each device
 	 * shall be listed here.<br>
-	 * Note: As the devices are not present on superior we cannot use references here.
+	 * Note: As the devices are not present on superior we cannot use references here.<br>
+	 * The first element shall represent the device which the issue was a child of originally
 	 * TODO: Should we better use device locations here?
 	 */
 	StringArrayResource devicesRelated();
 	
 	/** This link shall be set for ongoing issues on the gateway to access device information like for AlarmGroupData
 	 * elements that are direct children in {@link InstallAppDeviceBase#knownFault()}
+	 * Note: The element shall be kept locally even if released.
 	 */
 	InstallAppDevice parentForOngoingIssues();
 }
