@@ -17,6 +17,9 @@ public interface InstallAppDevice extends InstallAppDeviceBase {
 	/** Free status text field for current operation situation */
 	public StringResource operationStatus();
 	
+	/** Free status text field for previous operation situation (copy operation status to this field when done*/
+	public StringResource operationStatusDone();
+	
 	/** 0: "Unknown": nothing done / unknown<br>
 	 *  1: "SerialNumberRecorded": Teach-in process finished by operation, serial number was copied to the installation spreadsheet<br>
 	 *  3: "PackedForShipping": Confirmation that device was packed into parcel for customer<br>
