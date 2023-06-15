@@ -52,10 +52,10 @@ public class LightingControlModel extends ResourcePattern<OnOffSwitch> {
     
     public void sunblindMove(boolean up) {
     	final BooleanResource invert = sunblindUpDown.getSubResource("inverted", BooleanResource.class);
-    	if(invert != null && invert.getValue())
-    		sunblindUpDown.stateControl().setValue(!up);
-    	else
+    	if(invert != null && invert.getValue() && (!Boolean.getBoolean("SKIP_SHUTTER_INVERT")))
     		sunblindUpDown.stateControl().setValue(up);
+    	else
+    		sunblindUpDown.stateControl().setValue(!up);
     }
     
     public void sunblindStop() {

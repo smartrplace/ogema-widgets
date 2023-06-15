@@ -17,7 +17,7 @@ public interface KnxLightingControls extends PhysicalElement {
     
     MultiSwitch lightingPercentage();
     
-    /** Write true to start shutter going up, false to start going down*/
+    /** Write true to start shutter going down, false to start going up*/
     OnOffSwitch sunblindUpDown();
 	
     /** True: shutter reached top-most position*/
@@ -34,10 +34,10 @@ public interface KnxLightingControls extends PhysicalElement {
     
     default void sunblindMove(boolean up) {
     	final BooleanResource invert = sunblindUpDown().getSubResource("inverted", BooleanResource.class).getLocationResource();
-    	if(invert != null && invert.getValue())
-            sunblindUpDown().stateControl().setValue(!up);
+    	if(invert != null && invert.getValue() && (!Boolean.getBoolean("SKIP_SHUTTER_INVERT")))
+            sunblindUpDown().stateControl().setValue(up);
     	else
-    		sunblindUpDown().stateControl().setValue(up);
+    		sunblindUpDown().stateControl().setValue(!up);
     }
     
     default void sunblindStop() {
