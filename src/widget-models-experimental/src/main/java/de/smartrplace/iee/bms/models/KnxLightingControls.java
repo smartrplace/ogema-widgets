@@ -33,7 +33,11 @@ public interface KnxLightingControls extends PhysicalElement {
     IntegerResource dimmerStep();
     
     default void sunblindMove(boolean up) {
-        sunblindUpDown().stateControl().setValue(up);
+    	final BooleanResource invert = sunblindUpDown().getSubResource("inverted", BooleanResource.class).getLocationResource();
+    	if(invert != null && invert.getValue())
+            sunblindUpDown().stateControl().setValue(!up);
+    	else
+    		sunblindUpDown().stateControl().setValue(up);
     }
     
     default void sunblindStop() {
