@@ -105,6 +105,14 @@ public interface AlarmGroupData extends Data {
 	
 	/** When this time is reached then a reminder to the email in the assignment shall be sent*/
 	TimeResource dueDateForResponsibility();
+	
+	/** 0/inactive: default re-reminding (e.g. after 3 days)
+	 *  1: remind every day
+	 *  2: remind every week
+	 *  3: remind every month
+	 *  -1: no reminders
+	 */
+	IntegerResource reminderType();
 
 	/** Gateway-wide unique ID of all known issues ever occured.
 	 * TODO: Make this integer?*/
