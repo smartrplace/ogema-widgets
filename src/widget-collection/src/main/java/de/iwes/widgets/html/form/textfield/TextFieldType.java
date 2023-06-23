@@ -20,7 +20,7 @@ public enum TextFieldType {
 	TEXT("text"), PASSWORD("password"), SUBMIT("submit"), RADIO("radio"), CHECKBOX("checkbox"), BUTTON("button"),
 	// the following types require HTML5
 	COLOR("color"), EMAIL("email"), MONTH("month"),
-	NUMBER("number"), RANGE("range"), SEARCH("search"), TIME("time"), URL("url"), WEEK("week");
+	NUMBER("number"), RANGE("range"), SEARCH("search"), TIME("time"), URL("url"), WEEK("week"), DATE("date"), DATETIME_LOCAL("datetime-local");
 	
 	private final String type;
 	
