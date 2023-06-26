@@ -284,7 +284,12 @@ public class GaRoDataType implements GaRoDataTypeI {
 	public static final GaRoDataType Heatpower = new GaRoDataType("Heatpower",
 			PowerResource.class);
 	public static final GaRoDataType HeatEnergyIntegral = new GaRoDataType("HeatEnergyIntegral",
-			EnergyResource.class);
+			EnergyResource.class) {
+		@Override
+		public AggregationModePlus aggregationMode() {
+			return AggregationModePlus.INTEGRATED;
+		}		
+	};
 	@Deprecated //use VolumenFlow instead
 	public static final GaRoDataType HeatFlow = new GaRoDataType("VolumeFlow",
 			FlowResource.class);
@@ -294,7 +299,12 @@ public class GaRoDataType implements GaRoDataTypeI {
 	public static final GaRoDataType HeatVolumeIntegral = new GaRoDataType("HeatVolumeIntegral",
 			VolumeResource.class);
 	public static final GaRoDataType VolumeIntegral = new GaRoDataType("VolumeIntegral",
-			VolumeResource.class);
+			VolumeResource.class) {
+		@Override
+		public AggregationModePlus aggregationMode() {
+			return AggregationModePlus.INTEGRATED;
+		}		
+	};
 	public static final GaRoDataType HeatSupplyTemperatur = new GaRoDataType("HeatSupplyTemperatur",
 			TemperatureResource.class);
 	public static final GaRoDataType HeatReturnTemperatur = new GaRoDataType("HeatReturnTemperatur",
@@ -309,7 +319,12 @@ public class GaRoDataType implements GaRoDataTypeI {
 			TemperatureResource.class);
 	
 	public static final GaRoDataType HeatCostAllocatorPoints = new GaRoDataType("HeatCostAllocatorPoints",
-			FloatResource.class);
+			FloatResource.class) {
+		@Override
+		public AggregationModePlus aggregationMode() {
+			return AggregationModePlus.INTEGRATED;
+		}
+	};
 	public static final GaRoDataType LocationGenericFactor = new GaRoDataType("LocationFactor",
 			FloatResource.class);
 	public static final GaRoDataType HeatpumpCOP = new GaRoDataType("COP",
@@ -539,10 +554,21 @@ public class GaRoDataType implements GaRoDataTypeI {
 	public static final GaRoDataType PowerMeter = new GaRoDataType("PowerMeter",
 			PowerResource.class, Level.GATEWAY);
 	public static final GaRoDataType PowerMeterEnergy = new GaRoDataType("PowerMeterEnergy",
-			EnergyResource.class, Level.GATEWAY);
+			EnergyResource.class, Level.GATEWAY) {
+		@Override
+		public AggregationModePlus aggregationMode() {
+			return AggregationModePlus.INTEGRATED;
+		}		
+	};
 	/** For meters mainly focussing on consumption a separate field for export may exist*/
 	public static final GaRoDataType PowerMeterEnergyExported = new GaRoDataType("PowerMeterEnergyExported",
-			EnergyResource.class, Level.GATEWAY);
+			EnergyResource.class, Level.GATEWAY) {
+		@Override
+		public AggregationModePlus aggregationMode() {
+			return AggregationModePlus.INTEGRATED;
+		}
+		
+	};
 	public static final GaRoDataType PowerMeterCurrent = new GaRoDataType("PowerMeterCurrent",
 			ElectricCurrentResource.class, Level.GATEWAY);
 	public static final GaRoDataType PowerMeterVoltage = new GaRoDataType("PowerMeterVoltage",
