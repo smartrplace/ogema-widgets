@@ -19,8 +19,11 @@ public interface ThermostatInstallationData {
 	 */
 	IntegerResource antiVandalismType();
 
-	/** 0: unknown
-	 *  1: no adapter
+	/** 0: unknown<br>
+	 *  1: no adapter<br>
+	 *  2: Danfoss<br>
+	 *  3: Oventrop<br>
+	 *  999: other<br>
 	 *  ...
 	 */
 	IntegerResource adapterType();

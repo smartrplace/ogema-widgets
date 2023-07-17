@@ -5,7 +5,7 @@ import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.model.extended.alarming.AlarmGroupDataMajor;
 import org.ogema.model.prototypes.Data;
 import org.ogema.model.user.NaturalPerson;
-import org.smartrplace.external.accessadmin.config.SubCustomerData;
+import org.smartrplace.external.accessadmin.config.SubCustomerSuperiorData;
 
 public interface GatewaySuperiorData extends Data {
 	/** First generation known issue statistics to be transferred from gateway to superior
@@ -24,16 +24,11 @@ public interface GatewaySuperiorData extends Data {
 	ResourceList<NaturalPerson> responsibilityContacts();
 	
 	
-	/** If no tenants exist or the same facility/IT contact information applies to all
-	 * tenants all information is stored here. This information shall also be considered
-	 * relevant for all tenants that have no special entry in {@link #tenantData()}
-	 */
-	SubCustomerData buildingData();
-
 	/** Special information per tenant if different from {@link #buildingData()}. Note that
 	 * initially administration of tenant data may only take place on gateway level.
+	 * The building subcustomer should be marked with {@link SubCustomerData#aggregationType()=1}
 	 * */
-	ResourceList<SubCustomerData> tenantData();
+	ResourceList<SubCustomerSuperiorData> tenantData();
 	
 	/** Number of tenants with own contacts for facility management and/or IT.
 	 * Note that this number may be different from number of tenants defined on CMS
