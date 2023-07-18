@@ -1,5 +1,6 @@
 package org.ogema.virtual.device.config;
 
+import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.model.prototypes.Data;
 
@@ -15,4 +16,7 @@ public interface VirtualThermostatConfig extends Data {
 	 * negative: force off
 	 */
 	IntegerResource forceOnOff();
+	
+	/** State determined and set for all relevant switches in the room */
+	BooleanResource roomStateControl();
 }
