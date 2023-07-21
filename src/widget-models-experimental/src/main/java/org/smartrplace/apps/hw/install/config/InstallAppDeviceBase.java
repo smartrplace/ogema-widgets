@@ -3,6 +3,7 @@ package org.smartrplace.apps.hw.install.config;
 import org.ogema.core.model.Resource;
 import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.simple.BooleanResource;
+import org.ogema.core.model.simple.FloatResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.model.extended.alarming.AlarmConfiguration;
@@ -27,7 +28,14 @@ public interface InstallAppDeviceBase extends Data {
 	
 	/** Single datapoint alarms for the device*/
 	public ResourceList<AlarmConfiguration> alarms();
+	
+	/** Special alarming settings for the device if existing*/
 	public DevelopmentTask devTask();
+	
+	/** If active and positive then each relevant {@link AlarmConfiguration#maxIntervalBetweenNewValues()} will be checked if shorter than
+	 * this value. If so the effective interval will be extended to this value. Interval in minutes.
+	 */
+	public FloatResource minimumIntervalBetweenNewValues();
 	
 	/** Known fault on device. Note that in the future room and gateway fault states may be stored in
 	 * {@link AlarmingData#knownSystemFaults()}. If not active of not existing then the device has no

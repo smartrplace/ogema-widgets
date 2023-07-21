@@ -379,6 +379,9 @@ public class GaRoEvalHelper {
 		if(recId.contains("/sunblindBottom")) return GaRoDataType.ShutterBottomPosition; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/sunblindTop")) return GaRoDataType.ShutterTopPosition; //"onOffSwitch/stateFeedback"
 		
+		if(recId.contains("/installationMode/stateControl")) return GaRoDataType.RouterInstallationModeCt;
+		if(recId.contains("/installationMode/stateFeedback")) return GaRoDataType.RouterInstallationModeFb;
+
 		if(recId.contains("/stateFeedback")) return GaRoDataType.SwitchStateFeedback; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/stateControl")) return GaRoDataType.SwitchStateControl; //"onOffSwitch/stateFeedback"
 		

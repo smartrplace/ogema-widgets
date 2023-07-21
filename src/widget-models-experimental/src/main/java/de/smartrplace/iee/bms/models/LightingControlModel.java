@@ -1,5 +1,6 @@
 package de.smartrplace.iee.bms.models;
 
+import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.resourcemanager.pattern.ResourcePattern;
 import org.ogema.model.actors.MultiSwitch;
 import org.ogema.model.actors.OnOffSwitch;
@@ -50,12 +51,16 @@ public class LightingControlModel extends ResourcePattern<OnOffSwitch> {
     }
     
     public void sunblindMove(boolean up) {
-        sunblindUpDown.stateControl().setValue(up);
+    	final BooleanResource invert = sunblindUpDown.getSubResource("inverted", BooleanResource.class);
+    	if(invert != null && invert.getValue() && (!Boolean.getBoolean("SKIP_SHUTTER_INVERT")))
+    		sunblindUpDown.stateControl().setValue(up);
+    	else
+    		sunblindUpDown.stateControl().setValue(!up);
     }
     
     public void sunblindStop() {
         //if (sunblindMoving.getValue()) { //XXX maybe better to write always
-            sunblindSlatsStep.stateControl().setValue(true);
+    	sunblindSlatsStep.stateControl().setValue(true);
         //}
     }
     

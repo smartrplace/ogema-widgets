@@ -19,6 +19,7 @@ import org.ogema.generictype.GenericDataTypeDeclaration;
 
 import de.iwes.timeseries.eval.garo.api.helper.base.GaRoEvalHelper;
 import de.iwes.timeseries.eval.garo.multibase.GaRoSingleEvalProvider;
+import de.iwes.timeseries.eval.online.utils.InputSeriesAggregator.AggregationMode;
 
 /** Supported data types
  * The respective Strings used for identifiction are defined in {@link GaRoEvalHelper#getDataType(String)}.
@@ -31,10 +32,39 @@ import de.iwes.timeseries.eval.garo.multibase.GaRoSingleEvalProvider;
  * Pre-Evaluation.
  */
 public interface GaRoDataTypeI extends GenericDataTypeDeclaration {
+	public static enum AggregationModePlus {
+		/** power / volume flow*/
+		FLOW,
+		/** integrated flow like meter reading */
+		INTEGRATED,
+		/** integrated flow per time step, time step may be variable */
+		CONSUMPTION,
+		/** like "integrated", but reading counter is reset to zero each beginning of day*/
+		CONSUMPTION_PER_DAY,
+		/** like "integrated", but reading counter is reset to zero each beginning of month*/
+		CONSUMPTION_PER_MONTH,
+		/** like "integrated", but reading counter is reset to zero each beginning of year*/
+		CONSUMPTION_PER_YEAR,
+		/** like "integrated", but reset to zero may occur occasionally, usually when meter is
+		 * powered off - this may be the case for simple submeters without persistent storage 
+		 */
+		INTEGRATED_WITH_RESET,
+		/** Average power or other value. The average shall apply to the entire time series until the
+		 * next value. The last two values of the time series shall be equal and indicate the duration of
+		 * the last interval. This can be applied to almost all evaluated measurement values and other
+		 * evaluation results.
+		 */
+		AVERAGE_VALUE_PER_STEP
+	}
+
 	public enum Level {ROOM, GATEWAY, OVERALL};
 	public Level getLevel();
 	
 	/**Null for standard types, otherwise the id of the {@link GaRoSingleEvalProvider} is given here
 	 */
 	public default String primaryEvalProvider() { return null; }
+	
+	public default AggregationModePlus aggregationMode() {
+		return AggregationModePlus.AVERAGE_VALUE_PER_STEP;
+	}
 }

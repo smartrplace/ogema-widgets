@@ -36,21 +36,15 @@ public class SystemSupervisionApp implements Application, ResourceDemandListener
 	private Tasks tasks;
 	private TriggerListener triggerListener;
 	private ShellCommands shellCommands;
-	private ShellCommandsInitial shellInitial;
 	
 	@Override
 	public void start(final ApplicationManager appManager) {
 		this.appMan = appManager;
 		appManager.getResourceAccess().addResourceDemand(SystemSupervisionConfig.class, this);
-		this.shellInitial = new ShellCommandsInitial(appManager, appManager.getAppID().getBundle().getBundleContext());
 	}
 
 	@Override
 	public void stop(AppStopReason reason) {
-		final ShellCommandsInitial initial = this.shellInitial;
-		this.shellInitial = null;
-		if (initial != null)
-			initial.close();
 		stopInternal();
 		if (appMan != null)
 			appMan.getResourceAccess().removeResourceDemand(SystemSupervisionConfig.class, this);

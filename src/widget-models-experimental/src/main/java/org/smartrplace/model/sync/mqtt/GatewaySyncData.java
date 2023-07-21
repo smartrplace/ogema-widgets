@@ -1,9 +1,11 @@
 package org.smartrplace.model.sync.mqtt;
 
+import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.array.StringArrayResource;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.TimeResource;
+import org.ogema.model.extended.alarming.AlarmGroupData;
 import org.ogema.model.prototypes.Data;
 
 /** Resource model to be created as top-level resource on superior instances for MQTT resource synching.
@@ -33,14 +35,45 @@ public interface GatewaySyncData extends Data {
 	 */
 	StringArrayResource toplevelResourcesToBeSynchronized();
 	
+	/*************************
+	 * Commands as draft
+	 *************************/
 	
-	/***********************
-	 * Default Payload data: Application-specific models may be added as decorators
-	 * e.g. for room control.
-	 ***********************/
+	/** Several commands may be given in each element of the array. These commands shall be processed by
+	 * an application on the server side.
+	 * After each command an entry containing a time-stamp must be given that is used
+	 * to identify the response. Entries is this list are deleted only by the gateway that writes the
+	 * entries.
+	 */
+	StringArrayResource commandsGwToServer();
+	
+	/** Responses of the server to the requests sent by the gateway in commandsGwToServer.
+	 * Also after each entry a timestamp shall be given that indicates the response. Entries must
+	 * also be cleaned up the gateway, the resource is only written by the server.*/
+	StringArrayResource responseOnGwToServer();
+	
+	/** Counterpart to commandsGwToServer for writing commands from the server that are
+	 * executed on the gateway console.
+	 */
+	StringArrayResource commandsServerToGw();
+
+	/** Counterpart to responseOnGwToServer for writing commands from the server that are
+	 * executed on the gateway console.
+	 */
+	StringArrayResource responseOnServerToGw();
+
+	/*************************************************
+	 * Only relevant for synchronization to superior
+	 *************************************************/
+	
+	/** KnownIssues to be synchronized to be superior.
+	 * TODO: Model needs to be extended a littel bit to make link to the base-known issues in knownDevices()
+	 */
+	ResourceList<AlarmGroupData> superiorIssues();
 	
 	/** Each entry shall hold a device room location and a room name or location separated by a comma
 	 * The device room location shall be the location gateway side
+	 * TODO: Methods using this set deprecated as not really used and tested yet.
 	 */
 	StringArrayResource deviceNames();
 	

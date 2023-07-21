@@ -66,6 +66,11 @@ public class LabelData extends WidgetData {
         return result;
     }
     
+    @Override
+    protected String getWidthSelector() {
+    	return ">span";
+    }
+    
     /******* Public methods ******/
 
     public void setText(String text) {

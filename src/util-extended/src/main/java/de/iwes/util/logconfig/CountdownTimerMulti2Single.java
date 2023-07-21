@@ -53,6 +53,7 @@ public abstract class CountdownTimerMulti2Single {
 			
 			@Override
 			public void delayedExecution() {
+				stop();
 				if(persistentFlagOpen != null)
 					persistentFlagOpen.setValue(false);
 				CountdownTimerMulti2Single.this.delayedExecution();
@@ -70,5 +71,21 @@ public abstract class CountdownTimerMulti2Single {
 	public void executeNow() {
 		stop();
 		delayedExecution();
+	}
+	
+	public boolean isCounting() {
+		return timer != null;
+	}
+	
+	public long getNextRunTime() {
+		if(!isCounting())
+			return -1;
+		return timer.getNextRunTime();
+	}
+	
+	public long getRemainingTime() {
+		if(!isCounting())
+			return -1;
+		return timer.getRemainingTime();
 	}
 }

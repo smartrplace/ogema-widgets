@@ -26,15 +26,19 @@ public interface UserAdminData extends Data {
 	/** Comma-separated list of email addresses that shall be used for customer maintenance requests in
 	 * addition to the admin email addresses received from CMS (or customer addresses directly created on the gateway)
 	 */
+	@Deprecated
 	StringResource additionalAdminEmailAddresses();
 	
 	/** Salutations for email. Shall contain entries like "Frau Müller" or "Herr Maier". The rest of the template shall
 	 * be filled automatically. The first entries are for additionalAdminEmailAddresses followed by salutations for addresses
-	 * received from CMS.
+	 * received from CMS.<br>
+	 * {@link SubCustomerData#personalSalutations()} instead.
 	 */
+	@Deprecated
 	StringResource personalSalutations();
 	
 	/** If true then no user addresses will be evaluated*/
+	@Deprecated
 	BooleanResource useOnlyAdditionalAddresses();
 	
 	Action triggerUpdateFromCMS();

@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -36,6 +37,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Stream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -681,13 +683,14 @@ public class OgemaOsgiWidgetServiceImpl extends HttpServlet implements WidgetAdm
 	
 	@SuppressWarnings("unchecked")
 	private static Map<String,String[]> getPageParameters(String pagePath, String sessionId, String zerothParameter, HttpServletRequest req) {
-
 		try {
 			Map<String,String[]> params = extractPageParameters(zerothParameter);
 			for (Map.Entry<String, String[]> entry : ((Set<Map.Entry<String, String[]>>) req.getParameterMap().entrySet())) {
 				String key = entry.getKey();
 				if (key.equals("initialWidgetInformation")) continue;
 				String[] value = entry.getValue();
+				if (params.containsKey(key))
+					value = Stream.concat(Arrays.stream(params.get(key)), Arrays.stream(value)).toArray(String[]::new);
 				params.put(key, value);
 			}
 			return params;

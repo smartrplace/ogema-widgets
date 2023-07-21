@@ -8,6 +8,7 @@ import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.locations.Room;
 import org.ogema.model.prototypes.Data;
+import org.ogema.model.user.NaturalPerson;
 
 /** If the resource exists then an ongoing alarm is active*/
 public interface AlarmGroupData extends Data {
@@ -66,14 +67,59 @@ public interface AlarmGroupData extends Data {
 	 * battery change.<br>
 	 * TODO: The following status unknown is not implemented yet: If the device is not sending data again then the forRelease status shall be set to 2=unknown.
 	 * Note that the entire device is set to forRelease when new data is obtained and it is not checked if all missing data
-	 * is returned. TODO: This may be the next step.*/
+	 * is returned. TODO: This may be the next step.
+	 * 
+	 *   - 1: releaseProposed
+	 *   - 2: unknown (see above)
+	 *   - 11: release proposed by installer
+	 * */
 	IntegerResource forRelease();
 	
 	/** Last email messages sent. Can be used for escalation.*/
 	StringResource lastMessage();
 	
+	/**
+	 * Replaced by #processingOrder()
+	 * 0: lowest priority
+	 * >0: higher priority
+	 * @return
+	 */
+	@Deprecated
+	IntegerResource priority();
+	
+	/**
+	 * Typical values: 10, 20, 30, 40, ...
+	 * @return
+	 */
+	FloatResource processingOrder();
+	
+	
 	/** Escalation data could be stored per AlarmGroupData and provider or just per provider.
 	 * We may not use this in the first step. This can be used directly by the provider, is not
 	 * used by the framework.*/
 	ResourceList<EscalationData> escalationData();
+	
+	/** Person/Email contact responsible for next step. This is the email address/name of the UserData. Note that we cannot
+	 * set a reference here as this information is synchronized with superior.*/
+	StringResource responsibility();
+	
+	/** When this time is reached then a reminder to the email in the assignment shall be sent*/
+	TimeResource dueDateForResponsibility();
+	
+	/** 0/inactive: default re-reminding (e.g. after 3 days)
+	 *  1: remind every day
+	 *  2: remind every week
+	 *  3: remind every month
+	 *  -1: no reminders
+	 */
+	IntegerResource reminderType();
+
+	/** Gateway-wide unique ID of all known issues ever occured.
+	 * TODO: Make this integer?*/
+	StringResource knownIssueId();
+	
+	/** If active and non-empty the issue shall be assigned "Dependent"
+	 * *In this case the issue is released and analysed together with its parent.
+	 * Note that we cannot set a reference here as this is synchronized with superior.*/
+	StringResource knownIssueParent();
 }

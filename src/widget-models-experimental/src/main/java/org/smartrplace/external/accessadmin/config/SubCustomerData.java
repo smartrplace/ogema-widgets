@@ -5,7 +5,6 @@ import org.ogema.core.model.array.IntegerArrayResource;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
-import org.ogema.core.model.units.TemperatureResource;
 import org.ogema.model.locations.BuildingPropertyUnit;
 import org.ogema.model.prototypes.Data;
 
@@ -13,6 +12,9 @@ public interface SubCustomerData extends Data {
 	//Room-mapping is stored in room as each room must be in exactly sub customer
 	//we have to use a decorator "subcustomer"
 	//ResourceList<Room> rooms();
+	
+	/** Reference to superior master data in database*/
+	SubCustomerSuperiorData databaseData();
 	
 	/** Building / usage type. If the building has only a single subCustomer the type is relevant
 	 * for the entire building. The following types are defined:<br>
@@ -57,23 +59,34 @@ public interface SubCustomerData extends Data {
 	
 	/** Comma-separated list of email addresses that shall be used for customer maintenance requests in
 	 * addition to the admin email addresses received from CMS (or customer addresses directly created on the gateway)
+	 * <br>Moved to {@link SubCustomerSuperiorData}
 	 */
+	@Deprecated
 	StringResource additionalAdminEmailAddresses();
 	
 	/** Salutations for email. Shall contain entries like "Frau Müller" or "Herr Maier". The rest of the template shall
 	 * be filled automatically. The first entries are for additionalAdminEmailAddresses followed by salutations for addresses
 	 * received from CMS.
+	 * <br>Moved to {@link SubCustomerSuperiorData}
 	 */
+	@Deprecated
 	StringResource personalSalutations();
 	
-	/** If true then no user addresses will be evaluated*/
+	/** If true then no user addresses will be evaluated
+	 * <br>Moved to {@link SubCustomerSuperiorData}
+	 * */
+	@Deprecated
 	BooleanResource useOnlyAdditionalAddresses();
 
 	/** Comma-separated list of email addresses that shall be used for IT maintenance requests
+	 * <br>Moved to {@link SubCustomerSuperiorData}
 	 */
+	@Deprecated
 	StringResource emailAddressesIT();
 	
 	/** Salutations for IT email addresses
+	 * <br>Moved to {@link SubCustomerSuperiorData}
 	 */
+	@Deprecated
 	StringResource personalSalutationsIT();
 }
