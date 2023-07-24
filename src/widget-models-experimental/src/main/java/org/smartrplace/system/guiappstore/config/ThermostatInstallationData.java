@@ -8,7 +8,7 @@ public interface ThermostatInstallationData {
 	 *  2: all thermostats have anti-theft installed (used also for single thermostat if it is anti-theft installed)
 	 *  3: a few thermostats are protected (those protected should have indication on thermostat level)
 	 *  4: thermostats are protected partially
-	 *  3: most thermostats are protected (those not protected should have indication on thermostat level)
+	 *  5: most thermostats are protected (those not protected should have indication on thermostat level)
 	 */
 	IntegerResource antiTheftType();
 	

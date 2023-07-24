@@ -126,6 +126,11 @@ public class PageSnippet extends OgemaWidgetBase<PageSnippetData> implements Pag
 		return this;
 	}
 	
+	public PageSnippet removeItems(Collection<HtmlItem> items, OgemaHttpRequest req) {
+		getData(req).removeItems(items);
+		return this;
+	}
+	
 	@Override
 	public PageSnippet linebreak(OgemaHttpRequest req) {
 		getData(req).linebreak();
