@@ -26,8 +26,6 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
     this.element = $("#" + widgetID + ".ogema-widget")[0];
     this.groups = [];
     this.pollingInterval = -1;
-    this.subpollingInterval = -1;
-    var subpollingTimer = undefined;
     var triggeredActionGET = {};    // use widgetID as key, object with keys 'id': function to be executed as value (function name), 'args': arguments (object) 
     var triggeredActionPOST = {};
     this.governingWidget = false;
@@ -287,48 +285,8 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
         }
 
 //        if (gw.isDynamicWidget && gw.dataChanged(result)) {  
-		  if (result.composition)
-		  	  window.clearTimeout(this.subpollingTimer);
-	      if (result.composition && result.composition.init) {
-			  const comp = result.composition;
-			  const existing  = comp.init.filter(data => ogema.widgets[data[0]]);
-			  for (let idx=0; idx<existing.length; idx++) {  // clean up widgets that do not really exist any more
-				  const existingWidget = ogema.widgets[existing[idx][0]];
-				  if (!existingWidget.element || !existingWidget.element.isConnected)
-				  	  delete ogema.widgets[existing[idx][0]];
-			  }
-			  const initData  = comp.init.filter(data => !ogema.widgets[data[0]]);
-			  // TODO make sure this data is not appended to initialWidgetData requests?
-			  Object.assign(ogema.widgetLoader.initialWidgetInformation, comp.sub);    		  
-			  // FIXME there is a potential race condition here if the loader is already running; or if multiple widgets try to load subwidgets of the same type
-			  // this is not so easy to overcome without a migration to a promise based widget loader impl
-			  ogema.widgetLoader.loadUniqueWidgetData(initData, true);
-			  if (comp.subpolling > 0 && !ogema.widgetLoader.pollingStopped) {
-				  this.subpollingInterval = comp.subpolling;
-			      function subpoll() {
-					 var servletPath = gw.servletPath + ogema.getParameters() + "&subpolling=true" ;
-		             $.ajax({
-		                type: "GET",
-		                url: servletPath,
-		                headers: { Accept: "application/json" }
-		             }).done(function(result) {
-		                Object.entries(result) // TODO test
-		                    .map(([id, data]) => [ogema.widgets[id], data instanceof Array ? data[0] : data])
-		                    .filter(arr => arr[0])
-		                 	.forEach(([subwidget, data]) => subwidget.handleWidgetGET(data));
-		                 if (gw.subpollingInterval > 0 && !ogema.widgetLoader.pollingStopped)
-					 		gw.subpollingTimer = setTimeout(subpoll, gw.subpollingInterval);
-		             }).fail(function(jqXHR, textStatus, errorThrown) {
-		            	console.error(gw.widgetID, "failed to poll subwidgets", errorThrown);
-		             });
-			      }
-			      gw.subpollingTimer = setTimeout(subpoll, this.subpollingInterval);
-			  } else {
-				  this.subpollingInterval = -1;
-			  }
-		  }
 		  if (gw.isDynamicWidget) {
-		   	var nrDeleteWidgets = subwidgetsToBeRemoved.length;
+		   	var nrDeleteWidgets = subwidgetsToBeRemoved.length; 	
 		   	
             var interval = 0; //Initial waiting-time
             var attemptCount = 0;
@@ -349,16 +307,14 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
 	                        if (result.hasOwnProperty("subWidgets")) {		
 	        				    gw.subWidgets = result.subWidgets;
 	     				    }
-	                        if (updateSubwidgets && !gw.composition) 
-	                        	ogema.reloadWidgets();
+	                        if (updateSubwidgets) ogema.reloadWidgets();
 	                        clearInterval(waitForLoading);
 	                    }
 	                }
 	
 	            }, interval);
 	       } else if (updateSubwidgets) {    // if no widgets are deleted, but new ones to be loaded
-	       		if (!gw.composition)
-	       			ogema.reloadWidgets(); 
+	       		ogema.reloadWidgets(); 
 	       		if (result.hasOwnProperty("subWidgets")) {		
 				    gw.subWidgets = result.subWidgets;
 			    }	

@@ -70,7 +70,7 @@ public class TemplateDropdownData<T> extends DropdownData implements TemplateDat
 //			addOption(valLab[1], valLab[0], false);
 			addOption(new TemplateBasedLabelledItem<T>(item, (TemplateDropdown<T>) widget), false);
 			
-			boolean selected = getOptions().size() ==1 && this.urlParam == null;
+			boolean selected = getOptions().size() ==1;
 			listOptions.put(item,selected);
 			return true;
 		} finally {
@@ -183,7 +183,7 @@ public class TemplateDropdownData<T> extends DropdownData implements TemplateDat
 		try {
 			super.update(map, sel); // FIXME -> adds non-LabelledItem elements!
 			String selected = getSelectedValue();
-			if (selected == null && this.urlParam == null && (!map.isEmpty() || addEmptyOpt)) {
+			if (selected == null && (!map.isEmpty() || addEmptyOpt)) {
 				LoggerFactory.getLogger(getClass()).error("Error in dropdown widget: no item selected although items should be available");
 				options.get(0).select(true);
 				selected = options.get(0).id();

@@ -25,6 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.json.JSONObject;
 
@@ -208,26 +209,6 @@ public class PageSnippetData extends WidgetData {
 			final List<Integer> forRemoval = new ArrayList<>();
 			for (Map.Entry<Integer, HtmlItem> entry: htmlItems.entrySet()) {
 				if (entry.getValue().equals(item)) {
-					forRemoval.add(entry.getKey());
-				}
-			}
-			if (!forRemoval.isEmpty()) {
-				forRemoval.stream().map(i -> htmlItems.remove(i)).forEach(item2 -> item2.getSubWidgets().forEach(w -> w.destroyWidget()));
-				this.itemsRemoved(forRemoval);
-			}
-		} finally {
-			writeUnlock();
-		}
-	}
-	
-	public void removeItems(Collection<HtmlItem> items) {
-		if(items == null)
-			throw new NullPointerException("HtmlItems cannot be null!");
-		writeLock(); 
-		try {
-			final List<Integer> forRemoval = new ArrayList<>();
-			for (Map.Entry<Integer, HtmlItem> entry: htmlItems.entrySet()) {
-				if (items.contains(entry.getValue())) {
 					forRemoval.add(entry.getKey());
 				}
 			}

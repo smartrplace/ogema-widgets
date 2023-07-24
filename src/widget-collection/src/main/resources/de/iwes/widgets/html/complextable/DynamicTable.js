@@ -130,8 +130,7 @@ DynamicTable.prototype.update = function(data) {
 	if (data.hasOwnProperty('html') && data.hasOwnProperty('rows') && data.hasOwnProperty('cols')) {
 		//console.log("Received new set of rows",data.html);
 		this.setRows(data.html,data.rows,data.cols);
-		if (!data.composition)
-			ogema.reloadWidgets(); // updates subwidgets
+		ogema.reloadWidgets(); // updates subwidgets
 	}
 /*	if (data.hasOwnProperty('css')) {
 		var el = $("#" + this.widgetID).find( "#ComplexTableWidgetBody");

@@ -72,7 +72,6 @@ public abstract class WidgetData {
     OgemaHttpRequest initialRequest; 
     protected final ReentrantReadWriteLock lock;
     protected final boolean globalWidget;
-    protected boolean compositeWidget = false;
 
     private Map<String, Object> sessionDataFlex = null;
     public Object putSessionDataFlex(String key, Object value) {
@@ -786,30 +785,6 @@ public abstract class WidgetData {
 	       if (widget.governingWidget) {
 	           results.put("governingWidget", widget.governingWidget);
 	       }
-	       if (widget.compositeWidget) {
-    		   final JSONObject comp = new JSONObject();
-    		   results.put("composition", comp);
-	    	   final Collection<OgemaWidgetBase<?>> subwidgets = (Collection<OgemaWidgetBase<?>>) (Object) this.getSubWidgets();
-	    	   if (!subwidgets.isEmpty()) {
-	    		   final JSONArray initData = new JSONArray();
-	    		   subwidgets.stream().forEach(w -> {
-	    			   final String className = w.getWidgetClass().getSimpleName();
-	    			   final String widgetSystemPath = w.getWidgetClass().getPackage().getName().replaceAll("\\.", "/");
-	    			   final String widgetWebResourcePath = ("/ogema/widget"  + widgetSystemPath.substring(widgetSystemPath.lastIndexOf("/"))).replaceAll("/+", "/");;
-	    			   initData.put(new JSONArray(new String[]{ w.getId(), className, widgetWebResourcePath + "/" + className +".html" }));
-	    			   w.setControlledByComposite();
-	    		   });
-	    		   final JSONObject subData = new JSONObject();
-	    		   subwidgets.stream()
-	    		   		.forEach(w -> w.appendWidgetInformation(req, subData));
-	    		   comp.put("init", initData);
-	    		   comp.put("sub", subData);
-	    		   if (widget.compositeSubwidgetPolling > 0)
-	    			   comp.put("subpolling", widget.compositeSubwidgetPolling);
-	    	   }
-	    	   
-	       }
-	       
 	       List<Map<String,Object>> cnc = new LinkedList<Map<String,Object>>();
 	       cnc.addAll(connectElements);
 	       cnc.addAll(widget.globalConnectElements);
@@ -827,7 +802,7 @@ public abstract class WidgetData {
 	/*       if(req.widgetAttribute.containsKey("pollingInterval")) {
 	       		results.put("pollingInterval", req.widgetAttribute.get("pollingInterval"));
 	       } else { */
-	       results.put("pollingInterval", widget.isControlledByComposite() ? -1 : pollingInterval);
+	       		results.put("pollingInterval", pollingInterval);
 	//       }
 	       if (!sendValueOnChange) {
 	           results.put("sendValueOnChange", sendValueOnChange);
@@ -944,18 +919,6 @@ public abstract class WidgetData {
        } finally {
     	   readUnlock();
        }
-   }
-   
-   protected JSONObject collectSubwidgetData(OgemaHttpRequest req) {
-	   final JSONObject result = new JSONObject();
-	   final Collection<OgemaWidgetBase<?>> subwidgets = (Collection<OgemaWidgetBase<?>>) (Object) this.getSubWidgets();
-	   subwidgets.stream()
-	   	.filter(w -> w.getPollingInterval(req) > 0)
-	   	.forEach(w -> {
-		   w.appendWidgetInformation(req,result);
-   		   w.updateDependentWidgets(req);
-	   });
-	   return result;
    }
 
    /**
