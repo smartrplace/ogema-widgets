@@ -66,11 +66,6 @@
             <artifactId>util-extended</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.ogema.widgets</groupId>
-            <artifactId>util-extended</artifactId>
-            <version>2.2.2-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.10</version>
