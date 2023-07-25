@@ -33,18 +33,26 @@ public interface LocalGatewayInformation extends PhysicalElement {
 	 */
 	StringResource id();
 	
-	/** Base URL of gateway to connect to via internet, e.g. https://customer.manufacturer.de:2000*/
+	/** Base URL of gateway to connect to via internet, e.g. https://customer.manufacturer.de:2000
+	 * Use element in SubCustomerSuperiorData instead*/
+	@Deprecated
 	StringResource gatewayBaseUrl();
 	
-	/** Url to gateway installation and operation documentation*/
+	/** Url to gateway installation and operation documentation
+	 * Use element in SubCustomerSuperiorData instead*/
+	@Deprecated
 	StringResource gatewayOperationDatabaseUrl();
 	
 	/** Url to overview on gateway documentation sources. If this is existing then the {@link #gatewayOperationDatabaseUrl()} may 
-	 * not be used as the link overview should usually contain this.*/
+	 * not be used as the link overview should usually contain this.
+	 * Use element in SubCustomerSuperiorData instead*/
+	@Deprecated
 	StringResource gatewayLinkOverviewUrl();
 
 	/** ID of system default locale (obtained by OgemaLocale.getLocale().getLanguage() ), which can
-	 * be used to obtain OgemaLocale object by OgemaLocale#getLocale*/
+	 * be used to obtain OgemaLocale object by OgemaLocale#getLocale
+	 * Use element in SubCustomerSuperiorData instead*/
+	@Deprecated
 	StringResource systemLocale();
 	
 	ResourceList<TimedJobConfig> timedJobs();
