@@ -1,8 +1,9 @@
 package org.smartrplace.system.guiappstore.config;
 
 import org.ogema.core.model.simple.IntegerResource;
+import org.ogema.model.prototypes.Data;
 
-public interface ThermostatInstallationData {
+public interface ThermostatInstallationData extends Data {
 	/** 0: unknown<br>
 	 *  1: no anti-theft is installed
 	 *  2: all thermostats have anti-theft installed (used also for single thermostat if it is anti-theft installed)
