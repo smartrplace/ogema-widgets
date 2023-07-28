@@ -24,6 +24,17 @@ public interface AlarmGroupDataMajor extends AlarmGroupData {
 	 */
 	StringResource finalDiagnosis();
 	
+	/**
+	 * A release comment 
+	 */
+	StringResource finalAnalysisComment();
+	
+	/**
+	 * Indicate if the problem arose in a dev project 
+	 */
+	StringResource featureUnderDevelopment();
+	
+	
 	/** A major known fault may be related to more than one device. The deviceId of each device
 	 * shall be listed here.<br>
 	 * Note: As the devices are not present on superior we cannot use references here.<br>
