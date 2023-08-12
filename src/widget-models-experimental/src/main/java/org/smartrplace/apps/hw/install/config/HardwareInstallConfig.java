@@ -161,6 +161,11 @@ public interface HardwareInstallConfig extends Data {
 	 */
 	IntegerResource sendIntervalMode();
 	
+	/** If positive then all thermostats indicated for extended sending shall be set to sending with maximum interval until the
+	 * absolute time indicated by this resource is reached
+	 */
+	TimeResource maxSendModeUntil();
+	
 	/** Data of devices that will connect later and will be created by the respective driver then*/
 	ResourceList<PreKnownDeviceData> preKnownDevices();
 	
@@ -179,4 +184,10 @@ public interface HardwareInstallConfig extends Data {
 	
 	/** History of configuration changes via GUI (for now roomcontrol only)*/
 	ResourceList<StringResource> actionHistory();
+	
+	/** History of configuration changes in the issue settings*/
+	ResourceList<StringResource> issueHistory();
+	
+	/** Last ID used in issue setting history*/
+	IntegerResource issueHistoryID();
 }
