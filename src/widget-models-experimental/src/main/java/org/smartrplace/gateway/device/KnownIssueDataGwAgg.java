@@ -8,4 +8,11 @@ public interface KnownIssueDataGwAgg extends KnownIssueDataGw {
 	IntegerResource heartbeatFailed();
 	
 	IntegerResource alarmingDeactivated();
+
+	/** Addition resource for logging */
+	IntegerResource thermostatNum();
+	IntegerResource wallThermostatNum();
+	IntegerResource windowSensNum();
+	IntegerResource airconNum();
+	IntegerResource otherRealDeviceNum();
 }

@@ -92,13 +92,5 @@ public interface KnownIssueDataGw extends PhysicalElement {
 	IntegerArrayResource devicesByTypeIssuesManufacturer();
 	IntegerArrayResource devicesByTypeIssuesCustomer();
 
-	/** Addition resource for logging */
-	IntegerResource thermostatNum();
-	IntegerResource wallThermostatNum();
-	IntegerResource windowSensNum();
-	IntegerResource airconNum();
-	IntegerResource otherRealDeviceNum();
-
-
 	MemoryTimeseriesPST referenceForDeviceHandler();
 }
