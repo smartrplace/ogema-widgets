@@ -194,6 +194,14 @@ public class ValueResourceHelper {
 			return false;
 		return setCreate(fres, value);
 	}
+	public static boolean setCreateIfChanged(BooleanResource fres, boolean value) {
+		if(!fres.exists())
+			return setCreate(fres, value);
+		if(fres.getValue() == value)
+			return false;
+		return setCreate(fres, value);
+	}
+
 	/** Write only if the value has changed
 	 * 
 	 * @param fres

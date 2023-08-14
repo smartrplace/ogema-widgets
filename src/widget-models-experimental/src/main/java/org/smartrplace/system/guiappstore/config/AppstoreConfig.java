@@ -4,6 +4,7 @@ import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.prototypes.Configuration;
+import org.smartrplace.gateway.device.KnownIssueDataGwAgg;
 
 /** 
  * The global configuration resource type for this app.
@@ -45,4 +46,7 @@ public interface AppstoreConfig extends Configuration {
 	/** For local appstore here a head version entry should exist representing a software setup
 	 * not represented by a local backup*/
 	SystemUpdate headVersion();
+	
+	/** Aggregated data like number of datapoints, knownIssues etc.*/
+	KnownIssueDataGwAgg aggregatedStatistics();
 }

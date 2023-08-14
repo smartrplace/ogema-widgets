@@ -4,6 +4,7 @@ import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.prototypes.PhysicalElement;
+import org.smartrplace.gateway.device.GatewaySuperiorData;
 
 /** 
  * Access configuration for gateways and groups of them.
@@ -11,6 +12,8 @@ import org.ogema.model.prototypes.PhysicalElement;
 public interface GatewayData extends PhysicalElement {
 	//@Deprecated
 	//ResourceList<GatewayGroupData> groups();
+	/** Reference to data synchronized via Resource-replicator to superior*/
+	GatewaySuperiorData gwSuperiorData();
 	
 	GatewayGroupData installationLevelGroup();
 	
