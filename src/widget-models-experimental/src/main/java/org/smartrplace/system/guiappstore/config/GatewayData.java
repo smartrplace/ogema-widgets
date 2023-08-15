@@ -1,10 +1,12 @@
 package org.smartrplace.system.guiappstore.config;
 
 import org.ogema.core.model.simple.BooleanResource;
+import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.prototypes.PhysicalElement;
 import org.smartrplace.gateway.device.GatewaySuperiorData;
+import org.smartrplace.gateway.device.KnownIssueDataAggforLog;
 
 /** 
  * Access configuration for gateways and groups of them.
@@ -14,6 +16,8 @@ public interface GatewayData extends PhysicalElement {
 	//ResourceList<GatewayGroupData> groups();
 	/** Reference to data synchronized via Resource-replicator to superior*/
 	GatewaySuperiorData gwSuperiorData();
+	/** Evaluation data for gateway not in synchronization*/
+	KnownIssueDataAggforLog kniForLog();
 	
 	GatewayGroupData installationLevelGroup();
 	

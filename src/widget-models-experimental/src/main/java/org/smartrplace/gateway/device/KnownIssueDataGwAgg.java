@@ -9,10 +9,5 @@ public interface KnownIssueDataGwAgg extends KnownIssueDataGw {
 	
 	IntegerResource alarmingDeactivated();
 
-	/** Addition resource for logging */
-	IntegerResource thermostatNum();
-	IntegerResource wallThermostatNum();
-	IntegerResource windowSensNum();
-	IntegerResource airconNum();
-	IntegerResource otherRealDeviceNum();
+	KnownIssueDataAggforLog kniForLog();
 }

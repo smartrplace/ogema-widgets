@@ -85,6 +85,7 @@ public interface KnownIssueDataGw extends PhysicalElement {
 	IntegerArrayResource devicesByTypeWithActiveAlarms();
 	
 	IntegerArrayResource devicesByTypeIssuesNone();
+	IntegerArrayResource devicesByTypeIssuesBacklog();
 	IntegerArrayResource devicesByTypeIssuesSupDevUrgent();
 	IntegerArrayResource devicesByTypeIssuesSupDevStd();
 	IntegerArrayResource devicesByTypeIssuesOpUrgent();
