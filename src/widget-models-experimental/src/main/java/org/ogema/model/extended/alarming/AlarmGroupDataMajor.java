@@ -43,6 +43,9 @@ public interface AlarmGroupDataMajor extends AlarmGroupData {
 	 */
 	StringArrayResource devicesRelated();
 	
+	/** Name of the first element device of {@link #devicesRelated()}*/
+	StringResource firstDeviceName();
+	
 	/** This link shall be set for ongoing issues on the gateway to access device information like for AlarmGroupData
 	 * elements that are direct children in {@link InstallAppDeviceBase#knownFault()}
 	 * Note: The element shall be kept locally even if released.
