@@ -37,6 +37,12 @@ Icon.prototype.update = function (data) {
    sub.off('click');
    var gw = this;
    if (enabled) {
-   		sub.on('click', function() { gw.sendPOST(); });
+        if (data.hasOwnProperty("link")) {
+			var link = data.link;
+			sub.on('click', function() { window.open(link, target="_blank"); });
+		}
+		else { 
+   			sub.on('click', function() { gw.sendPOST(); });
+   		}
    }
 };

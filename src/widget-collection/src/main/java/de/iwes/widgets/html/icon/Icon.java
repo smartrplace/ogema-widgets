@@ -33,6 +33,7 @@ public class Icon extends OgemaWidgetBase<IconData> {
 	private float defaultScale = Float.NaN;
 	private boolean defaultEnabled = false;
 	private boolean defaultOgemaServletSource = false;
+	private String defaultLink = null;
 
 	/*********** Constructor **********/
 
@@ -73,6 +74,7 @@ public class Icon extends OgemaWidgetBase<IconData> {
 			opt.enable();
 		else
 			opt.disable();
+		opt.setLink(defaultLink);
 		opt.setOgemaServletSource(defaultOgemaServletSource);
 	}
 
@@ -121,7 +123,24 @@ public class Icon extends OgemaWidgetBase<IconData> {
 	public void setScale(float scale, OgemaHttpRequest req) {
 		getData(req).setScale(scale);
 	}
+	
+	public String getLink(OgemaHttpRequest req) {
+		return getData(req).getLink();
+	}
 
+	/**
+	 * Set to null to remove link
+	 * @param link
+	 * @param req
+	 */
+	public void setLink(String link, OgemaHttpRequest req) {
+		getData(req).setLink(link);
+	}
+
+	public void setDefaultLink(String link) {
+		this.defaultLink = link;
+	}
+	
 	/**
 	 * Call this once to trigger POST requests when the user clicks the icon.
 	 */

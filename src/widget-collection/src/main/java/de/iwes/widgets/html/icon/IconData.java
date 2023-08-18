@@ -31,6 +31,7 @@ public class IconData extends WidgetData {
 	private IconType iconType = null;
 	private float scale = Float.NaN;
 	private boolean isOgemaServlet = false;
+	private String link = null;
 
 	/*
 	 ********** Constructor *********
@@ -55,6 +56,8 @@ public class IconData extends WidgetData {
         	if (isOgemaServlet && !isAbsolutePath(iconType.getBrowserPath()))
         		obj.put("ogemaServlet", true);
         }
+        if (link != null)
+        	obj.put("link", link);
         return obj;
     }
 
@@ -115,6 +118,14 @@ public class IconData extends WidgetData {
 
 	public void setScale(float scale) {
 		this.scale = scale;
+	}
+	
+	public String getLink() {
+		return link;
+	}
+
+	public void setLink(String link) {
+		this.link = link == null || link.trim().isEmpty() ? null : link;
 	}
 
 	@Override

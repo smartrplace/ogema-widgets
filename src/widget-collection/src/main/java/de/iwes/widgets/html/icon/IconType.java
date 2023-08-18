@@ -32,6 +32,7 @@ public class IconType {
 	public static final IconType CLOSE = new IconType(BASE_PATH + "/tango/Emblem-unreadable.svg");
 	public static final IconType IMPORTANT = new IconType(BASE_PATH + "/tango/Emblem-important.svg");
 	public static final IconType HELP_CONTENT = new IconType(BASE_PATH + "/tango/Help-content.svg");
+	public static final IconType EXTERNAL_LINK = new IconType(BASE_PATH + "/publicicons/link.svg");
 
 	private final String browserPath;
 
