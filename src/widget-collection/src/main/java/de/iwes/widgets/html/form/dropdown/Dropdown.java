@@ -118,9 +118,8 @@ public class Dropdown extends OgemaWidgetBase<DropdownData> implements SubmitWid
 			opt.setAddEmptyOption(defaultAddEmptyOption, defaultEmptyOptLabel);
 		else
 			opt.setAddEmptyOption(defaultAddEmptyOption);
-		if (defaultOptions != null) {
+		if (defaultOptions != null)
 			opt.setOptions(defaultOptions);
-		}
 		if (defaultUrlParam != null)
 			opt.setSelectByUrlParam(defaultUrlParam);
 		super.setDefaultValues(opt);

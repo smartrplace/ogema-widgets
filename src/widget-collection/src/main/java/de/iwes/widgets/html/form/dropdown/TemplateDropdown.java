@@ -78,8 +78,10 @@ public class TemplateDropdown<T> extends Dropdown implements TemplateWidget<T>, 
 		if (defaultItems != null) {
 			opt2.update(defaultItems);
 		}
-		if (defaultSelected != null)
+		if (defaultSelected != null) {
 			opt2.selectItem(defaultSelected);
+			opt2.defaultSelected();
+		}
 	}
 
 	/*

@@ -98,7 +98,10 @@ public class ResourceDropdown<R extends Resource> extends TemplateDropdown<R> im
 		@SuppressWarnings("unchecked")
 		ResourceDropdownData<R> opt2 = (ResourceDropdownData<R>) opt;
 		opt2.setType(defaultType);
-		opt2.selectItem(defaultSelected); // works only if resources are set manually... then the default options have been set already
+		if (defaultSelected != null) {
+			opt2.selectItem(defaultSelected);
+			opt2.defaultSelected();
+		}
 	}
 
 	@Override

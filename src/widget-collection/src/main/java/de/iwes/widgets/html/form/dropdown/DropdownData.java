@@ -42,6 +42,7 @@ public class DropdownData extends WidgetData {
     protected boolean addEmptyOpt = false;
     protected String emptyOptLabel = "";
     protected String urlParam = null;
+    protected boolean isDefaultSelected = false;  // only relevant if urlParam is set
     
 	/*********** Constructor **********/
 	
@@ -70,8 +71,13 @@ public class DropdownData extends WidgetData {
 	        for (DropdownOption o : optionLoc) {
 	            array.put(o.getJSON(req.getLocale()));
 	        }
-	        if (urlParam != null)
+	        if (urlParam != null) {
 	        	result.put("syncParam", urlParam);
+	        	if (this.isDefaultSelected) {
+	        		result.put("defaultSelected", true);
+	        		this.isDefaultSelected = false;
+	        	}
+	        }
         } finally {
         	writeUnlock();
         }
@@ -194,7 +200,6 @@ public class DropdownData extends WidgetData {
     	}
     }
     
-    
     public DropdownOption getSelected() {
     	readLock();
     	try {
@@ -230,6 +235,10 @@ public class DropdownData extends WidgetData {
     
     public void selectSingleOption(String value) {
     	selectSingleOption(value, true);
+    }
+    
+    public void defaultSelected() {
+    	this.isDefaultSelected = true;
     }
     
     public void selectSingleOption(String value, boolean checkForDouble) {

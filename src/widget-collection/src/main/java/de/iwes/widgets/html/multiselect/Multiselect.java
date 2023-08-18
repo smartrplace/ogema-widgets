@@ -103,9 +103,8 @@ public class Multiselect extends OgemaWidgetBase<MultiselectData> {
 	
 	@Override
 	protected void setDefaultValues(MultiselectData opt) {
-		if (defaultOptions != null) {
+		if (defaultOptions != null)
 			opt.setOptions(defaultOptions);
-		}
 		if (defaultUrlParam != null)
 			opt.setSelectByUrlParam(defaultUrlParam);
 //		if (defaultWidth != null)

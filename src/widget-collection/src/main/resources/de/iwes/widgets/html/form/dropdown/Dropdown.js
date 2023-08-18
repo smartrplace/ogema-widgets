@@ -60,36 +60,38 @@ Dropdown.prototype.update = function (data) {
         }
 
         this.dropdownOptions.html(html);
-        if (!hasSelected && this.syncParam) {
-			var params = new URLSearchParams(window.location.search);
-			var value = params.get(this.syncParam);
-			if (value !== null) {
-				value = value.toLowerCase();
-				var optValueFound;
-				var optLabelFound;
-				for (var i = 0; i < options.length; i++) {
-					var opt = options[i];
-					if (opt.value.toLowerCase() === value) {
-						optValueFound = opt;
-						break;
+        if (this.syncParam) {
+	    	if (!hasSelected || data.defaultSelected) {
+				var params = new URLSearchParams(window.location.search);
+				var value = params.get(this.syncParam);
+				if (value !== null) {
+					value = value.toLowerCase();
+					var optValueFound;
+					var optLabelFound;
+					for (var i = 0; i < options.length; i++) {
+						var opt = options[i];
+						if (opt.value.toLowerCase() === value) {
+							optValueFound = opt;
+							break;
+						}
+						if (opt.label.toLowerCase() === value)
+							optLabelFound = opt;
 					}
-					if (opt.label.toLowerCase() === value)
-						optLabelFound = opt;
+					var option = optValueFound || optLabelFound;
+					if (!option && options.length > 0 && !data.defaultSelected) {
+						option = options[0];
+						hasSelected = true;
+					}
+					if (option) {
+						this.dropdown[0].querySelector("select").value = option.value; // should trigger a POST request, but doesn't
+						if (this.sendValueOnChange)
+							this.sendPOST();
+					}
 				}
-				var option = optValueFound || optLabelFound;
-				if (!option && options.length > 0) {
-					option = options[0];
-					hasSelected = true;
-				}
-				if (option) {
-					this.dropdown[0].querySelector("select").value = option.value; // should trigger a POST request, but doesn't
-					if (this.sendValueOnChange)
-						this.sendPOST();
-				}
-			}
-		} 
-		if (this.syncParam && hasSelected)
-			this.syncParams();
+			} 
+			if (hasSelected)
+				this.syncParams();
+		}
     }
 };
 

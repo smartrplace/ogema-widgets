@@ -163,11 +163,11 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
         for (var i = 0; i < artificialAttributes.length; i++) {    // brute force... remove all attributes, and reset those that are sent later. TODO To be improved...
             gw.element.removeAttribute(artificialAttributes[i]);
         }
-        artificalAttributes = [];
+        artificialAttributes = [];
         if (result.hasOwnProperty("attributes")) {
             Object.keys(result.attributes).forEach(function (attr) {
                 gw.element.setAttribute(attr, result.attributes[attr]);
-                artificalAttributes.push(attr);
+                artificialAttributes.push(attr);
             });
         }
 /*        if (result.hasOwnProperty('params')) {  // TODO required?

@@ -47,19 +47,29 @@ Multiselect.prototype.update = function (data) {
     this.dropdownOptions = this.dropdown.find("#list");
     if (hasSelected)
     	this.initialSelectionDone = true;
-    else if (data.syncParam && !this.initialSelectionDone) {
+    if (data.syncParam && (!this.initialSelectionDone || data.defaultSelected)) {
 		var params = new URLSearchParams(window.location.search);	
 		var values = params.getAll(this.syncParam);
 		values = values.map(function(v) { return v.toLowerCase(); })
 		var found = false;
-		Array.from(this.dropdown[0].querySelectorAll("option")).forEach(function(opt) {
+		var allOptions = Array.from(this.dropdown[0].querySelectorAll("option"));
+		var preSelectedIds = undefined;
+		if (this.initialSelectionDone && data.defaultSelected && values.length > 0) {
+			var currentSelected = allOptions
+				.filter(function(opt) {return opt.selected;});
+			preSelectedIds = currentSelect.map(function(opt) {return opt.value;});
+			currentSelected
+				.filter(function(opt) {values.indexOf(opt.value.toLowerCase()) < 0})
+				.forEach(function(opt) {opt.selected = false; });
+		}
+		allOptions.forEach(function(opt) {
 			if (values.indexOf(opt.value.toLowerCase()) >= 0) {
 				opt.selected = "selected";
 				found = true;
 			}
 		});
 		if (!found) {
-			Array.from(this.dropdown[0].querySelectorAll("option")).forEach(function(opt) {
+			allOptions.forEach(function(opt) {
 			if (values.indexOf(opt.label.toLowerCase()) >= 0) {
 				opt.selected = "selected";
 				found = true;
@@ -69,6 +79,10 @@ Multiselect.prototype.update = function (data) {
 		if (found) {
 			//this.initialSelectionDone = true; // this is problematic if there is a chain of multiple dependent widgets
 			this.sendPOST();
+		} else if (preSelectedIds) {
+			allOptions
+				.filter(function(opt) {preSelectedIds.indexOf(opt.value) >= 0})
+				.forEach(function(opt) {opt.selected = "selected"; });
 		}
 	}
     var disabled = data.hasOwnProperty("disabled") && data.disabled;

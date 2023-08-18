@@ -39,6 +39,7 @@ public class MultiselectData extends WidgetData {
     protected final Set<DropdownOption> options = new LinkedHashSet<DropdownOption>();
     private String width = null;
     protected String urlParam = null;
+    protected boolean isDefaultSelected = false;  // only relevant if urlParam is set
     
 	/*********** Constructor **********/
 	
@@ -60,8 +61,13 @@ public class MultiselectData extends WidgetData {
 	        if (width != null) {
 	        	result.put("width", width);
 	        }
-	        if (urlParam != null)
+	        if (urlParam != null) {
 	        	result.put("syncParam", urlParam);
+	        	if (this.isDefaultSelected) {
+	        		result.put("defaultSelected", true);
+	        		this.isDefaultSelected = false;
+	        	}
+	        }
         } finally {
         	readUnlock();
         }
@@ -224,6 +230,10 @@ public class MultiselectData extends WidgetData {
     	} finally {
     		writeUnlock();
     	}
+    }
+    
+    public void defaultSelected() {
+    	this.isDefaultSelected = true;
     }
     
     public void selectMultipleOptions(Collection<String> selectedOptions) {

@@ -102,6 +102,7 @@ public class TemplateMultiselect<T> extends Multiselect implements MultiSelector
 		}
 		if (defaultSelectedItems != null) {
 			opt2.selectMultipleItems(defaultSelectedItems);
+			opt2.defaultSelected();
 		}
 	}
 	
