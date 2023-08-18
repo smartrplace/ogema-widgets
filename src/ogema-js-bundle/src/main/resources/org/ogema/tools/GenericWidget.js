@@ -27,6 +27,7 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
     this.groups = [];
     this.pollingInterval = -1;
     this.subpollingInterval = -1;
+    this.controlledExternally = false;
     var subpollingTimer = undefined;
     var triggeredActionGET = {};    // use widgetID as key, object with keys 'id': function to be executed as value (function name), 'args': arguments (object) 
     var triggeredActionPOST = {};
@@ -298,11 +299,11 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
 				  	  delete ogema.widgets[existing[idx][0]];
 			  }
 			  const initData  = comp.init.filter(data => !ogema.widgets[data[0]]);
-			  // TODO make sure this data is not appended to initialWidgetData requests?
-			  Object.assign(ogema.widgetLoader.initialWidgetInformation, comp.sub);    		  
+			  Object.assign(ogema.widgetLoader.initialWidgetInformation, comp.sub);
 			  // FIXME there is a potential race condition here if the loader is already running; or if multiple widgets try to load subwidgets of the same type
 			  // this is not so easy to overcome without a migration to a promise based widget loader impl
 			  ogema.widgetLoader.loadUniqueWidgetData(initData, true);
+			  
 			  if (comp.subpolling > 0 && !ogema.widgetLoader.pollingStopped) {
 				  this.subpollingInterval = comp.subpolling;
 			      function subpoll() {
@@ -396,7 +397,6 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
                     ogema.widgets[value].invalidateSubWidgets("all");
                 }
                 delete ogema.widgets[value];						
-//                console.log("          deleted ",value);
             } catch (e) {
                 console.error("Widget not found", value);
             }

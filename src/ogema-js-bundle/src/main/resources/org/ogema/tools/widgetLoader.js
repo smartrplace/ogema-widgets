@@ -276,6 +276,8 @@ ogema.widgetLoader.createWidgets = function(widgetScripts, skipFinish, iteration
 				var servletPath = window.location.pathname.replace('.html', '').replace('.htm', '') + '/' + widgetID;
 		    var widget = new window[type](servletPath, widgetID);
 		    ogema.widgets[widgetID] = widget;
+		    if (skipFinish)
+		    	widget.controlledExternally = true;
 		} catch (exception) {
 			if (iteration > 10) {
 		    	console.log("There was an error creating an instance for widgetID: " + widgetID + " of type " + type + " on servletPath: " + servletPath);
@@ -394,11 +396,11 @@ ogema.widgetLoader.loadWidgets = function() {
                             widgetFound = true;
                             break;
                         }
-
                     }
-
                     if (!widgetFound) {
-                        delete ogema.widgets[widgetID];
+						var w = ogema.widgets[widgetID]
+						if (!w.element?.isConnected || !w.controlledExternally)
+	                        delete ogema.widgets[widgetID];
                     }
                 });
 

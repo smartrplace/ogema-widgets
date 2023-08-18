@@ -29,6 +29,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -791,23 +792,14 @@ public abstract class WidgetData {
     		   results.put("composition", comp);
 	    	   final Collection<OgemaWidgetBase<?>> subwidgets = (Collection<OgemaWidgetBase<?>>) (Object) this.getSubWidgets();
 	    	   if (!subwidgets.isEmpty()) {
-	    		   final JSONArray initData = new JSONArray();
-	    		   subwidgets.stream().forEach(w -> {
-	    			   final String className = w.getWidgetClass().getSimpleName();
-	    			   final String widgetSystemPath = w.getWidgetClass().getPackage().getName().replaceAll("\\.", "/");
-	    			   final String widgetWebResourcePath = ("/ogema/widget"  + widgetSystemPath.substring(widgetSystemPath.lastIndexOf("/"))).replaceAll("/+", "/");;
-	    			   initData.put(new JSONArray(new String[]{ w.getId(), className, widgetWebResourcePath + "/" + className +".html" }));
-	    			   w.setControlledByComposite();
-	    		   });
-	    		   final JSONObject subData = new JSONObject();
-	    		   subwidgets.stream()
-	    		   		.forEach(w -> w.appendWidgetInformation(req, subData));
-	    		   comp.put("init", initData);
+		    	   final JSONArray initData = new JSONArray();
+		    	   final JSONObject subData = new JSONObject();
+		    	   WidgetData.appendCompositeSubwidgetsData(subwidgets, initData, subData, req);
+		    	   comp.put("init", initData);
 	    		   comp.put("sub", subData);
 	    		   if (widget.compositeSubwidgetPolling > 0)
 	    			   comp.put("subpolling", widget.compositeSubwidgetPolling);
 	    	   }
-	    	   
 	       }
 	       
 	       List<Map<String,Object>> cnc = new LinkedList<Map<String,Object>>();
@@ -944,6 +936,22 @@ public abstract class WidgetData {
        } finally {
     	   readUnlock();
        }
+   }
+   
+   private static void appendCompositeSubwidgetsData(final Collection<OgemaWidgetBase<?>> subwidgets, final JSONArray initData, 
+		   					final JSONObject subData, final OgemaHttpRequest req) {
+	   if (subwidgets.isEmpty())
+		   return;
+	   subwidgets.stream().forEach(w -> {
+		   final String className = w.getWidgetClass().getSimpleName();
+		   final String widgetSystemPath = w.getWidgetClass().getPackage().getName().replaceAll("\\.", "/");
+		   final String widgetWebResourcePath = ("/ogema/widget"  + widgetSystemPath.substring(widgetSystemPath.lastIndexOf("/"))).replaceAll("/+", "/");;
+		   initData.put(new JSONArray(new String[]{ w.getId(), className, widgetWebResourcePath + "/" + className +".html" }));
+		   w.setControlledByComposite();
+		   if (w.isDynamicWidget()) // ensures that widget subdata will also be appended by w.appendWidgetInformation
+			   w.setComposite(-1); 
+	   });
+	   subwidgets.stream().forEach(w -> w.appendWidgetInformation(req, subData));
    }
    
    protected JSONObject collectSubwidgetData(OgemaHttpRequest req) {
