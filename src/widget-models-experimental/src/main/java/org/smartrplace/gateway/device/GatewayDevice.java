@@ -15,6 +15,11 @@ import org.smartrplace.monitoring.vnstat.resources.NetworkTrafficData;
 /** Sensor and actor data for the gateway itself<br>
  * Note that a top-level resource of this type can be obtained/created via the method ResourceHelper#getLocalDevice(ApplicationManager)*/
 public interface GatewayDevice extends PhysicalElement {
+	/** If this is active and non-empty then the gateway is a subgateway. If possible provide the super-gateway-id
+	 * here, otherwise just "T" (for true)
+	 */
+	StringResource subGatewayToSuperGw();
+	
 	/** Each time a pull operation on Git is performed on update shall be written into the resource:
 	 * 1: success, no update found
 	 * 2: update found, OGEMA restart triggered (more details may be provided with additional positive values)
