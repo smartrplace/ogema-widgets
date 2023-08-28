@@ -93,10 +93,15 @@ public interface KnownIssueDataGw extends PhysicalElement {
 	IntegerArrayResource devicesByTypeIssuesManufacturer();
 	IntegerArrayResource devicesByTypeIssuesCustomer();
 
+	/** Number of issues assigned as relevant without notification. Note that we only require one issue per device handler type per
+	 * analysis assigned - type to be set, so a positive number here may not indicate a real issue.
+	 */
 	IntegerArrayResource devicesByTypeIssuesWithoutNotification();
-	IntegerArrayResource devicesByTypeIssuesNotifcation3TimesSent();
+
 	/** Number of device handlers for which at least one notification would be required, but none is set */
 	IntegerResource notificationPerTypeMissing();
+
+	IntegerArrayResource devicesByTypeIssuesNotifcation3TimesSent();
 	
 	MemoryTimeseriesPST referenceForDeviceHandler();
 }
