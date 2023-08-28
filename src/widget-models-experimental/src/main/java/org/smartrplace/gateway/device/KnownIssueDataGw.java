@@ -93,5 +93,8 @@ public interface KnownIssueDataGw extends PhysicalElement {
 	IntegerArrayResource devicesByTypeIssuesManufacturer();
 	IntegerArrayResource devicesByTypeIssuesCustomer();
 
+	IntegerArrayResource devicesByTypeIssuesWithoutNotification();
+	IntegerArrayResource devicesByTypeIssuesNotifcation3TimesSent();
+	
 	MemoryTimeseriesPST referenceForDeviceHandler();
 }

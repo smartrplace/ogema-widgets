@@ -14,4 +14,6 @@ public interface KnownIssueDataAggforLog extends PhysicalElement {
 	IntegerResource roomNum();
 	IntegerResource datapointNum();
 
+	IntegerResource kniWoNotficationNum();
+	IntegerResource kni3TimesSensNum();
 }

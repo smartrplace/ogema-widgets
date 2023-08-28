@@ -46,6 +46,21 @@ public interface SubCustomerSuperiorData extends Data {
 	StringResource phoneNumbersIT();
 
 	/******************************
+	/*** Gatway connection data 
+	*******************************/
+
+	/** Gateway connected via mobile of provider */
+	BooleanResource gatewayConnectionViaMobileProvider();
+	
+	/** 0: Unknown<br>
+	 *  1: No known restrictions tested<br>
+	 *  2: Teach-in not possible<br>
+	 *  3: VPN blocked<br>
+	 *  100: Everything blocked
+	 */
+	IntegerResource networkRestrictions();
+	
+	/******************************
 	/*** Hardware installation data 
 	*******************************/
 	
@@ -67,14 +82,6 @@ public interface SubCustomerSuperiorData extends Data {
 	 *  4: special (see separate data)
 	 */
 	FloatResource summerWinterModeSwitching();
-	
-	/** 0: Unknown<br>
-	 *  1: No known restrictions tested<br>
-	 *  2: Teach-in not possible<br>
-	 *  3: VPN blocked<br>
-	 *  100: Everything blocked
-	 */
-	IntegerResource networkRestrictions();
 	
 	/** 0: unknown<br>
 	 *  1: not required<br>
