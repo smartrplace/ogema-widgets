@@ -51,4 +51,8 @@ public interface AlarmGroupDataMajor extends AlarmGroupData {
 	 * Note: The element shall be kept locally even if released.
 	 */
 	InstallAppDevice parentForOngoingIssues();
+	
+	/** More information on emails and phone calls shall be obtained from wiki / support email Sent folder*/
+	TimeResource lastEmailSent();
+	TimeResource lastPhoneCallWithCustomer();
 }

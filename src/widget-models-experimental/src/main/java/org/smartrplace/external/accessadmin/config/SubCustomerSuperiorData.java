@@ -19,7 +19,8 @@ public interface SubCustomerSuperiorData extends Data {
 	IntegerResource aggregationType();
 	
 	/** Comma-separated list of email addresses that shall be used for customer maintenance requests. 
-	 * This shall include tech contacts and admin email addresses received from CMS (or customer addresses directly created on the gateway)
+	 * This shall include tech contacts and admin email addresses received from CMS (or customer addresses directly created on the gateway)<br>
+	 * !!! NOTE: The name "additional" is misleading now, but the existing resources cannot easily be renamed !!!
 	 */
 	StringResource additionalAdminEmailAddresses();
 	
@@ -88,6 +89,15 @@ public interface SubCustomerSuperiorData extends Data {
 	 *  2: do contact sales first
 	 */
 	IntegerResource contactSalesBeforeInformation();
+	
+	/** 0: unknown/default (like option 1)<br>
+	 *  1: via email, use phone if urgent <br>
+	 *  2: via email only, even if urgent <br>
+	 *  3: via phone only, do not send email if not coordinated with sales <br>
+	 *  4: via email, then directly also phone (email for documentation purposes)<br>
+	 *  5: via phone and email if not reached via phone<br>
+	 */
+	IntegerResource contactPreferences();
 	
 	/** 0: unknown<br>
 	 *  1: yes
