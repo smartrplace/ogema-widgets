@@ -93,6 +93,11 @@ public interface KnownIssueDataGw extends PhysicalElement {
 	IntegerArrayResource devicesByTypeIssuesManufacturer();
 	IntegerArrayResource devicesByTypeIssuesCustomer();
 
+	IntegerResource operationActionRequestedShortTerm();
+	IntegerResource appointmentRequestedShortTerm();
+	IntegerResource dev1RequestedShortTerm();
+	IntegerResource dev2RequestedShortTerm();
+
 	/** Number of issues assigned as relevant without notification. Note that we only require one issue per device handler type per
 	 * analysis assigned - type to be set, so a positive number here may not indicate a real issue.
 	 */
