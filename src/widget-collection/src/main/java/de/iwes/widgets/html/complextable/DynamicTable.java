@@ -15,12 +15,16 @@
  */
 package de.iwes.widgets.html.complextable;
 
+import java.util.AbstractMap;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import de.iwes.widgets.api.extended.OgemaWidgetBase;
 import de.iwes.widgets.api.extended.plus.TemplateWidget;
@@ -325,6 +329,27 @@ public class DynamicTable<T> extends OgemaWidgetBase<DynamicTableData<T>> implem
 	 */
 	public void setHeaderFontColor(String rgb, OgemaHttpRequest req) {
 		getData(req).setHeaderFontColor(rgb);
+	}
+	
+	/**
+	 * @param backgroundColor may be null, but then items scrolling below the header remain visible.
+	 */
+	public void setDefaultStickyHeader(String backgroundColor) {
+		addDefaultCssItem(">div>div>table>tbody>tr:first-child", stickyHeader(backgroundColor));
+	}
+	
+	public void setStickyHeader(String backgroundColor, OgemaHttpRequest req) {
+		addCssItem(">div>div>table>tbody>tr:first-child", stickyHeader(backgroundColor), req);
+	}
+	
+	private static Map<String, String> stickyHeader(String backgroundColor) {
+		final Stream.Builder<Map.Entry<String, String>> builder = Stream.<Map.Entry<String, String>> builder()
+			.add(new AbstractMap.SimpleEntry<String, String>("position", "sticky"))
+			.add(new AbstractMap.SimpleEntry<String, String>("top", "0px"))
+			.add(new AbstractMap.SimpleEntry<String, String>("z-index", "100"));
+		if (backgroundColor != null)
+			builder.add(new AbstractMap.SimpleEntry<String, String>("background-color", backgroundColor));
+		return builder.build().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 	
 	/**
