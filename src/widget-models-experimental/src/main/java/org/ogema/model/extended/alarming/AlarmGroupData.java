@@ -114,6 +114,9 @@ public interface AlarmGroupData extends Data {
 	 */
 	IntegerResource reminderType();
 
+	/** Count number of emails sent out without change of responsibility*/
+	IntegerResource reminderCount();
+	
 	/** Gateway-wide unique ID of all known issues ever occured.
 	 * TODO: Make this integer?*/
 	StringResource knownIssueId();
