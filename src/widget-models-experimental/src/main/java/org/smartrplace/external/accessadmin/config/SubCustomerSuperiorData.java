@@ -62,7 +62,7 @@ public interface SubCustomerSuperiorData extends Data {
 	IntegerResource networkRestrictions();
 	
 	/******************************
-	/*** Hardware installation data 
+	/*** Battery change data 
 	*******************************/
 	
 	/** 0: unknown<br>
@@ -71,6 +71,15 @@ public interface SubCustomerSuperiorData extends Data {
 	 *  3: customer performs all battery changes
 	 */
 	IntegerResource batteryChangeLevel();
+	
+	BooleanResource batteriesMustBeSent();
+	
+	/** Write yes/no or device types that need to be changed in full beginning of heating/cooling season*/
+	StringResource changeBatteriesStartingSeason();
+	
+	/******************************
+	/*** Hardware installation data 
+	*******************************/
 	
 	/** Customer can be asked to uninstall thermostat and reinstall, adapt thermostat */
 	BooleanResource customerPerformsThermostatAdapt();
@@ -135,4 +144,25 @@ public interface SubCustomerSuperiorData extends Data {
 	 * <br>Copied from LocalGatewayInformation*/
 	StringResource systemLocale();
 
+	/******************************
+	/*** Service organization 
+	*******************************/
+	
+	/** Define regional codes for each site*/
+	IntegerResource region();
+	
+	/** 0: unknown<br>
+	 *  1: not relevant<br>
+	 *  2: not urgent<br>
+	 *  3: intermediate<br>
+	 *  4: urgent<br>
+	 *  5: very urgent<br>
+	 */
+	IntegerResource onsiteVisitPriority();
+	IntegerResource batteryChangePriority();
+	
+	/** 0: no special testing gateway<br>
+	 *  1: test gateway that might have special software version
+	 */
+	IntegerResource testGatewayStatus();
 }

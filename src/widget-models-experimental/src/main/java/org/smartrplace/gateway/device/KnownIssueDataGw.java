@@ -2,9 +2,9 @@ package org.smartrplace.gateway.device;
 
 import org.ogema.core.model.ModelModifiers.NonPersistent;
 import org.ogema.core.model.array.IntegerArrayResource;
-import org.ogema.core.model.array.StringArrayResource;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.IntegerResource;
+import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.prototypes.PhysicalElement;
 
 public interface KnownIssueDataGw extends PhysicalElement {
@@ -98,6 +98,12 @@ public interface KnownIssueDataGw extends PhysicalElement {
 	IntegerResource dev1RequestedShortTerm();
 	IntegerResource dev2RequestedShortTerm();
 
+	IntegerArrayResource devicesBatteryCritical();
+	IntegerArrayResource devicesBatteryWarning();
+	IntegerArrayResource devicesBatteryChangeRecommended();
+	IntegerArrayResource devicesBatteryEmpty();
+	TimeResource lastBuildTime();
+	
 	/** Number of issues assigned as relevant without notification. Note that we only require one issue per device handler type per
 	 * analysis assigned - type to be set, so a positive number here may not indicate a real issue.
 	 */
