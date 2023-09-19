@@ -77,6 +77,13 @@ public interface SubCustomerSuperiorData extends Data {
 	/** Write yes/no or device types that need to be changed in full beginning of heating/cooling season*/
 	StringResource changeBatteriesStartingSeason();
 	
+	/** If true the customer received everything required for the season-starting (e.g. appointment for battery changes, batteries sent out, battery report, ...=
+	 */
+	BooleanResource customerReceivedWhatRequired();
+	
+	/** Comment for gateway maintenance, not regarding ongoing issues (e.g. what still has to be sent for battery exchange*/
+	StringResource gatewayMaintenanceComment();
+
 	/******************************
 	/*** Hardware installation data 
 	*******************************/
