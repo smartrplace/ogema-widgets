@@ -166,10 +166,10 @@ public interface SubCustomerSuperiorData extends Data {
 	 *  5: very urgent<br>
 	 */
 	IntegerResource onsiteVisitPriority();
-	IntegerResource batteryChangePriority();
+	//IntegerResource batteryChangePriority();
 	
 	/** 0: no special testing gateway<br>
 	 *  1: test gateway that might have special software version
 	 */
-	IntegerResource testGatewayStatus();
+	//IntegerResource testGatewayStatus();
 }
