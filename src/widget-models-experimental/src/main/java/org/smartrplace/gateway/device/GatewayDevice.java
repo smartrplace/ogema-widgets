@@ -150,4 +150,6 @@ public interface GatewayDevice extends PhysicalElement {
     FloatResource pstTSServlet();
     @Deprecated
     FloatResource pstTSServletCounter();
+	
+	ResourceList<InterfaceInfo> networkInterfaces();
 }
