@@ -300,10 +300,20 @@ public class LogHelper {
         		ValueResourceHelper.setCreate(gw.systemRestartCounterLastHours(), 1);
         	} else
         		gw.systemRestartCounterLastHours().getAndAdd(1);
+        	new CountDownDelayedExecutionTimer(appManager, 20*MINUTE_MILLIS) {
+				
+				@Override
+				public void delayedExecution() {
+					//Rewrite for Replicator
+					gw.systemRestart().setValue(gw.systemRestart().getValue());
+				}
+			};
         	new CountDownDelayedExecutionTimer(appManager, 2*HOUR_MILLIS) {
 				
 				@Override
 				public void delayedExecution() {
+					//Rewrite for Replicator
+					gw.systemRestart().setValue(gw.systemRestart().getValue());
 					gw.systemRestartCounterLastHours().setValue(0);
 				}
 			};
