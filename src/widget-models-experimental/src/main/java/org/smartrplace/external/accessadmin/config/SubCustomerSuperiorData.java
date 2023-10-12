@@ -69,6 +69,8 @@ public interface SubCustomerSuperiorData extends Data {
 	 *  1: customer does not change any batteries<br>
 	 *  2: customer changes single batteries in urgent cases<br>
 	 *  3: customer performs all battery changes
+	 *  4: in urgent cases contact customer to offer own battery change as an exception<br>
+	 *  5: no batteries
 	 */
 	IntegerResource batteryChangeLevel();
 	
