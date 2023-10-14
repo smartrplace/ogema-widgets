@@ -137,6 +137,7 @@ public interface SubCustomerSuperiorData extends Data {
 	ThermostatInstallationData thermostatInstallationData();
 
 	/** Base URL of gateway to connect to via internet, e.g. https://customer.manufacturer.de:2000*/
+	@Deprecated // Not used yet, but shall be switched in the future
 	StringResource gatewayBaseUrl();
 
 	/** Url to gateway installation and operation documentation

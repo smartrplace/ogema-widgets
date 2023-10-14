@@ -34,8 +34,8 @@ public interface LocalGatewayInformation extends PhysicalElement {
 	StringResource id();
 	
 	/** Base URL of gateway to connect to via internet, e.g. https://customer.manufacturer.de:2000
-	 * Use element in SubCustomerSuperiorData instead*/
-	@Deprecated
+	 * Use element in SubCustomerSuperiorData instead<br>
+	 * Note: Shall be switched to SubcustomerSuperiorData#gatewayBaseUrl() in the future*/
 	StringResource gatewayBaseUrl();
 	
 	/** Url to gateway installation and operation documentation
