@@ -1,6 +1,7 @@
 package org.ogema.model.extended.alarming;
 
 import org.ogema.core.model.ResourceList;
+import org.ogema.core.model.array.StringArrayResource;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.FloatResource;
 import org.ogema.core.model.simple.IntegerResource;
@@ -8,7 +9,6 @@ import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.locations.Room;
 import org.ogema.model.prototypes.Data;
-import org.ogema.model.user.NaturalPerson;
 
 /** If the resource exists then an ongoing alarm is active*/
 public interface AlarmGroupData extends Data {
@@ -117,12 +117,9 @@ public interface AlarmGroupData extends Data {
 	/** Count number of emails sent out without change of responsibility*/
 	IntegerResource reminderCount();
 	
-	/** Gateway-wide unique ID of all known issues ever occured.
-	 * TODO: Make this integer?*/
-	StringResource knownIssueId();
-	
-	/** If active and non-empty the issue shall be assigned "Dependent"
+	/** If active and non-empty this resource shall contain devices that also have a known issue
+	 * due to this KnownIssues. These devices shall be assigned "Dependent"
 	 * *In this case the issue is released and analysed together with its parent.
 	 * Note that we cannot set a reference here as this is synchronized with superior.*/
-	StringResource knownIssueParent();
+	StringArrayResource dependentIssueDeviceIds();
 }

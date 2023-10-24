@@ -5,6 +5,7 @@ import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.model.extended.alarming.AlarmGroupDataMajor;
 import org.ogema.model.prototypes.Data;
 import org.ogema.model.user.NaturalPerson;
+import org.smartrplace.apps.hw.install.config.InstallAppDevice;
 import org.smartrplace.external.accessadmin.config.SubCustomerSuperiorData;
 
 public interface GatewaySuperiorData extends Data {
@@ -14,7 +15,7 @@ public interface GatewaySuperiorData extends Data {
 	KnownIssueDataGw knownIssueStatistics();
 	
 	/** Known issues to be synchronized with superior and/or shall be stored for
-	 * staistical purposes.
+	 * statistical purposes.
 	 */
 	ResourceList<AlarmGroupDataMajor> majorKnownIssues();
 	

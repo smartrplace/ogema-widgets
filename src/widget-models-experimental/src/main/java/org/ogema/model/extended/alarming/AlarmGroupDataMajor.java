@@ -1,5 +1,6 @@
 package org.ogema.model.extended.alarming;
 
+import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.array.StringArrayResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
@@ -55,4 +56,26 @@ public interface AlarmGroupDataMajor extends AlarmGroupData {
 	/** More information on emails and phone calls shall be obtained from wiki / support email Sent folder*/
 	TimeResource lastEmailSent();
 	TimeResource lastPhoneCallWithCustomer();
+	
+	/** Status regarding blocking: This shall be present if this is an additional blocking KnownIssue,
+	 * not a standard known issue<br>
+	 * 0: no special blocking status (may not be an additional issue at all)
+	 * 4: Waiting for onsite support
+	 * 5: Waiting for onsite support (send reminders to onsite support)
+	 * 8: Waiting for customer
+	 * 9: Waiting for customer (send reminders to customer)
+	 * 10: Waiting for customer (send official delay notification ("Verzugsmeldung")
+	 * 12: waiting for onsite partner
+	 * 13: waiting for onsite partner (send reminders to partner)
+	 * 14: waiting for onsite partner (send official delay notification ("Verzugsmeldung")
+	 * 16: waiting for internal by auto-reminder
+	 * 20: waiting for supplier
+	 * 21: waiting for supplier (send reminders to supplier)
+	 * 22: waiting for supplier (send official delay notification ("Verzugsmeldung")
+	 */
+	IntegerResource blockingIssueStatus();
+	
+	/** Only relevant for devices blocked : List of references to alarms blocked as long as
+	 * alarm state exists*/
+	ResourceList<AlarmConfiguration> alarmsBlocked();
 }
