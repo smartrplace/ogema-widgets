@@ -91,6 +91,10 @@ public class EnumDropdown<E extends Enum> extends TemplateDropdown<E> {
 			String val2 = o2.id();
 			if (val1.equals(val2))
 				return 0;
+			if (val1.equals(DropdownData.EMPTY_OPT_ID))
+				return -1;
+			if (val2.equals(DropdownData.EMPTY_OPT_ID))
+				return 1;
 			E[] el = getAllElements();
 			for (E e: el) {
 				String name = e.name();
@@ -103,6 +107,18 @@ public class EnumDropdown<E extends Enum> extends TemplateDropdown<E> {
 		}
 
 	}
+	
+	@Override
+	public void setAddEmptyOption(boolean addEmptyOption, OgemaHttpRequest req) {
+		super.setAddEmptyOption(addEmptyOption, req);
+		update(Arrays.asList(getAllElements()), req);
+	}
+	
+	@Override
+	public void setAddEmptyOption(boolean addEmptyOption, String emptyOptLabel, OgemaHttpRequest req) {
+		super.setAddEmptyOption(addEmptyOption, emptyOptLabel, req);
+		update(Arrays.asList(getAllElements()), req);
+	} 
 	
 	/**
 	 * not supported by EnumDropdown
