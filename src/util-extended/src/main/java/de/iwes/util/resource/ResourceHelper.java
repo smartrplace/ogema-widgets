@@ -151,7 +151,7 @@ public class ResourceHelper {
 try {
 			res = res.getParent();
 }catch(NullPointerException e) {
-	throw new NullPointerException(" !!!! Exception in hasParentAboveType - res:"+res.getLocation()+"  r:"+r.getLocation());
+	throw new NullPointerException(" !!!! Exception in hasParentAboveType - useLocationResource:"+useLocationResource+"  r:"+(r==null?"null":r.getLocation())+" res=null:"+(res==null)+"  i:"+i);
 }
 			if(res == null) return -1;
 			if(typeMustMatchExactly) {
