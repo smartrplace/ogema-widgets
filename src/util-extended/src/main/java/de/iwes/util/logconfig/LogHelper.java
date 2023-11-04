@@ -281,6 +281,7 @@ public class LogHelper {
 	 * @param appManager
 	 */
 	private static boolean loggedStartup = false;
+	private static boolean restartMoreThen20MinutesAgo = false;
 	public static void logStartup(int startupAppId, ApplicationManager appManager) {
         GatewayDevice gw = ResourceHelper.getLocalDevice(appManager);
         if(!gw.systemRestart().exists()) {
@@ -306,6 +307,7 @@ public class LogHelper {
 				public void delayedExecution() {
 					//Rewrite for Replicator
 					gw.systemRestart().setValue(gw.systemRestart().getValue());
+					restartMoreThen20MinutesAgo = true;
 				}
 			};
         	new CountDownDelayedExecutionTimer(appManager, 2*HOUR_MILLIS) {
@@ -326,7 +328,15 @@ public class LogHelper {
         ValueResourceHelper.setCreate(gw.systemRestart(), 0);
 	}
 
+	/** Version for normal gateway */
 	public static boolean isStartupComplete(ApplicationManager appManager) {
+		return isStartupComplete(appManager, false);
+	}
+	
+	/** More generic */
+	public static boolean isStartupComplete(ApplicationManager appManager, boolean requireTimeout) {
+		if(requireTimeout && restartMoreThen20MinutesAgo)
+			return true;
 		GatewayDevice gw = ResourceHelper.getLocalDevice(appManager);
 	    int curVal = gw.systemRestart().getValue();
         return curVal >= 1020;

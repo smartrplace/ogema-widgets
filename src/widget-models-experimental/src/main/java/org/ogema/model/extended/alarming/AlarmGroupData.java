@@ -122,4 +122,7 @@ public interface AlarmGroupData extends Data {
 	 * *In this case the issue is released and analysed together with its parent.
 	 * Note that we cannot set a reference here as this is synchronized with superior.*/
 	StringArrayResource dependentIssueDeviceIds();
+	
+	/** We set a reference also to the parent where this device is set in {@link #dependentIssueDeviceIds()}*/
+	AlarmGroupData dependentIssueParent();
 }

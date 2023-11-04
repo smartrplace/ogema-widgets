@@ -4,6 +4,7 @@ import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.FloatResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
+import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.devices.buildingtechnology.Thermostat;
 import org.ogema.model.prototypes.Data;
 import org.smartrplace.system.guiappstore.config.ThermostatInstallationData;
@@ -79,12 +80,20 @@ public interface SubCustomerSuperiorData extends Data {
 	/** Write yes/no or device types that need to be changed in full beginning of heating/cooling season*/
 	StringResource changeBatteriesStartingSeason();
 	
+	/*********************************
+	 * Season data
+	 ********************************/
+	
 	/** If true the customer received everything required for the season-starting (e.g. appointment for battery changes, batteries sent out, battery report, ...=
 	 */
 	BooleanResource customerReceivedWhatRequired();
 	
 	/** Comment for gateway maintenance, not regarding ongoing issues (e.g. what still has to be sent for battery exchange*/
 	StringResource gatewayMaintenanceComment();
+	
+	/** Last thermostat decalcification time of most devices
+	 */
+	TimeResource lastGatewayDecalc();
 
 	/******************************
 	/*** Hardware installation data 

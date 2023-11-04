@@ -35,6 +35,8 @@ import org.smartrplace.alarming.escalation.model.AlarmingEscalationSettings;
 public interface HardwareInstallConfig extends Data {
 
 	ResourceList<InstallAppDevice> knownDevices();
+	ResourceList<DeviceTypeData> deviceHandlerData();
+	
 	ResourceList<DevelopmentTask> knownDevelopmentTasks();
 	
 	/** If true then listeners are active. If false then listeners are not active for performance reasons*/
@@ -149,8 +151,15 @@ public interface HardwareInstallConfig extends Data {
 	 */
 	IntegerResource autoThermostatMode();
 	
-	/** 0: Only perform if property is set, 1: off, 2: weekly postpone, 3: daily decalc*/ 
+	/** 0: Only perform if property is set<br>
+	 *  1: off: No postpone takes place, which usually leads to weekly decalc <br>
+	 *  2: weekly postpone (no decalc) <br>
+	 *  3: daily decalc <br>
+	 *  4: perform daily decalc from - until based on noPostponeStart/End, then perform weekly postpone to avoid further decalc
+	 */ 
 	IntegerResource weeklyPostponeMode();
+	TimeResource noPostponeStart();
+	TimeResource noPostponeEnd();
 	
 	/** 0: Let thermostats and other devices send in default rate, typically 1/20
 	 *  1: Force thermostats to default rate, even if thermostat has other special setting

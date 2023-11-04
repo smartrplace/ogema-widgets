@@ -77,8 +77,13 @@ public class DatepickerTimeResource extends Datepicker implements ResourceSelect
     		JSONObject result = super.onPOST(data, req);
     		if (selectedResource != null && selectedResource.exists()) 
     			selectedResource.setValue(getDateLong());
-    		else
+    		else if (selectedResource != null) {
+    			selectedResource.create();
+       			selectedResource.setValue(getDateLong());
+       			selectedResource.activate(false);
+    		} else
     			setDate("");
+    			
     		return result;
     	}
 		
