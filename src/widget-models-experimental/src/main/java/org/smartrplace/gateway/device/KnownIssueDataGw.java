@@ -4,6 +4,7 @@ import org.ogema.core.model.ModelModifiers.NonPersistent;
 import org.ogema.core.model.array.IntegerArrayResource;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.IntegerResource;
+import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.prototypes.PhysicalElement;
 
@@ -113,6 +114,9 @@ public interface KnownIssueDataGw extends PhysicalElement {
 	IntegerResource notificationPerTypeMissing();
 
 	IntegerArrayResource devicesByTypeIssuesNotifcation3TimesSent();
+	
+	/** Summary provided by gateway regarding types still assigned None */
+	StringResource alarmTypeSummary();
 	
 	MemoryTimeseriesPST referenceForDeviceHandler();
 }
