@@ -110,7 +110,10 @@ public interface AlarmGroupData extends Data {
 	 *  1: remind every day
 	 *  2: remind every week
 	 *  3: remind every month
-	 *  -1: no reminders
+	 * 11: remind daily; WiP
+	 * 21: remind weekly; WiP
+	 *  
+	 *  -1: no reminder
 	 */
 	IntegerResource reminderType();
 
