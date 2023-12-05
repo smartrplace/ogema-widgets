@@ -42,7 +42,7 @@ public abstract class CountdownTimerMulti2Single {
 		}
 	}
 
-	public void newEvent() {
+	public synchronized void newEvent() {
 		if(timer != null) {
 			timer.destroy();
 		}
@@ -57,6 +57,8 @@ public abstract class CountdownTimerMulti2Single {
 				if(persistentFlagOpen != null)
 					persistentFlagOpen.setValue(false);
 				CountdownTimerMulti2Single.this.delayedExecution();
+				destroy();
+				timer = null;
 			}
 		};
 	}
