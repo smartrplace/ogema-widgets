@@ -189,6 +189,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 			FloatResource.class);
 	public static final GaRoDataType ValveErrorPositionFb = new GaRoDataType("ValveErrorPosFb", 
 			FloatResource.class);
+	public static final GaRoDataType GlobalButtonLockCt = new GaRoDataType("GlobalButtonLockCt", 
+			BooleanResource.class);
 
 	public static final GaRoDataType HumidityMeasurement = new GaRoDataType("HumidityMeasurement",
 			PercentageResource.class);

@@ -180,6 +180,8 @@ public class GaRoEvalHelper {
 				"ValveErrorPosCt", "VentilFehlerPosition");
 		addRecId(GaRoDataType.ValveErrorPositionFb, new String[] {"/valve/errorRunPosition/stateFeedback"}, recIdSnippets,
 				"ValveErrorPosFb", "VentilFehlerPositionFeedback");
+		addRecId(GaRoDataType.GlobalButtonLockCt, new String[] {"/globalButtonLock"}, recIdSnippets,
+				"GlobalLockCt", "TastenSperre");
 		addRecId(GaRoDataType.InternetConnection, new String[] {"NetworkState/mainNetworkOk"}, recIdSnippets,
 				"Main Internet connection status", "DSL Status");
 		addRecId(GaRoDataType.RSSIDevice, new String[] {"/rssiDevice", "/communicationStatus/RSSI", "/signal/reading"}, recIdSnippets,
