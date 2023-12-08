@@ -45,4 +45,14 @@ public interface DisplayTemplate<T> {
 		return null;
 	}
 	
+	/**
+	 * Relevant when opt groups are active
+	 * @param object
+	 * @param locale
+	 * @return
+	 */
+	default String getOptGroup(T object, OgemaLocale locale) {
+		return null;
+	}
+	
 }

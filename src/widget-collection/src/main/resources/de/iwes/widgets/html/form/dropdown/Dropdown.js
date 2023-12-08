@@ -41,24 +41,68 @@ Dropdown.prototype.update = function (data) {
    	this.syncParam = data.syncParam || undefined;
 
     if (data.hasOwnProperty("options")) {
-		var hasSelected = false;
+        var hasSelected = false;
         var options = data.options;
         var html = "";
+        var optGroupsActive = data.optGroupsActive === true;
+        if (optGroupsActive) {
+            var allOptGroups = [];
+            var isSorted = true;
+            for (var i = 0; i < options.length; i++) {
+                var opt = options[i];
+            	var group = opt.optGroup ? opt.optGroup : "__none__";
+            	var currentIdx = allOptGroups.indexOf(group);
+            	if (currentIdx < 0)
+            	    allOptGroups.push(group);
+            	else if (currentIdx != allOptGroups.length - 1) {
+            	    isSorted = false;
+            	    break;
+            	}
+            }
+            if (!isSorted) {
+            	var optsByGroup = {};
+                for (var i = 0; i < options.length; i++) {
+                    var opt = options[i];
+		    var group = opt.optGroup ? opt.optGroup : "__none__";
+		    if (Object.keys(optsByGroup).indexOf(group) < 0)
+		    	optsByGroup[group] = [];
+		    optsByGroup[group].push(opt);
+            	}
+            	options = [];
+            	var keys = Object.keys(optsByGroup);
+            	for (var i = 0; i < keys.length; i++) {
+            	    var value = optsByGroup[keys[i]];
+            	    for (var j = 0; j < value.length; j++) {
+            	        options.push(value[j]);
+            	    }
+		}
+            }
+        }
+        var previousOptGroup = "";
         for (var i = 0; i < options.length; i++) {
             var selected = options[i].selected;
             if (selected)
             	hasSelected = true;
             var value = options[i].value;
             var label = options[i].label;
+	    if (optGroupsActive) {
+                var group = options[i].optGroup ? options[i].optGroup : "Other";
+                if (group !== previousOptGroup) {
+                    if (previousOptGroup !== "")
+                        html += "</optgroup>";
+                    html += "<optgroup label=\"" + group + "\">"
+                    previousOptGroup = group;
+              	}
+	    }
             html += "<option ";
-
             if (selected === true) {
                 html += "selected=\"selected\" ";
             }
             html += "value=\'" + value + "\'>" + label + "</option>";
 
         }
-
+	if (optGroupsActive && previousOptGroup !== "")
+	    html += "</optgroup>";
         this.dropdownOptions.html(html);
         if (this.syncParam) {
 	    	if (!hasSelected || data.defaultSelected) {

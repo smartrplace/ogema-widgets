@@ -45,6 +45,7 @@ public class Dropdown extends OgemaWidgetBase<DropdownData> implements SubmitWid
 	private boolean defaultAddEmptyOption = false; 
 	private String defaultEmptyOptLabel = null;
 	protected String defaultUrlParam = null;
+	protected boolean defaultActivateOptGroups = false; 
 	
     Comparator<DropdownOption> comparator = new Comparator<DropdownOption>() {
 		
@@ -122,6 +123,7 @@ public class Dropdown extends OgemaWidgetBase<DropdownData> implements SubmitWid
 			opt.setOptions(defaultOptions);
 		if (defaultUrlParam != null)
 			opt.setSelectByUrlParam(defaultUrlParam);
+		opt.setOptGroupsActive(defaultActivateOptGroups);					
 		super.setDefaultValues(opt);
 	}
 
@@ -134,7 +136,15 @@ public class Dropdown extends OgemaWidgetBase<DropdownData> implements SubmitWid
     public Collection<DropdownOption> getDefaultOptions() {
 		return defaultOptions;
 	}
+    
+    public void defaultActivateOptGroups() {
+		this.defaultActivateOptGroups = true;
+	}
 
+    public void defaultActivateOptGroups(boolean active, OgemaHttpRequest req) {
+		getData(req).setOptGroupsActive(active);
+	}
+    
 	public void setDefaultOptions(Collection<DropdownOption> defaultOptions) {
 		this.defaultOptions = defaultOptions;
 	}

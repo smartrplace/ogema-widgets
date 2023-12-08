@@ -17,6 +17,7 @@ package de.iwes.widgets.html.form.dropdown;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -172,16 +173,24 @@ public class TemplateDropdownData<T> extends DropdownData implements TemplateDat
 	 */
 	public void update(Collection<? extends T> items, T select) {
 		Map<String,String> map = new LinkedHashMap<>();
+		final Map<String, String> optGroups = optGroupsActive ? new HashMap<String, String>() : null;
+		final DisplayTemplate<T> template = ((TemplateDropdown<T>) widget).template;
 		String sel = null;
 		for (T item: items) {
 			String[] valLab = getValueAndLabel(item);
 			map.put(valLab[0], valLab[1]);
 			if (item.equals(select))
 				sel = valLab[0];
+			if (optGroupsActive) {
+				final String optGroup = template.getOptGroup(item, OgemaLocale.ENGLISH); // XXX cannot set locale this way
+				if (optGroup != null)
+					optGroups.put(valLab[0], optGroup);
+			}
 		}
 		writeLock();
 		try {
-			super.update(map, sel); // FIXME -> adds non-LabelledItem elements!
+			// FIXME -> adds non-LabelledItem elements... works differently than addItem() method
+			super.update(map, sel, optGroups); 
 			String selected = getSelectedValue();
 			if (selected == null && this.urlParam == null && (!map.isEmpty() || addEmptyOpt)) {
 				LoggerFactory.getLogger(getClass()).error("Error in dropdown widget: no item selected although items should be available");
@@ -226,7 +235,7 @@ public class TemplateDropdownData<T> extends DropdownData implements TemplateDat
 		return new String[]{value, label};
 	}
 	
-	private static class TemplateBasedLabelledItem<T> implements LabelledItem {
+	static class TemplateBasedLabelledItem<T> implements LabelledItem {
 		
 		private final T object;
 		private final TemplateDropdown<T> dropdown;
@@ -249,6 +258,10 @@ public class TemplateDropdownData<T> extends DropdownData implements TemplateDat
 		@Override
 		public String description(OgemaLocale locale) {
 			return dropdown.template.getDescription(object, locale);
+		}
+		
+		public String getOptGroup(OgemaLocale locale) {
+			return dropdown.template.getOptGroup(object, locale);
 		}
 		
 	}

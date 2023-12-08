@@ -18,7 +18,9 @@ package de.iwes.widgets.html.form.dropdown;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONObject;
 
+import de.iwes.widgets.api.extended.WidgetData;
 import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
+import de.iwes.widgets.html.form.dropdown.TemplateDropdownData.TemplateBasedLabelledItem;
 import de.iwes.widgets.template.LabelledItem;
 
 public class ProxyDropdownOption extends DropdownOption {
@@ -32,14 +34,19 @@ public class ProxyDropdownOption extends DropdownOption {
 	}
 	
 	@Override
-	public JSONObject getJSON(OgemaLocale locale) {
-		final JSONObject json = super.getJSON(locale);
+	public JSONObject getJSON(OgemaLocale locale, boolean optGroupsActive) {
+		final JSONObject json = super.getJSON(locale, optGroupsActive);
 		final String label = item.label(locale);
 		final String labelEncoded = label != null ? StringEscapeUtils.escapeHtml4(label) : valueEncoded; 
 		json.put("label", labelEncoded);
 		final String description = item.description(locale);
 		if (description != null)
 			json.put("tooltip", StringEscapeUtils.escapeHtml4(description));
+		if (optGroupsActive && item instanceof TemplateBasedLabelledItem) { // relevant for TemplateDropdown
+			final String optGroup = ((TemplateBasedLabelledItem<?>) item).getOptGroup(locale);
+			if (optGroup != null) 
+				json.put("optGroup", WidgetData.escapeHtmlAttributeValue(optGroup));
+		}
 		return json;
 	}
 	

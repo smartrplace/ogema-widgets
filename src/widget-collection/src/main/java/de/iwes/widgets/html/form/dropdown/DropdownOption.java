@@ -31,6 +31,7 @@ public class DropdownOption implements Serializable, Cloneable, LabelledItem {
     private final String label;
     private final String labelEncoded;
     private final String value;
+    private final String optGroup;
     final String valueEncoded;
     private boolean selected = false;
     
@@ -40,14 +41,20 @@ public class DropdownOption implements Serializable, Cloneable, LabelledItem {
         this.value = Objects.requireNonNull(value);
         this.valueEncoded = WidgetData.escapeHtmlAttributeValue(value);
         this.selected = selected;
+        this.optGroup = null;
     }
     
     public DropdownOption(String value, String label, boolean selected) {
+        this(value, label, selected, null);
+    }
+    
+    public DropdownOption(String value, String label, boolean selected, String optGroup) {
         this.label = Objects.requireNonNull(label);
         this.labelEncoded = StringEscapeUtils.escapeHtml4(label);
         this.value = Objects.requireNonNull(value);
         this.valueEncoded = WidgetData.escapeHtmlAttributeValue(value);
         this.selected = selected;
+        this.optGroup = optGroup != null ? WidgetData.escapeHtmlAttributeValue(optGroup) : null; 
     }
     
     @Override
@@ -115,15 +122,21 @@ public class DropdownOption implements Serializable, Cloneable, LabelledItem {
     
     @Override
     public String toString() {
-    	return getJSON(OgemaLocale.ENGLISH).toString();
+    	return getJSON(OgemaLocale.ENGLISH, false).toString();
     }
 
     public JSONObject getJSON(final OgemaLocale locale) {
+    	return this.getJSON(locale, false);
+    }
+    
+    public JSONObject getJSON(final OgemaLocale locale, boolean optGroupsActive) {
         JSONObject result = new JSONObject();
         if (labelEncoded != null)
         	result.put("label", labelEncoded);
         result.put("value", valueEncoded);
         result.put("selected", selected);
+        if (optGroupsActive && this.optGroup != null)
+        	result.put("optGroup", this.optGroup);
         return result;
     }
     

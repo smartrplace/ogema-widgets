@@ -43,6 +43,7 @@ public class DropdownData extends WidgetData {
     protected String emptyOptLabel = "";
     protected String urlParam = null;
     protected boolean isDefaultSelected = false;  // only relevant if urlParam is set
+    protected boolean optGroupsActive = false;
     
 	/*********** Constructor **********/
 	
@@ -68,8 +69,11 @@ public class DropdownData extends WidgetData {
 //	        } else {
         	optionLoc = options;
 //	        }
+        	if (this.optGroupsActive) {
+        		result.put("optGroupsActive", true);
+        	}
 	        for (DropdownOption o : optionLoc) {
-	            array.put(o.getJSON(req.getLocale()));
+	            array.put(o.getJSON(req.getLocale(), optGroupsActive));
 	        }
 	        if (urlParam != null) {
 	        	result.put("syncParam", urlParam);
@@ -285,6 +289,10 @@ public class DropdownData extends WidgetData {
     	update(values, null);
     }
     
+    public void update(Map<String,String> values, String select) {
+    	this.update(values, select, null);
+    }
+    
     /**
      * Update the items, and select a specific one, in case the old
      * selected item is no longer included
@@ -294,8 +302,9 @@ public class DropdownData extends WidgetData {
      * 		or if the option previously selected is not in the set of options anymore.
      * 		If the previously selected option is till available, the parameter select
      * 		is not relevant. 
+     * @param optGroups: may be null. Only relevant if optGroups are activated.
      */
-    public void update(Map<String,String> values, String select) {
+    public void update(Map<String,String> values, String select, Map<String,String> optGroups) {
     	if (addEmptyOpt && !values.keySet().contains(EMPTY_OPT_ID))
     		values.put(EMPTY_OPT_ID, emptyOptLabel);
     	writeLock();
@@ -321,7 +330,8 @@ public class DropdownData extends WidgetData {
 	    		}
 	    		if (!found) {
 //	    			addOption(newVal, entry.getValue(), false);
-	    			options.add(new DropdownOption(newVal, entry.getValue(), false));
+	    			final String optGroup = optGroups == null ? null : optGroups.get(newVal);
+	    			options.add(new DropdownOption(newVal, entry.getValue(), false, optGroup));
 	    		}
 	    	}
 	    	if (!selectedFound) {
@@ -341,7 +351,6 @@ public class DropdownData extends WidgetData {
     	} finally {
     		writeUnlock();
     	}
-    	
     }
       
     // XXX
@@ -429,5 +438,8 @@ public class DropdownData extends WidgetData {
 		return this.urlParam;
 	}
     
+	public void setOptGroupsActive(boolean active) {
+		this.optGroupsActive = active;
+	}
     
 }
