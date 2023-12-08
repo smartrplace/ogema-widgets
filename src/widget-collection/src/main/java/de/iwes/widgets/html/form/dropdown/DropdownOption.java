@@ -32,6 +32,7 @@ public class DropdownOption implements Serializable, Cloneable, LabelledItem {
     private final String labelEncoded;
     private final String value;
     private final String optGroup;
+    private final String description;
     final String valueEncoded;
     private boolean selected = false;
     
@@ -42,18 +43,20 @@ public class DropdownOption implements Serializable, Cloneable, LabelledItem {
         this.valueEncoded = WidgetData.escapeHtmlAttributeValue(value);
         this.selected = selected;
         this.optGroup = null;
+        this.description = null;
     }
     
     public DropdownOption(String value, String label, boolean selected) {
-        this(value, label, selected, null);
+        this(value, label, selected, null, null);
     }
     
-    public DropdownOption(String value, String label, boolean selected, String optGroup) {
+    public DropdownOption(String value, String label, boolean selected, String description, String optGroup) {
         this.label = Objects.requireNonNull(label);
         this.labelEncoded = StringEscapeUtils.escapeHtml4(label);
         this.value = Objects.requireNonNull(value);
         this.valueEncoded = WidgetData.escapeHtmlAttributeValue(value);
         this.selected = selected;
+        this.description = description != null ? WidgetData.escapeHtmlAttributeValue(description) : null;
         this.optGroup = optGroup != null ? WidgetData.escapeHtmlAttributeValue(optGroup) : null; 
     }
     
@@ -83,6 +86,11 @@ public class DropdownOption implements Serializable, Cloneable, LabelledItem {
     @Deprecated
     public String getValue() {
         return value;
+    }
+    
+    @Override
+    public String description(OgemaLocale locale) {
+    	return this.description;
     }
 
     public boolean isSelected() {
@@ -137,6 +145,8 @@ public class DropdownOption implements Serializable, Cloneable, LabelledItem {
         result.put("selected", selected);
         if (optGroupsActive && this.optGroup != null)
         	result.put("optGroup", this.optGroup);
+        if (description != null && !description.isEmpty())
+        	result.put("tooltip", description);
         return result;
     }
     

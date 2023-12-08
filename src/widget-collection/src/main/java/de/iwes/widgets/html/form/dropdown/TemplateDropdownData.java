@@ -173,8 +173,9 @@ public class TemplateDropdownData<T> extends DropdownData implements TemplateDat
 	 */
 	public void update(Collection<? extends T> items, T select) {
 		Map<String,String> map = new LinkedHashMap<>();
-		final Map<String, String> optGroups = optGroupsActive ? new HashMap<String, String>() : null;
+		final Map<String, String> optGroups = optGroupsActive ? new HashMap<>() : null;
 		final DisplayTemplate<T> template = ((TemplateDropdown<T>) widget).template;
+		Map<String, String> descriptions = null; 
 		String sel = null;
 		for (T item: items) {
 			String[] valLab = getValueAndLabel(item);
@@ -186,11 +187,17 @@ public class TemplateDropdownData<T> extends DropdownData implements TemplateDat
 				if (optGroup != null)
 					optGroups.put(valLab[0], optGroup);
 			}
+			final String descr = template.getDescription(item, OgemaLocale.ENGLISH);
+			if (descr != null && !descr.isEmpty()) {
+				if (descriptions == null)
+					descriptions = new HashMap<>();
+				descriptions.put(valLab[0], descr);
+			}
 		}
 		writeLock();
 		try {
 			// FIXME -> adds non-LabelledItem elements... works differently than addItem() method
-			super.update(map, sel, optGroups); 
+			super.update(map, sel, descriptions, optGroups); 
 			String selected = getSelectedValue();
 			if (selected == null && this.urlParam == null && (!map.isEmpty() || addEmptyOpt)) {
 				LoggerFactory.getLogger(getClass()).error("Error in dropdown widget: no item selected although items should be available");

@@ -290,7 +290,7 @@ public class DropdownData extends WidgetData {
     }
     
     public void update(Map<String,String> values, String select) {
-    	this.update(values, select, null);
+    	this.update(values, select, null, null);
     }
     
     /**
@@ -301,10 +301,12 @@ public class DropdownData extends WidgetData {
      * @param select option to select if no option was selected before calling the method
      * 		or if the option previously selected is not in the set of options anymore.
      * 		If the previously selected option is till available, the parameter select
-     * 		is not relevant. 
+     * 		is not relevant.
+     * @param descriptions: may be null. Add tooltips to individual entries 
      * @param optGroups: may be null. Only relevant if optGroups are activated.
      */
-    public void update(Map<String,String> values, String select, Map<String,String> optGroups) {
+    public void update(Map<String,String> values, String select, 
+    			Map<String,String> descriptions, Map<String,String> optGroups) {
     	if (addEmptyOpt && !values.keySet().contains(EMPTY_OPT_ID))
     		values.put(EMPTY_OPT_ID, emptyOptLabel);
     	writeLock();
@@ -331,7 +333,8 @@ public class DropdownData extends WidgetData {
 	    		if (!found) {
 //	    			addOption(newVal, entry.getValue(), false);
 	    			final String optGroup = optGroups == null ? null : optGroups.get(newVal);
-	    			options.add(new DropdownOption(newVal, entry.getValue(), false, optGroup));
+	    			final String description = descriptions == null ? null : descriptions.get(newVal);
+	    			options.add(new DropdownOption(newVal, entry.getValue(), false, description, optGroup));
 	    		}
 	    	}
 	    	if (!selectedFound) {

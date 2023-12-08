@@ -80,13 +80,14 @@ Dropdown.prototype.update = function (data) {
         }
         var previousOptGroup = "";
         for (var i = 0; i < options.length; i++) {
-            var selected = options[i].selected;
+            var opt = options[i];
+            var selected = opt.selected;
             if (selected)
             	hasSelected = true;
-            var value = options[i].value;
-            var label = options[i].label;
+            var value = opt.value;
+            var label = opt.label;
 	    if (optGroupsActive) {
-                var group = options[i].optGroup ? options[i].optGroup : "Other";
+                var group = opt.optGroup ? opt.optGroup : "Other";
                 if (group !== previousOptGroup) {
                     if (previousOptGroup !== "")
                         html += "</optgroup>";
@@ -98,6 +99,8 @@ Dropdown.prototype.update = function (data) {
             if (selected === true) {
                 html += "selected=\"selected\" ";
             }
+            if (opt.tooltip)
+                html += "title=\"" + opt.tooltip +  "\" ";
             html += "value=\'" + value + "\'>" + label + "</option>";
 
         }
