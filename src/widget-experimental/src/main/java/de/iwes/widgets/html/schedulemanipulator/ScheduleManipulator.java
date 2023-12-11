@@ -79,6 +79,11 @@ public class ScheduleManipulator extends PageSnippet {
 	private boolean defaultAllowPointAddition = true;
 	
 	public final ApplicationManager appMan;
+	
+	/** Last chart interval choice */
+    public static long lastPlotStart = -1;
+    public static long lastPlotEnd = -1;    
+	
 	/*
 	 ************************** constructors ***********************/
     
