@@ -15,6 +15,8 @@
  */
 package de.iwes.widgets.html.form.textfield;
 
+import java.util.Arrays;
+
 public enum TextFieldType {
 	
 	TEXT("text"), PASSWORD("password"), SUBMIT("submit"), RADIO("radio"), CHECKBOX("checkbox"), BUTTON("button"),
@@ -30,6 +32,16 @@ public enum TextFieldType {
 	
 	public String getTypeString() {
 		return type;
+	}
+	
+	public static TextFieldType of(String type) {
+		if (type == null)
+			return null;
+		final String type1 = type.toLowerCase();
+		return Arrays.stream(TextFieldType.values())
+			.filter(t -> type1.equals(t.type))
+			.findAny()
+			.orElse(null);
 	}
 	
 }

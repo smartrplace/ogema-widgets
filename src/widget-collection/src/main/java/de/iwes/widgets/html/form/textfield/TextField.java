@@ -19,7 +19,6 @@ import de.iwes.widgets.api.extended.OgemaWidgetBase;
 import de.iwes.widgets.api.widgets.OgemaWidget;
 import de.iwes.widgets.api.widgets.WidgetPage;
 import de.iwes.widgets.api.widgets.sessionmanagement.OgemaHttpRequest;
-import de.iwes.widgets.html.form.textfield.TextFieldData;
 
 /** TextField that can be edited by the user / page- or session-dependent version */
 public class TextField extends OgemaWidgetBase<TextFieldData>  {
@@ -148,6 +147,14 @@ public class TextField extends OgemaWidgetBase<TextFieldData>  {
 
     public void setType(TextFieldType type,OgemaHttpRequest req) {
     	getData(req).setType(type.getTypeString());
+    }
+    
+    public String getType(OgemaHttpRequest req) {
+    	return getData(req).getType();
+    }
+    
+    public TextFieldType getTypeEnum(OgemaHttpRequest req) {
+		return TextFieldType.of(getType(req));
     }
     
 	/**

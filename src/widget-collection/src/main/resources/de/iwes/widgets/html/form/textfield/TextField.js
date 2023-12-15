@@ -11,8 +11,14 @@ function TextField(servletPath, widgetID) {
 
 TextField.prototype.update = function (data) {
 
-	var tfelement = $("#" + this.widgetID + ".ogema-widget").find("#textField");
+    var tfelement = $("#" + this.widgetID + ".ogema-widget").find("#textField");
+    if (tfelement.length === 0)
+        return;
+    var inp = tfelement[0];
     var valueAvailable = false;
+    if (data.hasOwnProperty("type") && inp.type !== data.type) {
+    	tfelement.removeAttr("type").attr("type", data.type);
+    }
     if (data.hasOwnProperty("value") && data.value !== "") {
     	valueAvailable = true;
     }
@@ -31,10 +37,6 @@ TextField.prototype.update = function (data) {
         tmp.sendValueOnChange = data.sendValueOnChange;
     } else {
     	tmp.sendValueOnChange = true;
-    }
-
-    if (data.hasOwnProperty("type")) {
-    	tfelement.removeAttr("type").attr("type", data.type);
     }
 
     if (data.hasOwnProperty("inputmode")) {
