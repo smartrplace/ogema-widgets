@@ -4,6 +4,8 @@ import org.ogema.core.application.ApplicationManager;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.tools.resourcemanipulator.timer.CountDownDelayedExecutionTimer;
 
+import de.iwes.util.resource.ValueResourceHelper;
+
 /** This timer works like a {@link CountDownDelayedExecutionTimer}, but each time newEvent()
  * is called the timer is reset and the timer is only started when new event is called. In
  * this way the timer can be used for retarded events from multiple sources where the action
@@ -47,7 +49,7 @@ public abstract class CountdownTimerMulti2Single {
 			timer.destroy();
 		}
 		if(persistentFlagOpen != null)
-			persistentFlagOpen.setValue(true);
+			ValueResourceHelper.setCreate(persistentFlagOpen, true);
 		long duration = getVariableTimerDuration();
 		timer = new CountDownDelayedExecutionTimer(appMan, duration) {
 			
