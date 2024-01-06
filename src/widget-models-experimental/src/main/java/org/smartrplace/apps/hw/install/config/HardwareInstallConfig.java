@@ -156,6 +156,7 @@ public interface HardwareInstallConfig extends Data {
 	 *  2: weekly postpone (no decalc) <br>
 	 *  3: daily decalc <br>
 	 *  4: perform daily decalc from - until based on noPostponeStart/End, then perform weekly postpone to avoid further decalc
+	 *  5: perform monthly postpone (may be adjusted by system)
 	 */ 
 	IntegerResource weeklyPostponeMode();
 	TimeResource noPostponeStart();
@@ -199,4 +200,7 @@ public interface HardwareInstallConfig extends Data {
 	
 	/** Last ID used in issue setting history*/
 	IntegerResource issueHistoryID();
+	
+	/** Duration of last Update of Last Decalc for all thermostats */
+	TimeResource lastDecalcCalculationDuration();
 }
