@@ -183,6 +183,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 			FloatResource.class);
 	public static final GaRoDataType ValveErrorState = new GaRoDataType("ValveErrorState", 
 			FloatResource.class);
+	public static final GaRoDataType ValveDecalcEff = new GaRoDataType("ValveDecalcEff", 
+			FloatResource.class);
 	public static final GaRoDataType ValveAdaptionStart = new GaRoDataType("ValveAdaptionStart", 
 			BooleanResource.class);
 	public static final GaRoDataType ValveErrorPositionCt = new GaRoDataType("ValveErrorPosCt", 
