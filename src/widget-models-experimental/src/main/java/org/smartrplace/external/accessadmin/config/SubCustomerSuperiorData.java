@@ -1,5 +1,6 @@
 package org.smartrplace.external.accessadmin.config;
 
+import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.FloatResource;
 import org.ogema.core.model.simple.IntegerResource;
@@ -184,4 +185,6 @@ public interface SubCustomerSuperiorData extends Data {
 	 *  1: test gateway that might have special software version
 	 */
 	//IntegerResource testGatewayStatus();
+	
+	ResourceList<OnsiteVisitData> onSiteVisits();
 }
