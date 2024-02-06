@@ -22,7 +22,7 @@ public abstract class CountdownTimerMulti2Single {
 	protected final long countdownTime;
 	protected final BooleanResource persistentFlagOpen;
 	
-	protected CountDownDelayedExecutionTimer timer;
+	protected volatile CountDownDelayedExecutionTimer timer;
 	
 	public CountdownTimerMulti2Single(ApplicationManager appMan, long countdownTime) {
 		this(appMan, countdownTime, null);
