@@ -161,6 +161,7 @@ public interface HardwareInstallConfig extends Data {
 	IntegerResource weeklyPostponeMode();
 	TimeResource noPostponeStart();
 	TimeResource noPostponeEnd();
+	TimeResource blockAutoDecalcUntil();
 	
 	/** 0: Let thermostats and other devices send in default rate, typically 1/20
 	 *  1: Force thermostats to default rate, even if thermostat has other special setting
