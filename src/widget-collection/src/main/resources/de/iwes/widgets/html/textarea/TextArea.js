@@ -18,7 +18,7 @@ TextArea.prototype.update = function (data) {
     this.el.off("change");
     if (!data.hasOwnProperty("sendValueOnChange") || data.sendValueOnChange) {
     	const tmp = this;
-    	tmp.el.change(tmp.sendPOST);
+    	tmp.el.change(function() { tmp.sendPOST(); });
     }
     if (data.hasOwnProperty("selected")) {
 		this.el[0].select();
