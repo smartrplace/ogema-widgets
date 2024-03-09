@@ -204,4 +204,10 @@ public interface HardwareInstallConfig extends Data {
 	
 	/** Duration of last Update of Last Decalc for all thermostats */
 	TimeResource lastDecalcCalculationDuration();
+	
+	/**0: Room assigned of devices can be fully set via API<br>
+	 * 1: Room assigned via API is supported, but auto-removal via API is blocked
+	 * 2: No room assignment can be changed via API
+	 */
+	IntegerResource deviceProtectedMode();
 }
