@@ -56,11 +56,16 @@ public interface AlarmGroupData extends Data {
 	 * 40: Thermostat requires wall thermostat or other room temperature measurement (own temperature measurement not sufficient)
 	 * 50: Battery low
 	 */
-	//@Deprecated // currently not used
+	@Deprecated // currently not used
 	IntegerResource diagnosis();
 	
 	/** See AlarmingConfigUtil#ASSIGNEMENT_ROLES*/
 	IntegerResource assigned();
+	
+	/** Diagnosis of analysis before onsite visit or other troubleshooting procedure
+	 * Uses same format as {@link #finalDiagnosis()} .
+	 */
+	StringResource preFinalDiagnosis();
 	
 	/** If 1=releaseProposed then the known fault is marked for release. E.g. because a device marked for "not reacheable" is sending
 	 * data again or a device that is off due to battery is sending data again and battery voltage indicates a

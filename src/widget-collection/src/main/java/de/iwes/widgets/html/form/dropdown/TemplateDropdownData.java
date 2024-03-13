@@ -99,8 +99,11 @@ public class TemplateDropdownData<T> extends DropdownData implements TemplateDat
 	}
 	
 	public void selectItem(T item) {
-		if (item == null)
+		if (item == null) {
+			if(addEmptyOpt)
+				selectSingleOption(null);
 			return;
+		}
 		String[] valLab = getValueAndLabel(item);
 		writeLock();
 		try {
