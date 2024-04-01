@@ -46,7 +46,7 @@ public class ValueResourceDropdownData<V extends SingleValueResource> extends Te
 		}
 		try {
 			V resource = getSelectedResource();
-			((ValueResourceDropdown<V>) widget).setResourceValue(resource, value, displayedValues);
+			((ValueResourceDropdown<V>) widget).setResourceValue(resource, value, displayedValues, req);
 //			setValue(value);
 		} catch (Exception e) {
 			// ignore -> we do not want to print user data to the log

@@ -42,11 +42,11 @@ public interface HardwareInstallConfig extends Data {
 	/** If true then listeners are active. If false then listeners are not active for performance reasons*/
 	BooleanResource isInstallationActive();
 	
-	/** 0: do not activate logging automatically
-	 *  1: activate logging for all datapoints of new devices
+	/** 0: do not activate logging automatically<br>
+	 *  1: activate logging for all datapoints of new devices<br>
 	 *  2: activate all logging configured for all devices found on each startup: Means that for existing devices
 	 *  	logging is checked for all datapoints and that datapoints that have been added for existing devices via
-	 *  	software updates are also activated. 
+	 *  	software updates are also activated.<br>
 	 * @return
 	 */
 	IntegerResource autoLoggingActivation();
@@ -98,17 +98,17 @@ public interface HardwareInstallConfig extends Data {
 	VolumeAccumulatedSensor mainGasMeter();
 	
 	/** Note that for some changes to take effect a system restart is necessary as pages have to be added/
-	 * removed at applications.
-	 *  0: No extended view mode
+	 * removed at applications.<br>
+	 *  0: No extended view mode<br>
 	 *  1: master only. If master-only is not possible (as pages are added/removed at applications cannot be
-	 *  	controlled on a per-user base) no extended mode is supported at such positions.
-	 *  2: all users if not blocked by other permissions
+	 *  	controlled on a per-user base) no extended mode is supported at such positions.<br>
+	 *  2: all users if not blocked by other permissions<br>
 	 */
 	IntegerResource extendedViewMode();
 	
 	/**
-	 * 0: Location, KNI
-	 * 1: KNI, Location
+	 * 0: Location, KNI<br>
+	 * 1: KNI, Location<br>
 	 */
 	IntegerResource showModePageOrder();
 	
@@ -139,15 +139,15 @@ public interface HardwareInstallConfig extends Data {
 	
 	/** 0: Let page decide itself e.g. based on number of devices and properties set<br>
 	 *  1: Force pages to allow ALL<br>
-	 *  2: Force pages to deny selection of ALL
+	 *  2: Force pages to deny selection of ALL<br>
 	 */
 	IntegerResource allowAllDevicesInTablePagesMode();
 	
-	/** The following settings apply for all rooms that are not in manual, eco-mode or booking mode 
+	/** The following settings apply for all rooms that are not in manual, eco-mode or booking mode<br> 
 	 *  0: If configPending to thermostat then auto-mode shall be disabled. May be overwritten by thermostat-specific indication<br>
 	 *  1: Auto-mode shall be enabled for all thermostats, a valid config has been sent. May be overwritten by thermostat-specific indication<br>
 	 *  2: Auto-mode shall be disabled for all thermostats (e.g. because auto settings are unclear due to previous special settings). May be overwritten by thermostat-specific indication<br>
-	 *  3: Auto-mode shall be disabled for all thermostats. No overwriting possible (to make sure e.g. for testing)
+	 *  3: Auto-mode shall be disabled for all thermostats. No overwriting possible (to make sure e.g. for testing)<br>
 	 */
 	IntegerResource autoThermostatMode();
 	
@@ -155,20 +155,30 @@ public interface HardwareInstallConfig extends Data {
 	 *  1: off: No postpone takes place, which usually leads to weekly decalc <br>
 	 *  2: weekly postpone (no decalc) <br>
 	 *  3: daily decalc <br>
-	 *  4: perform daily decalc from - until based on noPostponeStart/End, then perform weekly postpone to avoid further decalc
-	 *  5: perform monthly postpone (may be adjusted by system)
+	 *  4: perform daily decalc from - until based on noPostponeStart/End, then perform weekly postpone to avoid further decalc<br>
+	 *  5: perform monthly postpone (may be adjusted by system)<br>
 	 */ 
 	IntegerResource weeklyPostponeMode();
 	TimeResource noPostponeStart();
 	TimeResource noPostponeEnd();
 	TimeResource blockAutoDecalcUntil();
 	
-	/** 0: Let thermostats and other devices send in default rate, typically 1/20
-	 *  1: Force thermostats to default rate, even if thermostat has other special setting
-	 *  2: Summer mode confirmed: Disable cyclic messaging / reduce to one message per day if possible
-	 *  3: Force disabling cyclic messaging even if thermstat has other special setting
-	 *  4: Reduced cyclic messaging for energy-saving mode during winter
-	 *  5: Force reduced cyclic messaging even if thermostat has other special setting
+	/** Smart alarm mode:<br>
+	 * 0: Use standard settings including adaptations due to temperature-without-heating and blocking intervals<br>
+	 * 1: Use too-cold and much to warm, do not use slight/medium too warm<br>
+	 * 2: Use only much too warm<br>
+	 * 3: Like 2, but during winter (October - February) apply normal settings like 0<br>
+	 * 4: Like 2, extend duration for much too warm<br>
+	 * 5: Like 3, extend duration for much too warm<br>
+	 */
+	IntegerResource smartAlarmMode();
+	
+	/** 0: Let thermostats and other devices send in default rate, typically 1/20<br>
+	 *  1: Force thermostats to default rate, even if thermostat has other special setting<br>
+	 *  2: Summer mode confirmed: Disable cyclic messaging / reduce to one message per day if possible<br>
+	 *  3: Force disabling cyclic messaging even if thermstat has other special setting<br>
+	 *  4: Reduced cyclic messaging for energy-saving mode during winter<br>
+	 *  5: Force reduced cyclic messaging even if thermostat has other special setting<br>
 	 */
 	IntegerResource sendIntervalMode();
 	
@@ -187,9 +197,9 @@ public interface HardwareInstallConfig extends Data {
 	 * last marking operation. It is recommended to perform this manually when cleaning up and testing is finished.*/
 	TimeResource nextTimeToDeleteMarkedDevices();
 	
-	/** Determines the level of escalation alarming messages (potentially also base alarming messages)
-	 *  0: normal
-	 *  -10: summer mode for mainly heating systems / winter mode for mainly cooling systems
+	/** Determines the level of escalation alarming messages (potentially also base alarming messages)<br>
+	 *  0: normal<br>
+	 *  -10: summer mode for mainly heating systems / winter mode for mainly cooling systems<br>
 	 */
 	IntegerResource alarmingReductionLevel();
 	
@@ -206,8 +216,8 @@ public interface HardwareInstallConfig extends Data {
 	TimeResource lastDecalcCalculationDuration();
 	
 	/**0: Room assigned of devices can be fully set via API<br>
-	 * 1: Room assigned via API is supported, but auto-removal via API is blocked
-	 * 2: No room assignment can be changed via API
+	 * 1: Room assigned via API is supported, but auto-removal via API is blocked<br>
+	 * 2: No room assignment can be changed via API<br>
 	 */
 	IntegerResource deviceProtectedMode();
 }

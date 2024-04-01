@@ -41,6 +41,7 @@ import org.ogema.model.locations.Location;
 import org.ogema.model.prototypes.PhysicalElement;
 import org.ogema.tools.resource.util.ResourceUtils;
 import org.slf4j.LoggerFactory;
+import org.smartrplace.apps.hw.install.config.HardwareInstallConfig;
 import org.smartrplace.gateway.device.GatewayDevice;
 
 import de.iwes.util.logconfig.EvalHelper;
@@ -275,6 +276,10 @@ try {
 		return getOrCreateTopLevelResource("OGEMA_Gateway", LocalGatewayInformation.class, appMan);
 	}
 	
+	public static HardwareInstallConfig getHwConfig(ResourceAccess resAcc) {
+		return getTopLevelResource("hardwareInstallConfig", HardwareInstallConfig.class, resAcc);
+	}
+
 	public static GatewayDevice getLocalDevice(ResourceAccess resAcc) {
 		return getTopLevelResource("Gateway_Device", GatewayDevice.class, resAcc);
 	}

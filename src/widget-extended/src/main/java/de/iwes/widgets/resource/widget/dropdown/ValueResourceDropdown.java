@@ -147,7 +147,7 @@ public class ValueResourceDropdown<V extends SingleValueResource> extends Templa
 	}
 
 	/** override this if required*/
-	protected void setResourceValue(V resource, String value, List<String> displayedValues) {
+	protected void setResourceValue(V resource, String value, List<String> displayedValues, OgemaHttpRequest req) {
 		//if(!(resource instanceof StringResource)) {
 		//	value = value.replaceAll("[^\\d.,-]", "");
 		//}
@@ -164,7 +164,8 @@ public class ValueResourceDropdown<V extends SingleValueResource> extends Templa
 					if(defaultValuesToSet != null)
 						((IntegerResource) resource).setValue(defaultValuesToSet.get(i));					
 					else
-						((IntegerResource) resource).setValue(i);					
+						((IntegerResource) resource).setValue(i);
+					break;
 				}
 				i++;
 			}

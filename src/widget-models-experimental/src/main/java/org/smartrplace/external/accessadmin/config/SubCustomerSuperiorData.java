@@ -187,4 +187,17 @@ public interface SubCustomerSuperiorData extends Data {
 	//IntegerResource testGatewayStatus();
 	
 	ResourceList<OnsiteVisitData> onSiteVisits();
+	
+	/**********************************
+	 * Show configs
+	 * ********************************/
+	
+	/** 0: use system default
+	 *  1: show automatedManagement switch, otherwise system default
+	 * -1: block automatedManagement switch, otherwise system default
+	 *  2: show wowi heat time plan, no automatedManagement switch
+	 *  3: show full heat curve, no automatedManagement switch
+	 *  4: show full wowi mode
+	 */
+	IntegerResource frontendMode();
 }
