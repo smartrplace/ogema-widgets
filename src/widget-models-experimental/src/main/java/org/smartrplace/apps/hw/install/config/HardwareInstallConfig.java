@@ -173,6 +173,17 @@ public interface HardwareInstallConfig extends Data {
 	 */
 	IntegerResource smartAlarmMode();
 	
+	/** Auto-Decalc mode:<br>
+	 * 0: Auto analysis only<br>
+	 * 1: Block Auto analysis<br>
+	 * 2: Auto Decalc, no release<br>
+	 * 3: Auto Decalc and release if decalc possible<br>
+	 * 4: Auto Decalc, release or set email reminder daily/weekly<br>		
+	 * 5: Auto Decalc, release or set email reminder weekly<br>		
+	 * 6: Auto Decalc, release or set blocking for check onsite<br>
+	 */
+	IntegerResource autoDecalcMode();
+	
 	/** 0: Let thermostats and other devices send in default rate, typically 1/20<br>
 	 *  1: Force thermostats to default rate, even if thermostat has other special setting<br>
 	 *  2: Summer mode confirmed: Disable cyclic messaging / reduce to one message per day if possible<br>
