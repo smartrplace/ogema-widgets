@@ -70,7 +70,7 @@ public interface SubCustomerSuperiorData extends Data {
 	/** 0: unknown<br>
 	 *  1: customer does not change any batteries<br>
 	 *  2: customer changes single batteries in urgent cases<br>
-	 *  3: customer performs all battery changes
+	 *  3: customer performs all battery changes<br>
 	 *  4: in urgent cases contact customer to offer own battery change as an exception<br>
 	 *  5: no batteries
 	 */
@@ -163,6 +163,22 @@ public interface SubCustomerSuperiorData extends Data {
 	 * be used to obtain OgemaLocale object by OgemaLocale#getLocale
 	 * <br>Copied from LocalGatewayInformation*/
 	StringResource systemLocale();
+	
+	/** Sensitivity of reaction to alarms<br>
+	 * -1 : LOW<br>
+	 * 0 : Standard<br>
+	 * 1 : Std+Booking<br>
+	 * 2 : High<br>
+	 * 3 : High+Booking<br>
+	 * 4 : Remind after 1d
+	 * 5 : Remind after 3d
+	 * 6 : Remind after 7d
+	 * 7 : Remind after 14d
+	 * 8 : Remind after 30d
+	 * 9 : Remind after 90d
+	 * 10 : Remind after 365d
+	 */
+	IntegerResource sensitivity();
 
 	/******************************
 	/*** Service organization 
