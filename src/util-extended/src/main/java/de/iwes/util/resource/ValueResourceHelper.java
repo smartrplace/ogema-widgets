@@ -404,6 +404,10 @@ public class ValueResourceHelper {
 		else return false;
 	}
 
+	public static int getSecondDigit(float val) {
+		return Math.round(val*100f) % 10;
+	}	
+	
 	/** Get Recorded data from SingleValueResource
 	 * 
 	 * @param valueResource
@@ -472,5 +476,6 @@ public class ValueResourceHelper {
 		if(prop == null)
 			return false;
 		return StringFormatHelper.getListFromString(prop).contains(searchString);
-	}	
+	}
+
 }
