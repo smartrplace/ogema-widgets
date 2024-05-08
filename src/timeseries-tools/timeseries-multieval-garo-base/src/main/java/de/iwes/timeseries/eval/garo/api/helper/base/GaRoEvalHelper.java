@@ -293,7 +293,8 @@ public class GaRoEvalHelper {
 				&&recId.contains("reactiveAngleSensor/reading")) return GaRoDataType.PowerMeterReactiveAngleSubphase;
 
 		if(recId.contains("/apparentEnergy/reading")) return GaRoDataType.ApparentEnergy;
-		if(recId.contains("/apparentPower/reading")) return GaRoDataType.ApparentPower;
+		if(recId.contains("/apparentPower/reading")
+				||recId.contains("/apparentPowerSensor/reading")) return GaRoDataType.ApparentPower;
 		if(recId.contains("/apparentEnergySensor/reading")) return GaRoDataType.ApparentEnergy;
 		if(recId.contains("/apparentPowerSensor/reading")) return GaRoDataType.ApparentPower;
 		
