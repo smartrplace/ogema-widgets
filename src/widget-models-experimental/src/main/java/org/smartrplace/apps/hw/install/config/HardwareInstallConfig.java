@@ -23,6 +23,7 @@ import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.connections.ElectricityConnection;
 import org.ogema.model.extended.alarming.DevelopmentTask;
+import org.ogema.model.extended.alarming.IssueActionReport;
 import org.ogema.model.metering.ElectricityMeter;
 import org.ogema.model.prototypes.Configuration;
 import org.ogema.model.prototypes.Data;
@@ -173,14 +174,16 @@ public interface HardwareInstallConfig extends Data {
 	 */
 	IntegerResource smartAlarmMode();
 	
-	/** Auto-Decalc mode:<br>
+	/** Auto Action and Release mode (was previously: Auto-Decalc mode):<br>
+	 * Note: In the future separate mode management resources for different applications/devices
+	 * may be supported, for now we use a common setting.<br>
 	 * 0: Auto analysis only<br>
 	 * 1: Block Auto analysis<br>
-	 * 2: Auto Decalc, no release<br>
-	 * 3: Auto Decalc and release if decalc possible<br>
-	 * 4: Auto Decalc, release or set email reminder daily/weekly<br>		
-	 * 5: Auto Decalc, release or set email reminder weekly<br>		
-	 * 6: Auto Decalc, release or set blocking for check onsite<br>
+	 * 2: Auto Action/Decalc, no release<br>
+	 * 3: Auto Action/Decalc and release if decalc possible<br>
+	 * 4: Auto Action/Decalc, release or set email reminder daily/weekly<br>		
+	 * 5: Auto Action/Decalc, release or set email reminder weekly<br>		
+	 * 6: Auto Action/Decalc, release or set blocking for check onsite<br>
 	 */
 	IntegerResource autoDecalcMode();
 	
@@ -231,4 +234,10 @@ public interface HardwareInstallConfig extends Data {
 	 * 2: No room assignment can be changed via API<br>
 	 */
 	IntegerResource deviceProtectedMode();
+		
+	/** We keep data here to avoid sync with superior.
+	 * TODO: Clean up regularly
+	 */
+	ResourceList<IssueActionReport> issueActionReports();
+	BooleanResource alarmingSettinRecalcFlag();
 }
