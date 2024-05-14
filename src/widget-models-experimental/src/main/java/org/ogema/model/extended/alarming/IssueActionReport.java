@@ -21,6 +21,7 @@ public interface IssueActionReport extends Data {
 	/** Only available if action is finished */
 	TimeResource endTime();
 	StringResource result();
+	IntegerResource lastStepFinished();
 	
 	/** 0: Unknown<br>
 	 *  1: Auto (by eval directly)<br>
@@ -28,4 +29,6 @@ public interface IssueActionReport extends Data {
 	 *  3: Manual<br>
 	 */
 	IntegerResource triggeredBy();
+	
+	IntegerResource countStarts();
 }
