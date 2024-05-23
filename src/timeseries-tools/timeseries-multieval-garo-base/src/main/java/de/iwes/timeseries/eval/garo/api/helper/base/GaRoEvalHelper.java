@@ -511,6 +511,8 @@ public class GaRoEvalHelper {
 		if(recId.contains("Gateway_Device/javaCpuPercentageTotal")) return GaRoDataType.JavaLoad;
 		if(recId.contains("Gateway_Device/systemLoadAvg1")) return GaRoDataType.SystemLoad;
 
+		if(recId.contains("/heatingCoolingMode")) return GaRoDataType.SeasonMode;
+		
 		if(recId.contains("RexometerSerial/configs/gas_energy/value")) return GaRoDataType.GasMeter;
 		if(recId.contains("/gasMeter")) return GaRoDataType.GasMeter;
 		if(recId.contains("RexometerSerial/configs/gas_batteryVoltage/value")) return GaRoDataType.GasMeterBatteryVoltage;
