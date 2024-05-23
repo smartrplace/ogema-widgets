@@ -89,4 +89,7 @@ public interface SubCustomerData extends Data {
 	 */
 	@Deprecated
 	StringResource personalSalutationsIT();
+
+	/** Counter for tenant data reset e.g. due to change of tenant*/
+	IntegerResource resetCounter();
 }

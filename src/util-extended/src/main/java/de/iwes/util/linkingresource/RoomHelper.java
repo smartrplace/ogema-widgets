@@ -66,6 +66,8 @@ public class RoomHelper {
 	public static final int OTHER = 900;
 	public static final int CUSTOM = 10000;
 
+	public static final String ROOM_TENANT_NAME_RES = "tenantRoomName";
+
 	/** Find room in resource itself or in super resource
 	 * @deprecated Use {@link ResourceUtils#getDeviceLocationRoom(PhysicalElement)} instead.
 	 * */
