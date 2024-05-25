@@ -2,6 +2,7 @@ package org.smartrplace.external.accessadmin.config;
 
 import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.array.IntegerArrayResource;
+import org.ogema.core.model.array.StringArrayResource;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
@@ -34,6 +35,11 @@ public interface SubCustomerData extends Data {
 	
 	/** Indeces of days that are considered working days, 1=Monday, 7=Sunday*/
 	IntegerArrayResource workingDays();
+	
+	/** Index[0]: Devices types heating, [1]: Devices types cooling<br>
+	 * Supported device types: TH, AC
+	 */
+	StringArrayResource seasonDevicesDevices();
 	
 	/** The default lower temperature is applied to all rooms as a default*/
 	//TemperatureResource defaultEcoTemperatureHeating();
