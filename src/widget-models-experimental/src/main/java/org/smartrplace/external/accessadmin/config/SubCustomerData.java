@@ -39,7 +39,7 @@ public interface SubCustomerData extends Data {
 	/** Index[0]: Devices types heating, [1]: Devices types cooling<br>
 	 * Supported device types: TH, AC
 	 */
-	StringArrayResource seasonDevicesDevices();
+	StringArrayResource seasonDeviceTypes();
 	
 	/** The default lower temperature is applied to all rooms as a default*/
 	//TemperatureResource defaultEcoTemperatureHeating();
