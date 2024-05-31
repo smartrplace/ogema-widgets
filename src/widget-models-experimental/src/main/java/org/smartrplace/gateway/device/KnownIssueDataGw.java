@@ -105,6 +105,43 @@ public interface KnownIssueDataGw extends PhysicalElement {
 	IntegerArrayResource devicesBatteryEmpty();
 	TimeResource lastBuildTime();
 	
+	/******************************
+	 * High level Evaluation
+	 *****************************/
+	
+	/** For standard: First reminder overdue or issue not classified more than N days (default N=3).
+	 * Note: Does NOT contain devices in {@link #devicesByTypeDelayedLevel2()}.*/ 
+	IntegerArrayResource devicesByTypeDelayed();
+	/** For standard: Third reminder overdue or issue not classified more than 3*N days (default N=3)*/ 
+	IntegerArrayResource devicesByTypeDelayedLevel2();
+	IntegerArrayResource devicesByTypeAutoActionDevices();
+	/** Other devices not delayed by reminder. Includes dependent, backlog etc.
+	 * The four categories should add up to all devices shown in IssuesPage. Not really important.*/ 
+	//IntegerArrayResource devicesByTypeWithoutActionUndelayed();
+	
+	//IntegerArrayResource devicesByTypeBlocked();
+	
+	/** Manual standard actions counted per day*/
+	IntegerResource manualIssueActionPerDay();
+	/** Extra time for manual actions beyond the default time per action counted. May also be negative
+	 * if the standard time times count is considererd too high
+	 */
+	TimeResource manualIssueActionExtraTimePerDay();
+	IntegerResource manualIssueActionCounter();
+	TimeResource manualIssueActionExtraTimeCounter();
+	
+	/** Reporting towards customer. Should also allow to estime new issues per day.*/
+	/** Not really important*/
+	IntegerResource simpleAutoReleasesPerDay();
+	IntegerResource releaseByServicePerDay();
+
+	/** Count releases including setting to trash and setting blocked.*/
+	IntegerResource manualReleasePerDay();
+	IntegerResource simpleAutoReleasesCounter();
+	IntegerResource releaseByServiceCounter();
+	IntegerResource manualReleaseCounter();
+	TimeResource currentDayEnd();
+	
 	/** Number of issues assigned as relevant without notification. Note that we only require one issue per device handler type per
 	 * analysis assigned - type to be set, so a positive number here may not indicate a real issue.
 	 */

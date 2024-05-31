@@ -16,4 +16,9 @@ public interface KnownIssueDataAggforLog extends PhysicalElement {
 
 	IntegerResource kniWoNotficationNum();
 	IntegerResource kni3TimesSensNum();
+	
+	//High level evaluation
+	IntegerResource kniDelayed1p();
+	IntegerResource kniDelayed2p();
+	IntegerResource kniAuto();
 }
