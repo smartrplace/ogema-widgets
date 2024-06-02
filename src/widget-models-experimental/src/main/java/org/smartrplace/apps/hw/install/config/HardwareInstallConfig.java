@@ -36,7 +36,7 @@ import org.smartrplace.alarming.escalation.model.AlarmingEscalationSettings;
 public interface HardwareInstallConfig extends Data {
 
 	ResourceList<InstallAppDevice> knownDevices();
-	ResourceList<DeviceTypeData> deviceHandlerData();
+	//ResourceList<DeviceTypeData> deviceHandlerData();
 	
 	ResourceList<DevelopmentTask> knownDevelopmentTasks();
 	
