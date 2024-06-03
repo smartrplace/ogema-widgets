@@ -31,4 +31,6 @@ public interface IssueActionReport extends Data {
 	IntegerResource triggeredBy();
 	
 	IntegerResource countStarts();
+	
+	IntegerResource countStepRepetitions();
 }
