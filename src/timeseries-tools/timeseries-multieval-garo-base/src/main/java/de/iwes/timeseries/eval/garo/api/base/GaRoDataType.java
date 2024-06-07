@@ -713,6 +713,9 @@ public class GaRoDataType implements GaRoDataTypeI {
 		}		
 	};
 	
+	public static final GaRoDataType ElectricityMarketPrice = new GaRoDataType("ElectricityMarketPrice",
+			FloatResource.class, Level.OVERALL);
+
 	//The following options are not linked to a specific GaRo level
 	public static final GaRoDataType KPI_DURATION = new GaRoDataType("Duration",
 			TimeResource.class);

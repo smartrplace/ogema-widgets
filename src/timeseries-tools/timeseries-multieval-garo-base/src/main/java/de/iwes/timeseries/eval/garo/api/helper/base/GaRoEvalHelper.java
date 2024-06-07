@@ -139,6 +139,9 @@ public class GaRoEvalHelper {
 		addRecId(GaRoDataType.WindDirectionExt, new String[] {"BigBlueRoom/sensors/wind/direction",
 				"WeatherData/sensors/wind/direction", "OpenWeatherMapData/windSensor/direction"}, recIdSnippets,
 				"Wind Direction(Ext)", "Windrichtung(ext)");
+		addRecId(GaRoDataType.ElectricityMarketPrice, new String[] {"GridConnection/elPrice/price"}, recIdSnippets,
+				"Electricity Market Price", "Strommarktpreis");
+
 		addRecId(GaRoDataType.CloudCoverageExt, new String[] {"BigBlueRoom/sensors/cloudCoverage",
 				"WeatherData/sensors/cloudCoverage", "OpenWeatherMapData/cloudCoverage"}, recIdSnippets,
 				"Cloud Coverage(Ext)", "Wolken-Bedeckungsgrad(ext)");
