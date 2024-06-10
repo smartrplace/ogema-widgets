@@ -330,15 +330,23 @@ public class LogHelper {
 
 	/** Version for normal gateway */
 	public static boolean isStartupComplete(ApplicationManager appManager) {
-		return isStartupComplete(appManager, false);
+		return isStartupComplete(appManager, StartupDetection.ALL_BUNDLES_STARTED_WITHOUT_TIMEOUT);
 	}
 	
+	public enum StartupDetection {
+		ALL_BUNDLES_STARTED_WITHOUT_TIMEOUT,
+		ALL_BUNDLES_STARTED,
+		/** Time-based criteria shall make sure all initial listener requests have been processed*/
+		TIME_AFTER_FIRST_BUNDLE_20MIN
+	}
 	/** More generic */
-	public static boolean isStartupComplete(ApplicationManager appManager, boolean requireTimeout) {
-		if(requireTimeout && restartMoreThen20MinutesAgo)
+	public static boolean isStartupComplete(ApplicationManager appManager, StartupDetection mode) {
+		if(mode == StartupDetection.TIME_AFTER_FIRST_BUNDLE_20MIN)
+			return restartMoreThen20MinutesAgo;
+		if(mode == StartupDetection.ALL_BUNDLES_STARTED && restartMoreThen20MinutesAgo)
 			return true;
 		GatewayDevice gw = ResourceHelper.getLocalDevice(appManager);
 	    int curVal = gw.systemRestart().getValue();
         return curVal >= 1020;
-	}	
+	}
 }
