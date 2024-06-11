@@ -24,13 +24,16 @@ public interface IssueActionReport extends Data {
 	IntegerResource lastStepFinished();
 	
 	/** 0: Unknown<br>
-	 *  1: Auto (by eval directly)<br>
-	 *  2: Auto (by framework)<br>
+	 *  1: Self-started<br>
+	 *  2: Auto (by evaluation via framework)<br>
 	 *  3: Manual<br>
 	 */
 	IntegerResource triggeredBy();
 	
 	IntegerResource countStarts();
 	
+	/** Count step and action repetitions. Is only reset when action is restarted after it is
+	 * finished completey
+	 */
 	IntegerResource countStepRepetitions();
 }
