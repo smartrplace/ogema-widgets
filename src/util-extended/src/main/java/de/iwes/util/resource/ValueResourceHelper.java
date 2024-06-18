@@ -478,4 +478,14 @@ public class ValueResourceHelper {
 		return StringFormatHelper.getListFromString(prop).contains(searchString);
 	}
 
+	/** The property identified by propertyName shall be chunked by commas then the
+	 * stringForCheck shall be checked if it contains any of the chunks
+	 * @param stringForCheck
+	 * @param propertyName
+	 * @return
+	 */
+	public static boolean doesPropertyIdentifyString(String stringForCheck, String propertyName) {
+		return StringFormatHelper.doesPropertyIdentifyString(stringForCheck, propertyName);
+	}
+
 }
