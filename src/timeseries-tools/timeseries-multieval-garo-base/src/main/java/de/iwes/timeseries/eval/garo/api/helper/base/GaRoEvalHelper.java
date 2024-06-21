@@ -279,6 +279,9 @@ public class GaRoEvalHelper {
 		if(recId.contains("connection/energyExportedSensor/reading")) return GaRoDataType.PowerMeterEnergyExported;
 		if(recId.endsWith("/powerReading")) return GaRoDataType.PowerMeter;
 		if(recId.endsWith("/energyReading")) return GaRoDataType.PowerMeterEnergy;
+		if(recId.contains("HM_HmIP_ESI_") && recId.contains("/sensors/Energy_")) return GaRoDataType.PowerMeterEnergy;
+		if(recId.contains("HM_HmIP_ESI_") && recId.contains("/sensors/GasVolume_")) return GaRoDataType.GasVolume;
+		if(recId.contains("HM_HmIP_ESI_") && recId.contains("/sensors/GasFlow_")) return GaRoDataType.GasFlow;
 
 		if(recId.contains("connection/currentSensor/reading")) return GaRoDataType.PowerMeterCurrent;
 		if(recId.contains("connection/voltageSensor/reading")) return GaRoDataType.PowerMeterVoltage;

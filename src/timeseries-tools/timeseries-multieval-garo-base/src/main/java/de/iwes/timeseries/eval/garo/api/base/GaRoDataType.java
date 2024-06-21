@@ -593,6 +593,10 @@ public class GaRoDataType implements GaRoDataTypeI {
 			AngleResource.class, Level.GATEWAY);
 	public static final GaRoDataType GasMeter = new GaRoDataType("GasMeter",
 			PowerResource.class, Level.GATEWAY);
+	public static final GaRoDataType GasVolume = new GaRoDataType("GasVolume",
+			VolumeResource.class, Level.GATEWAY);
+	public static final GaRoDataType GasFlow = new GaRoDataType("GasFlow",
+			FlowResource.class, Level.GATEWAY);
 	public static final GaRoDataType GasMeterBatteryVoltage = new GaRoDataType("GasMeterBatteryVoltage",
 			VoltageResource.class, Level.GATEWAY);
 	public static final GaRoDataType CompetitionLevel = new GaRoDataType("CompetitionLevel",
