@@ -123,6 +123,13 @@ public interface GatewayDevice extends PhysicalElement {
      */
     FloatResource logFileCheckNotification();
     
+    /** Each time room control devices are cleaned up (ThermostatResetService) then the number of devices unassigned
+     * is written. As devices without open alarms are cleaned up these devices need to have an open alarm. With
+     * auto-actions these devices should be devices that are newly in alarm state.<br>
+     * This should only be counteds if the respective controller (CCU, Gateway) is not in alarm state.
+     */
+    FloatResource countDeviceUnassignedWithOpenAlarm();
+    
     /** Memore timeseries supervision*/
     @Deprecated
     FloatResource pstMultiToSingleEvents();
