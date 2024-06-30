@@ -180,6 +180,12 @@ public interface SubCustomerSuperiorData extends Data {
 	 */
 	IntegerResource sensitivity();
 
+	/** If true the gateway is assumed to be fully set up. All room devices must be assigned to
+	 * a room or set to trash, otherwise an alarm shall be generated
+	 */
+	BooleanResource gatewayFullyInstalledAndConfigured();
+	
+
 	/******************************
 	/*** Service organization 
 	*******************************/
@@ -204,6 +210,7 @@ public interface SubCustomerSuperiorData extends Data {
 	
 	ResourceList<OnsiteVisitData> onSiteVisits();
 	
+
 	/**********************************
 	 * Show configs
 	 * ********************************/
