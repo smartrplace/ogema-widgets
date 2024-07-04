@@ -177,6 +177,9 @@ public interface SubCustomerSuperiorData extends Data {
 	 * 8 : Remind after 30d
 	 * 9 : Remind after 90d
 	 * 10 : Remind after 365d
+	 * 21 : Std+Booking All Year
+	 * 22 : High All Year
+	 * 23 : High+Booking All Year
 	 */
 	IntegerResource sensitivity();
 
