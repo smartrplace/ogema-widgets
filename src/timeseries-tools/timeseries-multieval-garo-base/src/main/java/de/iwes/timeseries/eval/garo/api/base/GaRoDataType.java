@@ -44,7 +44,6 @@ import org.ogema.core.model.units.VolumeResource;
 import org.ogema.generictype.GenericAttribute;
 import org.ogema.generictype.GenericAttributeImpl;
 
-import de.iwes.timeseries.eval.garo.api.helper.base.GaRoEvalHelper;
 import de.iwes.timeseries.eval.garo.multibase.GaRoSingleEvalProviderPreEvalRequesting;
 import de.iwes.widgets.api.widgets.localisation.OgemaLocale;
 
@@ -309,11 +308,13 @@ public class GaRoDataType implements GaRoDataTypeI {
 			return AggregationModePlus.INTEGRATED;
 		}		
 	};
-	public static final GaRoDataType HeatSupplyTemperatur = new GaRoDataType("HeatSupplyTemperatur",
+	public static final GaRoDataType HeatSupplyTemperature = new GaRoDataType("HeatSupplyTemperature",
 			TemperatureResource.class);
-	public static final GaRoDataType HeatReturnTemperatur = new GaRoDataType("HeatReturnTemperatur",
+	public static final GaRoDataType HeatReturnTemperature = new GaRoDataType("HeatReturnTemperature",
 			TemperatureResource.class);
-	public static final GaRoDataType HeatFlowTemperatur = new GaRoDataType("HeatFlowTemperatur",
+	public static final GaRoDataType HeatTemperatureDifference = new GaRoDataType("HeatTemperatureDifference",
+			TemperatureResource.class);
+	public static final GaRoDataType HeatFlowTemperature = new GaRoDataType("HeatFlowTemperature",
 			TemperatureResource.class);
 	public static final GaRoDataType HeatFlowInLpmin = new GaRoDataType("HeatFlowInLpmin",
 			FlowResource.class);
@@ -763,7 +764,7 @@ public class GaRoDataType implements GaRoDataTypeI {
 			HumidityMeasurement, MotionDetection, WindowOpen, ChargeSensor, ChargeVoltage,
 			PowerMeter, PowerMeterSubphase, PowerMeterOutlet,
 			PowerMeterEnergy, PowerMeterEnergySubphase,
-			Heatpower, HeatEnergyIntegral, VolumeFlow, VolumeIntegral, HeatSupplyTemperatur, HeatReturnTemperatur,
+			Heatpower, HeatEnergyIntegral, VolumeFlow, VolumeIntegral, HeatSupplyTemperature, HeatReturnTemperature,
 			SwitchStateFeedback, WaterPHValue, WaterConductivityValue, WaterRedoxValue, WaterOxygenConcentrationValue,
 			WaterTemperatureValue,
 			FreshWaterFlow, FreshWaterVolume,

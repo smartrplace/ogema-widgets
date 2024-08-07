@@ -351,8 +351,8 @@ public class GaRoEvalHelper {
 		if(recId.contains("/VOLUME")) return GaRoDataType.VolumeIntegral;
 		if(recId.contains("/volumeSensor/reading")) return GaRoDataType.VolumeIntegral;
 		
-		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_TFl_")) return GaRoDataType.HeatFlowTemperatur;
-		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_TRt_")) return GaRoDataType.HeatReturnTemperatur;
+		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_TFl_")) return GaRoDataType.HeatFlowTemperature;
+		if(recId.startsWith("BACnet/remoteDevices/") && recId.contains("_TRt_")) return GaRoDataType.HeatReturnTemperature;
 		if(recId.endsWith("/operating/reading") ||
 				(recId.startsWith("BACnet/remoteDevices/") &&
 				((recId.contains("_RfMch") && recId.contains("_OpSta_")) || recId.contains("_ReC_OpSta_")))) return GaRoDataType.OperatingStatus;
@@ -396,11 +396,12 @@ public class GaRoEvalHelper {
 		if(recId.contains("/stateFeedback")) return GaRoDataType.SwitchStateFeedback; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/stateControl")) return GaRoDataType.SwitchStateControl; //"onOffSwitch/stateFeedback"
 		
-		if(recId.contains("/FLOW_TEMPERATURE_")) return GaRoDataType.HeatSupplyTemperatur;
-		if(recId.contains("/inputTemperature/")) return GaRoDataType.HeatSupplyTemperatur;
-		if(recId.contains("/RETURN_TEMPERATURE_")) return GaRoDataType.HeatReturnTemperatur;
-		if(recId.contains("/outputTemperature/")) return GaRoDataType.HeatReturnTemperatur;
-		if(recId.contains("/returnTemperature/")) return GaRoDataType.HeatReturnTemperatur;
+		if(recId.contains("/FLOW_TEMPERATURE_")) return GaRoDataType.HeatSupplyTemperature;
+		if(recId.contains("/inputTemperature/")) return GaRoDataType.HeatSupplyTemperature;
+		if(recId.contains("/RETURN_TEMPERATURE_")) return GaRoDataType.HeatReturnTemperature;
+		if(recId.contains("/TEMPERATURE_DIFFERENCE_")) return GaRoDataType.HeatTemperatureDifference;
+		if(recId.contains("/outputTemperature/")) return GaRoDataType.HeatReturnTemperature;
+		if(recId.contains("/returnTemperature/")) return GaRoDataType.HeatReturnTemperature;
 		if(recId.contains("/storageTemperature")) return GaRoDataType.StorageTemperature;
 
 		if(recId.contains("/hcaEnergy/")) return GaRoDataType.HeatCostAllocatorPoints;
@@ -410,7 +411,7 @@ public class GaRoEvalHelper {
 		if(recId.startsWith("vpFlowScope/") && recId.contains("/flow/reading")) return GaRoDataType.VolumeFlow;
 		if(recId.startsWith("vpFlowScope/") && recId.contains("/flowInLpmin/reading")) return GaRoDataType.HeatFlowInLpmin;
 		if(recId.startsWith("vpFlowScope/") && recId.contains("/pressure/reading")) return GaRoDataType.HeatFlowPressure;
-		if(recId.startsWith("vpFlowScope/") && recId.contains("/temperature/reading")) return GaRoDataType.HeatSupplyTemperatur;
+		if(recId.startsWith("vpFlowScope/") && recId.contains("/temperature/reading")) return GaRoDataType.HeatSupplyTemperature;
 		
 		if(recId.contains("/pH_Wert_1/sensor/reading")) return GaRoDataType.WaterPHValue;
 		//if(recId.contains("/Leitwert_S__1/sensor/reading")) return GaRoDataType.WaterConductivityValue;
