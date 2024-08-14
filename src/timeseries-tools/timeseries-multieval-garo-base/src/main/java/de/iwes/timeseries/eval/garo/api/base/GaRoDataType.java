@@ -300,7 +300,12 @@ public class GaRoDataType implements GaRoDataTypeI {
 			FlowResource.class);
 	@Deprecated //use VolumeIntegral instead
 	public static final GaRoDataType HeatVolumeIntegral = new GaRoDataType("HeatVolumeIntegral",
-			VolumeResource.class);
+			VolumeResource.class) {
+		@Override
+		public AggregationModePlus aggregationMode() {
+			return AggregationModePlus.INTEGRATED;
+		}		
+	};
 	public static final GaRoDataType VolumeIntegral = new GaRoDataType("VolumeIntegral",
 			VolumeResource.class) {
 		@Override
@@ -595,7 +600,12 @@ public class GaRoDataType implements GaRoDataTypeI {
 	public static final GaRoDataType GasMeter = new GaRoDataType("GasMeter",
 			PowerResource.class, Level.GATEWAY);
 	public static final GaRoDataType GasVolume = new GaRoDataType("GasVolume",
-			VolumeResource.class, Level.GATEWAY);
+			VolumeResource.class, Level.GATEWAY) {
+		@Override
+		public AggregationModePlus aggregationMode() {
+			return AggregationModePlus.INTEGRATED;
+		}		
+	};
 	public static final GaRoDataType GasFlow = new GaRoDataType("GasFlow",
 			FlowResource.class, Level.GATEWAY);
 	public static final GaRoDataType GasMeterBatteryVoltage = new GaRoDataType("GasMeterBatteryVoltage",
