@@ -109,6 +109,11 @@ public class LogHelper {
 		return deviceId;
     }
 	
+	public static String getHmDeviceSerialNumberBase(String fullSerialString) {
+		String els[] = fullSerialString.split("_");
+		return els[els.length-1];
+	}
+	
 	public enum MustFitLevel {
 		IGNORE_TYPE,
 		ANY_TYPE_ALLOWED,
