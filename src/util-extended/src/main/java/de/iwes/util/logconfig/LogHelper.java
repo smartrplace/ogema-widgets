@@ -288,6 +288,10 @@ public class LogHelper {
 	private static boolean loggedStartup = false;
 	private static boolean restartMoreThen20MinutesAgo = false;
 	public static void logStartup(int startupAppId, ApplicationManager appManager) {
+		logStartup(startupAppId, appManager, false);
+	}
+	public static void logStartup(int startupAppId, ApplicationManager appManager,
+			boolean isSecondLog) {
         GatewayDevice gw = ResourceHelper.getLocalDevice(appManager);
         if(!gw.systemRestart().exists()) {
         	gw.systemRestart().create();
@@ -296,7 +300,8 @@ public class LogHelper {
         } else {
         	int curVal = gw.systemRestart().getValue();
         	if((curVal & startupAppId) != 0) {
-        		appManager.getLogger().warn("Startup ID "+startupAppId+" re-notification!");
+        		if(!isSecondLog)
+        			appManager.getLogger().warn("Startup ID "+startupAppId+" re-notification!");
         		return;
         	}
         	gw.systemRestart().getAndAdd(startupAppId);
