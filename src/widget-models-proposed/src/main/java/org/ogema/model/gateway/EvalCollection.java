@@ -32,6 +32,8 @@ public interface EvalCollection extends PhysicalElement {
 	
 	ResourceList<StringResource> initDoneStatus();
 	
+	ResourceList<CustomerMessageData> customerMessages();
+	
 	//ResourceList<IncidentProvider> incidentProviders();
 	//ResourceList<IncidentAutoClearanceConfiguration> incidenceAutoClearanceConfigs();
 	//ResourceList<IncidentNotificationTriggerConfiguration> incidentTriggerConfigs();

@@ -133,4 +133,9 @@ public interface AlarmGroupData extends Data {
 	
 	/** We set a reference also to the parent where this device is set in {@link #dependentIssueDeviceIds()}*/
 	AlarmGroupData dependentIssueParent();
+	
+	
+	/** Date of corresponding message being sent to customer for the first time.
+	 * Inactive if no such message has been sent or shall not be considered. */
+	TimeResource firstCustomerMessageTime();
 }
