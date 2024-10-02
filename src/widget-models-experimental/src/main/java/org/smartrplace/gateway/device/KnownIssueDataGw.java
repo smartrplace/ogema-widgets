@@ -142,6 +142,9 @@ public interface KnownIssueDataGw extends PhysicalElement {
 	IntegerResource manualReleaseCounter();
 	TimeResource currentDayEnd();
 	
+	/**System-wide stati*/
+	IntegerResource seasonMode();
+	
 	/** Number of issues assigned as relevant without notification. Note that we only require one issue per device handler type per
 	 * analysis assigned - type to be set, so a positive number here may not indicate a real issue.
 	 */
