@@ -199,6 +199,7 @@ public class StringFormatHelper {
 		if(list == null || list.isEmpty()) return "";
 		String result = null;
 		for(String s: list) {
+			s = s.replace(delimiter, "-");
 			if(result == null) result = s;
 			else result += delimiter+s;
 		}
