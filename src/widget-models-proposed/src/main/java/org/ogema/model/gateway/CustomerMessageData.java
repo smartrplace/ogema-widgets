@@ -14,4 +14,6 @@ public interface CustomerMessageData extends Data {
 	
 	/** If not existing or zero the message is still a draft and not SENT */
 	IntegerResource sendCounter();
+	/** Comment on success of sending etc. */
+	StringResource sendComment();
 }
