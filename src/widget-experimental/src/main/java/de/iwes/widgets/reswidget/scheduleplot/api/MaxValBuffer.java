@@ -97,7 +97,7 @@ public class MaxValBuffer {
 			SampledValue sv = values.next();
 			if (sv.getQuality() == Quality.BAD)
 				continue;
-			localVal =  sv.getValue().getFloatValue();
+			localVal =  Math.abs(sv.getValue().getFloatValue());
 			if (val == null || localVal > val) {
 				val = localVal;
 				t = sv.getTimestamp();

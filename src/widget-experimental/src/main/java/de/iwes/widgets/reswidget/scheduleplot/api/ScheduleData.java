@@ -272,7 +272,7 @@ public abstract class ScheduleData<D extends Plot2DDataSet> {
 					maxVal = buffer.getMaxValue(startTime, endTime);
 			}
 			if (maxVal == null) {
-				Object[] result = getMaxValueAndPoint(entry.getValue().iterator(startTime, endTime), 1, true, true);
+				Object[] result = getMaxValueAndPoint(entry.getValue().iterator(startTime, endTime), true, true);
 				if (result == null) // empty
 					continue;
 //					maxVal = ScheduleHelper.getMaxValue(entry.getValue().getValues(startTime, endTime), 1, true, true);
@@ -281,7 +281,7 @@ public abstract class ScheduleData<D extends Plot2DDataSet> {
 
 			}
 			//Class<?> type = schedule.getScheduleType();
-			maxVal = HumanReadableValueConverter.getHumanValue(maxVal, schedule);
+			maxVal = Math.abs(HumanReadableValueConverter.getHumanValue(maxVal, schedule));
 			/*if (type == TemperatureResource.class)
 				maxVal = maxVal - 273.15F;
 			else if(type == PercentageResource.class)
@@ -410,7 +410,7 @@ public abstract class ScheduleData<D extends Plot2DDataSet> {
 	}
 
 	// public method availabel in util-extended ScheduleHelper
-	private static Object[] getMaxValueAndPoint(Iterator<SampledValue> values, int mode, boolean omitBadQuality, boolean omitInfinity) {
+	private static Object[] getMaxValueAndPoint(Iterator<SampledValue> values, boolean omitBadQuality, boolean omitInfinity) {
 		if (!values.hasNext())
 			return null;
 		float maxValue = -Float.MAX_VALUE;
@@ -422,8 +422,7 @@ public abstract class ScheduleData<D extends Plot2DDataSet> {
 			float val = sv.getValue().getFloatValue();
 			if (Float.isNaN(val) || (Float.isInfinite(val) && omitInfinity))
 				continue;
-			if (mode == 1)
-				val = Math.abs(val);
+			val = Math.abs(val);
 			if (val > maxValue) {
 				maxValue = val;
 				timestamp = sv.getTimestamp();
