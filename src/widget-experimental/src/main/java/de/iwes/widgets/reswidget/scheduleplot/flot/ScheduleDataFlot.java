@@ -17,6 +17,7 @@ package de.iwes.widgets.reswidget.scheduleplot.flot;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Supplier;
 
 import org.joda.time.DateTimeZone;
@@ -35,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.cache.Cache;
 
+import de.iwes.util.format.StringFormatHelper;
 import de.iwes.widgets.html.plotflot.FlotDataSet;
 import de.iwes.widgets.reswidget.scheduleplot.api.MaxValBuffer;
 import de.iwes.widgets.reswidget.scheduleplot.api.ScheduleData;
@@ -71,9 +73,17 @@ public class ScheduleDataFlot extends ScheduleData<FlotDataSet> {
 				long downsamplingInterval) { // TODO implement reduction to maxNrPoints; preferably in ScheduleData, 
 																						// so other implementations can use it as well
 		JSONArray array = new JSONArray();
-		if (schedule.isEmpty(startTime, endTime))
+		
+		//FIXME: Cleanup - remove
+		List<SampledValue> vals = schedule.getValues(startTime, endTime);
+		System.out.println("Schedule size from "+StringFormatHelper.getTimeDateInLocalTimeZone(startTime)+
+				" to "+StringFormatHelper.getTimeDateInLocalTimeZone(endTime)+" : "+vals.size());
+		
+		if (schedule.isEmpty(startTime, endTime)) {
+			System.out.println("Schedule is empty from "+StringFormatHelper.getTimeDateInLocalTimeZone(startTime)+
+					" to "+StringFormatHelper.getTimeDateInLocalTimeZone(endTime)+", but "+vals.size());
 			return array;
-//		List<SampledValue> vals = schedule.getValues(startTime, endTime);
+		}
 		final Iterator<SampledValue> it; 
 		if (downsamplingInterval <= 0)
 			it = schedule.iterator(startTime, endTime);
