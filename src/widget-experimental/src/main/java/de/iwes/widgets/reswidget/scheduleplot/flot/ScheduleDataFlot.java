@@ -78,12 +78,14 @@ public class ScheduleDataFlot extends ScheduleData<FlotDataSet> {
 		List<SampledValue> vals = schedule.getValues(startTime, endTime);
 		System.out.println("Schedule size from "+StringFormatHelper.getTimeDateInLocalTimeZone(startTime)+
 				" to "+StringFormatHelper.getTimeDateInLocalTimeZone(endTime)+" : "+vals.size());
+		if(vals.isEmpty())
+			return array;
 		
-		if (schedule.isEmpty(startTime, endTime)) {
+		/*if (schedule.isEmpty(startTime, endTime)) {
 			System.out.println("Schedule is empty from "+StringFormatHelper.getTimeDateInLocalTimeZone(startTime)+
 					" to "+StringFormatHelper.getTimeDateInLocalTimeZone(endTime)+", but "+vals.size());
 			return array;
-		}
+		}*/
 		final Iterator<SampledValue> it; 
 		if (downsamplingInterval <= 0)
 			it = schedule.iterator(startTime, endTime);
