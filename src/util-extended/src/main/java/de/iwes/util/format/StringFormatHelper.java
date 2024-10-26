@@ -273,10 +273,14 @@ public class StringFormatHelper {
 		if(propStr == null)
 			return false;
 		List<String> els = StringFormatHelper.getListFromString(propStr);
-		for(String el: els) {
+		return doesListIdentifyString(stringForCheck, els);
+	}
+	
+	public static boolean doesListIdentifyString(String stringForCheck, List<String> identifyingStrings) {
+		for(String el: identifyingStrings) {
 			if(stringForCheck.contains(el))
 				return true;
 		}
-		return false;
+		return false;		
 	}
 }
