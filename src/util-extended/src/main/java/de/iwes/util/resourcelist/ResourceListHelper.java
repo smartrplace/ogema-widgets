@@ -28,11 +28,13 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import org.ogema.core.application.ApplicationManager;
 import org.ogema.core.model.Resource;
 import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.tools.resource.util.ResourceUtils;
 
+import de.iwes.util.resource.OGEMAResourceCopyHelper;
 import de.iwes.util.resource.ResourceHelper;
 import de.iwes.util.resource.ValueResourceHelper;
 
@@ -375,10 +377,27 @@ public class ResourceListHelper {
 		return result;
 	}
 
+	/** Delete all elements, but not ResourceList itself*/
 	public static <T extends Resource> void clear(ResourceList<T> intervals) {
 		List<T> all = intervals.getAllElements();
 		for(T el: all) {
 			el.delete();
+		}
+	}
+	
+	/** Copy elements from source into destination. Any existing elements in destination
+	 * are NOT removed.
+	 * @param <T>
+	 * @param source
+	 * @param dest
+	 * @param appMan
+	 */
+	public static <T extends Resource> void copyElements(ResourceList<T> source, ResourceList<T> dest,
+			ApplicationManager appMan) {
+		dest.create();
+		List<T> all = source.getAllElements();
+		for(T el: all) {
+			OGEMAResourceCopyHelper.copySubResourceIntoResourceList(dest, el, appMan, true);
 		}
 	}
 }
