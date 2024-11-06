@@ -741,6 +741,8 @@ public class GaRoDataType implements GaRoDataTypeI {
 	//General
 	public static final GaRoDataType Internal = new GaRoDataType("Internal",
 			SingleValueResource.class);
+	public static final GaRoDataType UnknownTemperature = new GaRoDataType("UnknownTemperature",
+			TemperatureResource.class);
 	public static final GaRoDataType Unknown = new GaRoDataType("Unknown",
 			SingleValueResource.class);
 	public static final GaRoDataType Any = new GaRoDataType("Any",
