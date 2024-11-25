@@ -30,6 +30,7 @@ import java.util.List;
 import org.ogema.core.application.ApplicationManager;
 import org.ogema.core.model.Resource;
 import org.ogema.core.model.ResourceList;
+import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.resourcemanager.ResourceAccess;
 import org.ogema.core.resourcemanager.pattern.PatternChangeListener;
 import org.ogema.core.resourcemanager.pattern.ResourcePattern;
@@ -429,5 +430,23 @@ public class RoomHelper {
 		result.setElementType(Room.class);
 		result.activate(false);
 		return result;
+	}
+	
+	public static String getCustomerRoomName(Room room) {
+		return getCustomerRoomName(room, Boolean.getBoolean("de.iwes.util.linkingresource.useCustomerRoomNameInternally"));
+	}
+	/**
+	 * @param room
+	 * @param forceCustomerName
+	 * @return if false then the customer name is only used if enforced by property de.iwes.util.linkingresource.useCustomerRoomNameInternally=true
+	 */
+	public static String getCustomerRoomName(Room room, boolean forceCustomerName) {
+		if(!forceCustomerName)
+			return ResourceUtils.getHumanReadableShortName(room);
+		StringResource roomTenantName = room.getSubResource(RoomHelper.ROOM_TENANT_NAME_RES, StringResource.class);
+		if(roomTenantName.isActive())
+			return roomTenantName.getValue();
+		else
+			return ResourceUtils.getHumanReadableShortName(room);
 	}
 }
