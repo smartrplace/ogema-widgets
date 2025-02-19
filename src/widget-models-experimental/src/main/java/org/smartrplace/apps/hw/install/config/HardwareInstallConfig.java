@@ -230,9 +230,11 @@ public interface HardwareInstallConfig extends Data {
 	/** Duration of last Update of Last Decalc for all thermostats */
 	TimeResource lastDecalcCalculationDuration();
 	
-	/**0: Room assigned of devices can be fully set via API<br>
+	/**0: Room assigned of devices can be fully set via API, no events counted yet<br>
 	 * 1: Room assigned via API is supported, but auto-removal via API is blocked<br>
-	 * 2: No room assignment can be changed via API<br>
+	 * 2: No room assignment can be changed via API.<br>
+	 * 3: Room assigned of devices can be fully set via API. The value indicates the number
+	 * of sync events +2 since it was last set to 2 manually or activated via a sync that took place<br>
 	 */
 	IntegerResource deviceProtectedMode();
 		

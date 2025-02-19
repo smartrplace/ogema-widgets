@@ -433,20 +433,23 @@ public class RoomHelper {
 	}
 	
 	public static String getCustomerRoomName(Room room) {
-		return getCustomerRoomName(room, Boolean.getBoolean("de.iwes.util.linkingresource.useCustomerRoomNameInternally"));
+		return getCustomerRoomName(room, Boolean.getBoolean("de.iwes.util.linkingresource.useCustomerRoomNameInternally"), true);
 	}
 	/**
 	 * @param room
 	 * @param forceCustomerName
 	 * @return if false then the customer name is only used if enforced by property de.iwes.util.linkingresource.useCustomerRoomNameInternally=true
 	 */
-	public static String getCustomerRoomName(Room room, boolean forceCustomerName) {
+	public static String getCustomerRoomName(Room room, boolean forceCustomerName,
+			boolean isGlobalUser) {
 		if(!forceCustomerName)
 			return ResourceUtils.getHumanReadableShortName(room);
 		StringResource roomTenantName = room.getSubResource(RoomHelper.ROOM_TENANT_NAME_RES, StringResource.class);
-		if(roomTenantName.isActive())
+		if(roomTenantName.isActive()) {
+			if(isGlobalUser && !ResourceUtils.getHumanReadableShortName(room).equals(roomTenantName.getValue()))
+				return ResourceUtils.getHumanReadableShortName(room) + " ("+roomTenantName.getValue()+")";
 			return roomTenantName.getValue();
-		else
+		} else
 			return ResourceUtils.getHumanReadableShortName(room);
 	}
 }
