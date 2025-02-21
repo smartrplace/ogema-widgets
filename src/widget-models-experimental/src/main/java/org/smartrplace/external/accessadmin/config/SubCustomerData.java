@@ -3,6 +3,7 @@ package org.smartrplace.external.accessadmin.config;
 import org.ogema.core.model.ResourceList;
 import org.ogema.core.model.array.IntegerArrayResource;
 import org.ogema.core.model.array.StringArrayResource;
+import org.ogema.core.model.array.TimeArrayResource;
 import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
@@ -98,4 +99,7 @@ public interface SubCustomerData extends Data {
 
 	/** Counter for tenant data reset e.g. due to change of tenant*/
 	IntegerResource resetCounter();
+	
+	TimeArrayResource holidayStartTimes();
+	TimeArrayResource holidayEndTimes();
 }
