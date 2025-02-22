@@ -206,6 +206,12 @@ public class StringFormatHelper {
 		return result;
 	}
 	
+	public static String addElement(String newEl, String serialized) {
+		if(serialized == null || serialized.isBlank())
+			return newEl;
+		return serialized+","+newEl;
+	}
+	
 	public static interface StringProvider<T> {
 		String label(T object);
 	}
