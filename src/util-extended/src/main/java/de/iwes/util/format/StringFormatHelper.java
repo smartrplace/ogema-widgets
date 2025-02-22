@@ -207,7 +207,7 @@ public class StringFormatHelper {
 	}
 	
 	public static String addElement(String newEl, String serialized) {
-		if(serialized == null || serialized.isBlank())
+		if(serialized == null || serialized.isEmpty())
 			return newEl;
 		return serialized+","+newEl;
 	}
