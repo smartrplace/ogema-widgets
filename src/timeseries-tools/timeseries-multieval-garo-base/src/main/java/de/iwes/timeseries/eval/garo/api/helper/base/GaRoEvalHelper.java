@@ -185,8 +185,8 @@ public class GaRoEvalHelper {
 				"ValveErrorPosCt", "VentilFehlerPosition");
 		addRecId(GaRoDataType.ValveErrorPositionFb, new String[] {"/valve/errorRunPosition/stateFeedback"}, recIdSnippets,
 				"ValveErrorPosFb", "VentilFehlerPositionFeedback");
-		addRecId(GaRoDataType.GlobalButtonLockCt, new String[] {"/globalButtonLock"}, recIdSnippets,
-				"GlobalLockCt", "TastenSperre");
+		//addRecId(GaRoDataType.GlobalButtonLockCt, new String[] {"/globalButtonLock"}, recIdSnippets,
+		//		"GlobalLockCt", "TastenSperre");
 		addRecId(GaRoDataType.InternetConnection, new String[] {"NetworkState/mainNetworkOk"}, recIdSnippets,
 				"Main Internet connection status", "DSL Status");
 		addRecId(GaRoDataType.RSSIDevice, new String[] {"/rssiDevice", "/communicationStatus/RSSI", "/signal/reading"}, recIdSnippets,
@@ -393,9 +393,6 @@ public class GaRoEvalHelper {
 		if(recId.contains("/installationMode/stateControl")) return GaRoDataType.RouterInstallationModeCt;
 		if(recId.contains("/installationMode/stateFeedback")) return GaRoDataType.RouterInstallationModeFb;
 
-		if(recId.contains("/stateFeedback")) return GaRoDataType.SwitchStateFeedback; //"onOffSwitch/stateFeedback"
-		if(recId.contains("/stateControl")) return GaRoDataType.SwitchStateControl; //"onOffSwitch/stateFeedback"
-		
 		if(recId.contains("/FLOW_TEMPERATURE_")) return GaRoDataType.HeatSupplyTemperature;
 		if(recId.contains("/inputTemperature/")) return GaRoDataType.HeatSupplyTemperature;
 		if(recId.contains("/RETURN_TEMPERATURE_")) return GaRoDataType.HeatReturnTemperature;
@@ -429,6 +426,12 @@ public class GaRoEvalHelper {
 		if(recId.contains("/configPending")) return GaRoDataType.ConfigPending;
 		if(recId.endsWith("/controlMode") || recId.contains("/controlMode/")) return GaRoDataType.ManuMode;
 		if(recId.contains("/controlModeFeedback")) return GaRoDataType.ManuModeFb;
+		if(recId.contains("/globalButtonLock")
+				&& ((recId.contains("/stateControl") || !recId.contains("Tuya"))))
+			return GaRoDataType.GlobalButtonLockCt; //"TastenSperre"
+		if(recId.contains("/globalButtonLock")
+				&& (recId.contains("/stateFeedback")))
+			return GaRoDataType.GlobalButtonLockFb; //"TastenSperre"
 		
 		if(recId.contains("/lightSensor/reading")) return GaRoDataType.LightSensor;
 		if(recId.contains("BRIGHTNESS/reading")) return GaRoDataType.LightSensor;
@@ -528,6 +531,9 @@ public class GaRoEvalHelper {
 		if(recId.contains("competitionPosition")) return GaRoDataType.CompetitionPosition;
 		if(recId.contains("Points")) return GaRoDataType.CompetitionPoints;
 
+		if(recId.contains("/stateFeedback")) return GaRoDataType.SwitchStateFeedback; //"onOffSwitch/stateFeedback"
+		if(recId.contains("/stateControl")) return GaRoDataType.SwitchStateControl; //"onOffSwitch/stateFeedback"
+		
 		if(recId.contains("$$")) return GaRoDataType.Internal;
 		return GaRoDataType.Unknown;
 	}
