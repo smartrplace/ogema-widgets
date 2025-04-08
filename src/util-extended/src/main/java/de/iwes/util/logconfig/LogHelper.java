@@ -39,6 +39,7 @@ import org.ogema.core.recordeddata.RecordedDataConfiguration;
 import org.ogema.core.recordeddata.RecordedDataConfiguration.StorageType;
 import org.ogema.core.resourcemanager.pattern.ResourcePattern;
 import org.ogema.drivers.homematic.xmlrpc.hl.types.HmDevice;
+import org.ogema.model.locations.Room;
 import org.ogema.model.prototypes.PhysicalElement;
 import org.ogema.tools.resource.util.LoggingUtils;
 import org.ogema.tools.resource.util.ValueResourceUtils;
@@ -174,6 +175,19 @@ public class LogHelper {
 			if(devices.size() > 1) return null; //throw new IllegalStateException("HmDevice should have maximum 1 PhysicalElement as child, "+parent.getLocation()+" has "+devices.size());
 			return devices.get(0);
 		}
+		
+		if(locationRelevant) {
+			Resource hmCheck2 = ResourceHelper.getFirstParentOfType(subResource, "org.ogema.drivers.homematic.xmlrpc.hl.types.HmDevice");
+			if(hmCheck2 != null) {
+				List<PhysicalElement> devices = hmCheck2.getSubResources(PhysicalElement.class, false);
+				for(PhysicalElement hmSub: devices) {
+					Room room = hmSub.location().room();
+					if(room != null && room.isActive())
+						return hmSub;
+				}
+			}
+		}
+
 		PhysicalElement device = ResourceHelper.getFirstParentOfType(subResource, PhysicalElement.class);
 		if(device == null) {
 			if(subResource instanceof PhysicalElement)
