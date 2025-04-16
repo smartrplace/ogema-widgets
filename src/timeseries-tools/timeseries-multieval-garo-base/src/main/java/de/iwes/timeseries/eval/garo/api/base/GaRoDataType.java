@@ -238,7 +238,12 @@ public class GaRoDataType implements GaRoDataTypeI {
 	public static final GaRoDataType FrequencySensorOutlet = new GaRoDataType("FrequencySensorOutlet",
 			FrequencyResource.class);
 	public static final GaRoDataType EnergyIntegralOutlet = new GaRoDataType("EnergyIntegralOutlet",
-			EnergyResource.class);
+			EnergyResource.class) {
+		@Override
+		public AggregationModePlus aggregationMode() {
+			return AggregationModePlus.INTEGRATED;
+		}				
+	};
 	public static final GaRoDataType SwitchStateFeedback = new GaRoDataType("SwitchStateFeedback",
 			BooleanResource.class);
 	public static final GaRoDataType SwitchStateControl = new GaRoDataType("SwitchStateControl",
