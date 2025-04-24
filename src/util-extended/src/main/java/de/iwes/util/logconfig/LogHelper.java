@@ -42,10 +42,12 @@ import org.ogema.drivers.homematic.xmlrpc.hl.types.HmDevice;
 import org.ogema.model.locations.Room;
 import org.ogema.model.prototypes.PhysicalElement;
 import org.ogema.tools.resource.util.LoggingUtils;
+import org.ogema.tools.resource.util.ResourceUtils;
 import org.ogema.tools.resource.util.ValueResourceUtils;
 import org.ogema.tools.resourcemanipulator.timer.CountDownDelayedExecutionTimer;
 import org.smartrplace.apps.hw.install.config.PreKnownDeviceData;
 import org.smartrplace.gateway.device.GatewayDevice;
+import org.smartrplace.widgets.api.DatapointServiceBase;
 
 import de.iwes.util.resource.ResourceHelper;
 import de.iwes.util.resource.ValueResourceHelper;
@@ -162,10 +164,10 @@ public class LogHelper {
 	 * @return device resource or null if no suitable resource was found
 	 */
 	public static PhysicalElement getDeviceResource(Resource subResource, boolean locationRelevant) {
-		return getDeviceResource(subResource, locationRelevant, true);
+		return getDeviceResource(subResource, locationRelevant, true, null);
 	}
-	public static PhysicalElement getDeviceResource(Resource subResource, boolean locationRelevant, boolean
-			useHighest) {
+	public static PhysicalElement getDeviceResource(Resource subResource, boolean locationRelevant,
+			boolean useHighest, DatapointServiceBase dpService) {
 		Resource hmCheck = ResourceHelper.getFirstParentOfType(subResource, "org.ogema.drivers.homematic.xmlrpc.hl.types.HmMaintenance");
 		if(hmCheck != null) {
 			Resource parent = hmCheck.getParent();
@@ -182,7 +184,11 @@ public class LogHelper {
 				List<PhysicalElement> devices = hmCheck2.getSubResources(PhysicalElement.class, false);
 				for(PhysicalElement hmSub: devices) {
 					Room room = hmSub.location().room();
-					if(room != null && room.isActive())
+					if(room == null || !room.isActive())
+						continue;
+					if(dpService == null)
+						return hmSub;
+					if(dpService.getMangedDeviceResource(hmSub) != null)
 						return hmSub;
 				}
 			}
@@ -212,6 +218,57 @@ public class LogHelper {
 				return device;
 			}
 		}
+	}
+	
+	/** Replacement for {@link ResourceUtils#getDeviceLocationRoom(Resource)}
+	 * Find room in resource itself or in super resource. Use the resource location to step
+	 * up to super resources
+	 * @param res 
+	 * @return
+	 * 		Room in which device is located, or null if this information is not available
+	 * @throws SecurityException
+	 * 		if the caller does not have the read permission for one of the resources necessary 
+	 * 		to access when checking for the room, typically one of the parent resources of res 
+	 */
+	public static Room getDeviceLocationRoom(Resource res, DatapointServiceBase dpService) {
+		return getDeviceRoom(res.getLocationResource(), dpService);
+	}
+
+	/** 
+	 * Find room in resource itself or in super resource.
+	 * @param device 
+	 * @return
+	 * 		Room in which device is located, or null if this information is not available
+	 * @throws SecurityException
+	 * 		if the caller does not have the read permission for one of the resources necessary 
+	 * 		to access when checking for the room, typically one of the parent resources of res 
+	 * 
+	 *  Replacement for {@link ResourceUtils#getDeviceRoom(Resource)}
+	 */
+	public static Room getDeviceRoom(Resource device, DatapointServiceBase dpService) {
+		while (device != null) {
+			if (device instanceof Room)
+				return (Room) device;
+			if (device instanceof PhysicalElement) {
+				Room room = ((PhysicalElement) device).location().room();
+				if (room.isActive()) 
+					return room;
+			} else if (device instanceof HmDevice) {
+				List<PhysicalElement> subs = device.getSubResources(PhysicalElement.class, false);
+				for(PhysicalElement sub: subs) {
+					Room room = sub.location().room();
+					if (!room.isActive())
+						continue;
+					if(dpService == null)
+						return room;
+					if(dpService.getMangedDeviceResource(sub) != null)
+						return room;
+				}
+			}
+			// possibly the caller does not have permission to access the parent resource
+			device = device.getParent();
+		}
+		return null;
 	}
 	
 	/**Activate standard logging (ON_VALUE_UPDATE)

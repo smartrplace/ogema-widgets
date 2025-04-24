@@ -28,7 +28,9 @@ import org.ogema.core.resourcemanager.ResourceAccess;
 import org.ogema.core.resourcemanager.pattern.ResourcePattern;
 import org.ogema.model.locations.Room;
 import org.ogema.model.prototypes.PhysicalElement;
-import org.ogema.tools.resource.util.ResourceUtils;
+import org.smartrplace.widgets.api.DatapointServiceBase;
+
+import de.iwes.util.logconfig.LogHelper;
 
 /** A LinkingResourceManagement is used if an application collects resources of a certain type
  * (e.g. heating valves), but needs to sort them by a linking resource (e.g. by the rooms in
@@ -43,10 +45,12 @@ import org.ogema.tools.resource.util.ResourceUtils;
 public class LinkingRoomManagement<P extends ResourcePattern<?>> extends LinkingResourceManagement<Room, P> {
 	
 	protected final ResourceAccess resAcc;
+	protected final DatapointServiceBase dpService;
 	protected Room defaultValue = null;
 	
-	public LinkingRoomManagement(ResourceAccess resAcc) {
+	public LinkingRoomManagement(ResourceAccess resAcc, DatapointServiceBase dpService) {
 		this.resAcc = resAcc;
+		this.dpService = dpService;
 	}
 
 	/** Add pattern with its room as linkingResource (as found by {@link RoomHelper.getResourceLocationRoom})
@@ -68,7 +72,7 @@ public class LinkingRoomManagement<P extends ResourcePattern<?>> extends Linking
 		if(!(pattern.model instanceof PhysicalElement)) 
 			throw new IllegalArgumentException("Must be instance of PhysicalElement!");
 		PhysicalElement modelPh = (PhysicalElement)(pattern.model);
-		Room room = ResourceUtils.getDeviceLocationRoom(modelPh);
+		Room room = LogHelper.getDeviceLocationRoom(modelPh, dpService);
 		if(room == null) {
 			if(defaultValue != null) {
 				room = defaultValue;
