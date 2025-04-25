@@ -48,6 +48,10 @@ public class LinkingRoomManagement<P extends ResourcePattern<?>> extends Linking
 	protected final DatapointServiceBase dpService;
 	protected Room defaultValue = null;
 	
+	@Deprecated
+	public LinkingRoomManagement(ResourceAccess resAcc) {
+		this(resAcc, null);
+	}
 	public LinkingRoomManagement(ResourceAccess resAcc, DatapointServiceBase dpService) {
 		this.resAcc = resAcc;
 		this.dpService = dpService;
