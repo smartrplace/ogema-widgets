@@ -57,7 +57,7 @@ public interface GaRoDataTypeI extends GenericDataTypeDeclaration {
 		AVERAGE_VALUE_PER_STEP
 	}
 
-	public enum Level {ROOM, GATEWAY, OVERALL};
+	public enum Level {DEVICE, ROOM, GATEWAY, OVERALL};
 	public Level getLevel();
 	
 	/**Null for standard types, otherwise the id of the {@link GaRoSingleEvalProvider} is given here
