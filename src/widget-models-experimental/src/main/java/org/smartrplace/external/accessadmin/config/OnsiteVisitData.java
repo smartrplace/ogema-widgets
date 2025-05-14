@@ -1,6 +1,7 @@
 package org.smartrplace.external.accessadmin.config;
 
 import org.ogema.core.model.simple.FloatResource;
+import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
 import org.ogema.core.model.simple.TimeResource;
 import org.ogema.model.prototypes.Data;
@@ -25,4 +26,11 @@ public interface OnsiteVisitData extends Data {
 	 * if decalcification is not blocked entirely normally.
 	 */
 	FloatResource performDecalcOfAllThermostatsDaysBeforeEvent();
+	
+	/** 0: Default (reported visit)<br>
+	 *  1: Requested visit<br>
+	 *  2: Planned visit without confirmation<br>
+	 *  3: Visit confirmed
+	 */
+	IntegerResource status();
 }
