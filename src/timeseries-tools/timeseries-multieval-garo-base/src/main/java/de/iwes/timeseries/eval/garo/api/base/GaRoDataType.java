@@ -243,6 +243,10 @@ public class GaRoDataType implements GaRoDataTypeI {
 		public AggregationModePlus aggregationMode() {
 			return AggregationModePlus.INTEGRATED;
 		}				
+		@Override
+		public DatapointBillingType billingType() {
+			return DatapointBillingType.MAIN_METER_READING;
+		}
 	};
 	public static final GaRoDataType SwitchStateFeedback = new GaRoDataType("SwitchStateFeedback",
 			BooleanResource.class);
@@ -298,7 +302,11 @@ public class GaRoDataType implements GaRoDataTypeI {
 		@Override
 		public AggregationModePlus aggregationMode() {
 			return AggregationModePlus.INTEGRATED;
-		}		
+		}
+		@Override
+		public DatapointBillingType billingType() {
+			return DatapointBillingType.MAIN_METER_READING;
+		}
 	};
 	@Deprecated //use VolumenFlow instead
 	public static final GaRoDataType HeatFlow = new GaRoDataType("VolumeFlow",
@@ -319,6 +327,10 @@ public class GaRoDataType implements GaRoDataTypeI {
 		public AggregationModePlus aggregationMode() {
 			return AggregationModePlus.INTEGRATED;
 		}		
+		@Override
+		public DatapointBillingType billingType() {
+			return DatapointBillingType.MAIN_METER_READING;
+		}
 	};
 	public static final GaRoDataType HeatSupplyTemperature = new GaRoDataType("HeatSupplyTemperature",
 			TemperatureResource.class);
@@ -340,6 +352,10 @@ public class GaRoDataType implements GaRoDataTypeI {
 		@Override
 		public AggregationModePlus aggregationMode() {
 			return AggregationModePlus.INTEGRATED;
+		}
+		@Override
+		public DatapointBillingType billingType() {
+			return DatapointBillingType.MAIN_METER_READING;
 		}
 	};
 	public static final GaRoDataType LocationGenericFactor = new GaRoDataType("LocationFactor",
@@ -576,6 +592,10 @@ public class GaRoDataType implements GaRoDataTypeI {
 		public AggregationModePlus aggregationMode() {
 			return AggregationModePlus.INTEGRATED;
 		}		
+		@Override
+		public DatapointBillingType billingType() {
+			return DatapointBillingType.MAIN_METER_READING;
+		}
 	};
 	/** For meters mainly focussing on consumption a separate field for export may exist*/
 	public static final GaRoDataType PowerMeterEnergyExported = new GaRoDataType("PowerMeterEnergyExported",
@@ -612,6 +632,10 @@ public class GaRoDataType implements GaRoDataTypeI {
 		public AggregationModePlus aggregationMode() {
 			return AggregationModePlus.INTEGRATED;
 		}		
+		@Override
+		public DatapointBillingType billingType() {
+			return DatapointBillingType.MAIN_METER_READING;
+		}
 	};
 	public static final GaRoDataType GasFlow = new GaRoDataType("GasFlow",
 			FlowResource.class, Level.GATEWAY);

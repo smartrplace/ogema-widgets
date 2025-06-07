@@ -19,7 +19,6 @@ import org.ogema.generictype.GenericDataTypeDeclaration;
 
 import de.iwes.timeseries.eval.garo.api.helper.base.GaRoEvalHelper;
 import de.iwes.timeseries.eval.garo.multibase.GaRoSingleEvalProvider;
-import de.iwes.timeseries.eval.online.utils.InputSeriesAggregator.AggregationMode;
 
 /** Supported data types
  * The respective Strings used for identifiction are defined in {@link GaRoEvalHelper#getDataType(String)}.
@@ -57,6 +56,11 @@ public interface GaRoDataTypeI extends GenericDataTypeDeclaration {
 		AVERAGE_VALUE_PER_STEP
 	}
 
+	public static enum DatapointBillingType {
+		MAIN_METER_READING,
+		OTHER
+	}
+	
 	public enum Level {DEVICE, ROOM, GATEWAY, OVERALL};
 	public Level getLevel();
 	
@@ -66,5 +70,9 @@ public interface GaRoDataTypeI extends GenericDataTypeDeclaration {
 	
 	public default AggregationModePlus aggregationMode() {
 		return AggregationModePlus.AVERAGE_VALUE_PER_STEP;
+	}
+	
+	public default DatapointBillingType billingType() {
+		return DatapointBillingType.OTHER;
 	}
 }
