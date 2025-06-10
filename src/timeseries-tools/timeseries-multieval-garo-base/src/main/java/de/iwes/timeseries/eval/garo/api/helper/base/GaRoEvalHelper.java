@@ -492,8 +492,10 @@ public class GaRoEvalHelper {
 
 		if(recId.contains("/SMOKE_DETECTOR") && (recId.contains("/reading"))) return GaRoDataType.SmokeDetect;
 		if(recId.contains("/sensors/smoke")) return GaRoDataType.SmokeDetect;
-		if(recId.contains("/SMOKE_DETECTOR") && (recId.contains("/reading"))) return GaRoDataType.SmokeDetect;
 		if(recId.contains("JMBUS_BASE/_") && (recId.contains("/error"))) return GaRoDataType.SmokeDetectError;
+		if(recId.contains("JMBUS_BASE/_") && (recId.endsWith("/reading"))
+				&& (!recId.contains("_0_0")) && (!recId.contains("hcaEnergy"))
+				&& (!recId.contains("battery")) && (!recId.contains("temperatureSensor"))) return GaRoDataType.SmokeDetect;
 
 		if(recId.contains("/sensors/RAIN_COUNTER")) return GaRoDataType.RainCounter; //"onOffSwitch/stateFeedback"
 		if(recId.contains("/sensors/RAINING")) return GaRoDataType.RainStatus; //"onOffSwitch/stateFeedback"
