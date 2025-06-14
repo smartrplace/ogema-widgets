@@ -81,6 +81,14 @@ public interface SubCustomerSuperiorData extends Data {
 	/** Write yes/no or device types that need to be changed in full beginning of heating/cooling season*/
 	StringResource changeBatteriesStartingSeason();
 	
+	/** 0: do not filter device messages<br>
+	 *  1: enable all once (requires page reload)<br>
+	 *  2: disable all once (requires page reload)<br>
+	 *  3: do not send empty-battery messages (may have to be changed between seasons). In winter these messages may be omitted
+	 *     if customer changes batteries by-self and shall not be bothered with any empty batteries when e.g. a CCU is offline
+	 */
+	IntegerResource customerMessageMode();
+	
 	/*********************************
 	 * Season data
 	 ********************************/
