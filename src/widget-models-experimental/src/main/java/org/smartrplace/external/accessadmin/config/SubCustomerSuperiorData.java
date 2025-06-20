@@ -234,4 +234,7 @@ public interface SubCustomerSuperiorData extends Data {
 	 *  4: show full wowi mode
 	 */
 	IntegerResource frontendMode();
+
+	/** Expected life time of a battery from 100% to time when device goes offline*/
+	FloatResource batteryLifetimeExpectedYears();
 }
