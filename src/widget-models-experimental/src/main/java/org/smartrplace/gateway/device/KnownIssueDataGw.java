@@ -158,5 +158,8 @@ public interface KnownIssueDataGw extends PhysicalElement {
 	/** Summary provided by gateway regarding types still assigned None */
 	StringResource alarmTypeSummary();
 	
+	/** Further general information */
+	StringResource alarmEvalData();
+	
 	MemoryTimeseriesPST referenceForDeviceHandler();
 }
