@@ -204,6 +204,9 @@ public interface SubCustomerSuperiorData extends Data {
 	/** Define regional codes for each site*/
 	IntegerResource region();
 	
+	/** Define usage codes for each site*/
+	IntegerResource buildingUsage();
+	
 	/** 0: unknown<br>
 	 *  1: not relevant<br>
 	 *  2: not urgent<br>
