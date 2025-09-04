@@ -76,8 +76,8 @@ public class ScheduleDataFlot extends ScheduleData<FlotDataSet> {
 		
 		//FIXME: Cleanup - remove
 		List<SampledValue> vals = schedule.getValues(startTime, endTime);
-		System.out.println("Schedule size from "+StringFormatHelper.getTimeDateInLocalTimeZone(startTime)+
-				" to "+StringFormatHelper.getTimeDateInLocalTimeZone(endTime)+" : "+vals.size());
+		//System.out.println("Schedule size from "+StringFormatHelper.getTimeDateInLocalTimeZone(startTime)+
+		//		" to "+StringFormatHelper.getTimeDateInLocalTimeZone(endTime)+" : "+vals.size());
 		if(vals.isEmpty())
 			return array;
 		

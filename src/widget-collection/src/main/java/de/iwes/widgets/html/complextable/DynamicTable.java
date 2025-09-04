@@ -237,6 +237,8 @@ public class DynamicTable<T> extends OgemaWidgetBase<DynamicTableData<T>> implem
     	return getData(req).removeItem(object);
     }
     
+    public static int plotRowNums = -1;
+    public static boolean rowNumInTableDone = false;
     
     /**
      * Remove all rows not contained in newRows, and add those that are new.
@@ -245,6 +247,8 @@ public class DynamicTable<T> extends OgemaWidgetBase<DynamicTableData<T>> implem
      * @param req
      */
     public void updateRows(Collection<T> newRows, OgemaHttpRequest req) {
+    	rowNumInTableDone = false;
+    	plotRowNums = newRows.size();
     	getData(req).updateRows(newRows, req);
     }
     
