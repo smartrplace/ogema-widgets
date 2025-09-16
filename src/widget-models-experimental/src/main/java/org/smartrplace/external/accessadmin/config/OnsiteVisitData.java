@@ -33,4 +33,9 @@ public interface OnsiteVisitData extends Data {
 	 *  3: Visit confirmed
 	 */
 	IntegerResource status();
+	
+	/** Store map of data provided by installation staff for battery change requests without issue*/
+	StringResource batteryChangeTimes();
+	/** Store map of data provided by installation staff for battery change requests without issue*/
+	StringResource batteryChangeComments();
 }

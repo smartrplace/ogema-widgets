@@ -29,7 +29,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.ogema.core.application.ApplicationManager;
 import org.ogema.core.model.simple.FloatResource;
@@ -206,6 +209,19 @@ public class StringFormatHelper {
 		return result;
 	}
 	
+	public static String getMapAsString(Map<String, String> map, String delimiter) {
+		if(map == null || map.isEmpty()) return "";
+		String result = null;
+		for(Entry<String, String> s: map.entrySet()) {
+			String key = s.getKey().replace(delimiter, "-");
+			String value = s.getValue().replace(delimiter, "-");
+			String newEntry = "{"+key+delimiter+value+"}";
+			if(result == null) result = newEntry;
+			else result += delimiter + newEntry;
+		}
+		return result;
+	}
+	
 	public static String addElement(String newEl, String serialized) {
 		if(serialized == null || serialized.isEmpty())
 			return newEl;
@@ -259,13 +275,51 @@ public class StringFormatHelper {
 			int newIdx = serialized.indexOf(separator, idx);
 			if(newIdx < 0) {
 				result.add(serialized.substring(idx).trim());
-				idx = -1;
 				break;
 			}
 			result.add(serialized.substring(idx, newIdx).trim());
 			idx = newIdx+separator.length();
 		}
 		return result;
+	}
+
+	public static Map<String, String> getMapFromString(String serialized, String separator) {
+		Map<String, String> result = new HashMap<String, String>();
+		if(serialized == null) return result;
+		int idx = 0;
+		while(idx >= 0) {
+			int newIdx = serialized.indexOf("}", idx);
+			if(newIdx < 0) {
+				String entryString = serialized.substring(idx).trim();
+				addElement(entryString, result);
+				break;
+			}
+			String entryString = serialized.substring(idx, newIdx).trim();
+			addElement(entryString, result);
+			idx = newIdx+separator.length();
+		}
+		return result;
+	}
+	/** We assument the String ends without "}" */
+	private static void addElement(String entryString, Map<String, String> result) {
+		int idx0 = entryString.indexOf("{");
+		if(idx0 < 0 || idx0 == entryString.length()-1)
+			return;
+		String entryStr = entryString.substring(idx0+1);
+		int idx = entryStr.indexOf(",");
+		if(idx < 0)
+			return;
+		String key;
+		String value;
+		if(entryStr.startsWith("{"))
+			key = entryStr.substring(1, idx);
+		else
+			key = entryStr.substring(0, idx);
+		if(idx == entryStr.length()-1)
+			value = "";
+		else
+			value = entryStr.substring(idx+1);
+		result.put(key, value);
 	}
 
 	/** The property identified by propertyName shall be chunked by commas then the
