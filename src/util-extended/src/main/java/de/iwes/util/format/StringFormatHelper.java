@@ -290,35 +290,34 @@ public class StringFormatHelper {
 		while(idx >= 0) {
 			int newIdx = serialized.indexOf("}", idx);
 			if(newIdx < 0) {
-				String entryString = serialized.substring(idx).trim();
-				addElement(entryString, result);
+				//We have read everything
+				//String entryString = serialized.substring(idx).trim();
+				//addElement(entryString, result);
 				break;
 			}
 			String entryString = serialized.substring(idx, newIdx).trim();
-			addElement(entryString, result);
+			addElement(entryString, separator, result);
 			idx = newIdx+separator.length();
 		}
 		return result;
 	}
 	/** We assument the String ends without "}" */
-	private static void addElement(String entryString, Map<String, String> result) {
+	private static void addElement(String entryString, String separator,
+			Map<String, String> result) {
 		int idx0 = entryString.indexOf("{");
 		if(idx0 < 0 || idx0 == entryString.length()-1)
 			return;
 		String entryStr = entryString.substring(idx0+1);
-		int idx = entryStr.indexOf(",");
+		int idx = entryStr.indexOf(separator);
 		if(idx < 0)
 			return;
 		String key;
 		String value;
-		if(entryStr.startsWith("{"))
-			key = entryStr.substring(1, idx);
-		else
-			key = entryStr.substring(0, idx);
+		key = entryStr.substring(0, idx);
 		if(idx == entryStr.length()-1)
 			value = "";
 		else
-			value = entryStr.substring(idx+1);
+			value = entryStr.substring(idx+separator.length());
 		result.put(key, value);
 	}
 
