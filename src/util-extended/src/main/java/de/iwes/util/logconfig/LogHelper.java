@@ -138,6 +138,8 @@ public class LogHelper {
 				return false;
 		}
 		String endCode = pre.deviceEndCode().getValue();
+		if(endCode.isBlank())
+			return false;
 		//if(hmName == null) {
 		//	String hmIdLoc = getDeviceId(name, endCode.length());
 		//	return hmIdLoc.equals(endCode);
