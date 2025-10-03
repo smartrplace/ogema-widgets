@@ -334,6 +334,9 @@ try {
 		Resource cr = parent;
 		for(int i=0; i<els.length; i++) {
 			if(cr == null) return null;
+			if(els[i].isEmpty())
+				//skip additional slashes
+				continue;
 			if(i == (els.length-1)) {
 				if(type == null)
 					return cr.getSubResource(els[i]);
@@ -578,6 +581,26 @@ try {
 		return getRelativeResource(parentTemplate, childTemplate, parentDestination, false);
 	}
 
+	/** Usually the result location part starts with a slash*/
+	public static String getRelativeLocationBelowParentOfType(Resource r, Class<? extends Resource> type) {
+		Resource parent = getFirstParentOfType(r, type);
+		if(parent == null)
+			return null;
+		int len = parent.getLocation().length();
+		if(len > r.getLocation().length())
+			//should never occur
+			return null;
+		return r.getLocation().substring(0, len);
+	}
+	
+	public static Resource getResourceByRelativePathBelowCommonParent(Resource resStart, String relativePath,
+			Class<? extends Resource> parentType) {
+		Resource parent = getFirstParentOfType(resStart, parentType);
+		if(parent == null)
+			return null;
+		return getSubResource(parent, relativePath);
+	}
+	
 	/** Get sub resource of a certain type. The sub resource shall either be defined by the model
 	 * or exist as a decorator. No virtual decorator shall be created
 	 * @param <T>
