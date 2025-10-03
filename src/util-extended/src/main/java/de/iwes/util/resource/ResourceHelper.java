@@ -587,10 +587,12 @@ try {
 		if(parent == null)
 			return null;
 		int len = parent.getLocation().length();
+		if(len == r.getLocation().length())
+			return "";
 		if(len > r.getLocation().length())
 			//should never occur
 			return null;
-		return r.getLocation().substring(0, len);
+		return r.getLocation().substring(len);
 	}
 	
 	public static Resource getResourceByRelativePathBelowCommonParent(Resource resStart, String relativePath,
