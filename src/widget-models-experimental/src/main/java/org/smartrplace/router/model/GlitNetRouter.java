@@ -13,6 +13,9 @@ public interface GlitNetRouter extends PhysicalElement {
     
     /** @return hostname as reported by ubus system board. */
     StringResource hostname();
+	
+	/** @return host IP address or name used to connect to the router. */
+	StringResource hostAddress();
     
     /** @return system release as reported by ubus system board. */
     StringResource releaseDescription();
