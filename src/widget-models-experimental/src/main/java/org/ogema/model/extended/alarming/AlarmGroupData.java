@@ -138,4 +138,7 @@ public interface AlarmGroupData extends Data {
 	/** Date of corresponding message being sent to customer for the first time.
 	 * Inactive if no such message has been sent or shall not be considered. */
 	TimeResource firstCustomerMessageTime();
+	
+	/** If existing the respective client task due date shall be fixed to this date*/
+	TimeResource clientTaskTargetDate();
 }
