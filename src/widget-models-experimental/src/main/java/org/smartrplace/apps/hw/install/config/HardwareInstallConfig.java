@@ -176,8 +176,8 @@ public interface HardwareInstallConfig extends Data {
 	IntegerResource smartAlarmMode();
 	
 	/** Auto Action and Release mode (was previously: Auto-Decalc mode):<br>
-	 * Note: In the future separate mode management resources for different applications/devices
-	 * may be supported, for now we use a common setting.<br>
+	 * Note: Auto-processing is now called from several services. Not all services may take care
+	 * of these settings, so usually control of release etc. is now done by separate properties.<br>
 	 * 0: Auto analysis only<br>
 	 * 1: Block Auto analysis<br>
 	 * 2: Auto Action/Decalc, no release<br>
