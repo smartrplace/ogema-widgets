@@ -102,4 +102,10 @@ public interface SubCustomerData extends Data {
 	
 	TimeArrayResource holidayStartTimes();
 	TimeArrayResource holidayEndTimes();
+	
+	/** 0: No check-in via thermostat
+	 * -1: Check-in active for all rooms of tenant (like org.smartrplace.apps.heatcontrol.logic.bookingByAnyRiseFrom=true)
+	 * positive: Check-in only active for rooms of type given by the resource 
+	 */
+	IntegerResource checkInMode();
 }
