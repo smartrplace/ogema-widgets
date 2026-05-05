@@ -67,7 +67,7 @@ public interface SingleRoomSimulationBase {
 	void addLight(float lumen);
 	boolean isPersonMoving();
 	void addPersonMoving();
-	/** m3*/
+	/** m³*/
 	float getVolume();
 
 	/** Add person to the room. Note that this information will not be stored persistently by the

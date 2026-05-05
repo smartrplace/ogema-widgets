@@ -907,9 +907,9 @@ public class GaRoDataType implements GaRoDataTypeI {
 		if(PowerResource.class.isAssignableFrom(type))
 			return "W";
 		if(VolumeResource.class.isAssignableFrom(type))
-			return "m3";
+			return "m³";
 		if(FlowResource.class.isAssignableFrom(type))
-			return "m3/s";
+			return "m³/s";
 		if(EnergyPerAreaResource.class.isAssignableFrom(type))
 			return "W/m2";
 		if(VelocityResource.class.isAssignableFrom(type))
