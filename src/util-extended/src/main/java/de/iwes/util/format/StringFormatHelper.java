@@ -340,7 +340,7 @@ public class StringFormatHelper {
 		return doesListIdentifyString(stringForCheck, els);
 	}
 	
-	public static boolean doesListIdentifyString(String stringForCheck, List<String> identifyingStrings) {
+	public static boolean doesListIdentifyString(String stringForCheck, Collection<String> identifyingStrings) {
 		for(String el: identifyingStrings) {
 			if(stringForCheck.contains(el))
 				return true;

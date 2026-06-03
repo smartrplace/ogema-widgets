@@ -604,7 +604,10 @@ public class GaRoDataType implements GaRoDataTypeI {
 		public AggregationModePlus aggregationMode() {
 			return AggregationModePlus.INTEGRATED;
 		}
-		
+		@Override
+		public DatapointBillingType billingType() {
+			return DatapointBillingType.MAIN_METER_READING;
+		}
 	};
 	public static final GaRoDataType PowerMeterCurrent = new GaRoDataType("PowerMeterCurrent",
 			ElectricCurrentResource.class, Level.GATEWAY);
