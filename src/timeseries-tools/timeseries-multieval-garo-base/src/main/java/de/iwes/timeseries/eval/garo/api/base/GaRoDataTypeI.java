@@ -61,7 +61,7 @@ public interface GaRoDataTypeI extends GenericDataTypeDeclaration {
 		OTHER
 	}
 	
-	public enum Level {DEVICE, ROOM, GATEWAY, OVERALL};
+	public enum Level {DEVICE, ROOM, TENANT, GATEWAY, OVERALL};
 	public Level getLevel();
 	
 	/**Null for standard types, otherwise the id of the {@link GaRoSingleEvalProvider} is given here
