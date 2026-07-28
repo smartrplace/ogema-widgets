@@ -43,6 +43,7 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
     var cssMap = {};
     var styles = {};
     var requestPending = false;
+    var ajaxGetRetries = 0;             // number of automatic retries after a readyState-0 (network) error on the current GET
     var waitForPendingRequest = false;
     var initialGroupUpdateSet = false;
     this.isDynamicWidget = false;
@@ -485,11 +486,12 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
                 url: servletPath,
                 contentType: contentType
             }).done(function (result) {
+            	ajaxGetRetries = 0;   // successful response resets the retry counter
                 gw.handleWidgetGET(result, isPollRequest, ignoreTriggerActions, excludedTriggers,excludedGroupTriggers);
             }).always(function() {
             	if (ogema.showOverlay) {
             		try {
-                		$("#" + widgetID + ".ogema-widget").overlayout(); 
+                		$("#" + widgetID + ".ogema-widget").overlayout();
             		} catch(err) {}
             	}
             	requestPending = false;
@@ -497,8 +499,21 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
             		deferred.resolve();
             	}
             }).fail(function(jqXHR, textStatus, errorThrown) {
-            	if (!isPollRequest) 
+            	if (textStatus === "abort")   // request cancelled, e.g. by page navigation/reload while widgets are still loading; not a real error
+            		return;
+            	if (!isPollRequest) {
+            		// a readyState-0 error on a fresh page load is often a transient network hiccup (or the browser's
+            		// TCP timeout on a busy server); retry a few times with backoff before alarming the user
+            		if (jqXHR.readyState === 0 && ajaxGetRetries < 3) {
+            			ajaxGetRetries++;
+            			setTimeout(function() {
+            				gw.sendGET(undefined, excludedTriggers, excludedGroupTriggers, triggeredBy, isPollRequest, ignoreTriggerActions);
+            			}, 1000 * ajaxGetRetries);
+            			return;
+            		}
+            		ajaxGetRetries = 0;
             		gw.handleAjaxError(jqXHR, textStatus, errorThrown, "GET");
+            	}
             });
         }
     };
@@ -670,6 +685,9 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
      }
      */
     this.handleAjaxError = function (jqXHR, textStatus, errorThrown, type) {
+    	if (textStatus === "abort") { // request cancelled (e.g. page navigation/reload while a request was in flight); not a real error
+    		return;
+    	}
     	if (jqXHR.readyState === 4 && jqXHR.status === 404) { // widget not found; typically a session-specific widget that has been removed
     		return;
     	}
@@ -691,8 +709,10 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
             // HTTP error (can be checked by XMLHttpRequest.status and XMLHttpRequest.statusText)
         }
         else if (jqXHR.readyState === 0) {
-            reason = "Network-error, cannot reach server! Is it running?";
-            // Network error (i.e. connection refused, access denied due to CORS, etc.)
+            reason = (textStatus === "timeout")
+                ? "Timeout - the server did not respond in time."
+                : "Network-error, cannot reach server! Is it running?";
+            // Network error (i.e. connection refused, access denied due to CORS, timeout, etc.)
         }
         var msg = "Ajax-error (" + type + "): " + reason;
         try {
