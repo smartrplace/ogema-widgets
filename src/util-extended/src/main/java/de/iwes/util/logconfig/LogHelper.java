@@ -39,6 +39,7 @@ import org.ogema.core.recordeddata.RecordedDataConfiguration;
 import org.ogema.core.recordeddata.RecordedDataConfiguration.StorageType;
 import org.ogema.core.resourcemanager.pattern.ResourcePattern;
 import org.ogema.drivers.homematic.xmlrpc.hl.types.HmDevice;
+import org.ogema.model.actors.OnOffSwitch;
 import org.ogema.model.locations.Room;
 import org.ogema.model.prototypes.PhysicalElement;
 import org.ogema.tools.resource.util.LoggingUtils;
@@ -172,6 +173,13 @@ public class LogHelper {
 			boolean useHighest, DatapointServiceBase dpService) {
 		Resource hmCheck = ResourceHelper.getFirstParentOfType(subResource, "org.ogema.drivers.homematic.xmlrpc.hl.types.HmMaintenance");
 		if(hmCheck != null) {
+			if(subResource.getLocation().contains("HM_HmIP_DRSI4")) {
+				if(subResource instanceof OnOffSwitch)
+					return (PhysicalElement) subResource;
+				OnOffSwitch result = ResourceHelper.getFirstParentOfType(subResource, OnOffSwitch.class);
+				if(result != null)
+					return result;
+			}
 			Resource parent = hmCheck.getParent();
 			if(parent == null) return null;
 			List<PhysicalElement> devices = parent.getSubResources(PhysicalElement.class, false);
