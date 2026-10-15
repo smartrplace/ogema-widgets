@@ -19,6 +19,53 @@
  *
  * Fraunhofer IWES/Fraunhofer IEE
  */
+
+/**
+ * Page-wide limiter for widget GET requests. Large pages fire hundreds of GETs at once; Chrome rejects
+ * requests beyond its per-renderer budget with net::ERR_INSUFFICIENT_RESOURCES (seen by jQuery as
+ * readyState 0, i.e. "cannot reach server"), and a busy server may drop connections under such bursts.
+ * Queueing on the client avoids both; with HTTP/1.1 Chrome only uses 6 connections per host anyway.
+ * The limit can be overridden by setting GenericWidget.ajaxLimiter.maxConcurrent.
+ */
+GenericWidget.ajaxLimiter = {
+	maxConcurrent: 8,
+	running: 0,
+	queue: [],
+	lastSuccess: 0,        // timestamp of the last successful widget GET; used to tell a reachable server from a dead one
+	/** requestFn must return a jqXHR; returns a promise that settles with the same arguments as the jqXHR */
+	run: function(requestFn) {
+		var limiter = this;
+		var result = $.Deferred();
+		limiter.queue.push(function() {
+			limiter.running++;
+			var xhr;
+			try {
+				xhr = requestFn();
+			} catch (e) {
+				limiter.running--;
+				limiter.next();
+				result.reject({readyState: 0, status: 0, statusText: "error"}, "error", e);
+				return;
+			}
+			xhr.always(function() {
+				limiter.running--;
+				limiter.next();
+			}).done(function() {
+				limiter.lastSuccess = Date.now();
+				result.resolve.apply(result, arguments);
+			}).fail(function() {
+				result.reject.apply(result, arguments);
+			});
+		});
+		limiter.next();
+		return result.promise();
+	},
+	next: function() {
+		while (this.running < this.maxConcurrent && this.queue.length > 0)
+			this.queue.shift()();
+	}
+};
+
 function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor of abstract class GenericWidget
 
     this.widgetID = widgetID;
@@ -481,10 +528,12 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
             var servletPath = gw.servletPath + ogema.getParameters();
             if (typeof triggeredBy !== "undefined")
             	servletPath += "&triggeredBy=" + triggeredBy; 
-            $.ajax({
-                type: "GET",
-                url: servletPath,
-                contentType: contentType
+            GenericWidget.ajaxLimiter.run(function() {
+            	return $.ajax({
+                    type: "GET",
+                    url: servletPath,
+                    contentType: contentType
+                });
             }).done(function (result) {
             	ajaxGetRetries = 0;   // successful response resets the retry counter
                 gw.handleWidgetGET(result, isPollRequest, ignoreTriggerActions, excludedTriggers,excludedGroupTriggers);
@@ -503,15 +552,23 @@ function GenericWidget(servletPath, widgetID, pollingInterval) {  // constructor
             		return;
             	if (!isPollRequest) {
             		// a readyState-0 error on a fresh page load is often a transient network hiccup (or the browser's
-            		// TCP timeout on a busy server); retry a few times with backoff before alarming the user
-            		if (jqXHR.readyState === 0 && ajaxGetRetries < 3) {
+            		// TCP timeout on a busy server); retry with exponential backoff before alarming the user. The random
+            		// jitter prevents all widgets that failed in the same burst from retrying in the same burst again.
+            		if (jqXHR.readyState === 0 && ajaxGetRetries < 5) {
+            			var backoff = 1000 * Math.pow(2, Math.min(ajaxGetRetries, 3)) * (0.5 + Math.random());
             			ajaxGetRetries++;
             			setTimeout(function() {
             				gw.sendGET(undefined, excludedTriggers, excludedGroupTriggers, triggeredBy, isPollRequest, ignoreTriggerActions);
-            			}, 1000 * ajaxGetRetries);
+            			}, backoff);
             			return;
             		}
             		ajaxGetRetries = 0;
+            		// other widgets got answers recently, so the server is reachable: do not replace the whole page
+            		// by the error message just because a single widget request failed
+            		if (jqXHR.readyState === 0 && Date.now() - GenericWidget.ajaxLimiter.lastSuccess < 30000) {
+            			console.warn("GET for widget " + widgetID + " failed repeatedly, but server is reachable; giving up on this request", textStatus, errorThrown);
+            			return;
+            		}
             		gw.handleAjaxError(jqXHR, textStatus, errorThrown, "GET");
             	}
             });
