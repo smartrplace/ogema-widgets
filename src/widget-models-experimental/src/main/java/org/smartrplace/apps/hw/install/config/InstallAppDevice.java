@@ -1,6 +1,7 @@
 package org.smartrplace.apps.hw.install.config;
 
 import org.ogema.core.model.array.TimeArrayResource;
+import org.ogema.core.model.simple.BooleanResource;
 import org.ogema.core.model.simple.IntegerResource;
 import org.ogema.core.model.simple.StringResource;
 
@@ -77,7 +78,13 @@ public interface InstallAppDevice extends InstallAppDeviceBase {
 	 * for debugging purposes
 	 */
 	public StringResource macAddress();
-	
+
+	/** If true the automatic MAC detection does not write a new MAC address for the device (neither into
+	 * {@link #macAddress()} nor as NEW_MAC entry into {@link #backupAddress()}). Set automatically when the IP
+	 * address of the device is answered by another known device (MAC of another device), can also be set manually.
+	 * Reset automatically when the device is online again with its own MAC address.*/
+	public BooleanResource macUpdateBlocked();
+
 	/** Used for internal status supervision of some device types*/
 	//public TimeResource supervisionStatus();
 	
